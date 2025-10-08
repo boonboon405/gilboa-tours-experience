@@ -1,11 +1,9 @@
 import { Phone, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/contexts/LanguageContext';
 import heroImage from '@/assets/hero-gilboa.jpg';
 
 export const Hero = () => {
-  const { t } = useLanguage();
-  const whatsappNumber = '972523456789'; // Replace with actual number
+  const whatsappNumber = '972523456789';
   const phoneNumber = '053-7314235';
 
   return (
@@ -14,7 +12,7 @@ export const Hero = () => {
       <div className="absolute inset-0">
         <img
           src={heroImage}
-          alt="Gilboa Mountains"
+          alt="הרי הגלבוע"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/50 to-foreground/70" />
@@ -24,13 +22,13 @@ export const Hero = () => {
       <div className="relative z-10 container mx-auto px-4 text-center">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 animate-fade-in">
-            {t('hero.title')}
+            חוויה קבוצתית בלתי נשכחת
           </h1>
           <h2 className="text-3xl md:text-5xl font-semibold text-accent mb-6 animate-fade-in">
-            {t('hero.subtitle')}
+            בלב הגלבוע
           </h2>
           <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
-            {t('hero.description')}
+            יום חווייתי, מהנה ומשמעותי שמשלב היסטוריה, טבע, גיבוש והרבה זיכרונות טובים לחברה שלכם.
           </p>
 
           {/* CTA Buttons */}
@@ -41,7 +39,7 @@ export const Hero = () => {
               className="text-lg px-8 py-6"
               onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              {t('hero.cta')}
+              הזמינו את ההרפתקה
             </Button>
             <Button
               variant="whatsapp"
@@ -49,8 +47,8 @@ export const Hero = () => {
               className="text-lg px-8 py-6"
               onClick={() => window.open(`https://wa.me/${whatsappNumber}`, '_blank')}
             >
-              <MessageCircle className="mr-2 h-5 w-5" />
-              {t('hero.whatsapp')}
+              <MessageCircle className="ml-2 h-5 w-5" />
+              וואטסאפ
             </Button>
           </div>
 
@@ -59,7 +57,7 @@ export const Hero = () => {
             href={`tel:${phoneNumber}`}
             className="inline-flex items-center text-white text-xl font-semibold hover:text-accent transition-colors"
           >
-            <Phone className="mr-2 h-6 w-6" />
+            <Phone className="ml-2 h-6 w-6" />
             {phoneNumber}
           </a>
         </div>

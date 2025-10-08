@@ -1,30 +1,28 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { Award, Settings, Shield, Truck } from 'lucide-react';
 
 export const WhyChooseUs = () => {
-  const { t } = useLanguage();
 
   const reasons = [
     {
       icon: Award,
-      titleKey: 'why.certified',
-      descKey: 'why.certified.desc',
+      title: 'מקצועי ומוסמך',
+      desc: 'מדריך טיולים מורשה עם שנות ניסיון',
     },
     {
       icon: Settings,
-      titleKey: 'why.custom',
-      descKey: 'why.custom.desc',
+      title: 'חוויות מותאמות אישית',
+      desc: 'מעוצב במיוחד לקבוצות עסקיות ומקצועיות',
     },
     {
       icon: Shield,
-      titleKey: 'why.safe',
-      descKey: 'why.safe.desc',
+      title: 'בטוח ומרענן',
+      desc: 'מושלם לקיץ הישראלי החם',
     },
     {
       icon: Truck,
-      titleKey: 'why.logistics',
-      descKey: 'why.logistics.desc',
+      title: 'שירות מלא',
+      desc: 'כל הלוגיסטיקה מטופלת מתחילה ועד סוף',
     },
   ];
 
@@ -32,7 +30,7 @@ export const WhyChooseUs = () => {
     <section className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl md:text-5xl font-bold text-center text-foreground mb-16">
-          {t('why.title')}
+          למה לבחור בדוד טורס?
         </h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
@@ -48,10 +46,10 @@ export const WhyChooseUs = () => {
                     <Icon className="h-8 w-8 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground mb-2">
-                    {t(reason.titleKey)}
+                    {reason.title}
                   </h3>
                   <p className="text-muted-foreground">
-                    {t(reason.descKey)}
+                    {reason.desc}
                   </p>
                 </CardContent>
               </Card>

@@ -1,5 +1,4 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { Mountain, Waves, Landmark, UtensilsCrossed } from 'lucide-react';
 import springsImage from '@/assets/springs-activity.jpg';
 import beitSheanImage from '@/assets/beit-shean.jpg';
@@ -7,34 +6,32 @@ import pelicansImage from '@/assets/pelicans.jpg';
 import clubCarsImage from '@/assets/club-cars.jpg';
 
 export const Activities = () => {
-  const { t } = useLanguage();
-
   const activities = [
     {
       icon: Mountain,
-      titleKey: 'activities.history.title',
-      descKey: 'activities.history.desc',
+      title: 'טבע ונוף היסטורי',
+      description: 'ביקור בכתף שאול, צפייה באירוס הגלבוע, ושקנאים מרהיבים בנדידה מעל עמק הירדן.',
       image: pelicansImage,
       color: 'from-primary to-primary-light',
     },
     {
       icon: Waves,
-      titleKey: 'activities.adventure.title',
-      descKey: 'activities.adventure.desc',
+      title: 'הרפתקה וגיבוש',
+      description: 'ניווט ברכבי קלאב קאר חשמליים בנחל המעיינות, ארבעה מעיינות טבעיים, ומשחקי מים אינטראקטיביים.',
       image: springsImage,
       color: 'from-secondary to-secondary-light',
     },
     {
       icon: Landmark,
-      titleKey: 'activities.culture.title',
-      descKey: 'activities.culture.desc',
+      title: 'רומא העתיקה בבית שאן',
+      description: 'ביקור בעתיקות המרשימות של בית שאן הרומית - היפודרום והאמפיתיאטרון.',
       image: beitSheanImage,
       color: 'from-accent to-orange-500',
     },
     {
       icon: UtensilsCrossed,
-      titleKey: 'activities.culinary.title',
-      descKey: 'activities.culinary.desc',
+      title: 'חוויה קולינרית',
+      description: 'ארוחה עשירה במסעדה כשרה עם אוכל מזרחי אותנטי - טעם אמיתי של האזור.',
       image: clubCarsImage,
       color: 'from-primary to-accent',
     },
@@ -45,10 +42,10 @@ export const Activities = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            {t('activities.title')}
+            מה כולל היום?
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            {t('activities.subtitle')}
+            שלושה מרכיבים עיקריים: היסטוריה, טבע וגיבוש צוותי
           </p>
         </div>
 
@@ -63,22 +60,22 @@ export const Activities = () => {
                 <div className="relative h-48 overflow-hidden">
                   <img
                     src={activity.image}
-                    alt={t(activity.titleKey)}
+                    alt={activity.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className={`absolute inset-0 bg-gradient-to-br ${activity.color} opacity-40 group-hover:opacity-30 transition-opacity`} />
                 </div>
                 <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
+                  <div className="flex items-start space-x-4 space-x-reverse">
                     <div className={`p-3 rounded-lg bg-gradient-to-br ${activity.color}`}>
                       <Icon className="h-6 w-6 text-white" />
                     </div>
                     <div className="flex-1">
                       <h3 className="text-2xl font-bold text-foreground mb-2">
-                        {t(activity.titleKey)}
+                        {activity.title}
                       </h3>
                       <p className="text-muted-foreground leading-relaxed">
-                        {t(activity.descKey)}
+                        {activity.description}
                       </p>
                     </div>
                   </div>

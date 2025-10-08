@@ -1,19 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { Users, Target, Lightbulb, Heart, MessageCircle } from 'lucide-react';
 import odtImage from '@/assets/odt-team.jpg';
 
 export const ODTSection = () => {
-  const { t } = useLanguage();
-  const whatsappNumber = '972523456789'; // Replace with actual number
+  const whatsappNumber = '972523456789';
 
   const benefits = [
-    { icon: Users, textKey: 'odt.benefit1' },
-    { icon: Target, textKey: 'odt.benefit2' },
-    { icon: Lightbulb, textKey: 'odt.benefit3' },
-    { icon: Heart, textKey: 'odt.benefit4' },
+    { icon: Users, text: 'שיתוף פעולה צוותי משופר' },
+    { icon: Target, text: 'פיתוח מנהיגות' },
+    { icon: Lightbulb, text: 'מיומנויות פתרון בעיות' },
+    { icon: Heart, text: 'בניית אמון' },
   ];
 
   return (
@@ -24,10 +22,10 @@ export const ODTSection = () => {
             ODT
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            {t('odt.title')}
+            פעילויות גיבוש ODT
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            {t('odt.subtitle')}
+            אימון פיתוח חוץ לצוות שלכם
           </p>
         </div>
 
@@ -47,19 +45,19 @@ export const ODTSection = () => {
             <Card className="border-2 border-primary/20">
               <CardHeader>
                 <CardTitle className="text-2xl text-primary">
-                  {t('odt.what')}
+                  מהו ODT?
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground leading-relaxed">
-                  {t('odt.what.desc')}
+                  אימון פיתוח חוץ משתמש באתגרים מבוססי טבע כדי לחזק עבודת צוות, מנהיגות ומיומנויות תקשורת.
                 </p>
               </CardContent>
             </Card>
 
             <div>
               <h3 className="text-2xl font-bold mb-4 text-foreground">
-                {t('odt.benefits')}
+                יתרונות
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 {benefits.map((benefit, index) => {
@@ -67,11 +65,11 @@ export const ODTSection = () => {
                   return (
                     <div
                       key={index}
-                      className="flex items-center space-x-3 p-4 rounded-lg bg-muted hover:bg-primary/10 transition-colors"
+                      className="flex items-center space-x-3 space-x-reverse p-4 rounded-lg bg-muted hover:bg-primary/10 transition-colors"
                     >
                       <Icon className="h-5 w-5 text-primary flex-shrink-0" />
                       <span className="text-sm font-medium text-foreground">
-                        {t(benefit.textKey)}
+                        {benefit.text}
                       </span>
                     </div>
                   );
@@ -85,8 +83,8 @@ export const ODTSection = () => {
               className="w-full text-lg"
               onClick={() => window.open(`https://wa.me/${whatsappNumber}`, '_blank')}
             >
-              <MessageCircle className="mr-2 h-5 w-5" />
-              {t('hero.whatsapp')}
+              <MessageCircle className="ml-2 h-5 w-5" />
+              וואטסאפ
             </Button>
           </div>
         </div>
