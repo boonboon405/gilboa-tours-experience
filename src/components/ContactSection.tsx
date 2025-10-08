@@ -18,7 +18,7 @@ export const ContactSection = () => {
 
   const whatsappNumber = '972523456789'; // Replace with actual number
   const email = 'info@davidtours.com';
-  const phoneNumber = '072-394-4222';
+  const phoneNumber = '053-7314235';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -6,7 +6,7 @@ import heroImage from '@/assets/hero-gilboa.jpg';
 export const Hero = () => {
   const { t } = useLanguage();
   const whatsappNumber = '972523456789'; // Replace with actual number
-  const phoneNumber = '072-394-4222';
+  const phoneNumber = '053-7314235';
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
