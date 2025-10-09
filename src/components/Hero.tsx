@@ -1,8 +1,12 @@
-import { Phone, MessageCircle } from 'lucide-react';
+import { useState } from 'react';
+import { Phone, MessageCircle, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroImage from '@/assets/hero-gilboa.jpg';
+import { LandscapeImageSelector } from './LandscapeImageSelector';
 
 export const Hero = () => {
+  const [currentImage, setCurrentImage] = useState(heroImage);
+  const [showImageSelector, setShowImageSelector] = useState(false);
   const whatsappNumber = '972523456789';
   const phoneNumber = '053-7314235';
 
@@ -11,12 +15,23 @@ export const Hero = () => {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
-          src={heroImage}
+          src={currentImage}
           alt="הרי הגלבוע"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/50 to-foreground/70" />
       </div>
+
+      {/* AI Image Generator Button */}
+      <Button
+        variant="outline"
+        size="sm"
+        className="absolute top-20 right-4 z-20 bg-background/80 backdrop-blur-sm"
+        onClick={() => setShowImageSelector(true)}
+      >
+        <Sparkles className="ml-2 h-4 w-4" />
+        צור תמונת רקע ב-AI
+      </Button>
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
@@ -69,6 +84,13 @@ export const Hero = () => {
           <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse" />
         </div>
       </div>
+
+      {/* Image Selector Dialog */}
+      <LandscapeImageSelector
+        open={showImageSelector}
+        onOpenChange={setShowImageSelector}
+        onImageSelected={setCurrentImage}
+      />
     </section>
   );
 };

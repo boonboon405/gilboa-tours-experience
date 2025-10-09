@@ -3,5 +3,11 @@ project_id = "sdyjuwjvrysjddageucj"
 [functions.send-contact-email]
 verify_jwt = false
 
+[functions.send-preferences-email]
+verify_jwt = false
+
 [functions.generate-odt-image]
+verify_jwt = false
+
+[functions.generate-landscape-image]
 verify_jwt = false

@@ -1,0 +1,182 @@
+import { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Loader2, Sparkles, Check } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+
+interface LandscapeImageSelectorProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onImageSelected: (imageUrl: string) => void;
+}
+
+export const LandscapeImageSelector = ({ open, onOpenChange, onImageSelected }: LandscapeImageSelectorProps) => {
+  const [images, setImages] = useState<string[]>([]);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [generatingIndex, setGeneratingIndex] = useState<number | null>(null);
+  const { toast } = useToast();
+
+  const generateImage = async (variation: number) => {
+    setGeneratingIndex(variation);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-landscape-image', {
+        body: { variation }
+      });
+
+      if (error) throw error;
+
+      if (data.error) {
+        if (data.error.includes("Rate limit")) {
+          toast({
+            title: "הגעת למגבלת השימוש",
+            description: "אנא נסה שוב בעוד כמה רגעים",
+            variant: "destructive"
+          });
+        } else if (data.error.includes("Payment required")) {
+          toast({
+            title: "נדרשת הוספת קרדיט",
+            description: "יש להוסיף קרדיט לחשבון",
+            variant: "destructive"
+          });
+        } else {
+          throw new Error(data.error);
+        }
+        return;
+      }
+
+      const newImages = [...images];
+      newImages[variation] = data.imageUrl;
+      setImages(newImages);
+      
+      toast({
+        title: "תמונה נוצרה בהצלחה!",
+        description: `אפשרות ${variation + 1} מתוך 6`
+      });
+    } catch (error) {
+      console.error('Error generating image:', error);
+      toast({
+        title: "שגיאה ביצירת תמונה",
+        description: "אנא נסה שוב",
+        variant: "destructive"
+      });
+    } finally {
+      setGeneratingIndex(null);
+    }
+  };
+
+  const generateAllImages = async () => {
+    setLoading(true);
+    setImages([]);
+    setSelectedImage(null);
+    
+    // Generate images sequentially to avoid rate limits
+    for (let i = 0; i < 6; i++) {
+      await generateImage(i);
+      // Add a small delay between requests
+      if (i < 5) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+    
+    setLoading(false);
+  };
+
+  const handleSelectImage = () => {
+    if (selectedImage) {
+      onImageSelected(selectedImage);
+      onOpenChange(false);
+      toast({
+        title: "התמונה נבחרה בהצלחה!",
+        description: "תמונת הרקע עודכנה"
+      });
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-2xl">בחר תמונת נוף ישראלית</DialogTitle>
+          <DialogDescription>
+            צור 6 אפשרויות שונות של נופי הגלבוע ועמק הירדן באמצעות AI
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <Button
+            onClick={generateAllImages}
+            disabled={loading}
+            className="w-full"
+            size="lg"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="ml-2 h-5 w-5 animate-spin" />
+                מייצר תמונות...
+              </>
+            ) : (
+              <>
+                <Sparkles className="ml-2 h-5 w-5" />
+                צור 6 אפשרויות חדשות
+              </>
+            )}
+          </Button>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[0, 1, 2, 3, 4, 5].map((index) => (
+              <div
+                key={index}
+                className={`relative aspect-video bg-muted rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${
+                  selectedImage === images[index] 
+                    ? 'border-primary ring-2 ring-primary' 
+                    : 'border-transparent hover:border-primary/50'
+                }`}
+                onClick={() => images[index] && setSelectedImage(images[index])}
+              >
+                {images[index] ? (
+                  <>
+                    <img
+                      src={images[index]}
+                      alt={`אפשרות ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    {selectedImage === images[index] && (
+                      <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                        <div className="bg-primary text-primary-foreground rounded-full p-2">
+                          <Check className="h-6 w-6" />
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : generatingIndex === index ? (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+                    <div className="text-center">
+                      <Sparkles className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">אפשרות {index + 1}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {selectedImage && (
+            <Button
+              onClick={handleSelectImage}
+              className="w-full"
+              size="lg"
+            >
+              השתמש בתמונה זו
+            </Button>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
