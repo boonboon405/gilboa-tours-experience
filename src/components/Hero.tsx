@@ -10,7 +10,9 @@ export const Hero = () => {
   const [images, setImages] = useState<string[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     const savedImages = saved ? JSON.parse(saved) : [];
-    return savedImages.length > 0 ? savedImages : [heroImage];
+    // Filter out empty/undefined slots
+    const validImages = savedImages.filter((img: string) => img);
+    return validImages.length > 0 ? validImages : [heroImage];
   });
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showImageSelector, setShowImageSelector] = useState(false);
