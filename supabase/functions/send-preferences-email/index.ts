@@ -17,6 +17,14 @@ interface PreferencesEmailRequest {
       otherOption?: string;
     };
   };
+  contactInfo: {
+    name: string;
+    company: string;
+    whatsappNumber: string;
+    officeNumber: string;
+    participantCount: string;
+    tourType: string;
+  };
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -26,9 +34,10 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { selections }: PreferencesEmailRequest = await req.json();
+    const { selections, contactInfo }: PreferencesEmailRequest = await req.json();
 
     console.log("Sending preferences email with selections:", selections);
+    console.log("Contact info:", contactInfo);
 
     // Build HTML content for the email
     let emailContent = `
@@ -36,6 +45,38 @@ const handler = async (req: Request): Promise<Response> => {
         <h2>העדפות לקוח חדשות - David Tours</h2>
         <p>התקבלה בחירת פעילויות חדשה מהאתר:</p>
         <br>
+        
+        <div style="background-color: #f0f9ff; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+          <h3 style="color: #1e40af; margin-top: 0;">פרטי יצירת קשר</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px; font-weight: bold; width: 40%;">שם:</td>
+              <td style="padding: 8px;">${contactInfo.name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; font-weight: bold;">חברה:</td>
+              <td style="padding: 8px;">${contactInfo.company}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; font-weight: bold;">מספר וואטסאפ:</td>
+              <td style="padding: 8px;">${contactInfo.whatsappNumber}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; font-weight: bold;">מספר משרד:</td>
+              <td style="padding: 8px;">${contactInfo.officeNumber}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; font-weight: bold;">מספר משתתפים משוער:</td>
+              <td style="padding: 8px;">${contactInfo.participantCount}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; font-weight: bold;">סוג טיול:</td>
+              <td style="padding: 8px;">${contactInfo.tourType}</td>
+            </tr>
+          </table>
+        </div>
+        
+        <h3 style="color: #2563eb;">בחירות פעילויות:</h3>
     `;
 
     // Add each section's selections
@@ -75,11 +116,43 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "David Tours <onboarding@resend.dev>",
       to: ["DavidIsraelTours@gmail.com"],
-      subject: "העדפות לקוח חדשות - בחירת פעילויות",
+      subject: `העדפות לקוח חדשות - ${contactInfo.name} - ${contactInfo.company}`,
       html: emailContent,
     });
 
     console.log("Preferences email sent successfully:", emailResponse);
+
+    // Archive the email to database
+    const archiveResponse = await fetch(
+      `${Deno.env.get("SUPABASE_URL")}/rest/v1/email_archive`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": Deno.env.get("SUPABASE_ANON_KEY") || "",
+          "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify({
+          recipient_email: "DavidIsraelTours@gmail.com",
+          subject: `העדפות לקוח חדשות - ${contactInfo.name} - ${contactInfo.company}`,
+          html_content: emailContent,
+          status: emailResponse.error ? "failed" : "sent",
+          error_message: emailResponse.error?.message || null,
+          email_data: {
+            contactInfo,
+            selections,
+            resend_response: emailResponse
+          }
+        })
+      }
+    );
+
+    if (!archiveResponse.ok) {
+      console.error("Error archiving email:", await archiveResponse.text());
+    } else {
+      console.log("Email archived successfully to database");
+    }
 
     return new Response(
       JSON.stringify({ 

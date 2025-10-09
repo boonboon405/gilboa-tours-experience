@@ -14,7 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      email_archive: {
+        Row: {
+          email_data: Json | null
+          error_message: string | null
+          html_content: string
+          id: string
+          recipient_email: string
+          sent_at: string
+          status: string
+          subject: string
+        }
+        Insert: {
+          email_data?: Json | null
+          error_message?: string | null
+          html_content: string
+          id?: string
+          recipient_email: string
+          sent_at?: string
+          status?: string
+          subject: string
+        }
+        Update: {
+          email_data?: Json | null
+          error_message?: string | null
+          html_content?: string
+          id?: string
+          recipient_email?: string
+          sent_at?: string
+          status?: string
+          subject?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

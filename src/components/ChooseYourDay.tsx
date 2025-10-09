@@ -156,6 +156,14 @@ export const ChooseYourDay = () => {
   });
   const [expandedSections, setExpandedSections] = useState<Set<number>>(new Set([1, 2, 3, 4]));
   const [isSending, setIsSending] = useState(false);
+  const [contactInfo, setContactInfo] = useState({
+    name: '',
+    company: '',
+    whatsappNumber: '',
+    officeNumber: '',
+    participantCount: '',
+    tourType: 'יום אחד'
+  });
 
   const toggleSection = (sectionId: number) => {
     const newExpanded = new Set(expandedSections);
@@ -185,6 +193,16 @@ export const ChooseYourDay = () => {
   };
 
   const handleSendPreferences = async () => {
+    // Validate contact info
+    if (!contactInfo.name || !contactInfo.company || !contactInfo.whatsappNumber) {
+      toast({
+        title: "פרטים חסרים",
+        description: "אנא מלא את כל השדות הנדרשים (שם, חברה, ומספר וואטסאפ)",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSending(true);
     
     try {
@@ -203,7 +221,10 @@ export const ChooseYourDay = () => {
       }, {} as any);
 
       const { error } = await supabase.functions.invoke('send-preferences-email', {
-        body: { selections: selectionsData }
+        body: { 
+          selections: selectionsData,
+          contactInfo 
+        }
       });
 
       if (error) throw error;
@@ -211,6 +232,16 @@ export const ChooseYourDay = () => {
       toast({
         title: "נשלח בהצלחה!",
         description: "ההעדפות שלך נשלחו למייל שלנו. נחזור אליך בהקדם.",
+      });
+
+      // Reset form after successful send
+      setContactInfo({
+        name: '',
+        company: '',
+        whatsappNumber: '',
+        officeNumber: '',
+        participantCount: '',
+        tourType: 'יום אחד'
       });
     } catch (error) {
       console.error('Error sending preferences:', error);
@@ -385,8 +416,93 @@ export const ChooseYourDay = () => {
           })}
         </div>
 
+        {/* Contact Form */}
+        <div className="mt-12">
+          <Card className="max-w-4xl mx-auto border-2">
+            <CardHeader>
+              <CardTitle className="text-2xl text-center">פרטי יצירת קשר</CardTitle>
+              <CardDescription className="text-center">
+                אנא מלא את הפרטים הבאים כדי שנוכל לחזור אליך
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    שם מלא <span className="text-destructive">*</span>
+                  </label>
+                  <Input
+                    value={contactInfo.name}
+                    onChange={(e) => setContactInfo({ ...contactInfo, name: e.target.value })}
+                    placeholder="הכנס שם מלא"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    שם החברה <span className="text-destructive">*</span>
+                  </label>
+                  <Input
+                    value={contactInfo.company}
+                    onChange={(e) => setContactInfo({ ...contactInfo, company: e.target.value })}
+                    placeholder="הכנס שם חברה"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    מספר וואטסאפ <span className="text-destructive">*</span>
+                  </label>
+                  <Input
+                    value={contactInfo.whatsappNumber}
+                    onChange={(e) => setContactInfo({ ...contactInfo, whatsappNumber: e.target.value })}
+                    placeholder="הכנס מספר וואטסאפ"
+                    dir="ltr"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    מספר משרד
+                  </label>
+                  <Input
+                    value={contactInfo.officeNumber}
+                    onChange={(e) => setContactInfo({ ...contactInfo, officeNumber: e.target.value })}
+                    placeholder="הכנס מספר משרד"
+                    dir="ltr"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    מספר משתתפים משוער
+                  </label>
+                  <Input
+                    value={contactInfo.participantCount}
+                    onChange={(e) => setContactInfo({ ...contactInfo, participantCount: e.target.value })}
+                    placeholder="כמה אנשים יהיו בטיול?"
+                    type="number"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    סוג הטיול
+                  </label>
+                  <select
+                    value={contactInfo.tourType}
+                    onChange={(e) => setContactInfo({ ...contactInfo, tourType: e.target.value })}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <option value="יום אחד">יום אחד</option>
+                    <option value="מספר ימים">מספר ימים</option>
+                  </select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Summary */}
-        <div className="mt-12 text-center">
+        <div className="mt-8 text-center">
           <Card className="max-w-2xl mx-auto border-2 border-primary">
             <CardHeader>
               <div className="flex items-center justify-center gap-4">
