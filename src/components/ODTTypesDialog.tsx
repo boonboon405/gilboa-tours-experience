@@ -132,16 +132,42 @@ export const ODTTypesDialog = ({ open, onOpenChange }: ODTTypesDialogProps) => {
         body: { prompt: odtType.imagePrompt }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error from edge function:', error);
+        throw new Error(error.message || 'Failed to generate image');
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
 
       if (data?.imageUrl) {
         setGeneratedImages(prev => ({ ...prev, [odtType.id]: data.imageUrl }));
+        toast({
+          title: 'תמונה נוצרה בהצלחה!',
+          description: 'התמונה נטענה',
+        });
+      } else {
+        throw new Error('No image URL returned');
       }
     } catch (error) {
       console.error('Error generating image:', error);
+      
+      let errorMessage = 'נסה שוב מאוחר יותר';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('timeout') || error.message.includes('timed out')) {
+          errorMessage = 'היצירה לוקחת זמן רב מדי. נסה שוב בעוד מספר שניות';
+        } else if (error.message.includes('Rate limit')) {
+          errorMessage = 'יותר מדי בקשות. המתן רגע ונסה שוב';
+        } else if (error.message.includes('Payment required')) {
+          errorMessage = 'נדרשת הוספת קרדיטים';
+        }
+      }
+      
       toast({
         title: 'שגיאה ביצירת תמונה',
-        description: 'נסה שוב מאוחר יותר',
+        description: errorMessage,
         variant: 'destructive'
       });
     } finally {
