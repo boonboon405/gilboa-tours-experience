@@ -31,7 +31,7 @@ export const Activities = () => {
     {
       icon: UtensilsCrossed,
       title: 'חוויה קולינרית',
-      description: 'ארוחה עשירה במסעדה כשרה עם אוכל מזרחי טעים ואותנטי - טעם אמיתי של האזור.',
+      description: 'ארוחה עשירה במסעדה כשרה עם אוכל מזרחי טעים ואותנטי - אירוח וטעם אמיתי של האזור.',
       image: culinaryImage,
       color: 'from-primary to-accent',
     },

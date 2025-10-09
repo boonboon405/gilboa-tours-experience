@@ -106,7 +106,7 @@ const translations = {
     'activities.culture.title': 'רומא העתיקה בבית שאן',
     'activities.culture.desc': 'ביקור בעתיקות המרשימות של בית שאן הרומית - היפודרום והאמפיתיאטרון.',
     'activities.culinary.title': 'חוויה קולינרית',
-    'activities.culinary.desc': 'ארוחה עשירה במסעדה כשרה עם אוכל מזרחי טעים ואותנטי - טעם אמיתי של האזור.',
+    'activities.culinary.desc': 'ארוחה עשירה במסעדה כשרה עם אוכל מזרחי טעים ואותנטי - אירוח וטעם אמיתי של האזור.',
     
     // ODT
     'odt.title': 'פעילויות גיבוש ODT',
