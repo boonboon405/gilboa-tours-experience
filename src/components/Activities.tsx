@@ -16,7 +16,7 @@ export const Activities = () => {
     },
     {
       icon: Waves,
-      title: 'הרפתקה וגיבוש',
+      title: 'הרפתקאות ODT וגיבוש',
       description: 'ניווט ברכבי קלאב קאר חשמליים בנחל המעיינות, ארבעה מעיינות טבעיים, ומשחקי מים אינטראקטיביים.',
       image: springsClubcarsImage,
       color: 'from-secondary to-secondary-light',

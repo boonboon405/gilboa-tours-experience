@@ -101,7 +101,7 @@ const translations = {
     'activities.subtitle': 'שלושה מרכיבים עיקריים: היסטוריה, טבע וגיבוש צוותי',
     'activities.history.title': 'טבע ונוף היסטורי',
     'activities.history.desc': 'ביקור בכתף שאול, צפייה באירוס הגלבוע, נצפה בשקנאים מרהיבים בנדידה מעל לבריכות הדגים של העמק.',
-    'activities.adventure.title': 'הרפתקה וגיבוש',
+    'activities.adventure.title': 'הרפתקאות ODT וגיבוש',
     'activities.adventure.desc': 'ניווט ברכבי קלאב קאר חשמליים בנחל המעיינות, ארבעה מעיינות טבעיים, ומשחקי מים אינטראקטיביים.',
     'activities.culture.title': 'רומא העתיקה בבית שאן',
     'activities.culture.desc': 'ביקור בעתיקות המרשימות של בית שאן הרומית - היפודרום והאמפיתיאטרון.',
