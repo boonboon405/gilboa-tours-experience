@@ -25,7 +25,7 @@ export const Hero = () => {
             חוויה קבוצתית מיוחדת, בונה ובלתי נשכחת
           </h1>
           <h2 className="text-3xl md:text-5xl font-semibold text-accent mb-6 animate-fade-in">
-            בלב הגלבוע
+            בלב הגלבוע הגליל וסובב כנרת
           </h2>
           <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
             יום חווייתי, מהנה ומשמעותי שמשלב היסטוריה, טבע, גיבוש והרבה זיכרונות טובים לחברה שלכם.
