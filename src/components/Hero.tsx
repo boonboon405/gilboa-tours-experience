@@ -28,10 +28,10 @@ export const Hero = () => {
     if (images.length > 1) {
       console.log('✅ Starting image rotation interval');
       const interval = setInterval(() => {
-        setCurrentImageIndex((prev) => {
-          const newIndex = (prev + 1) % images.length;
-          console.log('🔄 Rotating image:', { from: prev, to: newIndex, totalImages: images.length });
-          return newIndex;
+        setCurrentImageIndex((prevIndex) => {
+          const nextIndex = (prevIndex + 1) % images.length;
+          console.log('🔄 Rotating image:', { from: prevIndex, to: nextIndex, totalImages: images.length });
+          return nextIndex;
         });
       }, 10000);
 
@@ -42,7 +42,7 @@ export const Hero = () => {
     } else {
       console.log('⚠️ Not enough images for rotation:', images.length);
     }
-  }, [images]);
+  }, [images.length]);
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
