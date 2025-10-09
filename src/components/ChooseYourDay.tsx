@@ -111,7 +111,7 @@ const sections = [
     id: 4,
     icon: Wine,
     title: "קולינריה, יין וחגיגה",
-    description: "אוכל טוב מאחד אנשים. כאן, טעם ועבודת צוות פוגשים שמחה.",
+    description: "אוכל טוב  + כריכי איכות מפנקים מאחד אנשים. כאן, טעם ועבודת צוות פוגשים שמחה.",
     time: "15:30 - 17:00",
     color: "from-purple-600 to-pink-500",
     activities: [
