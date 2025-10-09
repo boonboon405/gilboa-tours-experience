@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -61,16 +62,49 @@ serve(async (req) => {
       }
 
       const data = await response.json();
-      const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+      const base64Image = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
 
-      if (!imageUrl) {
+      if (!base64Image) {
         throw new Error('No image generated');
       }
 
-      console.log('Image generated successfully');
+      console.log('Image generated successfully, uploading to storage...');
+
+      // Extract base64 data and convert to binary
+      const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '');
+      const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+
+      // Create Supabase client
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      // Generate unique filename
+      const filename = `odt-${Date.now()}-${Math.random().toString(36).substring(7)}.png`;
+      const filePath = `${filename}`;
+
+      // Upload to storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('odt-images')
+        .upload(filePath, binaryData, {
+          contentType: 'image/png',
+          upsert: false
+        });
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw new Error('Failed to upload image to storage');
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('odt-images')
+        .getPublicUrl(filePath);
+
+      console.log('Image uploaded successfully:', publicUrl);
 
       return new Response(
-        JSON.stringify({ imageUrl }),
+        JSON.stringify({ imageUrl: publicUrl }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }

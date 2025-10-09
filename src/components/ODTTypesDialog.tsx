@@ -134,7 +134,7 @@ export const ODTTypesDialog = ({ open, onOpenChange }: ODTTypesDialogProps) => {
   }, [generatedImages]);
 
   const generateImage = async (odtType: ODTType) => {
-    if (generatedImages[odtType.id]) return;
+    if (generatedImages[odtType.id] && !loadingImages[odtType.id]) return;
 
     setLoadingImages(prev => ({ ...prev, [odtType.id]: true }));
     
@@ -156,7 +156,7 @@ export const ODTTypesDialog = ({ open, onOpenChange }: ODTTypesDialogProps) => {
         setGeneratedImages(prev => ({ ...prev, [odtType.id]: data.imageUrl }));
         toast({
           title: 'תמונה נוצרה בהצלחה!',
-          description: 'התמונה נטענה',
+          description: 'התמונה נשמרה ותישאר זמינה',
         });
       } else {
         throw new Error('No image URL returned');
@@ -186,14 +186,30 @@ export const ODTTypesDialog = ({ open, onOpenChange }: ODTTypesDialogProps) => {
     }
   };
 
+  const clearAllImages = () => {
+    setGeneratedImages({});
+    localStorage.removeItem('odt-generated-images');
+    toast({
+      title: 'התמונות נמחקו',
+      description: 'ניתן ליצור תמונות חדשות',
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-3xl text-center">15 סוגי פעילויות ODT</DialogTitle>
           <DialogDescription className="text-center text-lg">
-            גלה בAI את מגוון הפעילויות לגיבוש צוות בטבע  לחץ וצור תמונה
+            גלה בAI את מגוון הפעילויות לגיבוש צוות בטבע - לחץ וצור תמונה
           </DialogDescription>
+          {Object.keys(generatedImages).length > 0 && (
+            <div className="flex justify-center mt-2">
+              <Button variant="outline" size="sm" onClick={clearAllImages}>
+                מחק את כל התמונות
+              </Button>
+            </div>
+          )}
         </DialogHeader>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
