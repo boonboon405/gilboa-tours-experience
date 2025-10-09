@@ -10,7 +10,7 @@ export const Activities = () => {
     {
       icon: Mountain,
       title: 'טבע ונוף היסטורי',
-      description: 'ביקור בכתף שאול, צפייה באירוס הגלבוע, ושקנאים מרהיבים בנדידה מעל עמק הירדן.',
+      description: 'ביקור בכתף שאול, צפייה באירוס הגלבוע, ושקנאים מרהיבים בנדידה מעל לבריכות הדגים של העמק.',
       image: pelicansImage,
       color: 'from-primary to-primary-light',
     },
