@@ -4,8 +4,14 @@ import { Button } from '@/components/ui/button';
 import heroImage from '@/assets/hero-gilboa.jpg';
 import { LandscapeImageSelector } from './LandscapeImageSelector';
 
+const STORAGE_KEY = 'landscape-images';
+
 export const Hero = () => {
-  const [images, setImages] = useState<string[]>([heroImage]);
+  const [images, setImages] = useState<string[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    const savedImages = saved ? JSON.parse(saved) : [];
+    return savedImages.length > 0 ? savedImages : [heroImage];
+  });
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showImageSelector, setShowImageSelector] = useState(false);
   const whatsappNumber = '972523456789';

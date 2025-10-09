@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Loader2, Sparkles, Check } from 'lucide-react';
+import { Loader2, Sparkles, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -11,11 +11,23 @@ interface LandscapeImageSelectorProps {
   onImagesSelected: (images: string[]) => void;
 }
 
+const STORAGE_KEY = 'landscape-images';
+
 export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }: LandscapeImageSelectorProps) => {
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<string[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  });
   const [loading, setLoading] = useState(false);
   const [generatingIndex, setGeneratingIndex] = useState<number | null>(null);
   const { toast } = useToast();
+
+  // Persist images to localStorage whenever they change
+  useEffect(() => {
+    if (images.length > 0) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(images));
+    }
+  }, [images]);
 
   const generateImage = async (variation: number) => {
     setGeneratingIndex(variation);
@@ -93,14 +105,38 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }:
     }
   };
 
+  const clearAllImages = () => {
+    setImages([]);
+    localStorage.removeItem(STORAGE_KEY);
+    toast({
+      title: "כל התמונות נמחקו",
+      description: "כעת תוכל ליצור תמונות חדשות"
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl">צור 12 תמונות נוף ישראליות</DialogTitle>
-          <DialogDescription>
-            תמונות של הגלבוע, הכנרת והרים מסביב יתחלפו אוטומטית כל 10 שניות
-          </DialogDescription>
+          <div className="flex items-start justify-between">
+            <div>
+              <DialogTitle className="text-2xl">צור 12 תמונות נוף ישראליות</DialogTitle>
+              <DialogDescription>
+                תמונות של הגלבוע, הכנרת והרים מסביב יתחלפו אוטומטית כל 10 שניות
+              </DialogDescription>
+            </div>
+            {images.some(img => img) && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={clearAllImages}
+                className="mr-2"
+              >
+                <Trash2 className="h-4 w-4 ml-2" />
+                מחק הכל
+              </Button>
+            )}
+          </div>
         </DialogHeader>
 
         <div className="space-y-4">
