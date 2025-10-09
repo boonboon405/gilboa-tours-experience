@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Mail, Phone, MessageCircle, Send } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 export const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -13,15 +14,36 @@ export const ContactSection = () => {
     phone: '',
     message: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const whatsappNumber = '972537314235';
   const email = 'info@davidtours.com';
   const phoneNumber = '053-7314235';
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('ההודעה נשלחה! נחזור אליך בקרוב.');
-    setFormData({ name: '', email: '', phone: '', message: '' });
+    setIsSubmitting(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: formData.message,
+        },
+      });
+
+      if (error) throw error;
+
+      toast.success('ההודעה נשלחה! נחזור אליך בקרוב.');
+      setFormData({ name: '', email: '', phone: '', message: '' });
+    } catch (error) {
+      console.error('Error sending email:', error);
+      toast.error('שגיאה בשליחת ההודעה. אנא נסה שוב.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -131,9 +153,15 @@ export const ContactSection = () => {
                     className="border-2"
                   />
                 </div>
-                <Button type="submit" variant="hero" size="lg" className="w-full text-lg">
+                <Button 
+                  type="submit" 
+                  variant="hero" 
+                  size="lg" 
+                  className="w-full text-lg"
+                  disabled={isSubmitting}
+                >
                   <Send className="ml-2 h-5 w-5" />
-                  שלח הודעה
+                  {isSubmitting ? 'שולח...' : 'שלח הודעה'}
                 </Button>
               </form>
             </CardContent>
