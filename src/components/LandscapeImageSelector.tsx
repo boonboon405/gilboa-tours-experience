@@ -29,70 +29,91 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }:
     }
   }, [images]);
 
-  const generateImage = async (variation: number) => {
+  const generateImage = async (variation: number, retries = 3): Promise<boolean> => {
     setGeneratingIndex(variation);
-    try {
-      const { data, error } = await supabase.functions.invoke('generate-landscape-image', {
-        body: { variation }
-      });
+    
+    for (let attempt = 0; attempt < retries; attempt++) {
+      try {
+        const { data, error } = await supabase.functions.invoke('generate-landscape-image', {
+          body: { variation }
+        });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      if (data.error) {
-        if (data.error.includes("Rate limit")) {
-          toast({
-            title: "הגעת למגבלת השימוש",
-            description: "אנא נסה שוב בעוד כמה רגעים",
-            variant: "destructive"
-          });
-        } else if (data.error.includes("Payment required")) {
-          toast({
-            title: "נדרשת הוספת קרדיט",
-            description: "יש להוסיף קרדיט לחשבון",
-            variant: "destructive"
-          });
-        } else {
-          throw new Error(data.error);
+        if (data.error) {
+          if (data.error.includes("Rate limit")) {
+            console.log(`Rate limit hit for variation ${variation}, waiting before retry...`);
+            await new Promise(resolve => setTimeout(resolve, 5000));
+            continue;
+          } else if (data.error.includes("Payment required")) {
+            toast({
+              title: "נדרשת הוספת קרדיט",
+              description: "יש להוסיף קרדיט לחשבון",
+              variant: "destructive"
+            });
+            return false;
+          } else {
+            throw new Error(data.error);
+          }
         }
-        return;
-      }
 
-      setImages(prev => {
-        const newImages = [...prev];
-        newImages[variation] = data.imageUrl;
-        return newImages;
-      });
-      
-      toast({
-        title: "תמונה נוצרה בהצלחה!",
-        description: `אפשרות ${variation + 1} מתוך 12`
-      });
-    } catch (error) {
-      console.error('Error generating image:', error);
-      toast({
-        title: "שגיאה ביצירת תמונה",
-        description: "אנא נסה שוב",
-        variant: "destructive"
-      });
-    } finally {
-      setGeneratingIndex(null);
+        setImages(prev => {
+          const newImages = [...prev];
+          newImages[variation] = data.imageUrl;
+          return newImages;
+        });
+        
+        console.log(`Image ${variation + 1}/12 generated successfully`);
+        return true;
+      } catch (error) {
+        console.error(`Error generating image ${variation + 1}, attempt ${attempt + 1}:`, error);
+        if (attempt < retries - 1) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+      }
     }
+    
+    setGeneratingIndex(null);
+    toast({
+      title: "שגיאה ביצירת תמונה",
+      description: `נכשל ליצור תמונה ${variation + 1} אחרי ${retries} ניסיונות`,
+      variant: "destructive"
+    });
+    return false;
   };
 
   const generateAllImages = async () => {
     setLoading(true);
     setImages([]);
     
+    let successCount = 0;
+    let failCount = 0;
+    
     // Generate images sequentially to avoid rate limits
     for (let i = 0; i < 12; i++) {
-      await generateImage(i);
-      // Add a small delay between requests
+      console.log(`Starting generation for image ${i + 1}/12`);
+      const success = await generateImage(i);
+      
+      if (success) {
+        successCount++;
+      } else {
+        failCount++;
+      }
+      
+      // Add delay between requests
       if (i < 11) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 3000));
       }
     }
     
     setLoading(false);
+    setGeneratingIndex(null);
+    
+    toast({
+      title: "תהליך יצירת התמונות הסתיים",
+      description: `נוצרו בהצלחה ${successCount} מתוך 12 תמונות${failCount > 0 ? ` (${failCount} נכשלו)` : ''}`,
+      variant: successCount > 0 ? "default" : "destructive"
+    });
   };
 
   const handleUseImages = () => {
