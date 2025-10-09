@@ -4,6 +4,7 @@ import { Activities } from '@/components/Activities';
 import { ChooseYourDay } from '@/components/ChooseYourDay';
 import { ODTSection } from '@/components/ODTSection';
 import { WhyChooseUs } from '@/components/WhyChooseUs';
+import { WhatToBring } from '@/components/WhatToBring';
 import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
 
@@ -16,6 +17,7 @@ const Index = () => {
       <ChooseYourDay />
       <ODTSection />
       <WhyChooseUs />
+      <WhatToBring />
       <ContactSection />
       <Footer />
     </div>
