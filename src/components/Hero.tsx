@@ -1,24 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Phone, MessageCircle, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroImage from '@/assets/hero-gilboa.jpg';
 import { LandscapeImageSelector } from './LandscapeImageSelector';
 
 export const Hero = () => {
-  const [currentImage, setCurrentImage] = useState(heroImage);
+  const [images, setImages] = useState<string[]>([heroImage]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showImageSelector, setShowImageSelector] = useState(false);
   const whatsappNumber = '972523456789';
   const phoneNumber = '053-7314235';
 
+  // Auto-rotate images every 10 seconds
+  useEffect(() => {
+    if (images.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % images.length);
+      }, 10000);
+
+      return () => clearInterval(interval);
+    }
+  }, [images.length]);
+
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      {/* Background Image */}
+      {/* Background Images with Fade Transition */}
       <div className="absolute inset-0">
-        <img
-          src={currentImage}
-          alt="הרי הגלבוע"
-          className="w-full h-full object-cover"
-        />
+        {images.map((image, index) => (
+          <img
+            key={index}
+            src={image}
+            alt={`הרי הגלבוע ${index + 1}`}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+              index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        ))}
         <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/50 to-foreground/70" />
       </div>
 
@@ -89,7 +106,10 @@ export const Hero = () => {
       <LandscapeImageSelector
         open={showImageSelector}
         onOpenChange={setShowImageSelector}
-        onImageSelected={setCurrentImage}
+        onImagesSelected={(newImages) => {
+          setImages(newImages);
+          setCurrentImageIndex(0);
+        }}
       />
     </section>
   );

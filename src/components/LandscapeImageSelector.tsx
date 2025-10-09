@@ -8,12 +8,11 @@ import { useToast } from '@/hooks/use-toast';
 interface LandscapeImageSelectorProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onImageSelected: (imageUrl: string) => void;
+  onImagesSelected: (images: string[]) => void;
 }
 
-export const LandscapeImageSelector = ({ open, onOpenChange, onImageSelected }: LandscapeImageSelectorProps) => {
+export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }: LandscapeImageSelectorProps) => {
   const [images, setImages] = useState<string[]>([]);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [generatingIndex, setGeneratingIndex] = useState<number | null>(null);
   const { toast } = useToast();
@@ -69,7 +68,6 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImageSelected }: 
   const generateAllImages = async () => {
     setLoading(true);
     setImages([]);
-    setSelectedImage(null);
     
     // Generate images sequentially to avoid rate limits
     for (let i = 0; i < 6; i++) {
@@ -83,13 +81,14 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImageSelected }: 
     setLoading(false);
   };
 
-  const handleSelectImage = () => {
-    if (selectedImage) {
-      onImageSelected(selectedImage);
+  const handleUseImages = () => {
+    const validImages = images.filter(img => img);
+    if (validImages.length > 0) {
+      onImagesSelected(validImages);
       onOpenChange(false);
       toast({
-        title: "התמונה נבחרה בהצלחה!",
-        description: "תמונת הרקע עודכנה"
+        title: "התמונות נבחרו בהצלחה!",
+        description: `${validImages.length} תמונות יתחלפו כל 10 שניות`
       });
     }
   };
@@ -98,9 +97,9 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImageSelected }: 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl">בחר תמונת נוף ישראלית</DialogTitle>
+          <DialogTitle className="text-2xl">צור 6 תמונות נוף ישראליות</DialogTitle>
           <DialogDescription>
-            צור 6 אפשרויות שונות של נופי הגלבוע ועמק הירדן באמצעות AI
+            התמונות יתחלפו אוטומטית כל 10 שניות ברקע הדף הראשי
           </DialogDescription>
         </DialogHeader>
 
@@ -128,28 +127,14 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImageSelected }: 
             {[0, 1, 2, 3, 4, 5].map((index) => (
               <div
                 key={index}
-                className={`relative aspect-video bg-muted rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${
-                  selectedImage === images[index] 
-                    ? 'border-primary ring-2 ring-primary' 
-                    : 'border-transparent hover:border-primary/50'
-                }`}
-                onClick={() => images[index] && setSelectedImage(images[index])}
+                className="relative aspect-video bg-muted rounded-lg overflow-hidden border-2 border-transparent"
               >
                 {images[index] ? (
-                  <>
-                    <img
-                      src={images[index]}
-                      alt={`אפשרות ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                    {selectedImage === images[index] && (
-                      <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
-                        <div className="bg-primary text-primary-foreground rounded-full p-2">
-                          <Check className="h-6 w-6" />
-                        </div>
-                      </div>
-                    )}
-                  </>
+                  <img
+                    src={images[index]}
+                    alt={`אפשרות ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
                 ) : generatingIndex === index ? (
                   <div className="absolute inset-0 flex items-center justify-center">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -166,13 +151,13 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImageSelected }: 
             ))}
           </div>
 
-          {selectedImage && (
+          {images.some(img => img) && (
             <Button
-              onClick={handleSelectImage}
+              onClick={handleUseImages}
               className="w-full"
               size="lg"
             >
-              השתמש בתמונה זו
+              השתמש בכל התמונות ({images.filter(img => img).length} תמונות)
             </Button>
           )}
         </div>
