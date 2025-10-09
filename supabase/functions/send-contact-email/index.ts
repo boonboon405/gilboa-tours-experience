@@ -35,7 +35,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Send notification email to business
     const notificationEmail = await resend.emails.send({
       from: "David Tours <onboarding@resend.dev>",
-      to: ["info@davidtours.com"],
+      to: ["DavidIsraelTours@gmail.com"],
       subject: `הודעה חדשה מ-${name}`,
       html: `
         <div dir="rtl" style="font-family: Arial, sans-serif;">
@@ -65,7 +65,7 @@ const handler = async (req: Request): Promise<Response> => {
           <p>בברכה,</p>
           <p><strong>צוות David Tours</strong></p>
           <p>טלפון: 053-7314235</p>
-          <p>אימייל: info@davidtours.com</p>
+          <p>אימייל: DavidIsraelTours@gmail.com</p>
         </div>
       `,
     });

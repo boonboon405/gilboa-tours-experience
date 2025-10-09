@@ -17,7 +17,7 @@ export const ContactSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const whatsappNumber = '972537314235';
-  const email = 'info@davidtours.com';
+  const email = 'DavidIsraelTours@gmail.com';
   const phoneNumber = '053-7314235';
 
   const handleSubmit = async (e: React.FormEvent) => {
