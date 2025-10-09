@@ -158,6 +158,7 @@ export const ChooseYourDay = () => {
   const [isSending, setIsSending] = useState(false);
   const [contactInfo, setContactInfo] = useState({
     name: '',
+    email: '',
     company: '',
     whatsappNumber: '',
     officeNumber: '',
@@ -194,10 +195,21 @@ export const ChooseYourDay = () => {
 
   const handleSendPreferences = async () => {
     // Validate contact info
-    if (!contactInfo.name || !contactInfo.company || !contactInfo.whatsappNumber) {
+    if (!contactInfo.name || !contactInfo.email || !contactInfo.company || !contactInfo.whatsappNumber) {
       toast({
         title: "פרטים חסרים",
-        description: "אנא מלא את כל השדות הנדרשים (שם, חברה, ומספר וואטסאפ)",
+        description: "אנא מלא את כל השדות הנדרשים (שם, אימייל, חברה, ומספר וואטסאפ)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(contactInfo.email)) {
+      toast({
+        title: "אימייל לא תקין",
+        description: "אנא הכנס כתובת אימייל תקינה",
         variant: "destructive",
       });
       return;
@@ -237,6 +249,7 @@ export const ChooseYourDay = () => {
       // Reset form after successful send
       setContactInfo({
         name: '',
+        email: '',
         company: '',
         whatsappNumber: '',
         officeNumber: '',
@@ -435,6 +448,19 @@ export const ChooseYourDay = () => {
                     value={contactInfo.name}
                     onChange={(e) => setContactInfo({ ...contactInfo, name: e.target.value })}
                     placeholder="הכנס שם מלא"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    כתובת אימייל <span className="text-destructive">*</span>
+                  </label>
+                  <Input
+                    type="email"
+                    value={contactInfo.email}
+                    onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
+                    placeholder="הכנס כתובת אימייל"
+                    dir="ltr"
                     required
                   />
                 </div>

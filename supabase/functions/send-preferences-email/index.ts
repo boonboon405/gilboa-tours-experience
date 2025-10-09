@@ -19,6 +19,7 @@ interface PreferencesEmailRequest {
   };
   contactInfo: {
     name: string;
+    email: string;
     company: string;
     whatsappNumber: string;
     officeNumber: string;
@@ -52,6 +53,10 @@ const handler = async (req: Request): Promise<Response> => {
             <tr>
               <td style="padding: 8px; font-weight: bold; width: 40%;">שם:</td>
               <td style="padding: 8px;">${contactInfo.name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; font-weight: bold;">אימייל:</td>
+              <td style="padding: 8px;">${contactInfo.email}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">חברה:</td>
