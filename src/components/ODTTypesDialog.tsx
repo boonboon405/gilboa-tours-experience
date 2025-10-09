@@ -235,18 +235,8 @@ export const ODTTypesDialog = ({ open, onOpenChange }: ODTTypesDialogProps) => {
         <DialogHeader>
           <DialogTitle className="text-3xl text-center">15 סוגי פעילויות ODT</DialogTitle>
           <DialogDescription className="text-center text-lg">
-            גלה בAI את מגוון הפעילויות לגיבוש צוות בטבע - לחץ וצור תמונה
+            גלה בAI את מגוון הפעילויות לגיבוש צוות בטבע - לחץ על כל תמונה ליצירה
           </DialogDescription>
-          <div className="flex justify-center gap-3 mt-4">
-            <Button onClick={generateAllImages} size="lg">
-              צור את כל 15 התמונות
-            </Button>
-            {Object.keys(generatedImages).length > 0 && (
-              <Button variant="outline" size="lg" onClick={clearAllImages}>
-                מחק הכל ({Object.keys(generatedImages).length}/15)
-              </Button>
-            )}
-          </div>
         </DialogHeader>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
