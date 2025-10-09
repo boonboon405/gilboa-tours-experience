@@ -57,9 +57,11 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }:
         return;
       }
 
-      const newImages = [...images];
-      newImages[variation] = data.imageUrl;
-      setImages(newImages);
+      setImages(prev => {
+        const newImages = [...prev];
+        newImages[variation] = data.imageUrl;
+        return newImages;
+      });
       
       toast({
         title: "תמונה נוצרה בהצלחה!",
