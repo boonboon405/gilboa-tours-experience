@@ -7,7 +7,7 @@ import odtImage from '@/assets/odt-team.jpg';
 import { ODTTypesDialog } from './ODTTypesDialog';
 
 export const ODTSection = () => {
-  const whatsappNumber = '972523456789';
+  const whatsappNumber = '972537314235';
   const [showODTTypes, setShowODTTypes] = useState(false);
 
   const benefits = [

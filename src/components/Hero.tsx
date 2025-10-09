@@ -16,7 +16,7 @@ export const Hero = () => {
   });
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showImageSelector, setShowImageSelector] = useState(false);
-  const whatsappNumber = '972523456789';
+  const whatsappNumber = '972537314235';
   const phoneNumber = '053-7314235';
 
   // Auto-rotate images every 10 seconds
