@@ -2,3 +2,6 @@ project_id = "sdyjuwjvrysjddageucj"
 
 [functions.send-contact-email]
 verify_jwt = false
+
+[functions.generate-odt-image]
+verify_jwt = false

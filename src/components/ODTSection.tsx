@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, Target, Lightbulb, Heart, MessageCircle } from 'lucide-react';
+import { Users, Target, Lightbulb, Heart, MessageCircle, Eye } from 'lucide-react';
 import odtImage from '@/assets/odt-team.jpg';
+import { ODTTypesDialog } from './ODTTypesDialog';
 
 export const ODTSection = () => {
   const whatsappNumber = '972523456789';
+  const [showODTTypes, setShowODTTypes] = useState(false);
 
   const benefits = [
     { icon: Users, text: 'שיתוף פעולה צוותי משופר' },
@@ -42,16 +45,25 @@ export const ODTSection = () => {
 
           {/* Content */}
           <div className="space-y-8">
-            <Card className="border-2 border-primary/20">
+            <Card className="border-2 border-primary/20 cursor-pointer hover:border-primary/40 transition-colors" onClick={() => setShowODTTypes(true)}>
               <CardHeader>
-                <CardTitle className="text-2xl text-primary">
+                <CardTitle className="text-2xl text-primary flex items-center justify-between">
                   מהו ODT?
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <Eye className="h-4 w-4" />
+                    לחץ כאן
+                  </Button>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground leading-relaxed">
                   אימון פיתוח חוץ משתמש באתגרים מבוססי טבע כדי לחזק עבודת צוות, מנהיגות ומיומנויות תקשורת.
                 </p>
+                <div className="mt-4 p-3 bg-primary/10 rounded-lg">
+                  <p className="text-sm font-medium text-primary text-center">
+                    לחץ כדי לראות 15 סוגי פעילויות ODT עם תמונות ריאליסטיות
+                  </p>
+                </div>
               </CardContent>
             </Card>
 
@@ -89,6 +101,8 @@ export const ODTSection = () => {
           </div>
         </div>
       </div>
+      
+      <ODTTypesDialog open={showODTTypes} onOpenChange={setShowODTTypes} />
     </section>
   );
 };
