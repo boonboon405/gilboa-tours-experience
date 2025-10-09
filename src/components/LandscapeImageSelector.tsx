@@ -57,13 +57,14 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }:
           }
         }
 
+        // data.publicUrl is returned from the edge function after uploading to storage
         setImages(prev => {
           const newImages = [...prev];
-          newImages[variation] = data.imageUrl;
+          newImages[variation] = data.publicUrl;
           return newImages;
         });
         
-        console.log(`Image ${variation + 1}/12 generated successfully`);
+        console.log(`Image ${variation + 1}/12 generated and uploaded successfully`);
         return true;
       } catch (error) {
         console.error(`Error generating image ${variation + 1}, attempt ${attempt + 1}:`, error);
