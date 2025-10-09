@@ -163,7 +163,7 @@ export const ChooseYourDay = () => {
     whatsappNumber: '',
     officeNumber: '',
     participantCount: '',
-    budgetPerPerson: '',
+    budgetPerPerson: '275',
     tourType: 'יום אחד'
   });
 
@@ -255,7 +255,7 @@ export const ChooseYourDay = () => {
         whatsappNumber: '',
         officeNumber: '',
         participantCount: '',
-        budgetPerPerson: '',
+        budgetPerPerson: '275',
         tourType: 'יום אחד'
       });
     } catch (error) {
@@ -528,6 +528,8 @@ export const ChooseYourDay = () => {
                     onChange={(e) => setContactInfo({ ...contactInfo, budgetPerPerson: e.target.value })}
                     placeholder="275 שקל"
                     type="number"
+                    step="25"
+                    min="275"
                   />
                 </div>
                 <div>
