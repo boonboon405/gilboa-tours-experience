@@ -3,8 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Sunrise, Waves, Landmark, Wine, Clock, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Sunrise, Waves, Landmark, Wine, Clock, CheckCircle2, ChevronDown, ChevronUp, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const sections = [
   {
@@ -139,6 +141,7 @@ const sections = [
 ];
 
 export const ChooseYourDay = () => {
+  const { toast } = useToast();
   const [selections, setSelections] = useState<Record<number, number[]>>({
     1: [],
     2: [],
@@ -152,6 +155,7 @@ export const ChooseYourDay = () => {
     4: ''
   });
   const [expandedSections, setExpandedSections] = useState<Set<number>>(new Set([1, 2, 3, 4]));
+  const [isSending, setIsSending] = useState(false);
 
   const toggleSection = (sectionId: number) => {
     const newExpanded = new Set(expandedSections);
@@ -177,6 +181,46 @@ export const ChooseYourDay = () => {
         ...selections,
         [sectionId]: [...currentSelections, activityIndex]
       });
+    }
+  };
+
+  const handleSendPreferences = async () => {
+    setIsSending(true);
+    
+    try {
+      // Build the selections data with activity names
+      const selectionsData = sections.reduce((acc, section) => {
+        const selectedIndices = selections[section.id] || [];
+        const selectedActivities = selectedIndices.map(index => section.activities[index]);
+        
+        acc[section.id] = {
+          sectionTitle: section.title,
+          activities: selectedActivities,
+          otherOption: otherOptions[section.id]
+        };
+        
+        return acc;
+      }, {} as any);
+
+      const { error } = await supabase.functions.invoke('send-preferences-email', {
+        body: { selections: selectionsData }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "נשלח בהצלחה!",
+        description: "ההעדפות שלך נשלחו למייל שלנו. נחזור אליך בהקדם.",
+      });
+    } catch (error) {
+      console.error('Error sending preferences:', error);
+      toast({
+        title: "שגיאה בשליחה",
+        description: "אירעה שגיאה בשליחת ההעדפות. נסה שוב מאוחר יותר.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -345,7 +389,17 @@ export const ChooseYourDay = () => {
         <div className="mt-12 text-center">
           <Card className="max-w-2xl mx-auto border-2 border-primary">
             <CardHeader>
-              <CardTitle className="text-2xl">סיכום הבחירות שלך</CardTitle>
+              <div className="flex items-center justify-center gap-4">
+                <CardTitle className="text-2xl">סיכום הבחירות שלך</CardTitle>
+                <Button 
+                  onClick={handleSendPreferences}
+                  disabled={isSending}
+                  className="gap-2"
+                >
+                  <Send className="h-4 w-4" />
+                  {isSending ? 'שולח...' : 'שלח למייל'}
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-4 gap-4">
