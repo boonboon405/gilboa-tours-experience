@@ -19,14 +19,20 @@ serve(async (req) => {
     }
 
     // Different prompts for variety
-    const prompts = [
-      "Ultra high resolution realistic photograph of Mount Gilboa (Har Hagilboa) in Israel at golden hour, panoramic view showing the dramatic mountainous landscape with rolling hills, native vegetation including wildflowers and olive trees, clear blue sky, warm sunlight, professional landscape photography, 16:9 aspect ratio",
-      "Ultra high resolution realistic photograph of the Jordan Valley in Israel, wide panoramic view showing the lush agricultural valley with palm trees, the Jordan River winding through green fields, distant mountains, dramatic clouds, golden hour lighting, professional landscape photography, 16:9 aspect ratio",
-      "Ultra high resolution realistic photograph of Mount Gilboa northern Israel, showing the steep mountain slopes covered with Mediterranean vegetation, rocky terrain, panoramic vista of the Jezreel Valley below, sunrise with pink and orange sky, professional nature photography, 16:9 aspect ratio",
-      "Ultra high resolution realistic photograph of the Jordan Valley landscape, showing the fertile valley with date palm groves, agricultural fields in various shades of green, the winding river, desert mountains in the background, clear day with blue sky, professional landscape photography, 16:9 aspect ratio",
-      "Ultra high resolution realistic photograph of Mount Gilboa range at sunset, dramatic mountain silhouettes, wild iris flowers in the foreground, golden light illuminating the valleys, clouds catching the sunset colors, panoramic view, professional landscape photography, 16:9 aspect ratio",
-      "Ultra high resolution realistic photograph of the Jordan Valley from elevated viewpoint, showing the entire valley spread below, patchwork of green agricultural fields, palm tree clusters, the meandering river catching sunlight, distant mountains, dramatic sky with scattered clouds, professional aerial-style landscape photography, 16:9 aspect ratio"
-    ];
+  const prompts = [
+    "Ultra high resolution realistic photograph of Mount Gilboa (Har Hagilboa) in Israel at golden hour, panoramic view showing the dramatic mountainous landscape with rolling hills, native vegetation including wildflowers and olive trees, clear blue sky, warm sunlight, professional landscape photography, 16:9 aspect ratio",
+    "Ultra high resolution realistic photograph of the Sea of Galilee (Kinneret) at sunrise, calm blue waters reflecting the golden sky, mountains surrounding the lake, fishing boats near the shore, peaceful atmosphere, professional landscape photography, 16:9 aspect ratio",
+    "Ultra high resolution realistic photograph of the Golan Heights mountains overlooking the Sea of Galilee, dramatic rocky peaks, green valleys below, the lake shimmering in the distance, clear Mediterranean sky, professional nature photography, 16:9 aspect ratio",
+    "Ultra high resolution realistic photograph of Mount Arbel cliff overlooking the Sea of Galilee, steep dramatic cliffs, panoramic view of the entire lake below, surrounding mountains, wild flowers in foreground, sunset lighting, professional landscape photography, 16:9 aspect ratio",
+    "Ultra high resolution realistic photograph of the Jordan Valley in Israel, wide panoramic view showing the lush agricultural valley with palm trees, the Jordan River winding through green fields, distant mountains, dramatic clouds, golden hour lighting, professional landscape photography, 16:9 aspect ratio",
+    "Ultra high resolution realistic photograph of the Sea of Galilee shoreline at Capernaum, ancient stone ruins near the water's edge, calm blue lake, mountains in the background, fishing boats, peaceful morning light, professional historical landscape photography, 16:9 aspect ratio",
+    "Ultra high resolution realistic photograph of Mount Gilboa northern Israel, showing the steep mountain slopes covered with Mediterranean vegetation, rocky terrain, panoramic vista of the Jezreel Valley below, sunrise with pink and orange sky, professional nature photography, 16:9 aspect ratio",
+    "Ultra high resolution realistic photograph of the Sea of Galilee from Tiberias hills, wide view of the entire lake, surrounding mountains creating a natural amphitheater, scattered clouds, vibrant blue water, professional aerial-style landscape photography, 16:9 aspect ratio",
+    "Ultra high resolution realistic photograph of Mount Hermon in the distance with the Sea of Galilee in foreground, snow-capped peak, green valleys, the lake reflecting the sky, spring wildflowers, dramatic landscape composition, professional nature photography, 16:9 aspect ratio",
+    "Ultra high resolution realistic photograph of the Jordan Valley landscape, showing the fertile valley with date palm groves, agricultural fields in various shades of green, the winding river, desert mountains in the background, clear day with blue sky, professional landscape photography, 16:9 aspect ratio",
+    "Ultra high resolution realistic photograph of the Sea of Galilee at golden hour, fishing boats silhouetted against the setting sun, mountains surrounding the lake turning purple and orange, calm waters, peaceful atmosphere, professional landscape photography, 16:9 aspect ratio",
+    "Ultra high resolution realistic photograph of Mount Gilboa range at sunset, dramatic mountain silhouettes, wild iris flowers in the foreground, golden light illuminating the valleys, clouds catching the sunset colors, panoramic view with Sea of Galilee visible in distance, professional landscape photography, 16:9 aspect ratio"
+  ];
 
     const selectedPrompt = prompts[variation % prompts.length];
 

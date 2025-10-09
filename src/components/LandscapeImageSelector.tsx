@@ -51,7 +51,7 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }:
       
       toast({
         title: "תמונה נוצרה בהצלחה!",
-        description: `אפשרות ${variation + 1} מתוך 6`
+        description: `אפשרות ${variation + 1} מתוך 12`
       });
     } catch (error) {
       console.error('Error generating image:', error);
@@ -70,10 +70,10 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }:
     setImages([]);
     
     // Generate images sequentially to avoid rate limits
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 12; i++) {
       await generateImage(i);
       // Add a small delay between requests
-      if (i < 5) {
+      if (i < 11) {
         await new Promise(resolve => setTimeout(resolve, 2000));
       }
     }
@@ -97,9 +97,9 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }:
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl">צור 6 תמונות נוף ישראליות</DialogTitle>
+          <DialogTitle className="text-2xl">צור 12 תמונות נוף ישראליות</DialogTitle>
           <DialogDescription>
-            התמונות יתחלפו אוטומטית כל 10 שניות ברקע הדף הראשי
+            תמונות של הגלבוע, הכנרת והרים מסביב יתחלפו אוטומטית כל 10 שניות
           </DialogDescription>
         </DialogHeader>
 
@@ -118,13 +118,13 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }:
             ) : (
               <>
                 <Sparkles className="ml-2 h-5 w-5" />
-                צור 6 אפשרויות חדשות
+                צור 12 אפשרויות חדשות
               </>
             )}
           </Button>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {[0, 1, 2, 3, 4, 5].map((index) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((index) => (
               <div
                 key={index}
                 className="relative aspect-video bg-muted rounded-lg overflow-hidden border-2 border-transparent"
