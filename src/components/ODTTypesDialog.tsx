@@ -126,15 +126,18 @@ export const ODTTypesDialog = ({ open, onOpenChange }: ODTTypesDialogProps) => {
   });
   const { toast } = useToast();
 
-  // Save images to localStorage whenever they change
+  // Save images to localStorage whenever they change - ALWAYS save to ensure persistence
   useEffect(() => {
-    if (Object.keys(generatedImages).length > 0) {
-      localStorage.setItem('odt-generated-images', JSON.stringify(generatedImages));
-    }
+    localStorage.setItem('odt-generated-images', JSON.stringify(generatedImages));
+    console.log('ODT images saved to localStorage:', Object.keys(generatedImages).length, 'images');
   }, [generatedImages]);
 
   const generateImage = async (odtType: ODTType) => {
-    if (generatedImages[odtType.id] && !loadingImages[odtType.id]) return;
+    // Skip if already exists (unless explicitly re-generating)
+    if (generatedImages[odtType.id] && !loadingImages[odtType.id]) {
+      console.log('Image already exists for ODT type:', odtType.id);
+      return;
+    }
 
     setLoadingImages(prev => ({ ...prev, [odtType.id]: true }));
     
@@ -153,10 +156,14 @@ export const ODTTypesDialog = ({ open, onOpenChange }: ODTTypesDialogProps) => {
       }
 
       if (data?.imageUrl) {
-        setGeneratedImages(prev => ({ ...prev, [odtType.id]: data.imageUrl }));
+        setGeneratedImages(prev => {
+          const updated = { ...prev, [odtType.id]: data.imageUrl };
+          console.log('Image generated and saved for ODT type:', odtType.id);
+          return updated;
+        });
         toast({
           title: 'תמונה נוצרה בהצלחה!',
-          description: 'התמונה נשמרה ותישאר זמינה',
+          description: 'התמונה נשמרה ותישאר זמינה לצמיתות',
         });
       } else {
         throw new Error('No image URL returned');
@@ -186,9 +193,36 @@ export const ODTTypesDialog = ({ open, onOpenChange }: ODTTypesDialogProps) => {
     }
   };
 
+  const generateAllImages = async () => {
+    const missingImages = odtTypes.filter(odt => !generatedImages[odt.id]);
+    
+    if (missingImages.length === 0) {
+      toast({
+        title: 'כל התמונות כבר נוצרו',
+        description: 'כל 15 התמונות שמורות במערכת',
+      });
+      return;
+    }
+
+    toast({
+      title: 'מתחיל ליצור תמונות',
+      description: `יוצר ${missingImages.length} תמונות חסרות...`,
+    });
+
+    // Generate images sequentially to avoid rate limits
+    for (let i = 0; i < missingImages.length; i++) {
+      await generateImage(missingImages[i]);
+      // Add delay between requests to avoid rate limiting
+      if (i < missingImages.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+  };
+
   const clearAllImages = () => {
     setGeneratedImages({});
-    localStorage.removeItem('odt-generated-images');
+    localStorage.setItem('odt-generated-images', JSON.stringify({}));
+    console.log('All ODT images cleared from localStorage');
     toast({
       title: 'התמונות נמחקו',
       description: 'ניתן ליצור תמונות חדשות',
@@ -203,13 +237,16 @@ export const ODTTypesDialog = ({ open, onOpenChange }: ODTTypesDialogProps) => {
           <DialogDescription className="text-center text-lg">
             גלה בAI את מגוון הפעילויות לגיבוש צוות בטבע - לחץ וצור תמונה
           </DialogDescription>
-          {Object.keys(generatedImages).length > 0 && (
-            <div className="flex justify-center mt-2">
-              <Button variant="outline" size="sm" onClick={clearAllImages}>
-                מחק את כל התמונות
+          <div className="flex justify-center gap-3 mt-4">
+            <Button onClick={generateAllImages} size="lg">
+              צור את כל 15 התמונות
+            </Button>
+            {Object.keys(generatedImages).length > 0 && (
+              <Button variant="outline" size="lg" onClick={clearAllImages}>
+                מחק הכל ({Object.keys(generatedImages).length}/15)
               </Button>
-            </div>
-          )}
+            )}
+          </div>
         </DialogHeader>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
