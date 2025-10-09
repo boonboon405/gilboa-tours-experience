@@ -36,7 +36,7 @@ export const Hero = () => {
     } else {
       console.log('⚠️ Not enough images for rotation:', images.length);
     }
-  }, [images.length]);
+  }, [images]);
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
