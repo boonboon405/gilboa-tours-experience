@@ -163,6 +163,7 @@ export const ChooseYourDay = () => {
     whatsappNumber: '',
     officeNumber: '',
     participantCount: '',
+    budgetPerPerson: '',
     tourType: 'יום אחד'
   });
 
@@ -254,6 +255,7 @@ export const ChooseYourDay = () => {
         whatsappNumber: '',
         officeNumber: '',
         participantCount: '',
+        budgetPerPerson: '',
         tourType: 'יום אחד'
       });
     } catch (error) {
@@ -514,6 +516,17 @@ export const ChooseYourDay = () => {
                     value={contactInfo.participantCount}
                     onChange={(e) => setContactInfo({ ...contactInfo, participantCount: e.target.value })}
                     placeholder="כמה אנשים יהיו בטיול?"
+                    type="number"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    תקציב לאדם ליום טיול
+                  </label>
+                  <Input
+                    value={contactInfo.budgetPerPerson}
+                    onChange={(e) => setContactInfo({ ...contactInfo, budgetPerPerson: e.target.value })}
+                    placeholder="תקציב משוער לאדם (בשקלים)"
                     type="number"
                   />
                 </div>
