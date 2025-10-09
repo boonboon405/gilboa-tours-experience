@@ -1,9 +1,9 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Mountain, Waves, Landmark, UtensilsCrossed } from 'lucide-react';
-import springsImage from '@/assets/springs-activity.jpg';
+import springsClubcarsImage from '@/assets/springs-clubcars-combined.jpg';
 import beitSheanImage from '@/assets/beit-shean.jpg';
 import pelicansImage from '@/assets/pelicans.jpg';
-import clubCarsImage from '@/assets/club-cars.jpg';
+import culinaryImage from '@/assets/culinary-experience.jpg';
 
 export const Activities = () => {
   const activities = [
@@ -18,7 +18,7 @@ export const Activities = () => {
       icon: Waves,
       title: 'הרפתקה וגיבוש',
       description: 'ניווט ברכבי קלאב קאר חשמליים בנחל המעיינות, ארבעה מעיינות טבעיים, ומשחקי מים אינטראקטיביים.',
-      image: springsImage,
+      image: springsClubcarsImage,
       color: 'from-secondary to-secondary-light',
     },
     {
@@ -32,7 +32,7 @@ export const Activities = () => {
       icon: UtensilsCrossed,
       title: 'חוויה קולינרית',
       description: 'ארוחה עשירה במסעדה כשרה עם אוכל מזרחי אותנטי - טעם אמיתי של האזור.',
-      image: clubCarsImage,
+      image: culinaryImage,
       color: 'from-primary to-accent',
     },
   ];
