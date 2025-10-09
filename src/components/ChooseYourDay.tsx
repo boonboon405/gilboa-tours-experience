@@ -250,7 +250,7 @@ export const ChooseYourDay = () => {
         description: "ההעדפות שלך נשלחו למייל שלנו. נחזור אליך בהקדם.",
       });
 
-      // Reset form after successful send
+      // Reset form and selections after successful send
       setContactInfo({
         name: '',
         email: '',
@@ -261,6 +261,10 @@ export const ChooseYourDay = () => {
         budgetPerPerson: '275',
         tourType: 'יום אחד'
       });
+      
+      // Reset all selections and other options
+      setSelections({});
+      setOtherOptions({});
     } catch (error) {
       console.error('Error sending preferences:', error);
       toast({
