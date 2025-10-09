@@ -22,7 +22,7 @@ export const Hero = () => {
       <div className="relative z-10 container mx-auto px-4 text-center">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 animate-fade-in">
-            חוויה קבוצתית בלתי נשכחת
+            חוויה קבוצתית מיוחדת, בונה ובלתי נשכחת
           </h1>
           <h2 className="text-3xl md:text-5xl font-semibold text-accent mb-6 animate-fade-in">
             בלב הגלבוע
