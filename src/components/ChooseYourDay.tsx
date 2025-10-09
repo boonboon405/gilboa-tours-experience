@@ -46,7 +46,7 @@ const sections = [
     id: 2,
     icon: Waves,
     title: "התקררות בצהריים – מעיינות, מים והרגעה",
-    description: "איזון האדרנלין עם חוויות מים מהנות והרגעה.",
+    description: "איזון האדרנלין עם חוויות ,ODTמשחקי  מים מהנות והרגעה",
     time: "11:30 - 13:30",
     color: "from-blue-500 to-cyan-400",
     activities: [
