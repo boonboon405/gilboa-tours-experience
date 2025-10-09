@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -119,8 +119,19 @@ interface ODTTypesDialogProps {
 
 export const ODTTypesDialog = ({ open, onOpenChange }: ODTTypesDialogProps) => {
   const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({});
-  const [generatedImages, setGeneratedImages] = useState<Record<number, string>>({});
+  const [generatedImages, setGeneratedImages] = useState<Record<number, string>>(() => {
+    // Load saved images from localStorage on initial mount
+    const saved = localStorage.getItem('odt-generated-images');
+    return saved ? JSON.parse(saved) : {};
+  });
   const { toast } = useToast();
+
+  // Save images to localStorage whenever they change
+  useEffect(() => {
+    if (Object.keys(generatedImages).length > 0) {
+      localStorage.setItem('odt-generated-images', JSON.stringify(generatedImages));
+    }
+  }, [generatedImages]);
 
   const generateImage = async (odtType: ODTType) => {
     if (generatedImages[odtType.id]) return;
