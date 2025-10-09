@@ -396,7 +396,15 @@ export const ChooseYourDay = () => {
                             <div className="flex-1">
                               <p className="text-sm leading-relaxed">
                                 <span className="font-medium ml-1">{index + 1}.</span>
-                                {activity}
+                                {typeof activity === 'string' && activity.includes('מומלץ מאד') ? (
+                                  <>
+                                    {activity.split('מומלץ מאד')[0]}
+                                    <span className="text-yellow-500 font-bold animate-pulse">מומלץ מאד</span>
+                                    {activity.split('מומלץ מאד')[1]}
+                                  </>
+                                ) : (
+                                  activity
+                                )}
                               </p>
                             </div>
                             {isSelected && (
