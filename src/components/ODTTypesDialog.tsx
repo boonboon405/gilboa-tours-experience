@@ -235,7 +235,7 @@ export const ODTTypesDialog = ({ open, onOpenChange }: ODTTypesDialogProps) => {
         <DialogHeader>
           <DialogTitle className="text-3xl text-center">15 סוגי פעילויות ODT</DialogTitle>
           <DialogDescription className="text-center text-lg">
-            בחר במתאים לכם פעילויות לגיבוש הצוות שלך בטבע
+            בחר במתאים לכם, פעילויות לגיבוש הצוות שלך בטבע
           </DialogDescription>
         </DialogHeader>
         
