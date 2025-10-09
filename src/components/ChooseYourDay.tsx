@@ -46,7 +46,7 @@ const sections = [
     id: 2,
     icon: Waves,
     title: "התקררות בצהריים – מעיינות, מים והרגעה",
-    description: "איזון האדרנלין עם חוויות ,ODTמשחקי  מים מהנות והרגעה",
+    description: "איזון האדרנלין עם חוויות ,ODTמשחקי מים, משחקי מים, מהנות והרגעה",
     time: "11:30 - 13:30",
     color: "from-blue-500 to-cyan-400",
     activities: [
@@ -201,21 +201,21 @@ export const ChooseYourDay = () => {
                   <Sunrise className="h-4 w-4 ml-1" />
                   הרפתקת בוקר
                 </Badge>
-                <span className="text-muted-foreground">→</span>
+                <span className="text-muted-foreground">←</span>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-blue-500/10 text-blue-700 border-blue-300">
                   <Waves className="h-4 w-4 ml-1" />
                   הרגעת מעיינות
                 </Badge>
-                <span className="text-muted-foreground">→</span>
+                <span className="text-muted-foreground">←</span>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-amber-500/10 text-amber-700 border-amber-300">
                   <Landmark className="h-4 w-4 ml-1" />
                   מפגש מורשת
                 </Badge>
-                <span className="text-muted-foreground">→</span>
+                <span className="text-muted-foreground">←</span>
               </div>
               <Badge variant="outline" className="bg-purple-500/10 text-purple-700 border-purple-300">
                 <Wine className="h-4 w-4 ml-1" />
