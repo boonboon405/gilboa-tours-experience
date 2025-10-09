@@ -526,7 +526,7 @@ export const ChooseYourDay = () => {
                   <Input
                     value={contactInfo.budgetPerPerson}
                     onChange={(e) => setContactInfo({ ...contactInfo, budgetPerPerson: e.target.value })}
-                    placeholder="תקציב משוער לאדם (בשקלים)"
+                    placeholder="275 שקל"
                     type="number"
                   />
                 </div>
