@@ -13,14 +13,30 @@ export const Hero = () => {
 
   // Auto-rotate images every 10 seconds
   useEffect(() => {
+    console.log('🖼️ Hero Images:', {
+      totalImages: images.length,
+      currentIndex: currentImageIndex,
+      images: images
+    });
+    
     if (images.length > 1) {
+      console.log('✅ Starting image rotation interval');
       const interval = setInterval(() => {
-        setCurrentImageIndex((prev) => (prev + 1) % images.length);
+        setCurrentImageIndex((prev) => {
+          const newIndex = (prev + 1) % images.length;
+          console.log('🔄 Rotating image:', { from: prev, to: newIndex });
+          return newIndex;
+        });
       }, 10000);
 
-      return () => clearInterval(interval);
+      return () => {
+        console.log('🛑 Clearing image rotation interval');
+        clearInterval(interval);
+      };
+    } else {
+      console.log('⚠️ Not enough images for rotation:', images.length);
     }
-  }, [images.length]);
+  }, [images.length, currentImageIndex]);
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
