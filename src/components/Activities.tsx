@@ -45,7 +45,7 @@ export const Activities = () => {
             מה כולל היום - דוגמא ליום כייף טיפוסי בנחל המעיינות?
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            שלושה מרכיבים עיקריים: היסטוריה, טבע וגיבוש צוותי
+            מרכיבים קולינריה מקומית: גיבוש צוותי בטבע, ODTהיסטוריה,
           </p>
         </div>
 
