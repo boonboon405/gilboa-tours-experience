@@ -14,6 +14,14 @@ export const Hero = () => {
     const validImages = savedImages.filter((img: string) => img);
     return validImages.length > 0 ? validImages : [heroImage];
   });
+
+  // Persist images to localStorage whenever they change
+  useEffect(() => {
+    if (images.length > 0) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(images));
+      console.log('💾 Saved images to localStorage:', images.length);
+    }
+  }, [images]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showImageSelector, setShowImageSelector] = useState(false);
   const whatsappNumber = '972537314235';

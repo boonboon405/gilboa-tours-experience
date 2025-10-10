@@ -85,13 +85,23 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }:
 
   const generateAllImages = async () => {
     setLoading(true);
-    setImages([]);
+    // Don't clear existing images - only generate missing ones or regenerate all
+    const imagesToGenerate = images.length === 12 && images.every(img => img) 
+      ? [] // All images exist, ask user what to do
+      : Array.from({ length: 12 }, (_, i) => i).filter(i => !images[i]); // Generate missing ones
+    
+    // If all 12 images already exist, regenerate all
+    if (imagesToGenerate.length === 0) {
+      setImages(Array(12).fill('')); // Clear for regeneration
+    }
     
     let successCount = 0;
     let failCount = 0;
     
+    const indicesToGenerate = imagesToGenerate.length === 0 ? Array.from({ length: 12 }, (_, i) => i) : imagesToGenerate;
+    
     // Generate images sequentially to avoid rate limits
-    for (let i = 0; i < 12; i++) {
+    for (const i of indicesToGenerate) {
       console.log(`Starting generation for image ${i + 1}/12`);
       const success = await generateImage(i);
       
@@ -102,7 +112,7 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }:
       }
       
       // Add delay between requests
-      if (i < 11) {
+      if (i !== indicesToGenerate[indicesToGenerate.length - 1]) {
         await new Promise(resolve => setTimeout(resolve, 3000));
       }
     }
@@ -112,19 +122,22 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }:
     
     toast({
       title: "תהליך יצירת התמונות הסתיים",
-      description: `נוצרו בהצלחה ${successCount} מתוך 12 תמונות${failCount > 0 ? ` (${failCount} נכשלו)` : ''}`,
+      description: `נוצרו בהצלחה ${successCount} מתוך ${indicesToGenerate.length} תמונות${failCount > 0 ? ` (${failCount} נכשלו)` : ''}`,
       variant: successCount > 0 ? "default" : "destructive"
     });
   };
 
   const handleUseImages = () => {
+    // Always use all 12 slots, even if some are empty - fill with valid images
     const validImages = images.filter(img => img);
     if (validImages.length > 0) {
+      // Save to localStorage immediately to anchor them
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(images));
       onImagesSelected(validImages);
       onOpenChange(false);
       toast({
         title: "התמונות נבחרו בהצלחה!",
-        description: `${validImages.length} תמונות יתחלפו כל 10 שניות`
+        description: `${validImages.length} תמונות יתחלפו כל 10 שניות ונשמרו לצמיתות`
       });
     }
   };
