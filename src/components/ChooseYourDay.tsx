@@ -359,16 +359,19 @@ export const ChooseYourDay = () => {
                         <CardDescription className="text-base">
                           {section.description}
                         </CardDescription>
-                        <div className="mt-2 flex items-center gap-2">
-                          <span className="text-sm font-medium text-primary">
+                        <div className="mt-3 flex items-center gap-2">
+                          <span className="text-sm font-medium text-muted-foreground">
                             בחר עד 8 פעילויות
                           </span>
-                          <Badge 
-                            variant={currentSelections.length === 0 ? "outline" : "default"}
-                            className="font-bold text-base px-3 py-1"
+                          <div 
+                            className={`font-bold text-lg px-4 py-2 rounded-full ${
+                              currentSelections.length === 0 
+                                ? 'bg-muted text-muted-foreground border-2 border-border' 
+                                : 'bg-primary text-primary-foreground shadow-lg'
+                            }`}
                           >
                             {currentSelections.length}/8 נבחרו
-                          </Badge>
+                          </div>
                         </div>
                       </div>
                     </div>
