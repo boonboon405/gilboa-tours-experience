@@ -569,7 +569,7 @@ export const ChooseYourDay = () => {
           <Card className="max-w-2xl mx-auto border-2 border-primary">
             <CardHeader>
               <div className="flex items-center justify-center gap-4">
-                <CardTitle className="text-2xl">סיכום הבחירות שלך</CardTitle>
+                <CardTitle className="text-2xl">סיכום הבחירות שלך ליום כייף</CardTitle>
                 <Button 
                   onClick={handleSendPreferences}
                   disabled={isSending}
