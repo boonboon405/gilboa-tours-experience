@@ -69,7 +69,7 @@ export const ODTSection = () => {
 
             <div>
               <h3 className="text-2xl font-bold mb-4 text-foreground">
-                יתרונות
+                ODT יתרונות
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 {benefits.map((benefit, index) => {
