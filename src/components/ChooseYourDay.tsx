@@ -363,15 +363,19 @@ export const ChooseYourDay = () => {
                           <span className="text-sm font-medium text-primary">
                             בחר עד 8 פעילויות
                           </span>
-                          <Badge variant={currentSelections.length === 0 ? "outline" : "default"}>
+                          <Badge 
+                            variant={currentSelections.length === 0 ? "outline" : "default"}
+                            className="font-bold text-base px-3 py-1"
+                          >
                             {currentSelections.length}/8 נבחרו
                           </Badge>
                         </div>
                       </div>
                     </div>
-                    <Button variant="ghost" size="icon" className="flex-shrink-0">
-                      {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-                    </Button>
+                    <div className="flex flex-col items-center gap-0 flex-shrink-0 p-2 rounded-md bg-primary/10 border-2 border-primary/20">
+                      <ChevronUp className={`h-4 w-4 transition-opacity ${isExpanded ? 'opacity-100 text-primary' : 'opacity-40'}`} />
+                      <ChevronDown className={`h-4 w-4 transition-opacity ${!isExpanded ? 'opacity-100 text-primary' : 'opacity-40'}`} />
+                    </div>
                   </div>
                 </CardHeader>
                 
