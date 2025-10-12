@@ -286,7 +286,7 @@ export const ChooseYourDay = () => {
             ביחרו את יום הכייף שלכם להלן 100 נושאים לבחירה
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            אפשרויות בלתי נשכחות
+            אפשרויות בלתי נשכחות-ב4 קטגוריות בישמעק אם: אפשרויות בלתי נשכחות
           </h2>
           <div className="max-w-3xl mx-auto space-y-4">
             <p className="text-xl text-muted-foreground">
