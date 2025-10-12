@@ -5,7 +5,6 @@ import { VIPTours } from '@/components/VIPTours';
 import { ODTSection } from '@/components/ODTSection';
 import { WhyChooseUs } from '@/components/WhyChooseUs';
 import { Testimonials } from '@/components/Testimonials';
-import { WhatToBring } from '@/components/WhatToBring';
 import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
 
@@ -19,7 +18,6 @@ const Index = () => {
       <ODTSection />
       <WhyChooseUs />
       <Testimonials />
-      <WhatToBring />
       <ContactSection />
       <Footer />
     </div>
