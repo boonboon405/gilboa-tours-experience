@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Sunrise, Waves, Landmark, Wine, Clock, CheckCircle2, ChevronDown, ChevronUp, Send, CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -171,7 +172,8 @@ export const ChooseYourDay = () => {
     officeNumber: '',
     participantCount: '',
     budgetPerPerson: '275',
-    tourType: 'יום אחד'
+    tourType: 'יום אחד',
+    specialComments: ''
   });
   const [suggestedDate, setSuggestedDate] = useState<Date>();
 
@@ -265,7 +267,8 @@ export const ChooseYourDay = () => {
         officeNumber: '',
         participantCount: '',
         budgetPerPerson: '275',
-        tourType: 'יום אחד'
+        tourType: 'יום אחד',
+        specialComments: ''
       });
       setSuggestedDate(undefined);
       
@@ -595,6 +598,17 @@ export const ChooseYourDay = () => {
                     </PopoverContent>
                   </Popover>
                 </div>
+              </div>
+              <div className="mt-6">
+                <label className="block text-sm font-medium mb-2">
+                  הערות ומשאלות מיוחדות על היום או סיבת היום בטבע
+                </label>
+                <Textarea
+                  value={contactInfo.specialComments}
+                  onChange={(e) => setContactInfo({ ...contactInfo, specialComments: e.target.value })}
+                  placeholder="שתף אותנו בפרטים נוספים, משאלות מיוחדות או סיבת האירוע..."
+                  className="min-h-[100px]"
+                />
               </div>
             </CardContent>
           </Card>
