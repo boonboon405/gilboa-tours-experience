@@ -294,7 +294,7 @@ export const ChooseYourDay = () => {
         <div className="text-center mb-12">
           <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-4">
             <Badge className="text-lg px-6 py-2 bg-gradient-hero">
-              ביחרו את יום הכייף שלכם להלן 100 נושאים לבחירה
+              ביחרו את יום הכיף שלכם להלן 100 נושאים לבחירה
             </Badge>
             <Badge className="text-lg px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
               טיולי VIP לאורחים מחו״ל
