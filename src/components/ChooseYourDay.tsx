@@ -174,7 +174,8 @@ export const ChooseYourDay = () => {
     participantCount: '',
     budgetPerPerson: '275',
     tourType: 'יום אחד',
-    specialComments: ''
+    specialComments: '',
+    language: ''
   });
   const [suggestedDate, setSuggestedDate] = useState<Date>();
 
@@ -269,7 +270,8 @@ export const ChooseYourDay = () => {
         participantCount: '',
         budgetPerPerson: '275',
         tourType: 'יום אחד',
-        specialComments: ''
+        specialComments: '',
+        language: ''
       });
       setSuggestedDate(undefined);
       
@@ -678,6 +680,17 @@ export const ChooseYourDay = () => {
                   onChange={(e) => setContactInfo({ ...contactInfo, specialComments: e.target.value })}
                   placeholder="שתף אותנו בפרטים נוספים, משאלות מיוחדות או סיבת האירוע..."
                   className="min-h-[100px]"
+                />
+              </div>
+              <div className="mt-6">
+                <label className="block text-sm font-medium mb-2">
+                  Languages: Let us know the language needed for your Guest
+                </label>
+                <Input
+                  value={contactInfo.language}
+                  onChange={(e) => setContactInfo({ ...contactInfo, language: e.target.value })}
+                  placeholder="e.g., English, Spanish, French, German..."
+                  dir="ltr"
                 />
               </div>
             </CardContent>

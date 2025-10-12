@@ -26,6 +26,7 @@ interface PreferencesEmailRequest {
     participantCount: string;
     tourType: string;
     specialComments: string;
+    language: string;
   };
   suggestedDate?: string;
 }
@@ -91,6 +92,12 @@ const handler = async (req: Request): Promise<Response> => {
             <tr>
               <td style="padding: 8px; font-weight: bold; vertical-align: top;">הערות ומשאלות מיוחדות:</td>
               <td style="padding: 8px; white-space: pre-wrap;">${contactInfo.specialComments}</td>
+            </tr>
+            ` : ''}
+            ${contactInfo.language ? `
+            <tr>
+              <td style="padding: 8px; font-weight: bold;">שפה נדרשת לאורחים:</td>
+              <td style="padding: 8px;">${contactInfo.language}</td>
             </tr>
             ` : ''}
           </table>
