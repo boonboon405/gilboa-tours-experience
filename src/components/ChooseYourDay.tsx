@@ -727,6 +727,74 @@ export const ChooseYourDay = () => {
         </div>
         )}
 
+        {/* Summary Section */}
+        <div className="max-w-6xl mx-auto my-12">
+          <Card className="border-2 border-green-500/30 bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-950/20 dark:to-emerald-950/20">
+            <CardHeader>
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <CardTitle className="text-3xl font-bold">
+                  סיכום הבחירות שלך ליום כיף
+                </CardTitle>
+                <Button 
+                  onClick={handleSendPreferences}
+                  disabled={isSending}
+                  size="lg"
+                  className="bg-green-600 hover:bg-green-700 text-white px-8"
+                >
+                  <Send className="h-5 w-5 ml-2" />
+                  {isSending ? 'שולח...' : 'שלח למייל'}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {activeSection === '100topics' ? (
+                <div className="flex flex-wrap justify-center gap-8 py-6">
+                  {sections.map((section) => {
+                    const count = (selections[section.id] || []).length;
+                    const colorClasses = [
+                      'from-orange-500 to-yellow-500',
+                      'from-blue-500 to-cyan-400',
+                      'from-amber-600 to-orange-500',
+                      'from-purple-600 to-pink-500'
+                    ];
+                    
+                    return (
+                      <div key={section.id} className="flex flex-col items-center gap-3">
+                        <div className={`w-24 h-24 rounded-full bg-gradient-to-br ${colorClasses[section.id - 1]} flex items-center justify-center text-white text-4xl font-bold shadow-lg`}>
+                          {count}
+                        </div>
+                        <span className="text-lg font-medium">קטגוריה {section.id}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="flex flex-wrap justify-center gap-8 py-6">
+                  {vipDestinations.map((destination) => {
+                    const count = (vipSelections[destination.id] || []).length;
+                    const colorClasses = [
+                      'from-green-600 to-emerald-500',
+                      'from-blue-600 to-sky-500',
+                      'from-cyan-600 to-teal-500',
+                      'from-purple-600 to-violet-500',
+                      'from-orange-600 to-amber-500'
+                    ];
+                    
+                    return (
+                      <div key={destination.id} className="flex flex-col items-center gap-3">
+                        <div className={`w-24 h-24 rounded-full bg-gradient-to-br ${colorClasses[destination.id - 1]} flex items-center justify-center text-white text-4xl font-bold shadow-lg`}>
+                          {count}
+                        </div>
+                        <span className="text-lg font-medium text-center">{destination.region}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Contact Form */}
         <div className="mt-12">
           <Card className="max-w-4xl mx-auto border-2">
