@@ -933,7 +933,7 @@ export const ChooseYourDay = () => {
               </div>
               <div className="mt-6">
                 <label className="block text-sm font-medium mb-2">
-                  הערות ומשאלות מיוחדות על היום או סיבת היום בטבע
+                  הערות ומשאלות מיוחדות אותם מבקשים האורחים
                 </label>
                 <Textarea
                   value={contactInfo.specialComments}
