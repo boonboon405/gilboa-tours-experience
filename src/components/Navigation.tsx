@@ -9,6 +9,7 @@ export const Navigation = () => {
     { label: 'בית', href: '#home' },
     { label: 'פעילויות', href: '#activities' },
     { label: 'ביחרו את יום הכייף שלכם', href: '#choose-your-day' },
+    { label: 'טיולי VIP לאורחים מחו״ל', href: '#vip-tours' },
     { label: 'גיבוש ODT', href: '#odt' },
     { label: 'צור קשר', href: '#contact' },
   ];
