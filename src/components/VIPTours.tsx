@@ -8,6 +8,7 @@ import { CheckCircle2, Send, CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -417,12 +418,25 @@ export const VIPTours = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2">סוג הטיול</label>
-                    <Input
+                    <label className="block text-sm font-medium mb-2">מספר ימים</label>
+                    <Select
                       value={contactInfo.tourType}
-                      onChange={(e) => setContactInfo({ ...contactInfo, tourType: e.target.value })}
-                      placeholder="למשל: יום אחד, שני ימים, וכו׳"
-                    />
+                      onValueChange={(value) => setContactInfo({ ...contactInfo, tourType: value })}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="בחר מספר ימים" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="יום אחד">יום אחד</SelectItem>
+                        <SelectItem value="יומיים">יומיים</SelectItem>
+                        <SelectItem value="3 ימים">3 ימים</SelectItem>
+                        <SelectItem value="4 ימים">4 ימים</SelectItem>
+                        <SelectItem value="5 ימים">5 ימים</SelectItem>
+                        <SelectItem value="שבוע">שבוע</SelectItem>
+                        <SelectItem value="10 ימים">10 ימים</SelectItem>
+                        <SelectItem value="שבועיים">שבועיים</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>
