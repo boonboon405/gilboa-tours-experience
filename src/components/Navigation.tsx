@@ -8,7 +8,7 @@ export const Navigation = () => {
   const navItems = [
     { label: 'בית', href: '#home' },
     { label: 'פעילויות', href: '#activities' },
-    { label: 'בחר את היום שלך', href: '#choose-your-day' },
+    { label: 'ביחרו את יום הכייף שלכם', href: '#choose-your-day' },
     { label: 'גיבוש ODT', href: '#odt' },
     { label: 'צור קשר', href: '#contact' },
   ];

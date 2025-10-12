@@ -283,7 +283,7 @@ export const ChooseYourDay = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <Badge className="mb-4 text-lg px-6 py-2 bg-gradient-hero">
-            בחר את היום שלך
+            ביחרו את יום הכייף שלכם להלן 100 נושאים לבחירה
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
             אפשרויות בלתי נשכחות
