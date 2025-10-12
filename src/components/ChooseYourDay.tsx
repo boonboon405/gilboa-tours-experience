@@ -292,9 +292,14 @@ export const ChooseYourDay = () => {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <Badge className="mb-4 text-lg px-6 py-2 bg-gradient-hero">
-            ביחרו את יום הכייף שלכם להלן 100 נושאים לבחירה
-          </Badge>
+          <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-4">
+            <Badge className="text-lg px-6 py-2 bg-gradient-hero">
+              ביחרו את יום הכייף שלכם להלן 100 נושאים לבחירה
+            </Badge>
+            <Badge className="text-lg px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+              טיולי VIP לאורחים מחו״ל
+            </Badge>
+          </div>
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
             אפשרויות בלתי נשכחות-ב4 קטגוריות :
           </h2>
@@ -333,6 +338,46 @@ export const ChooseYourDay = () => {
               שלב אותן באופן כרונולוגי ליצירת תוכנית יום מלא (09:00 - 17:00)
             </p>
           </div>
+        </div>
+
+        {/* VIP Tour Section */}
+        <div className="max-w-5xl mx-auto mb-12">
+          <Card className="border-2 border-purple-500/30 bg-gradient-to-br from-purple-50/50 to-blue-50/50 dark:from-purple-950/20 dark:to-blue-950/20">
+            <CardHeader className="text-center">
+              <div className="flex justify-center mb-4">
+                <Badge className="text-xl px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+                  טיולי VIP - עד 19 מטיילים
+                </Badge>
+              </div>
+              <CardTitle className="text-3xl md:text-4xl font-bold mb-4">
+                טיול VIP מיוחד לאורחים מחו״ל
+              </CardTitle>
+              <CardDescription className="text-lg md:text-xl leading-relaxed">
+                <p className="mb-4">
+                  החברה שלכם מארחת אורחים מחו״ל? דייויד טורס יכול לארח אותם בטיול VIP ברכב ממוזג מפואר ולהעניק להם חוויית טיול בלתי נשכחת ברחבי ישראל.
+                </p>
+                <p className="font-semibold text-primary">
+                  מתאים לקבוצות של 1-19 מטיילים • נהג מקצועי ומדריך מומחה • רכב מפואר וממוזג • מסלולים מותאמים אישית
+                </p>
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <div className="flex items-center gap-2 text-lg">
+                  <CheckCircle2 className="h-6 w-6 text-green-600" />
+                  <span>רכב VIP ממוזג</span>
+                </div>
+                <div className="flex items-center gap-2 text-lg">
+                  <CheckCircle2 className="h-6 w-6 text-green-600" />
+                  <span>מדריך מקצועי</span>
+                </div>
+                <div className="flex items-center gap-2 text-lg">
+                  <CheckCircle2 className="h-6 w-6 text-green-600" />
+                  <span>מסלול מותאם אישית</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Sections */}
