@@ -3,10 +3,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Sunrise, Waves, Landmark, Wine, Clock, CheckCircle2, ChevronDown, ChevronUp, Send } from 'lucide-react';
+import { Sunrise, Waves, Landmark, Wine, Clock, CheckCircle2, ChevronDown, ChevronUp, Send, CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 const sections = [
   {
@@ -169,6 +173,7 @@ export const ChooseYourDay = () => {
     budgetPerPerson: '275',
     tourType: 'יום אחד'
   });
+  const [suggestedDate, setSuggestedDate] = useState<Date>();
 
   const toggleSection = (sectionId: number) => {
     const newExpanded = new Set(expandedSections);
@@ -239,7 +244,8 @@ export const ChooseYourDay = () => {
       const { error } = await supabase.functions.invoke('send-preferences-email', {
         body: { 
           selections: selectionsData,
-          contactInfo 
+          contactInfo,
+          suggestedDate: suggestedDate ? format(suggestedDate, "dd/MM/yyyy") : null
         }
       });
 
@@ -261,6 +267,7 @@ export const ChooseYourDay = () => {
         budgetPerPerson: '275',
         tourType: 'יום אחד'
       });
+      setSuggestedDate(undefined);
       
       // Reset all selections and other options
       setSelections({});
@@ -558,6 +565,35 @@ export const ChooseYourDay = () => {
                     <option value="יום אחד">יום אחד</option>
                     <option value="מספר ימים">מספר ימים</option>
                   </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    תאריך מוצע לאירוע
+                  </label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-right font-normal h-10",
+                          !suggestedDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="ml-2 h-4 w-4" />
+                        {suggestedDate ? format(suggestedDate, "dd/MM/yyyy") : <span>בחר תאריך</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={suggestedDate}
+                        onSelect={setSuggestedDate}
+                        disabled={(date) => date < new Date()}
+                        initialFocus
+                        className={cn("p-3 pointer-events-auto")}
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </div>
             </CardContent>

@@ -26,6 +26,7 @@ interface PreferencesEmailRequest {
     participantCount: string;
     tourType: string;
   };
+  suggestedDate?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -35,10 +36,11 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { selections, contactInfo }: PreferencesEmailRequest = await req.json();
+    const { selections, contactInfo, suggestedDate }: PreferencesEmailRequest = await req.json();
 
     console.log("Sending preferences email with selections:", selections);
     console.log("Contact info:", contactInfo);
+    console.log("Suggested date:", suggestedDate);
 
     // Build HTML content for the email
     let emailContent = `
@@ -78,6 +80,12 @@ const handler = async (req: Request): Promise<Response> => {
               <td style="padding: 8px; font-weight: bold;">סוג טיול:</td>
               <td style="padding: 8px;">${contactInfo.tourType}</td>
             </tr>
+            ${suggestedDate ? `
+            <tr>
+              <td style="padding: 8px; font-weight: bold;">תאריך מוצע לאירוע:</td>
+              <td style="padding: 8px;">${suggestedDate}</td>
+            </tr>
+            ` : ''}
           </table>
         </div>
         
@@ -147,6 +155,7 @@ const handler = async (req: Request): Promise<Response> => {
           email_data: {
             contactInfo,
             selections,
+            suggestedDate,
             resend_response: emailResponse
           }
         })
