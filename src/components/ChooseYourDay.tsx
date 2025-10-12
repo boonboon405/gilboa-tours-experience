@@ -542,7 +542,7 @@ export const ChooseYourDay = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    תקציב לאדם ליום טיול
+                    תקציב משוער של החברה לאדם ליום גיבוש+טיול
                   </label>
                   <Input
                     value={contactInfo.budgetPerPerson}
