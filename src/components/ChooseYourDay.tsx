@@ -684,13 +684,12 @@ export const ChooseYourDay = () => {
               </div>
               <div className="mt-6">
                 <label className="block text-sm font-medium mb-2">
-                  Languages: Let us know the language needed for your Guest
+                  שפות: יש לציין את השפה הנדרשת לאורחים שלכם
                 </label>
                 <Input
                   value={contactInfo.language}
                   onChange={(e) => setContactInfo({ ...contactInfo, language: e.target.value })}
-                  placeholder="e.g., English, Spanish, French, German..."
-                  dir="ltr"
+                  placeholder="למשל: אנגלית, ספרדית, צרפתית, גרמנית..."
                 />
               </div>
             </CardContent>
