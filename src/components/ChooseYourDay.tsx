@@ -877,19 +877,6 @@ export const ChooseYourDay = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    תקציב משוער של החברה לאדם ליום גיבוש+טיול
-                  </label>
-                  <Input
-                    value={contactInfo.budgetPerPerson}
-                    onChange={(e) => setContactInfo({ ...contactInfo, budgetPerPerson: e.target.value })}
-                    placeholder="275 שקל"
-                    type="number"
-                    step="25"
-                    min="275"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">
                     סוג הטיול
                   </label>
                   <select
