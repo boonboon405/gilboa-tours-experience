@@ -318,26 +318,49 @@ export const ChooseYourDay = () => {
     setIsSending(true);
     
     try {
-      // Build the selections data with activity names
-      const selectionsData = sections.reduce((acc, section) => {
-        const selectedIndices = selections[section.id] || [];
-        const selectedActivities = selectedIndices.map(index => section.activities[index]);
-        
-        acc[section.id] = {
-          sectionTitle: section.title,
-          activities: selectedActivities,
-          otherOption: otherOptions[section.id]
-        };
-        
-        return acc;
-      }, {} as any);
+      let requestData: any = {
+        contactInfo,
+        suggestedDate: suggestedDate ? format(suggestedDate, "dd/MM/yyyy") : null,
+        tourType: activeSection === 'vip' ? 'VIP Tour' : '100 Topics Day'
+      };
+
+      if (activeSection === '100topics') {
+        // Build the selections data with activity names for 100 topics
+        const selectionsData = sections.reduce((acc, section) => {
+          const selectedIndices = selections[section.id] || [];
+          const selectedActivities = selectedIndices.map(index => section.activities[index]);
+          
+          acc[section.id] = {
+            sectionTitle: section.title,
+            activities: selectedActivities,
+            otherOption: otherOptions[section.id]
+          };
+          
+          return acc;
+        }, {} as any);
+
+        requestData.selections = selectionsData;
+      } else {
+        // Build VIP destinations data
+        const vipSelectionsData = vipDestinations.reduce((acc, destination) => {
+          const selectedIndices = vipSelections[destination.id] || [];
+          const selectedSites = selectedIndices.map(index => destination.sites[index]);
+          
+          if (selectedSites.length > 0) {
+            acc[destination.id] = {
+              region: destination.region,
+              sites: selectedSites
+            };
+          }
+          
+          return acc;
+        }, {} as any);
+
+        requestData.vipDestinations = vipSelectionsData;
+      }
 
       const { error } = await supabase.functions.invoke('send-preferences-email', {
-        body: { 
-          selections: selectionsData,
-          contactInfo,
-          suggestedDate: suggestedDate ? format(suggestedDate, "dd/MM/yyyy") : null
-        }
+        body: requestData
       });
 
       if (error) throw error;
@@ -364,6 +387,13 @@ export const ChooseYourDay = () => {
       
       // Reset all selections and other options
       setSelections({});
+      setVipSelections({
+        1: [],
+        2: [],
+        3: [],
+        4: [],
+        5: []
+      });
       setOtherOptions({});
     } catch (error) {
       console.error('Error sending preferences:', error);
@@ -452,44 +482,119 @@ export const ChooseYourDay = () => {
 
         {/* VIP Tour Section */}
         {activeSection === 'vip' && (
-          <div className="max-w-5xl mx-auto mb-12">
-          <Card className="border-2 border-purple-500/30 bg-gradient-to-br from-purple-50/50 to-blue-50/50 dark:from-purple-950/20 dark:to-blue-950/20">
-            <CardHeader className="text-center">
-              <div className="flex justify-center mb-4">
-                <Badge className="text-xl px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
-                  טיולי VIP - עד 19 מטיילים
-                </Badge>
-              </div>
-              <CardTitle className="text-3xl md:text-4xl font-bold mb-4">
-                טיול VIP מיוחד לאורחים מחו״ל
-              </CardTitle>
-              <CardDescription className="text-lg md:text-xl leading-relaxed">
-                <p className="mb-4">
-                  החברה שלכם מארחת אורחים מחו״ל? דייויד טורס יכול לארח אותם בטיול VIP ברכב ממוזג מפואר ולהעניק להם חוויית טיול בלתי נשכחת ברחבי ישראל.
+          <>
+            <div className="max-w-5xl mx-auto mb-12">
+              <Card className="border-2 border-purple-500/30 bg-gradient-to-br from-purple-50/50 to-blue-50/50 dark:from-purple-950/20 dark:to-blue-950/20">
+                <CardHeader className="text-center">
+                  <div className="flex justify-center mb-4">
+                    <Badge className="text-xl px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+                      טיולי VIP - עד 19 מטיילים
+                    </Badge>
+                  </div>
+                  <CardTitle className="text-3xl md:text-4xl font-bold mb-4">
+                    טיול VIP מיוחד לאורחים מחו״ל
+                  </CardTitle>
+                  <CardDescription className="text-lg md:text-xl leading-relaxed">
+                    <p className="mb-4">
+                      החברה שלכם מארחת אורחים מחו״ל? דייויד טורס יכול לארח אותם בטיול VIP ברכב ממוזג מפואר ולהעניק להם חוויית טיול בלתי נשכחת ברחבי ישראל.
+                    </p>
+                    <p className="font-semibold text-primary">
+                      מתאים לקבוצות של 1-19 מטיילים • נהג מקצועי ומדריך מומחה • רכב מפואר וממוזג • מסלולים מותאמים אישית
+                    </p>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <div className="flex items-center gap-2 text-lg">
+                      <CheckCircle2 className="h-6 w-6 text-green-600" />
+                      <span>רכב VIP ממוזג</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-lg">
+                      <CheckCircle2 className="h-6 w-6 text-green-600" />
+                      <span>מדריך מקצועי</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-lg">
+                      <CheckCircle2 className="h-6 w-6 text-green-600" />
+                      <span>מסלול מותאם אישית</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* VIP Destinations Selection */}
+            <div className="max-w-7xl mx-auto mb-12">
+              <div className="text-center mb-8">
+                <h3 className="text-3xl font-bold mb-4">בחרו את האתרים המועדפים עליכם</h3>
+                <p className="text-lg text-muted-foreground">
+                  רשימת 50 אתרים מומלצים לביקור בישראל, מחולקים לפי אזורים גיאוגרפיים – מצפון לדרום
                 </p>
-                <p className="font-semibold text-primary">
-                  מתאים לקבוצות של 1-19 מטיילים • נהג מקצועי ומדריך מומחה • רכב מפואר וממוזג • מסלולים מותאמים אישית
+                <p className="text-base text-muted-foreground mt-2">
+                  הרשימה כוללת אתרים היסטוריים, טבעיים, דתיים ותרבותיים, שנחשבים מהחשובים והמרתקים ביותר בארץ
                 </p>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center">
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <div className="flex items-center gap-2 text-lg">
-                  <CheckCircle2 className="h-6 w-6 text-green-600" />
-                  <span>רכב VIP ממוזג</span>
-                </div>
-                <div className="flex items-center gap-2 text-lg">
-                  <CheckCircle2 className="h-6 w-6 text-green-600" />
-                  <span>מדריך מקצועי</span>
-                </div>
-                <div className="flex items-center gap-2 text-lg">
-                  <CheckCircle2 className="h-6 w-6 text-green-600" />
-                  <span>מסלול מותאם אישית</span>
-                </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+
+              <div className="space-y-6">
+                {vipDestinations.map((destination) => {
+                  const currentSelections = vipSelections[destination.id] || [];
+                  
+                  return (
+                    <Card 
+                      key={destination.id}
+                      className="border-2 hover:shadow-strong transition-all duration-300"
+                    >
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-2xl">
+                            {destination.region}
+                          </CardTitle>
+                          <Badge 
+                            variant="secondary" 
+                            className={cn(
+                              "text-lg px-4 py-2",
+                              currentSelections.length > 0 && "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100"
+                            )}
+                          >
+                            {currentSelections.length} נבחרו
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {destination.sites.map((site, index) => (
+                            <div
+                              key={index}
+                              className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
+                              onClick={() => {
+                                const isSelected = currentSelections.includes(index);
+                                if (isSelected) {
+                                  setVipSelections({
+                                    ...vipSelections,
+                                    [destination.id]: currentSelections.filter(i => i !== index)
+                                  });
+                                } else {
+                                  setVipSelections({
+                                    ...vipSelections,
+                                    [destination.id]: [...currentSelections, index]
+                                  });
+                                }
+                              }}
+                            >
+                              <Checkbox
+                                checked={currentSelections.includes(index)}
+                                className="mt-1"
+                              />
+                              <span className="flex-1 text-right">{site}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+          </>
         )}
 
         {/* Sections */}

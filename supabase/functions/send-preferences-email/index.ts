@@ -10,11 +10,17 @@ const corsHeaders = {
 };
 
 interface PreferencesEmailRequest {
-  selections: {
+  selections?: {
     [key: number]: {
       sectionTitle: string;
       activities: string[];
       otherOption?: string;
+    };
+  };
+  vipDestinations?: {
+    [key: number]: {
+      region: string;
+      sites: string[];
     };
   };
   contactInfo: {
@@ -29,6 +35,7 @@ interface PreferencesEmailRequest {
     language: string;
   };
   suggestedDate?: string;
+  tourType?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -38,17 +45,19 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { selections, contactInfo, suggestedDate }: PreferencesEmailRequest = await req.json();
+    const { selections, vipDestinations, contactInfo, suggestedDate, tourType }: PreferencesEmailRequest = await req.json();
 
     console.log("Sending preferences email with selections:", selections);
+    console.log("VIP destinations:", vipDestinations);
     console.log("Contact info:", contactInfo);
     console.log("Suggested date:", suggestedDate);
+    console.log("Tour type:", tourType);
 
     // Build HTML content for the email
     let emailContent = `
       <div dir="rtl" style="font-family: Arial, sans-serif;">
         <h2>העדפות לקוח חדשות - David Tours</h2>
-        <p>התקבלה בחירת פעילויות חדשה מהאתר:</p>
+        <p>התקבלה בחירת ${tourType === 'VIP Tour' ? 'טיול VIP' : 'פעילויות'} חדשה מהאתר:</p>
         <br>
         
         <div style="background-color: #f0f9ff; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
@@ -102,34 +111,60 @@ const handler = async (req: Request): Promise<Response> => {
             ` : ''}
           </table>
         </div>
-        
-        <h3 style="color: #2563eb;">בחירות פעילויות:</h3>
     `;
 
-    // Add each section's selections
-    Object.entries(selections).forEach(([sectionId, section]) => {
-      if (section.activities.length > 0 || section.otherOption) {
-        emailContent += `
-          <h3 style="color: #2563eb; margin-top: 20px;">קטגוריה ${sectionId}: ${section.sectionTitle}</h3>
-        `;
-        
-        if (section.activities.length > 0) {
-          emailContent += `<ul style="margin-top: 10px;">`;
-          section.activities.forEach(activity => {
-            emailContent += `<li style="margin-bottom: 8px;">${activity}</li>`;
-          });
-          emailContent += `</ul>`;
-        }
-        
-        if (section.otherOption) {
+    // Handle VIP destinations or regular selections
+    if (tourType === 'VIP Tour' && vipDestinations) {
+      emailContent += `
+        <h3 style="color: #9333ea; margin-top: 30px;">אתרים שנבחרו לטיול VIP:</h3>
+      `;
+      
+      Object.entries(vipDestinations).forEach(([regionId, destination]) => {
+        if (destination.sites.length > 0) {
           emailContent += `
-            <p style="margin-top: 10px; padding: 10px; background-color: #f3f4f6; border-radius: 5px;">
-              <strong>אפשרות אחרת:</strong> ${section.otherOption}
-            </p>
+            <div style="background-color: #faf5ff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+              <h4 style="color: #7c3aed; margin-top: 0;">${destination.region}</h4>
+              <ul style="margin: 10px 0;">
+          `;
+          destination.sites.forEach(site => {
+            emailContent += `<li style="margin-bottom: 5px;">${site}</li>`;
+          });
+          emailContent += `
+              </ul>
+            </div>
           `;
         }
-      }
-    });
+      });
+    } else if (selections) {
+      emailContent += `
+        <h3 style="color: #2563eb;">בחירות פעילויות:</h3>
+      `;
+      
+      // Add each section's selections
+      Object.entries(selections).forEach(([sectionId, section]) => {
+        if (section.activities.length > 0 || section.otherOption) {
+          emailContent += `
+            <h3 style="color: #2563eb; margin-top: 20px;">קטגוריה ${sectionId}: ${section.sectionTitle}</h3>
+          `;
+          
+          if (section.activities.length > 0) {
+            emailContent += `<ul style="margin-top: 10px;">`;
+            section.activities.forEach(activity => {
+              emailContent += `<li style="margin-bottom: 8px;">${activity}</li>`;
+            });
+            emailContent += `</ul>`;
+          }
+          
+          if (section.otherOption) {
+            emailContent += `
+              <p style="margin-top: 10px; padding: 10px; background-color: #f3f4f6; border-radius: 5px;">
+                <strong>אפשרות אחרת:</strong> ${section.otherOption}
+              </p>
+            `;
+          }
+        }
+      });
+    }
 
     emailContent += `
         <br>
@@ -169,7 +204,9 @@ const handler = async (req: Request): Promise<Response> => {
           email_data: {
             contactInfo,
             selections,
+            vipDestinations,
             suggestedDate,
+            tourType,
             resend_response: emailResponse
           }
         })
