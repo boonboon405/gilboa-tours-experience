@@ -44,12 +44,17 @@ export const Footer = () => {
           {/* Links */}
           <div>
             <h4 className="text-lg font-semibold text-foreground mb-4">
-              פעילויות
+              קישורים מהירים
             </h4>
             <ul className="space-y-2">
               <li>
-                <a href="#activities" className="text-muted-foreground hover:text-primary transition-colors">
-                  טבע ונוף היסטורי
+                <a href="#choose-your-day" className="text-muted-foreground hover:text-primary transition-colors">
+                  ביחרו את יום הכייף שלכם
+                </a>
+              </li>
+              <li>
+                <a href="#vip-tours" className="text-muted-foreground hover:text-primary transition-colors">
+                  טיולי VIP
                 </a>
               </li>
               <li>
