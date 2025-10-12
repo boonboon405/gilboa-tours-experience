@@ -150,6 +150,7 @@ const sections = [
 
 export const ChooseYourDay = () => {
   const { toast } = useToast();
+  const [activeSection, setActiveSection] = useState<'100topics' | 'vip'>('100topics');
   const [selections, setSelections] = useState<Record<number, number[]>>({
     1: [],
     2: [],
@@ -293,55 +294,76 @@ export const ChooseYourDay = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-4">
-            <Badge className="text-lg px-6 py-2 bg-gradient-hero">
+            <Badge 
+              className={cn(
+                "text-lg px-6 py-2 cursor-pointer transition-all duration-300",
+                activeSection === '100topics' 
+                  ? "bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg scale-105" 
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              )}
+              onClick={() => setActiveSection('100topics')}
+            >
               ביחרו את יום הכיף שלכם להלן 100 נושאים לבחירה
             </Badge>
-            <Badge className="text-lg px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+            <Badge 
+              className={cn(
+                "text-lg px-6 py-2 cursor-pointer transition-all duration-300",
+                activeSection === 'vip' 
+                  ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg scale-105" 
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              )}
+              onClick={() => setActiveSection('vip')}
+            >
               טיולי VIP לאורחים מחו״ל
             </Badge>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            אפשרויות בלתי נשכחות-ב4 קטגוריות :
-          </h2>
-          <div className="max-w-3xl mx-auto space-y-4">
-            <p className="text-xl text-muted-foreground">
-              בחר פעילות אחת או שתיים מכל קטגוריה ונשוחח יחד על תכנון סופי של יום הכיף כולל מחיר סופי
-            </p>
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-lg">
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="bg-orange-500/10 text-orange-700 border-orange-300">
-                  <Sunrise className="h-4 w-4 ml-1" />
-                  הרפתקת בוקר
-                </Badge>
-                <span className="text-muted-foreground">←</span>
+          {activeSection === '100topics' && (
+            <>
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+                אפשרויות בלתי נשכחות-ב4 קטגוריות :
+              </h2>
+              <div className="max-w-3xl mx-auto space-y-4">
+                <p className="text-xl text-muted-foreground">
+                  בחר פעילות אחת או שתיים מכל קטגוריה ונשוחח יחד על תכנון סופי של יום הכיף כולל מחיר סופי
+                </p>
+                <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-lg">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="bg-orange-500/10 text-orange-700 border-orange-300">
+                      <Sunrise className="h-4 w-4 ml-1" />
+                      הרפתקת בוקר
+                    </Badge>
+                    <span className="text-muted-foreground">←</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="bg-blue-500/10 text-blue-700 border-blue-300">
+                      <Waves className="h-4 w-4 ml-1" />
+                      הרגעת מעיינות
+                    </Badge>
+                    <span className="text-muted-foreground">←</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="bg-amber-500/10 text-amber-700 border-amber-300">
+                      <Landmark className="h-4 w-4 ml-1" />
+                      מפגש מורשת
+                    </Badge>
+                    <span className="text-muted-foreground">←</span>
+                  </div>
+                  <Badge variant="outline" className="bg-purple-500/10 text-purple-700 border-purple-300">
+                    <Wine className="h-4 w-4 ml-1" />
+                    חגיגה קולינרית
+                  </Badge>
+                </div>
+                <p className="text-base text-muted-foreground">
+                  שלב אותן באופן כרונולוגי ליצירת תוכנית יום מלא (09:00 - 17:00)
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="bg-blue-500/10 text-blue-700 border-blue-300">
-                  <Waves className="h-4 w-4 ml-1" />
-                  הרגעת מעיינות
-                </Badge>
-                <span className="text-muted-foreground">←</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="bg-amber-500/10 text-amber-700 border-amber-300">
-                  <Landmark className="h-4 w-4 ml-1" />
-                  מפגש מורשת
-                </Badge>
-                <span className="text-muted-foreground">←</span>
-              </div>
-              <Badge variant="outline" className="bg-purple-500/10 text-purple-700 border-purple-300">
-                <Wine className="h-4 w-4 ml-1" />
-                חגיגה קולינרית
-              </Badge>
-            </div>
-            <p className="text-base text-muted-foreground">
-              שלב אותן באופן כרונולוגי ליצירת תוכנית יום מלא (09:00 - 17:00)
-            </p>
-          </div>
+            </>
+          )}
         </div>
 
         {/* VIP Tour Section */}
-        <div className="max-w-5xl mx-auto mb-12">
+        {activeSection === 'vip' && (
+          <div className="max-w-5xl mx-auto mb-12">
           <Card className="border-2 border-purple-500/30 bg-gradient-to-br from-purple-50/50 to-blue-50/50 dark:from-purple-950/20 dark:to-blue-950/20">
             <CardHeader className="text-center">
               <div className="flex justify-center mb-4">
@@ -379,9 +401,11 @@ export const ChooseYourDay = () => {
             </CardContent>
           </Card>
         </div>
+        )}
 
         {/* Sections */}
-        <div className="max-w-7xl mx-auto space-y-6">
+        {activeSection === '100topics' && (
+          <div className="max-w-7xl mx-auto space-y-6">
           {sections.map((section) => {
             const Icon = section.icon;
             const currentSelections = selections[section.id] || [];
@@ -507,6 +531,7 @@ export const ChooseYourDay = () => {
             );
           })}
         </div>
+        )}
 
         {/* Contact Form */}
         <div className="mt-12">
