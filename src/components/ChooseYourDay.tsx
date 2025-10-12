@@ -148,101 +148,13 @@ const sections = [
   }
 ];
 
-const vipDestinations = [
-  {
-    id: 1,
-    region: "🌿 צפון הארץ",
-    sites: [
-      "ראש הנקרה – הנקרות הלבנות והנוף לים התיכון",
-      "מצודת יחיעם – מבצר צלבני עתיק בגליל המערבי",
-      "עכו העתיקה – חומות, נמל, שוק ומנהרת הטמפלרים",
-      "נהריה – טיילת חוף קסומה עם אווירה גלילית",
-      "הר מירון – תצפיות ונקודת עליה לקבר רבי שמעון בר יוחאי",
-      "צפת העתיקה – סמטאות, גלריות לאמנות וקבלה",
-      "הכנרת – אתרי טבילה נוצריים וחופי רחצה",
-      "קבר הרמב״ם – טבריה",
-      "הר ארבל – תצפית מרהיבה על הכנרת",
-      "נחל עמוד – מסלול טבע מהיפים בארץ",
-      "חצור העתיקה – אתר ארכאולוגי מתקופת התנ״ך",
-      "נחל דן – שמורת טבע ומים זורמים כל השנה",
-      "תל דן – עיר כנענית עם שער מקורי",
-      "שמורת הבניאס (נחל חרמון) – מפלים ומקדש פאן",
-      "גולן – עין עבדת, קצרין העתיקה, הר בנטל ותצפית על סוריה"
-    ]
-  },
-  {
-    id: 2,
-    region: "🏞 עמק יזרעאל והגלבוע",
-    sites: [
-      "גבעת המורה – נוף מרהיב לעמק",
-      "נחל הקיבוצים – מסלול מים חווייתי לכל המשפחה",
-      "הר הגלבוע – פריחה עונתית ונוף לעמק חרוד",
-      "בית שאן – עתיקות רומיות מרשימות",
-      "הר תבור – מקום ההתגלות לפי המסורת הנוצרית",
-      "כנסיית הבשורה – נצרת",
-      "יקב תבור – טעימות יין ונוף הרים"
-    ]
-  },
-  {
-    id: 3,
-    region: "🏙 חיפה והשרון",
-    sites: [
-      "גני הבהאיים – אתר מורשת עולמית עוצר נשימה",
-      "המושבה הגרמנית – חיפה",
-      "מוזיאון ההעפלה וחיל הים – חיפה",
-      "קיסריה העתיקה – אמת מים, תיאטרון ונמל רומי",
-      "פארק רעננה – מהגדולים במרכז הארץ",
-      "שמורת הבונים – מסלול חוף סלעי יפהפה",
-      "גן לאומי אפולוניה – מבצר צלבני מעל הים בהרצליה"
-    ]
-  },
-  {
-    id: 4,
-    region: "🕍 ירושלים והסביבה",
-    sites: [
-      "העיר העתיקה בירושלים – הכותל המערבי, כנסיית הקבר, הר הבית",
-      "יד ושם – מוזיאון השואה הלאומי",
-      "מוזיאון ישראל – כולל דגם ירושלים ובית הספרים הלאומי",
-      "הר הזיתים – תצפית לעיר העתיקה",
-      "שכונת משכנות שאננים – השכונה היהודית הראשונה מחוץ לחומות",
-      "שוק מחנה יהודה – תרבות, אוכל ואווירה ירושלמית",
-      "עיר דוד – ארכאולוגיה מרתקת מימי בית ראשון"
-    ]
-  },
-  {
-    id: 5,
-    region: "🏜 הדרום ומדבר יהודה",
-    sites: [
-      "ים המלח – הנקודה הנמוכה בעולם",
-      "מצדה – סמל הגבורה היהודית ומורשת עולמית",
-      "עין גדי – נווה מדבר ומסלולי מים",
-      "מערת קומראן – מקום גילוי המגילות הגנוזות",
-      "מכתש רמון – פלא גאולוגי עולמי",
-      "מצפה רמון – מרכז אסטרונומי לצפייה בכוכבים",
-      "באר שבע – עיר האבות, באר אברהם ומוזיאון הנגב",
-      "פארק תמנע – נופי מדבר ונחושת קדומה",
-      "אילת – חופי ים סוף, שנורקלינג וצלילה",
-      "שמורת האלמוגים – אחת היפות בעולם",
-      "המצפה התת ימי באילת – עולם חי תת-ימי עשיר"
-    ]
-  }
-];
-
 export const ChooseYourDay = () => {
   const { toast } = useToast();
-  const [activeSection, setActiveSection] = useState<'100topics' | 'vip'>('100topics');
   const [selections, setSelections] = useState<Record<number, number[]>>({
     1: [],
     2: [],
     3: [],
     4: []
-  });
-  const [vipSelections, setVipSelections] = useState<Record<number, number[]>>({
-    1: [],
-    2: [],
-    3: [],
-    4: [],
-    5: []
   });
   const [otherOptions, setOtherOptions] = useState<Record<number, string>>({
     1: '',
@@ -321,43 +233,23 @@ export const ChooseYourDay = () => {
       let requestData: any = {
         contactInfo,
         suggestedDate: suggestedDate ? format(suggestedDate, "dd/MM/yyyy") : null,
-        tourType: activeSection === 'vip' ? 'VIP Tour' : '100 Topics Day'
+        tourType: '100 Topics Day'
       };
+      // Build the selections data with activity names for 100 topics
+      const selectionsData = sections.reduce((acc, section) => {
+        const selectedIndices = selections[section.id] || [];
+        const selectedActivities = selectedIndices.map(index => section.activities[index]);
+        
+        acc[section.id] = {
+          sectionTitle: section.title,
+          activities: selectedActivities,
+          otherOption: otherOptions[section.id]
+        };
+        
+        return acc;
+      }, {} as any);
 
-      if (activeSection === '100topics') {
-        // Build the selections data with activity names for 100 topics
-        const selectionsData = sections.reduce((acc, section) => {
-          const selectedIndices = selections[section.id] || [];
-          const selectedActivities = selectedIndices.map(index => section.activities[index]);
-          
-          acc[section.id] = {
-            sectionTitle: section.title,
-            activities: selectedActivities,
-            otherOption: otherOptions[section.id]
-          };
-          
-          return acc;
-        }, {} as any);
-
-        requestData.selections = selectionsData;
-      } else {
-        // Build VIP destinations data
-        const vipSelectionsData = vipDestinations.reduce((acc, destination) => {
-          const selectedIndices = vipSelections[destination.id] || [];
-          const selectedSites = selectedIndices.map(index => destination.sites[index]);
-          
-          if (selectedSites.length > 0) {
-            acc[destination.id] = {
-              region: destination.region,
-              sites: selectedSites
-            };
-          }
-          
-          return acc;
-        }, {} as any);
-
-        requestData.vipDestinations = vipSelectionsData;
-      }
+      requestData.selections = selectionsData;
 
       const { error } = await supabase.functions.invoke('send-preferences-email', {
         body: requestData
@@ -387,13 +279,6 @@ export const ChooseYourDay = () => {
       
       // Reset all selections and other options
       setSelections({});
-      setVipSelections({
-        1: [],
-        2: [],
-        3: [],
-        4: [],
-        5: []
-      });
       setOtherOptions({});
     } catch (error) {
       console.error('Error sending preferences:', error);
@@ -412,194 +297,48 @@ export const ChooseYourDay = () => {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-4">
-            <Badge 
-              className={cn(
-                "text-lg px-6 py-2 cursor-pointer transition-all duration-300",
-                activeSection === '100topics' 
-                  ? "bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg scale-105" 
-                  : "bg-muted text-muted-foreground hover:bg-muted/80"
-              )}
-              onClick={() => setActiveSection('100topics')}
-            >
-              ביחרו את יום הכיף שלכם להלן 100 נושאים לבחירה
-            </Badge>
-            <Badge 
-              className={cn(
-                "text-lg px-6 py-2 cursor-pointer transition-all duration-300",
-                activeSection === 'vip' 
-                  ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg scale-105" 
-                  : "bg-muted text-muted-foreground hover:bg-muted/80"
-              )}
-              onClick={() => setActiveSection('vip')}
-            >
-              טיולי VIP לאורחים מחו״ל
-            </Badge>
-          </div>
-          {activeSection === '100topics' && (
-            <>
-              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-                אפשרויות בלתי נשכחות-ב4 קטגוריות :
-              </h2>
-              <div className="max-w-3xl mx-auto space-y-4">
-                <p className="text-xl text-muted-foreground">
-                  בחר פעילות אחת או שתיים מכל קטגוריה ונשוחח יחד על תכנון סופי של יום הכיף כולל מחיר סופי
-                </p>
-                <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-lg">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-orange-500/10 text-orange-700 border-orange-300">
-                      <Sunrise className="h-4 w-4 ml-1" />
-                      הרפתקת בוקר
-                    </Badge>
-                    <span className="text-muted-foreground">←</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-blue-500/10 text-blue-700 border-blue-300">
-                      <Waves className="h-4 w-4 ml-1" />
-                      הרגעת מעיינות
-                    </Badge>
-                    <span className="text-muted-foreground">←</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-amber-500/10 text-amber-700 border-amber-300">
-                      <Landmark className="h-4 w-4 ml-1" />
-                      מפגש מורשת
-                    </Badge>
-                    <span className="text-muted-foreground">←</span>
-                  </div>
-                  <Badge variant="outline" className="bg-purple-500/10 text-purple-700 border-purple-300">
-                    <Wine className="h-4 w-4 ml-1" />
-                    חגיגה קולינרית
-                  </Badge>
-                </div>
-                <p className="text-base text-muted-foreground">
-                  שלב אותן באופן כרונולוגי ליצירת תוכנית יום מלא (09:00 - 17:00)
-                </p>
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+            בחרו את יום הכיף שלכם להלן 100 נושאים לבחירה
+          </h2>
+          <div className="max-w-3xl mx-auto space-y-4">
+            <p className="text-xl text-muted-foreground">
+              בחר פעילות אחת או שתיים מכל קטגוריה ונשוחח יחד על תכנון סופי של יום הכיף כולל מחיר סופי
+            </p>
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-lg">
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="bg-orange-500/10 text-orange-700 border-orange-300">
+                  <Sunrise className="h-4 w-4 ml-1" />
+                  הרפתקת בוקר
+                </Badge>
+                <span className="text-muted-foreground">←</span>
               </div>
-            </>
-          )}
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="bg-blue-500/10 text-blue-700 border-blue-300">
+                  <Waves className="h-4 w-4 ml-1" />
+                  הרגעת מעיינות
+                </Badge>
+                <span className="text-muted-foreground">←</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="bg-amber-500/10 text-amber-700 border-amber-300">
+                  <Landmark className="h-4 w-4 ml-1" />
+                  מפגש מורשת
+                </Badge>
+                <span className="text-muted-foreground">←</span>
+              </div>
+              <Badge variant="outline" className="bg-purple-500/10 text-purple-700 border-purple-300">
+                <Wine className="h-4 w-4 ml-1" />
+                חגיגה קולינרית
+              </Badge>
+            </div>
+            <p className="text-base text-muted-foreground">
+              שלב אותן באופן כרונולוגי ליצירת תוכנית יום מלא (09:00 - 17:00)
+            </p>
+          </div>
         </div>
 
-        {/* VIP Tour Section */}
-        {activeSection === 'vip' && (
-          <>
-            <div className="max-w-5xl mx-auto mb-12">
-              <Card className="border-2 border-purple-500/30 bg-gradient-to-br from-purple-50/50 to-blue-50/50 dark:from-purple-950/20 dark:to-blue-950/20">
-                <CardHeader className="text-center">
-                  <div className="flex justify-center mb-4">
-                    <Badge className="text-xl px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
-                      טיולי VIP - עד 19 מטיילים
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-3xl md:text-4xl font-bold mb-4">
-                    טיול VIP מיוחד לאורחים מחו״ל
-                  </CardTitle>
-                  <CardDescription className="text-lg md:text-xl leading-relaxed">
-                    <p className="mb-4">
-                      החברה שלכם מארחת אורחים מחו״ל? דייויד טורס יכול לארח אותם בטיול VIP ברכב ממוזג מפואר ולהעניק להם חוויית טיול בלתי נשכחת ברחבי ישראל.
-                    </p>
-                    <p className="font-semibold text-primary">
-                      מתאים לקבוצות של 1-19 מטיילים • נהג מקצועי ומדריך מומחה • רכב מפואר וממוזג • מסלולים מותאמים אישית
-                    </p>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <div className="flex items-center gap-2 text-lg">
-                      <CheckCircle2 className="h-6 w-6 text-green-600" />
-                      <span>רכב VIP ממוזג</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-lg">
-                      <CheckCircle2 className="h-6 w-6 text-green-600" />
-                      <span>מדריך מקצועי</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-lg">
-                      <CheckCircle2 className="h-6 w-6 text-green-600" />
-                      <span>מסלול מותאם אישית</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* VIP Destinations Selection */}
-            <div className="max-w-7xl mx-auto mb-12">
-              <div className="text-center mb-8">
-                <h3 className="text-3xl font-bold mb-4">בחרו את האתרים המועדפים עליכם</h3>
-                <p className="text-lg text-muted-foreground">
-                  רשימת 50 אתרים מומלצים לביקור בישראל, מחולקים לפי אזורים גיאוגרפיים – מצפון לדרום
-                </p>
-                <p className="text-base text-muted-foreground mt-2">
-                  הרשימה כוללת אתרים היסטוריים, טבעיים, דתיים ותרבותיים, שנחשבים מהחשובים והמרתקים ביותר בארץ
-                </p>
-              </div>
-
-              <div className="space-y-6">
-                {vipDestinations.map((destination) => {
-                  const currentSelections = vipSelections[destination.id] || [];
-                  
-                  return (
-                    <Card 
-                      key={destination.id}
-                      className="border-2 hover:shadow-strong transition-all duration-300"
-                    >
-                      <CardHeader>
-                        <div className="flex items-center justify-between">
-                          <CardTitle className="text-2xl">
-                            {destination.region}
-                          </CardTitle>
-                          <Badge 
-                            variant="secondary" 
-                            className={cn(
-                              "text-lg px-4 py-2",
-                              currentSelections.length > 0 && "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100"
-                            )}
-                          >
-                            {currentSelections.length} נבחרו
-                          </Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {destination.sites.map((site, index) => (
-                            <div
-                              key={index}
-                              className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
-                              onClick={() => {
-                                const isSelected = currentSelections.includes(index);
-                                if (isSelected) {
-                                  setVipSelections({
-                                    ...vipSelections,
-                                    [destination.id]: currentSelections.filter(i => i !== index)
-                                  });
-                                } else {
-                                  setVipSelections({
-                                    ...vipSelections,
-                                    [destination.id]: [...currentSelections, index]
-                                  });
-                                }
-                              }}
-                            >
-                              <Checkbox
-                                checked={currentSelections.includes(index)}
-                                className="mt-1"
-                              />
-                              <span className="flex-1 text-right">{site}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
-          </>
-        )}
-
         {/* Sections */}
-        {activeSection === '100topics' && (
-          <div className="max-w-7xl mx-auto space-y-6">
+        <div className="max-w-7xl mx-auto space-y-6">
           {sections.map((section) => {
             const Icon = section.icon;
             const currentSelections = selections[section.id] || [];
@@ -721,11 +460,10 @@ export const ChooseYourDay = () => {
                     </div>
                   </CardContent>
                 )}
-              </Card>
+          </Card>
             );
           })}
         </div>
-        )}
 
         {/* Summary Section */}
         <div className="max-w-6xl mx-auto my-12">
@@ -747,50 +485,26 @@ export const ChooseYourDay = () => {
               </div>
             </CardHeader>
             <CardContent>
-              {activeSection === '100topics' ? (
-                <div className="flex flex-wrap justify-center gap-8 py-6">
-                  {sections.map((section) => {
-                    const count = (selections[section.id] || []).length;
-                    const colorClasses = [
-                      'from-orange-500 to-yellow-500',
-                      'from-blue-500 to-cyan-400',
-                      'from-amber-600 to-orange-500',
-                      'from-purple-600 to-pink-500'
-                    ];
-                    
-                    return (
-                      <div key={section.id} className="flex flex-col items-center gap-3">
-                        <div className={`w-24 h-24 rounded-full bg-gradient-to-br ${colorClasses[section.id - 1]} flex items-center justify-center text-white text-4xl font-bold shadow-lg`}>
-                          {count}
-                        </div>
-                        <span className="text-lg font-medium">קטגוריה {section.id}</span>
+              <div className="flex flex-wrap justify-center gap-8 py-6">
+                {sections.map((section) => {
+                  const count = (selections[section.id] || []).length;
+                  const colorClasses = [
+                    'from-orange-500 to-yellow-500',
+                    'from-blue-500 to-cyan-400',
+                    'from-amber-600 to-orange-500',
+                    'from-purple-600 to-pink-500'
+                  ];
+                  
+                  return (
+                    <div key={section.id} className="flex flex-col items-center gap-3">
+                      <div className={`w-24 h-24 rounded-full bg-gradient-to-br ${colorClasses[section.id - 1]} flex items-center justify-center text-white text-4xl font-bold shadow-lg`}>
+                        {count}
                       </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="flex flex-wrap justify-center gap-8 py-6">
-                  {vipDestinations.map((destination) => {
-                    const count = (vipSelections[destination.id] || []).length;
-                    const colorClasses = [
-                      'from-green-600 to-emerald-500',
-                      'from-blue-600 to-sky-500',
-                      'from-cyan-600 to-teal-500',
-                      'from-purple-600 to-violet-500',
-                      'from-orange-600 to-amber-500'
-                    ];
-                    
-                    return (
-                      <div key={destination.id} className="flex flex-col items-center gap-3">
-                        <div className={`w-24 h-24 rounded-full bg-gradient-to-br ${colorClasses[destination.id - 1]} flex items-center justify-center text-white text-4xl font-bold shadow-lg`}>
-                          {count}
-                        </div>
-                        <span className="text-lg font-medium text-center">{destination.region}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+                      <span className="text-lg font-medium">קטגוריה {section.id}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </CardContent>
           </Card>
         </div>
