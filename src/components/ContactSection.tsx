@@ -100,10 +100,12 @@ export const ContactSection = () => {
               variant="whatsapp"
               size="lg"
               className="w-full text-lg"
-              onClick={() => window.open('https://wa.me/972537314235', '_blank')}
+              asChild
             >
-              <MessageCircle className="ml-2 h-5 w-5" />
-              וואטסאפ
+              <a href="https://wa.me/972537314235" target="_blank" rel="noopener noreferrer">
+                <MessageCircle className="ml-2 h-5 w-5" />
+                וואטסאפ
+              </a>
             </Button>
           </div>
 
