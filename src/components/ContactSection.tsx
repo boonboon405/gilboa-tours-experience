@@ -100,7 +100,7 @@ export const ContactSection = () => {
               variant="whatsapp"
               size="lg"
               className="w-full text-lg"
-              onClick={() => window.open(`https://wa.me/${whatsappNumber}`, '_blank')}
+              onClick={() => window.open('https://api.WhatsApp.com/send?phone=+972537314235', '_blank')}
             >
               <MessageCircle className="ml-2 h-5 w-5" />
               וואטסאפ
