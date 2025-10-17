@@ -373,7 +373,7 @@ export const ChooseYourDay = () => {
                         </CardDescription>
                         <div className="mt-3 flex items-center gap-2">
                           <span className="text-sm font-medium text-muted-foreground">
-                            בחר עד 8 פעילויות
+                            בחרו באטרקציה אחת - בחר עד 8 פעילויות
                           </span>
                           <div 
                             className={`font-bold text-lg px-4 py-2 rounded-full ${
