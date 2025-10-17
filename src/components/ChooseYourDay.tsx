@@ -302,7 +302,7 @@ export const ChooseYourDay = () => {
           </h2>
           <div className="max-w-3xl mx-auto space-y-4">
             <p className="text-xl text-muted-foreground">
-              בחר פעילות אחת או שתיים מכל קטגוריה ונשוחח יחד על תכנון סופי של יום הכיף כולל מחיר סופי
+              בחרו את ארבעת (4) האתרים המועדפים עליכם
             </p>
             <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-lg">
               <div className="flex items-center gap-2">
@@ -373,7 +373,7 @@ export const ChooseYourDay = () => {
                         </CardDescription>
                         <div className="mt-3 flex items-center gap-2">
                           <span className="text-sm font-medium text-muted-foreground">
-                            בחרו את ארבעת (4) האתרים המועדפים עליכם
+                            בחר עד 8 פעילויות
                           </span>
                           <div 
                             className={`font-bold text-lg px-4 py-2 rounded-full ${
