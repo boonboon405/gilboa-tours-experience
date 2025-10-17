@@ -302,7 +302,7 @@ export const ChooseYourDay = () => {
           </h2>
           <div className="max-w-3xl mx-auto space-y-4">
             <p className="text-xl text-muted-foreground">
-              בחרו את ארבעת (4) האתרים המועדפים עליכם
+              בחרו מתוך 4 הקטגוריות את ארבעת (4) האטרקציות או האתרים המועדפים עליכם
             </p>
             <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-lg">
               <div className="flex items-center gap-2">
