@@ -25,21 +25,25 @@ export const ContactSection = () => {
     setIsSubmitting(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('send-contact-email', {
-        body: {
+      const response = await fetch('https://wde.app.n8n.cloud/webhook/805437d0-da8b-4ec5-9a10-154900493358', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
           message: formData.message,
-        },
+        }),
       });
 
-      if (error) throw error;
+      if (!response.ok) throw new Error('Failed to send message');
 
       toast.success('ההודעה נשלחה! נחזור אליך בקרוב.');
       setFormData({ name: '', email: '', phone: '', message: '' });
     } catch (error) {
-      console.error('Error sending email:', error);
+      console.error('Error sending message:', error);
       toast.error('שגיאה בשליחת ההודעה. אנא נסה שוב.');
     } finally {
       setIsSubmitting(false);
