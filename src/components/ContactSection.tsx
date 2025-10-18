@@ -30,6 +30,7 @@ export const ContactSection = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        mode: 'no-cors',
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
@@ -37,8 +38,6 @@ export const ContactSection = () => {
           message: formData.message,
         }),
       });
-
-      if (!response.ok) throw new Error('Failed to send message');
 
       toast.success('ההודעה נשלחה! נחזור אליך בקרוב.');
       setFormData({ name: '', email: '', phone: '', message: '' });
