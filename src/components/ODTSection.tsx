@@ -5,16 +5,18 @@ import { Button } from '@/components/ui/button';
 import { Users, Target, Lightbulb, Heart, MessageCircle, Eye } from 'lucide-react';
 import odtImage from '@/assets/odt-team.jpg';
 import { ODTTypesDialog } from './ODTTypesDialog';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const ODTSection = () => {
+  const { t } = useLanguage();
   const whatsappNumber = '972537314235';
   const [showODTTypes, setShowODTTypes] = useState(false);
 
   const benefits = [
-    { icon: Users, text: 'שיתוף פעולה צוותי משופר' },
-    { icon: Target, text: 'פיתוח מנהיגות' },
-    { icon: Lightbulb, text: 'מיומנויות פתרון בעיות' },
-    { icon: Heart, text: 'בניית אמון' },
+    { icon: Users, text: t('odt.benefit1') },
+    { icon: Target, text: t('odt.benefit2') },
+    { icon: Lightbulb, text: t('odt.benefit3') },
+    { icon: Heart, text: t('odt.benefit4') },
   ];
 
   return (
@@ -36,20 +38,20 @@ export const ODTSection = () => {
             <Card className="border-2 border-primary/20 cursor-pointer hover:border-primary/40 transition-colors" onClick={() => setShowODTTypes(true)}>
               <CardHeader>
                 <CardTitle className="text-2xl text-primary flex items-center justify-between">
-                  מהו ODT?
+                  {t('odt.what')}
                   <Button variant="ghost" size="sm" className="gap-2">
                     <Eye className="h-4 w-4" />
-                    לחץ כאן
+                    {t('odt.what') === 'What is ODT?' ? 'Click here' : 'לחץ כאן'}
                   </Button>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground leading-relaxed">
-                  אימון פיתוח חוץ משתמש באתגרים מבוססי טבע כדי לחזק עבודת צוות, מנהיגות ומיומנויות תקשורת.
+                  {t('odt.what.desc')}
                 </p>
                 <div className="mt-4 p-3 bg-primary/10 rounded-lg">
                   <p className="text-sm font-medium text-primary text-center">
-                    לחץ כדי לראות 15 סוגי פעילויות ODT עם תמונות ריאליסטיות
+                    {t('odt.what') === 'What is ODT?' ? 'Click to see 15 ODT activity types with realistic photos' : 'לחץ כדי לראות 15 סוגי פעילויות ODT עם תמונות ריאליסטיות'}
                   </p>
                 </div>
               </CardContent>
@@ -57,7 +59,7 @@ export const ODTSection = () => {
 
             <div>
               <h3 className="text-2xl font-bold mb-4 text-foreground">
-                ODT יתרונות
+                {t('odt.benefits')}
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 {benefits.map((benefit, index) => {
@@ -84,7 +86,7 @@ export const ODTSection = () => {
               onClick={() => window.open(`https://wa.me/${whatsappNumber}`, '_blank')}
             >
               <MessageCircle className="ml-2 h-5 w-5" />
-              וואטסאפ
+              {t('hero.whatsapp')}
             </Button>
           </div>
         </div>

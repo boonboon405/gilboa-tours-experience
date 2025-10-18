@@ -15,8 +15,8 @@ export const Navigation = () => {
 
   const navItems = [
     { label: t('nav.home'), href: '#home' },
-    { label: 'ביחרו את יום הכייף שלכם', href: '#choose-your-day' },
-    { label: 'טיולי VIP לאורחים מחו״ל', href: '#vip-tours' },
+    { label: t('footer.chooseDay'), href: '#choose-your-day' },
+    { label: t('footer.vipTours'), href: '#vip-tours' },
     { label: t('nav.odt'), href: '#odt' },
     { label: t('nav.contact'), href: '#contact' },
   ];

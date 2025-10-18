@@ -6,8 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Mail, Phone, MessageCircle, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const ContactSection = () => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -36,11 +38,11 @@ export const ContactSection = () => {
 
       if (error) throw error;
 
-      toast.success('ההודעה נשלחה! נחזור אליך בקרוב.');
+      toast.success(t('contact.send') === 'Send Message' ? 'Message sent! We\'ll get back to you soon.' : 'ההודעה נשלחה! נחזור אליך בקרוב.');
       setFormData({ name: '', email: '', phone: '', message: '' });
     } catch (error) {
       console.error('Error sending email:', error);
-      toast.error('שגיאה בשליחת ההודעה. אנא נסה שוב.');
+      toast.error(t('contact.send') === 'Send Message' ? 'Error sending message. Please try again.' : 'שגיאה בשליחת ההודעה. אנא נסה שוב.');
     } finally {
       setIsSubmitting(false);
     }
@@ -51,7 +53,7 @@ export const ContactSection = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            צור קשר
+            {t('contact.title')}
           </h2>
         </div>
 
@@ -65,7 +67,7 @@ export const ContactSection = () => {
                     <Phone className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">טלפון</p>
+                    <p className="text-sm text-muted-foreground">{t('footer.phone')}</p>
                     <a
                       href={`tel:${phoneNumber}`}
                       className="text-lg font-semibold text-foreground hover:text-primary transition-colors"
@@ -84,7 +86,7 @@ export const ContactSection = () => {
                     <Mail className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">אימייל</p>
+                    <p className="text-sm text-muted-foreground">{t('footer.email')}</p>
                     <a
                       href={`mailto:${email}`}
                       className="text-lg font-semibold text-foreground hover:text-primary transition-colors"
@@ -104,7 +106,7 @@ export const ContactSection = () => {
             >
               <a href="https://wa.me/972537314235" target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="ml-2 h-5 w-5" />
-                וואטסאפ
+                {t('hero.whatsapp')}
               </a>
             </Button>
           </div>
@@ -112,13 +114,13 @@ export const ContactSection = () => {
           {/* Contact Form */}
           <Card className="border-2">
             <CardHeader>
-              <CardTitle className="text-2xl">צור קשר</CardTitle>
+              <CardTitle className="text-2xl">{t('contact.title')}</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <Input
-                    placeholder="שם מלא"
+                    placeholder={t('contact.name')}
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
@@ -128,7 +130,7 @@ export const ContactSection = () => {
                 <div>
                   <Input
                     type="email"
-                    placeholder='דוא"ל'
+                    placeholder={t('contact.email')}
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
@@ -138,7 +140,7 @@ export const ContactSection = () => {
                 <div>
                   <Input
                     type="tel"
-                    placeholder="טלפון"
+                    placeholder={t('contact.phone')}
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     required
@@ -147,7 +149,7 @@ export const ContactSection = () => {
                 </div>
                 <div>
                   <Textarea
-                    placeholder="הודעה"
+                    placeholder={t('contact.message')}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     required
@@ -163,7 +165,7 @@ export const ContactSection = () => {
                   disabled={isSubmitting}
                 >
                   <Send className="ml-2 h-5 w-5" />
-                  {isSubmitting ? 'שולח...' : 'שלח הודעה'}
+                  {isSubmitting ? (t('vip.sending')) : t('contact.send')}
                 </Button>
               </form>
             </CardContent>

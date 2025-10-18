@@ -1,6 +1,8 @@
 import { Mail, Phone } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const Footer = () => {
+  const { t } = useLanguage();
   const email = 'info@davidtours.com';
   const phoneNumber = '053-7314235';
 
@@ -14,14 +16,14 @@ export const Footer = () => {
               דוד טורס
             </h3>
             <p className="text-muted-foreground">
-              יום חווייתי, מהנה ומשמעותי שמשלב היסטוריה, טבע, גיבוש והרבה זיכרונות טובים לחברה שלכם.
+              {t('footer.brand.desc')}
             </p>
           </div>
 
           {/* Contact */}
           <div>
             <h4 className="text-lg font-semibold text-foreground mb-4">
-              צור קשר
+              {t('footer.contact')}
             </h4>
             <div className="space-y-3">
               <a
@@ -44,27 +46,27 @@ export const Footer = () => {
           {/* Links */}
           <div>
             <h4 className="text-lg font-semibold text-foreground mb-4">
-              קישורים מהירים
+              {t('footer.links')}
             </h4>
             <ul className="space-y-2">
               <li>
                 <a href="#choose-your-day" className="text-muted-foreground hover:text-primary transition-colors">
-                  ביחרו את יום הכייף שלכם
+                  {t('footer.chooseDay')}
                 </a>
               </li>
               <li>
                 <a href="#vip-tours" className="text-muted-foreground hover:text-primary transition-colors">
-                  טיולי VIP
+                  {t('footer.vipTours')}
                 </a>
               </li>
               <li>
                 <a href="#odt" className="text-muted-foreground hover:text-primary transition-colors">
-                  פעילויות גיבוש ODT
+                  {t('footer.odt')}
                 </a>
               </li>
               <li>
                 <a href="#contact" className="text-muted-foreground hover:text-primary transition-colors">
-                  צור קשר
+                  {t('footer.contact')}
                 </a>
               </li>
             </ul>
@@ -72,7 +74,7 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-border pt-8 text-center text-muted-foreground">
-          <p>© 2025 דוד טורס. כל הזכויות שמורות.</p>
+          <p>{t('footer.rights')}</p>
         </div>
       </div>
     </footer>

@@ -3,10 +3,12 @@ import { Phone, MessageCircle, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroImage from '@/assets/hero-gilboa.jpg';
 import { LandscapeImageSelector } from './LandscapeImageSelector';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const STORAGE_KEY = 'landscape-images';
 
 export const Hero = () => {
+  const { t } = useLanguage();
   const [images, setImages] = useState<string[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     const savedImages = saved ? JSON.parse(saved) : [];
@@ -79,20 +81,20 @@ export const Hero = () => {
         onClick={() => setShowImageSelector(true)}
       >
         <Sparkles className="ml-2 h-4 w-4" />
-        צור תמונת רקע ב-AI
+        {t('hero.title') === 'Discover the Ultimate Team Experience' ? 'Create AI Background' : 'צור תמונת רקע ב-AI'}
       </Button>
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 animate-fade-in">
-            חוויה קבוצתית מיוחדת, בונה ובלתי נשכחת
+            {t('hero.title')}
           </h1>
           <h2 className="text-3xl md:text-5xl font-semibold text-accent mb-6 animate-fade-in">
-            בלב הגלבוע הגליל וסובב כנרת
+            {t('hero.subtitle')}
           </h2>
           <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
-            יום חווייתי, מהנה ומשמעותי שמשלב היסטוריה, טבע, גיבוש והרבה זיכרונות טובים לחברה שלכם.
+            {t('hero.description')}
           </p>
 
           {/* CTA Buttons */}
@@ -103,7 +105,7 @@ export const Hero = () => {
               className="text-lg px-8 py-6"
               onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              הזמינו את ההרפתקה
+              {t('hero.cta')}
             </Button>
             <Button
               variant="whatsapp"
@@ -112,7 +114,7 @@ export const Hero = () => {
               onClick={() => window.open(`https://wa.me/${whatsappNumber}`, '_blank')}
             >
               <MessageCircle className="ml-2 h-5 w-5" />
-              וואטסאפ
+              {t('hero.whatsapp')}
             </Button>
           </div>
 
