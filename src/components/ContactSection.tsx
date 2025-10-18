@@ -6,6 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Mail, Phone, MessageCircle, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { z } from 'zod';
+
+const contactSchema = z.object({
+  name: z.string().trim().min(1, 'שם נדרש').max(100, 'שם ארוך מדי'),
+  email: z.string().trim().email('אימייל לא תקין').max(255, 'אימייל ארוך מדי'),
+  phone: z.string().trim().min(6, 'טלפון לא תקין').max(30, 'טלפון ארוך מדי'),
+  message: z.string().trim().min(1, 'הודעה נדרשת').max(1000, 'הודעה ארוכה מדי'),
+});
 
 export const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -24,20 +32,20 @@ export const ContactSection = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    // Validate input
+    const parsed = contactSchema.safeParse(formData);
+    if (!parsed.success) {
+      toast.error(parsed.error.errors[0]?.message || 'בדיקת קלט נכשלה');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
-      const response = await fetch('https://wde.app.n8n.cloud/webhook/805437d0-da8b-4ec5-9a10-154900493358', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        mode: 'no-cors',
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          message: formData.message,
-        }),
+      const { data, error } = await supabase.functions.invoke('forward-webhook', {
+        body: parsed.data,
       });
+
+      if (error) throw error;
 
       toast.success('ההודעה נשלחה! נחזור אליך בקרוב.');
       setFormData({ name: '', email: '', phone: '', message: '' });

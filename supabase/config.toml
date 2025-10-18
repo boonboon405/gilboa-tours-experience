@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.generate-landscape-image]
 verify_jwt = false
+
+[functions.forward-webhook]
+verify_jwt = false
