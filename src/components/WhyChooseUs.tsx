@@ -1,30 +1,28 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Award, Settings, Shield, Truck } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 export const WhyChooseUs = () => {
-  const { t } = useLanguage();
 
   const reasons = [
     {
       icon: Award,
-      title: t('why.certified'),
-      desc: t('why.certified.desc'),
+      title: 'מקצועי ומוסמך',
+      desc: 'מדריך טיולים מורשה עם שנות ניסיון',
     },
     {
       icon: Settings,
-      title: t('why.custom'),
-      desc: t('why.custom.desc'),
+      title: 'חוויות מותאמות אישית',
+      desc: 'מעוצב במיוחד לקבוצות עסקיות, חברות הי טק, ועדי עובדים וחברות מקצועיות',
     },
     {
       icon: Shield,
-      title: t('why.safe'),
-      desc: t('why.safe.desc'),
+      title: 'בטוח ומרענן',
+      desc: 'מושלם לקיץ הישראלי החם',
     },
     {
       icon: Truck,
-      title: t('why.logistics'),
-      desc: t('why.logistics.desc'),
+      title: 'שירות מלא',
+      desc: 'כל הלוגיסטיקה מטופלת מתחילה ועד סוף',
     },
   ];
 
@@ -32,7 +30,7 @@ export const WhyChooseUs = () => {
     <section className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl md:text-5xl font-bold text-center text-foreground mb-16">
-          {t('why.title')}
+          למה לבחור בדוד טורס?
         </h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">

@@ -1,8 +1,6 @@
 import { Mail, Phone } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 export const Footer = () => {
-  const { t } = useLanguage();
   const email = 'info@davidtours.com';
   const phoneNumber = '053-7314235';
 
@@ -16,14 +14,14 @@ export const Footer = () => {
               דוד טורס
             </h3>
             <p className="text-muted-foreground">
-              {t('footer.brand.desc')}
+              יום חווייתי, מהנה ומשמעותי שמשלב היסטוריה, טבע, גיבוש והרבה זיכרונות טובים לחברה שלכם.
             </p>
           </div>
 
           {/* Contact */}
           <div>
             <h4 className="text-lg font-semibold text-foreground mb-4">
-              {t('footer.contact')}
+              צור קשר
             </h4>
             <div className="space-y-3">
               <a
@@ -46,27 +44,27 @@ export const Footer = () => {
           {/* Links */}
           <div>
             <h4 className="text-lg font-semibold text-foreground mb-4">
-              {t('footer.links')}
+              קישורים מהירים
             </h4>
             <ul className="space-y-2">
               <li>
                 <a href="#choose-your-day" className="text-muted-foreground hover:text-primary transition-colors">
-                  {t('footer.chooseDay')}
+                  ביחרו את יום הכייף שלכם
                 </a>
               </li>
               <li>
                 <a href="#vip-tours" className="text-muted-foreground hover:text-primary transition-colors">
-                  {t('footer.vipTours')}
+                  טיולי VIP
                 </a>
               </li>
               <li>
                 <a href="#odt" className="text-muted-foreground hover:text-primary transition-colors">
-                  {t('footer.odt')}
+                  פעילויות גיבוש ODT
                 </a>
               </li>
               <li>
                 <a href="#contact" className="text-muted-foreground hover:text-primary transition-colors">
-                  {t('footer.contact')}
+                  צור קשר
                 </a>
               </li>
             </ul>
@@ -74,7 +72,7 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-border pt-8 text-center text-muted-foreground">
-          <p>{t('footer.rights')}</p>
+          <p>© 2025 דוד טורס. כל הזכויות שמורות.</p>
         </div>
       </div>
     </footer>
