@@ -1,7 +1,7 @@
 import { Mail, Phone } from 'lucide-react';
 
 export const Footer = () => {
-  const email = 'info@davidtours.com';
+  const email = 'davidisraeltours@gmail.com';
   const phoneNumber = '053-7314235';
 
   return (
