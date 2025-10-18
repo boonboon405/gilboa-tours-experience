@@ -1,16 +1,24 @@
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   const navItems = [
-    { label: 'בית', href: '#home' },
+    { label: t('nav.home'), href: '#home' },
     { label: 'ביחרו את יום הכייף שלכם', href: '#choose-your-day' },
     { label: 'טיולי VIP לאורחים מחו״ל', href: '#vip-tours' },
-    { label: 'גיבוש ODT', href: '#odt' },
-    { label: 'צור קשר', href: '#contact' },
+    { label: t('nav.odt'), href: '#odt' },
+    { label: t('nav.contact'), href: '#contact' },
   ];
 
   return (
@@ -25,7 +33,7 @@ export const Navigation = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
             {navItems.map((item) => (
               <a
                 key={item.label}
@@ -35,10 +43,57 @@ export const Navigation = () => {
                 {item.label}
               </a>
             ))}
+            
+            {/* Language Switcher */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Globe className="h-4 w-4" />
+                  {language === 'he' ? 'עברית' : 'English'}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-card">
+                <DropdownMenuItem 
+                  onClick={() => setLanguage('he')}
+                  className="cursor-pointer"
+                >
+                  עברית
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setLanguage('en')}
+                  className="cursor-pointer"
+                >
+                  English
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          {/* Mobile Menu Button & Language Switcher */}
+          <div className="md:hidden flex items-center gap-2">
+            {/* Language Switcher */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Globe className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-card">
+                <DropdownMenuItem 
+                  onClick={() => setLanguage('he')}
+                  className="cursor-pointer"
+                >
+                  עברית
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setLanguage('en')}
+                  className="cursor-pointer"
+                >
+                  English
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <Button
               variant="ghost"
               size="icon"
