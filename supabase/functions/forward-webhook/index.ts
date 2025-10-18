@@ -37,19 +37,18 @@ serve(async (req: Request): Promise<Response> => {
       );
     }
 
-    const params = new URLSearchParams({
-      name: parsed.data.name,
-      email: parsed.data.email,
-      phone: parsed.data.phone,
-      message: parsed.data.message,
+    const payload = {
+      ...parsed.data,
       source: "website",
       timestamp: new Date().toISOString(),
-    });
+    };
 
-    const webhookUrl = `https://wde.app.n8n.cloud/webhook/805437d0-da8b-4ec5-9a10-154900493358?${params.toString()}`;
+    const webhookUrl = "https://wde.app.n8n.cloud/webhook/805437d0-da8b-4ec5-9a10-154900493358";
 
     const resp = await fetch(webhookUrl, {
-      method: "GET",
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
 
     if (!resp.ok) {
