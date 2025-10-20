@@ -280,6 +280,9 @@ export const VIPTours = () => {
                         {currentSelections.length} נבחרו
                       </Badge>
                     </div>
+                    <CardDescription className="text-base mt-3">
+                      בחר עד 5 פעילויות, יחד נקבע את האטרקציות הכי מתאימות בהיתחשב בזמנים ואפשרויות בשטח ומזג אויר
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
