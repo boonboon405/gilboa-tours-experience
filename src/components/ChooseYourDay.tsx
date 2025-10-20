@@ -197,7 +197,7 @@ export const ChooseYourDay = () => {
         ...selections,
         [sectionId]: currentSelections.filter(i => i !== activityIndex)
       });
-    } else if (currentSelections.length < 8) {
+    } else if (currentSelections.length < 5) {
       setSelections({
         ...selections,
         [sectionId]: [...currentSelections, activityIndex]
@@ -373,7 +373,7 @@ export const ChooseYourDay = () => {
                         </CardDescription>
                         <div className="mt-3 flex items-center gap-2">
                           <span className="text-sm font-medium text-muted-foreground">
-                            בחר עד 8 פעילויות
+                            בחר עד 5 פעילויות, יחד נקבע את האטרקציה הכי מתאימה בהיתחשב בזמנים ואפשרויות בשטח ומזג אויר
                           </span>
                           <div 
                             className={`font-bold text-lg px-4 py-2 rounded-full ${
@@ -382,7 +382,7 @@ export const ChooseYourDay = () => {
                                 : 'bg-primary text-primary-foreground shadow-lg'
                             }`}
                           >
-                            {currentSelections.length}/8 נבחרו
+                            {currentSelections.length}/5 נבחרו
                           </div>
                         </div>
                       </div>
@@ -400,7 +400,7 @@ export const ChooseYourDay = () => {
                     <div className="grid md:grid-cols-2 gap-3">
                       {section.activities.map((activity, index) => {
                         const isSelected = currentSelections.includes(index);
-                        const isDisabled = !isSelected && currentSelections.length >= 8;
+                        const isDisabled = !isSelected && currentSelections.length >= 5;
                         
                         return (
                           <div
