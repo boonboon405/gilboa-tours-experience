@@ -266,7 +266,7 @@ export const BookingForm = ({ tourType = "general", preselectedDestinations = []
           id="special_requests"
           value={formData.special_requests}
           onChange={(e) => handleInputChange("special_requests", e.target.value)}
-          placeholder="ציין כל דרישה או בקשה מיוחדת..."
+          placeholder="מה ברצונכם לחוות, לראות, לצפות בסיור?"
           maxLength={1000}
           rows={4}
         />
