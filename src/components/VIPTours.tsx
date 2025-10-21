@@ -247,7 +247,7 @@ export const VIPTours = () => {
         {/* VIP Destinations Selection */}
         <div className="max-w-7xl mx-auto mb-12">
           <div className="text-center mb-8">
-            <h3 className="text-3xl font-bold mb-4">בחרו את האתרים המועדפים עליכם</h3>
+            <h3 className="text-3xl font-bold mb-4">בחרו את חבל הארץ ואת האתרים המועדפים עליכם</h3>
             <p className="text-lg text-muted-foreground">
               רשימת 50 אתרים מומלצים לביקור בישראל, מחולקים לפי אזורים גיאוגרפיים – מצפון לדרום
             </p>
