@@ -70,24 +70,36 @@ export const BookingForm = ({ tourType = "general", preselectedDestinations = []
 
       setIsSubmitting(true);
 
-      const { error } = await supabase.from("bookings").insert([
-        {
-          tour_type: tourType,
-          tour_date: format(tourDate, "yyyy-MM-dd"),
-          participants_count: validatedData.participants_count,
-          tour_duration: validatedData.tour_duration,
-          preferred_language: validatedData.preferred_language,
-          customer_name: validatedData.customer_name,
-          customer_email: validatedData.customer_email,
-          customer_phone: validatedData.customer_phone,
-          customer_company: validatedData.customer_company || null,
-          special_requests: validatedData.special_requests || null,
-          selected_destinations: preselectedDestinations.length > 0 ? preselectedDestinations : null,
-          status: "pending",
-        },
-      ]);
+      const bookingData = {
+        tour_type: tourType,
+        tour_date: format(tourDate, "yyyy-MM-dd"),
+        participants_count: validatedData.participants_count,
+        tour_duration: validatedData.tour_duration,
+        preferred_language: validatedData.preferred_language,
+        customer_name: validatedData.customer_name,
+        customer_email: validatedData.customer_email,
+        customer_phone: validatedData.customer_phone,
+        customer_company: validatedData.customer_company || null,
+        special_requests: validatedData.special_requests || null,
+        selected_destinations: preselectedDestinations.length > 0 ? preselectedDestinations : null,
+        status: "pending",
+      };
+
+      const { data, error } = await supabase.from("bookings").insert([bookingData]).select();
 
       if (error) throw error;
+
+      // Send notification email in the background
+      if (data && data[0]) {
+        try {
+          await supabase.functions.invoke('send-booking-notification', {
+            body: { booking: data[0] }
+          });
+        } catch (emailError) {
+          console.error('Error sending notification email:', emailError);
+          // Don't fail the booking if email fails
+        }
+      }
 
       toast({
         title: "ההזמנה נשלחה בהצלחה!",
