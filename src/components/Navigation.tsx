@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,6 +36,12 @@ export const Navigation = () => {
                 {item.label}
               </a>
             ))}
+            <Link to="/booking">
+              <Button variant="default" className="gap-2">
+                <Calendar className="h-4 w-4" />
+                הזמן סיור
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -63,6 +70,12 @@ export const Navigation = () => {
                 {item.label}
               </a>
             ))}
+            <Link to="/booking">
+              <Button variant="default" className="w-full mt-2 gap-2">
+                <Calendar className="h-4 w-4" />
+                הזמן סיור
+              </Button>
+            </Link>
           </div>
         )}
       </div>

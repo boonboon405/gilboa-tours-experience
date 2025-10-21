@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          created_at: string
+          customer_company: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          id: string
+          participants_count: number
+          preferred_language: string | null
+          selected_destinations: Json | null
+          special_requests: string | null
+          status: string
+          tour_date: string
+          tour_duration: string | null
+          tour_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_company?: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          id?: string
+          participants_count: number
+          preferred_language?: string | null
+          selected_destinations?: Json | null
+          special_requests?: string | null
+          status?: string
+          tour_date: string
+          tour_duration?: string | null
+          tour_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_company?: string | null
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string
+          id?: string
+          participants_count?: number
+          preferred_language?: string | null
+          selected_destinations?: Json | null
+          special_requests?: string | null
+          status?: string
+          tour_date?: string
+          tour_duration?: string | null
+          tour_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       email_archive: {
         Row: {
           email_data: Json | null

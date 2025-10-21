@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Phone, MessageCircle, Sparkles } from 'lucide-react';
+import { Phone, MessageCircle, Sparkles, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import heroImage from '@/assets/hero-gilboa.jpg';
 import { LandscapeImageSelector } from './LandscapeImageSelector';
 
@@ -97,13 +98,23 @@ export const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+            <Link to="/booking">
+              <Button
+                variant="hero"
+                size="lg"
+                className="text-lg px-8 py-6 gap-2"
+              >
+                <Calendar className="h-5 w-5" />
+                הזמן סיור
+              </Button>
+            </Link>
             <Button
               variant="hero"
               size="lg"
               className="text-lg px-8 py-6"
               onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              הזמינו את ההרפתקה
+              צור קשר
             </Button>
             <Button
               variant="whatsapp"
