@@ -298,7 +298,7 @@ export const ChooseYourDay = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            בחרו את יום הכיף שלכם להלן כ100 טיולים ואטרקציות לבחירה
+            יום כייף וגיבוש לחברות - כ100 טיולים ואטרקציות לבחירה
           </h2>
           <div className="max-w-3xl mx-auto space-y-4">
             <p className="text-xl text-muted-foreground">
