@@ -465,26 +465,19 @@ export const ChooseYourDay = () => {
           })}
         </div>
 
-        {/* Summary Section */}
+        {/* Combined Summary and Contact Form */}
         <div className="max-w-6xl mx-auto my-12">
           <Card className="border-2 border-green-500/30 bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-950/20 dark:to-emerald-950/20">
             <CardHeader>
-              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                <CardTitle className="text-3xl font-bold">
-                  סיכום הבחירות שלך ליום כיף
-                </CardTitle>
-                <Button 
-                  onClick={handleSendPreferences}
-                  disabled={isSending}
-                  size="lg"
-                  className="bg-green-600 hover:bg-green-700 text-white px-8"
-                >
-                  <Send className="h-5 w-5 ml-2" />
-                  {isSending ? 'שולח...' : 'שלח למייל'}
-                </Button>
-              </div>
+              <CardTitle className="text-3xl font-bold text-center">
+                סיכום הבחירות שלך ליום כיף
+              </CardTitle>
+              <CardDescription className="text-center">
+                אנא מלא את הפרטים הבאים כדי שנוכל לחזור אליך
+              </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-8">
+              {/* Category Summary Circles */}
               <div className="flex flex-wrap justify-center gap-8 py-6">
                 {sections.map((section) => {
                   const count = (selections[section.id] || []).length;
@@ -505,20 +498,8 @@ export const ChooseYourDay = () => {
                   );
                 })}
               </div>
-            </CardContent>
-          </Card>
-        </div>
 
-        {/* Contact Form */}
-        <div className="mt-12">
-          <Card className="max-w-4xl mx-auto border-2">
-            <CardHeader>
-              <CardTitle className="text-2xl text-center">פרטי יצירת קשר</CardTitle>
-              <CardDescription className="text-center">
-                אנא מלא את הפרטים הבאים כדי שנוכל לחזור אליך
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              {/* Contact Form Fields */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">
@@ -653,40 +634,23 @@ export const ChooseYourDay = () => {
                   placeholder="למשל: אנגלית, ספרדית, צרפתית, גרמנית..."
                 />
               </div>
+
+              {/* Send Button */}
+              <div className="flex justify-center pt-4">
+                <Button 
+                  onClick={handleSendPreferences}
+                  disabled={isSending}
+                  size="lg"
+                  className="bg-green-600 hover:bg-green-700 text-white px-8"
+                >
+                  <Send className="h-5 w-5 ml-2" />
+                  {isSending ? 'שולח...' : 'שלח למייל'}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Summary */}
-        <div className="mt-8 text-center">
-          <Card className="max-w-2xl mx-auto border-2 border-primary">
-            <CardHeader>
-              <div className="flex items-center justify-center gap-4">
-                <CardTitle className="text-2xl">סיכום הבחירות שלך ליום כייף</CardTitle>
-                <Button 
-                  onClick={handleSendPreferences}
-                  disabled={isSending}
-                  className="gap-2"
-                >
-                  <Send className="h-4 w-4" />
-                  {isSending ? 'שולח...' : 'שלח למייל'}
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-4 gap-4">
-                {sections.map((section) => (
-                  <div key={section.id} className="text-center">
-                    <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${section.color} flex items-center justify-center`}>
-                      <span className="text-white font-bold">{(selections[section.id] || []).length}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">קטגוריה {section.id}</p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </section>
   );
