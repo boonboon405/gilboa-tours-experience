@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { updateFormField, setTourDate, setIsSubmitting, resetBookingForm } from "@/store/slices/bookingSlice";
+import { getLanguage } from "@/store/slices/languageSlice";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,39 +16,28 @@ import { z } from "zod";
 
 const bookingSchema = z.object({
   customer_name: z.string().trim().min(2, "השם חייב להכיל לפחות 2 תווים").max(100),
-  customer_email: z.string().trim().email("כתובת אימייל לא תקינה").max(255),
-  customer_phone: z.string().trim().min(9, "מספר טלפון לא תקין").max(20),
-  customer_company: z.string().max(100).optional(),
-  participants_count: z.number().min(1, "חייב להיות לפחות משתתף אחד").max(100),
+  email: z.string().trim().email("כתובת אימייל לא תקינה").max(255),
+  phone: z.string().trim().min(9, "מספר טלפון לא תקין").max(20),
+  company_name: z.string().max(100).optional(),
+  num_participants: z.string().min(1, "נא להזין מספר משתתפים"),
   tour_duration: z.string().min(1, "נא לבחור משך סיור"),
   preferred_language: z.string().min(1, "נא לבחור שפה"),
   special_requests: z.string().max(1000).optional(),
 });
 
-interface BookingFormProps {
-  tourType?: string;
-  preselectedDestinations?: string[];
-}
-
-export const BookingForm = ({ tourType = "general", preselectedDestinations = [] }: BookingFormProps) => {
-  const { language } = useLanguage();
+export const BookingForm = () => {
+  const dispatch = useAppDispatch();
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [tourDate, setTourDate] = useState<Date>();
+  
+  const language = useAppSelector(getLanguage);
+  const formData = useAppSelector((state) => state.booking.formData);
+  const tourDate = useAppSelector((state) => state.booking.tourDate);
+  const isSubmitting = useAppSelector((state) => state.booking.isSubmitting);
+  const tourType = useAppSelector((state) => state.tour.tourType) || "general";
+  const preselectedDestinations = useAppSelector((state) => state.tour.preselectedDestinations) || [];
 
-  const [formData, setFormData] = useState({
-    customer_name: "",
-    customer_email: "",
-    customer_phone: "",
-    customer_company: "",
-    participants_count: "",
-    tour_duration: "",
-    preferred_language: language,
-    special_requests: "",
-  });
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleInputChange = (field: keyof typeof formData, value: string) => {
+    dispatch(updateFormField({ field, value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -63,23 +53,19 @@ export const BookingForm = ({ tourType = "general", preselectedDestinations = []
     }
 
     try {
-      const validatedData = bookingSchema.parse({
-        ...formData,
-        participants_count: parseInt(formData.participants_count),
-      });
-
-      setIsSubmitting(true);
+      const validatedData = bookingSchema.parse(formData);
+      dispatch(setIsSubmitting(true));
 
       const bookingData = {
         tour_type: tourType,
         tour_date: format(tourDate, "yyyy-MM-dd"),
-        participants_count: validatedData.participants_count,
+        participants_count: parseInt(validatedData.num_participants),
         tour_duration: validatedData.tour_duration,
         preferred_language: validatedData.preferred_language,
         customer_name: validatedData.customer_name,
-        customer_email: validatedData.customer_email,
-        customer_phone: validatedData.customer_phone,
-        customer_company: validatedData.customer_company || null,
+        customer_email: validatedData.email,
+        customer_phone: validatedData.phone,
+        customer_company: validatedData.company_name || null,
         special_requests: validatedData.special_requests || null,
         selected_destinations: preselectedDestinations.length > 0 ? preselectedDestinations : null,
         status: "pending",
@@ -97,7 +83,6 @@ export const BookingForm = ({ tourType = "general", preselectedDestinations = []
           });
         } catch (emailError) {
           console.error('Error sending notification email:', emailError);
-          // Don't fail the booking if email fails
         }
       }
 
@@ -106,18 +91,7 @@ export const BookingForm = ({ tourType = "general", preselectedDestinations = []
         description: "נציג יצור איתך קשר בהקדם",
       });
 
-      // Reset form
-      setFormData({
-        customer_name: "",
-        customer_email: "",
-        customer_phone: "",
-        customer_company: "",
-        participants_count: "",
-        tour_duration: "",
-        preferred_language: language,
-        special_requests: "",
-      });
-      setTourDate(undefined);
+      dispatch(resetBookingForm());
     } catch (error) {
       if (error instanceof z.ZodError) {
         toast({
@@ -134,7 +108,7 @@ export const BookingForm = ({ tourType = "general", preselectedDestinations = []
         });
       }
     } finally {
-      setIsSubmitting(false);
+      dispatch(setIsSubmitting(false));
     }
   };
 
@@ -158,48 +132,48 @@ export const BookingForm = ({ tourType = "general", preselectedDestinations = []
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="customer_email">אימייל *</Label>
+          <Label htmlFor="email">אימייל *</Label>
           <Input
-            id="customer_email"
+            id="email"
             type="email"
-            value={formData.customer_email}
-            onChange={(e) => handleInputChange("customer_email", e.target.value)}
+            value={formData.email}
+            onChange={(e) => handleInputChange("email", e.target.value)}
             required
             maxLength={255}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="customer_phone">טלפון *</Label>
+          <Label htmlFor="phone">טלפון *</Label>
           <Input
-            id="customer_phone"
+            id="phone"
             type="tel"
-            value={formData.customer_phone}
-            onChange={(e) => handleInputChange("customer_phone", e.target.value)}
+            value={formData.phone}
+            onChange={(e) => handleInputChange("phone", e.target.value)}
             required
             maxLength={20}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="customer_company">חברה (אופציונלי)</Label>
+          <Label htmlFor="company_name">חברה (אופציונלי)</Label>
           <Input
-            id="customer_company"
-            value={formData.customer_company}
-            onChange={(e) => handleInputChange("customer_company", e.target.value)}
+            id="company_name"
+            value={formData.company_name}
+            onChange={(e) => handleInputChange("company_name", e.target.value)}
             maxLength={100}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="participants_count">מספר משתתפים *</Label>
+          <Label htmlFor="num_participants">מספר משתתפים *</Label>
           <Input
-            id="participants_count"
+            id="num_participants"
             type="number"
             min="1"
             max="100"
-            value={formData.participants_count}
-            onChange={(e) => handleInputChange("participants_count", e.target.value)}
+            value={formData.num_participants}
+            onChange={(e) => handleInputChange("num_participants", e.target.value)}
             required
           />
         </div>
@@ -220,7 +194,7 @@ export const BookingForm = ({ tourType = "general", preselectedDestinations = []
               <Calendar
                 mode="single"
                 selected={tourDate}
-                onSelect={setTourDate}
+                onSelect={(date) => dispatch(setTourDate(date))}
                 disabled={(date) => date < new Date()}
                 initialFocus
               />

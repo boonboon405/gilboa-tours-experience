@@ -1,9 +1,10 @@
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useAppSelector } from '@/store/hooks';
+import { getLanguage } from '@/store/slices/languageSlice';
 import { Card, CardContent } from '@/components/ui/card';
 import { Backpack, Sun, Droplets, Footprints, Camera, Shirt, Glasses, Sandwich, Snowflake } from 'lucide-react';
 
 const WhatToBring = () => {
-  const { language } = useLanguage();
+  const language = useAppSelector(getLanguage);
 
   const items = [
     {
