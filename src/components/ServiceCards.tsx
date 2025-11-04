@@ -34,7 +34,7 @@ const services: Service[] = [
     highlights: [
       "משך הסיור: 6-8 שעות",
       "מתאים לגילאי 8-88+",
-      "כולל הסעות ומדריך"
+      "כולל מדריך לא כולל הסעות"
     ],
     cta: "בחר את הסיור שלך",
     scrollTo: "choose-your-day"
