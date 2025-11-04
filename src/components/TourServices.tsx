@@ -1,14 +1,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Users, Briefcase, MapPin, Clock, CheckCircle2 } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useNavigate } from "react-router-dom";
+import { Calendar, Users, Briefcase, CheckCircle2 } from "lucide-react";
 
 export const TourServices = () => {
-  const { language } = useLanguage();
-  const navigate = useNavigate();
-  const isHebrew = language === 'he';
+  const isHebrew = true; // Default to Hebrew
 
   const services = {
     daily: {
