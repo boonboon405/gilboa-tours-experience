@@ -104,6 +104,101 @@ export type Database = {
         }
         Relationships: []
       }
+      leads: {
+        Row: {
+          assigned_to: string | null
+          contact_status: Database["public"]["Enums"]["contact_status"]
+          created_at: string
+          email: string | null
+          engagement_type: Database["public"]["Enums"]["engagement_type"]
+          id: string
+          interested_keywords: string[] | null
+          last_contacted_at: string | null
+          name: string
+          notes: string | null
+          phone: string | null
+          source_platform: Database["public"]["Enums"]["lead_source"]
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          contact_status?: Database["public"]["Enums"]["contact_status"]
+          created_at?: string
+          email?: string | null
+          engagement_type?: Database["public"]["Enums"]["engagement_type"]
+          id?: string
+          interested_keywords?: string[] | null
+          last_contacted_at?: string | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          source_platform?: Database["public"]["Enums"]["lead_source"]
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          contact_status?: Database["public"]["Enums"]["contact_status"]
+          created_at?: string
+          email?: string | null
+          engagement_type?: Database["public"]["Enums"]["engagement_type"]
+          id?: string
+          interested_keywords?: string[] | null
+          last_contacted_at?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          source_platform?: Database["public"]["Enums"]["lead_source"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      message_logs: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          external_id: string | null
+          id: string
+          lead_id: string | null
+          message_content: string
+          message_type: string
+          recipient: string
+          sent_by: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          external_id?: string | null
+          id?: string
+          lead_id?: string | null
+          message_content: string
+          message_type: string
+          recipient: string
+          sent_by?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          external_id?: string | null
+          id?: string
+          lead_id?: string | null
+          message_content?: string
+          message_type?: string
+          recipient?: string
+          sent_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_logs_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       seo_keywords: {
         Row: {
           category: string | null
@@ -136,7 +231,28 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      contact_status:
+        | "new"
+        | "contacted"
+        | "interested"
+        | "not_interested"
+        | "converted"
+        | "follow_up"
+      engagement_type:
+        | "comment"
+        | "dm"
+        | "ad_click"
+        | "form_submission"
+        | "phone_call"
+        | "email"
+        | "other"
+      lead_source:
+        | "instagram"
+        | "facebook"
+        | "tiktok"
+        | "website"
+        | "referral"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -263,6 +379,32 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      contact_status: [
+        "new",
+        "contacted",
+        "interested",
+        "not_interested",
+        "converted",
+        "follow_up",
+      ],
+      engagement_type: [
+        "comment",
+        "dm",
+        "ad_click",
+        "form_submission",
+        "phone_call",
+        "email",
+        "other",
+      ],
+      lead_source: [
+        "instagram",
+        "facebook",
+        "tiktok",
+        "website",
+        "referral",
+        "other",
+      ],
+    },
   },
 } as const
