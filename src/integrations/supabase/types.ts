@@ -104,6 +104,30 @@ export type Database = {
         }
         Relationships: []
       }
+      seo_keywords: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          keyword: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          keyword: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          keyword?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

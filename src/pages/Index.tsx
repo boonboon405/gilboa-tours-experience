@@ -7,10 +7,12 @@ import { ODTSection } from '@/components/ODTSection';
 import { Testimonials } from '@/components/Testimonials';
 import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
+import SEOKeywords from '@/components/SEOKeywords';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEOKeywords />
       <Navigation />
       <Hero />
       <ServiceCards />
