@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Search } from 'lucide-react';
+import { ArrowLeft, Search, Download, FileSpreadsheet } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import * as XLSX from 'xlsx';
+import { toast } from 'sonner';
 
 type Keyword = {
   id: string;
@@ -93,6 +95,43 @@ export default function KeywordsList() {
     return categories.find(c => c.value === value)?.label || value;
   };
 
+  const exportToCSV = () => {
+    const csvContent = [
+      ['מילת מפתח', 'קטגוריה'],
+      ...filteredKeywords.map(kw => [
+        kw.keyword,
+        getCategoryLabel(kw.category) || 'ללא קטגוריה'
+      ])
+    ].map(row => row.join(',')).join('\n');
+
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `keywords_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    toast.success('הקובץ הורד בהצלחה');
+  };
+
+  const exportToExcel = () => {
+    const data = filteredKeywords.map(kw => ({
+      'מילת מפתח': kw.keyword,
+      'קטגוריה': getCategoryLabel(kw.category) || 'ללא קטגוריה'
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Keywords');
+    
+    // Set column widths
+    worksheet['!cols'] = [
+      { wch: 30 },
+      { wch: 20 }
+    ];
+
+    XLSX.writeFile(workbook, `keywords_${new Date().toISOString().split('T')[0]}.xlsx`);
+    toast.success('הקובץ הורד בהצלחה');
+  };
+
   const groupedKeywords = filteredKeywords.reduce((acc, kw) => {
     const cat = kw.category || 'uncategorized';
     if (!acc[cat]) acc[cat] = [];
@@ -116,8 +155,22 @@ export default function KeywordsList() {
             <ArrowLeft className="ml-2 h-4 w-4" />
             חזרה לדף הבית
           </Button>
-          <h1 className="text-4xl font-bold mb-2">רשימת מילות מפתח</h1>
-          <p className="text-muted-foreground">סה"כ {keywords.length} מילות מפתח</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold mb-2">רשימת מילות מפתח</h1>
+              <p className="text-muted-foreground">סה"כ {keywords.length} מילות מפתח</p>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={exportToCSV} variant="outline">
+                <Download className="ml-2 h-4 w-4" />
+                ייצא CSV
+              </Button>
+              <Button onClick={exportToExcel} variant="outline">
+                <FileSpreadsheet className="ml-2 h-4 w-4" />
+                ייצא Excel
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Search and Filter */}
