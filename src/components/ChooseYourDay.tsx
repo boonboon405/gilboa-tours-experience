@@ -436,10 +436,12 @@ export const ChooseYourDay = () => {
               const currentSelections = selections[section.id] || [];
               const isExpanded = expandedSections.has(section.id);
               
-              // Filter activities based on quiz results
+              // Filter activities based on quiz results - show top 4 recommended
               const displayActivities = (quizResults && !showAllActivities)
-                ? filterActivitiesByDNA(section.activities, quizResults, 10)
+                ? filterActivitiesByDNA(section.activities, quizResults, 4)
                 : section.activities.map((text, index) => ({ text, index, relevanceScore: 0, matchedCategories: [] }));
+              
+              const hasRecommendations = quizResults && !showAllActivities;
               
               return (
                 <Card 
@@ -447,9 +449,15 @@ export const ChooseYourDay = () => {
                   className="border-2 hover:shadow-strong transition-all duration-300"
                 >
                   <CardHeader 
-                    className="cursor-pointer"
+                    className="cursor-pointer relative"
                     onClick={() => toggleSection(section.id)}
                   >
+                    {hasRecommendations && (
+                      <Badge className="absolute top-4 left-4 bg-gradient-hero text-white border-none flex items-center gap-1 shadow-glow z-10">
+                        <Sparkles className="h-3 w-3 animate-pulse" />
+                        מומלץ
+                      </Badge>
+                    )}
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-start gap-4 flex-1">
                         <div className={`p-3 rounded-lg bg-gradient-to-br ${section.color} flex-shrink-0`}>
