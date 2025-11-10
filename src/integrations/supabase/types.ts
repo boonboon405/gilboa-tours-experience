@@ -199,6 +199,36 @@ export type Database = {
           },
         ]
       }
+      quiz_results: {
+        Row: {
+          created_at: string
+          id: string
+          percentages: Json
+          scores: Json
+          session_id: string | null
+          top_categories: string[]
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          percentages: Json
+          scores: Json
+          session_id?: string | null
+          top_categories: string[]
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          percentages?: Json
+          scores?: Json
+          session_id?: string | null
+          top_categories?: string[]
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       seo_keywords: {
         Row: {
           category: string | null
@@ -228,7 +258,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_category_stats: {
+        Args: never
+        Returns: {
+          appearance_count: number
+          avg_percentage: number
+          category: string
+        }[]
+      }
     }
     Enums: {
       contact_status:

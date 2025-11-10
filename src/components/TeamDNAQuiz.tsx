@@ -7,6 +7,7 @@ import { quizQuestions, calculateQuizResults, QuizResults } from '@/utils/quizSc
 import { categoryMetadata } from '@/utils/activityCategories';
 import { Sparkles, ArrowRight, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 
 interface TeamDNAQuizProps {
   open: boolean;
@@ -47,10 +48,24 @@ export const TeamDNAQuiz = ({ open, onClose, onComplete }: TeamDNAQuizProps) => 
     }
   };
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     if (results) {
       // Save to localStorage
       localStorage.setItem('teamDNAResults', JSON.stringify(results));
+      
+      // Save analytics to database
+      try {
+        await supabase.from('quiz_results').insert({
+          scores: results.scores as any,
+          top_categories: results.topCategories,
+          percentages: results.percentages as any,
+          session_id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        });
+      } catch (err) {
+        console.error('Error saving quiz analytics:', err);
+        // Don't block user flow if analytics fail
+      }
+      
       onComplete(results);
       onClose();
     }
