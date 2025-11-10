@@ -1,10 +1,17 @@
 import { useState } from 'react';
-import { Menu, X, Calendar } from 'lucide-react';
+import { Menu, X, Calendar, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { TeamDNAQuiz } from '@/components/TeamDNAQuiz';
+import { QuizResults } from '@/utils/quizScoring';
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
+
+  const handleQuizComplete = (results: QuizResults) => {
+    console.log('Quiz completed with results:', results);
+  };
 
   const navItems = [
     { label: 'בית', href: '#home' },
@@ -27,6 +34,13 @@ export const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
+            <button
+              onClick={() => setShowQuiz(true)}
+              className="text-foreground hover:text-primary transition-colors font-medium whitespace-nowrap flex items-center gap-2"
+            >
+              <Sparkles className="h-4 w-4" />
+              Quiz
+            </button>
             {navItems.map((item) => (
               <a
                 key={item.label}
@@ -60,6 +74,16 @@ export const Navigation = () => {
         {/* Mobile Menu */}
         {isOpen && (
           <div className="md:hidden pb-4">
+            <button
+              onClick={() => {
+                setShowQuiz(true);
+                setIsOpen(false);
+              }}
+              className="block py-2 text-foreground hover:text-primary transition-colors w-full text-right flex items-center gap-2"
+            >
+              <Sparkles className="h-4 w-4" />
+              Quiz
+            </button>
             {navItems.map((item) => (
               <a
                 key={item.label}
@@ -79,6 +103,12 @@ export const Navigation = () => {
           </div>
         )}
       </div>
+
+      <TeamDNAQuiz
+        open={showQuiz}
+        onClose={() => setShowQuiz(false)}
+        onComplete={handleQuizComplete}
+      />
     </nav>
   );
 };
