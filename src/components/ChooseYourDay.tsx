@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Sunrise, Waves, Landmark, Wine, Clock, CheckCircle2, ChevronDown, ChevronUp, Send, CalendarIcon } from 'lucide-react';
+import { Sunrise, Waves, Landmark, Wine, Clock, CheckCircle2, ChevronDown, ChevronUp, Send, CalendarIcon, Sparkles, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -12,6 +12,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { TeamDNAQuiz } from '@/components/TeamDNAQuiz';
+import { QuizResults } from '@/utils/quizScoring';
+import { filterActivitiesByDNA } from '@/utils/activityFiltering';
+import { categoryMetadata } from '@/utils/activityCategories';
 
 const sections = [
   {
@@ -177,6 +181,38 @@ export const ChooseYourDay = () => {
     language: ''
   });
   const [suggestedDate, setSuggestedDate] = useState<Date>();
+  
+  // Quiz state
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [quizResults, setQuizResults] = useState<QuizResults | null>(null);
+  const [showAllActivities, setShowAllActivities] = useState(false);
+
+  // Load quiz results from localStorage on mount
+  useEffect(() => {
+    const savedResults = localStorage.getItem('teamDNAResults');
+    if (savedResults) {
+      try {
+        setQuizResults(JSON.parse(savedResults));
+      } catch (e) {
+        console.error('Failed to parse saved quiz results', e);
+      }
+    } else {
+      // Show quiz if no saved results
+      setShowQuiz(true);
+    }
+  }, []);
+
+  const handleQuizComplete = (results: QuizResults) => {
+    setQuizResults(results);
+    setShowAllActivities(false);
+  };
+
+  const handleResetQuiz = () => {
+    localStorage.removeItem('teamDNAResults');
+    setQuizResults(null);
+    setShowAllActivities(false);
+    setShowQuiz(true);
+  };
 
   const toggleSection = (sectionId: number) => {
     const newExpanded = new Set(expandedSections);
@@ -293,17 +329,73 @@ export const ChooseYourDay = () => {
   };
 
   return (
-    <section id="choose-your-day" className="py-20 bg-gradient-to-br from-background to-muted">
-      <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            יום כייף וגיבוש לחברות - כ100 טיולים ואטרקציות לבחירה
-          </h2>
-          <div className="max-w-3xl mx-auto space-y-4">
-            <p className="text-xl text-muted-foreground">
-              בחרו מתוך הקטגוריות את  האטרקציות או האתרים המועדפים עליכם
-            </p>
+    <>
+      {/* Team DNA Quiz Modal */}
+      <TeamDNAQuiz 
+        open={showQuiz}
+        onClose={() => setShowQuiz(false)}
+        onComplete={handleQuizComplete}
+      />
+
+      <section id="choose-your-day" className="py-20 bg-gradient-to-br from-background to-muted">
+        <div className="container mx-auto px-4">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+              יום כייף וגיבוש לחברות - כ100 טיולים ואטרקציות לבחירה
+            </h2>
+            
+            {/* DNA Results Banner */}
+            {quizResults && !showAllActivities && (
+              <div className="max-w-4xl mx-auto mb-8 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border-2 border-primary/20">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  <h3 className="text-xl font-bold">הפעילויות נבחרו במיוחד עבורכם</h3>
+                  <Sparkles className="h-5 w-5 text-primary" />
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  בהתאם ל-DNA של הצוות שלכם:
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
+                  {quizResults.topCategories.map((category) => {
+                    const meta = categoryMetadata[category];
+                    const percentage = quizResults.percentages[category];
+                    return (
+                      <Badge key={category} variant="outline" className="text-base px-4 py-2">
+                        <span className="text-xl ml-2">{meta.icon}</span>
+                        {meta.name}
+                        <span className="text-primary font-bold mr-2">({percentage}%)</span>
+                      </Badge>
+                    );
+                  })}
+                </div>
+                <div className="flex gap-3 justify-center">
+                  <Button variant="outline" size="sm" onClick={handleResetQuiz}>
+                    <RefreshCw className="h-4 w-4 ml-2" />
+                    שנה העדפות
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => setShowAllActivities(true)}>
+                    הצג את כל הפעילויות
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {showAllActivities && (
+              <div className="max-w-4xl mx-auto mb-8 p-4 bg-muted/50 rounded-lg">
+                <p className="text-sm">
+                  מציג את כל הפעילויות.
+                  <Button variant="link" size="sm" onClick={() => setShowAllActivities(false)} className="mr-2">
+                    חזור לפעילויות המומלצות
+                  </Button>
+                </p>
+              </div>
+            )}
+
+            <div className="max-w-3xl mx-auto space-y-4">
+              <p className="text-xl text-muted-foreground">
+                בחרו מתוך הקטגוריות את  האטרקציות או האתרים המועדפים עליכם
+              </p>
             <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-lg">
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-orange-500/10 text-orange-700 border-orange-300">
@@ -337,70 +429,80 @@ export const ChooseYourDay = () => {
           </div>
         </div>
 
-        {/* Sections */}
-        <div className="max-w-7xl mx-auto space-y-6">
-          {sections.map((section) => {
-            const Icon = section.icon;
-            const currentSelections = selections[section.id] || [];
-            const isExpanded = expandedSections.has(section.id);
-            
-            return (
-              <Card 
-                key={section.id} 
-                className="border-2 hover:shadow-strong transition-all duration-300"
-              >
-                <CardHeader 
-                  className="cursor-pointer"
-                  onClick={() => toggleSection(section.id)}
+          {/* Sections */}
+          <div className="max-w-7xl mx-auto space-y-6">
+            {sections.map((section) => {
+              const Icon = section.icon;
+              const currentSelections = selections[section.id] || [];
+              const isExpanded = expandedSections.has(section.id);
+              
+              // Filter activities based on quiz results
+              const displayActivities = (quizResults && !showAllActivities)
+                ? filterActivitiesByDNA(section.activities, quizResults, 10)
+                : section.activities.map((text, index) => ({ text, index, relevanceScore: 0, matchedCategories: [] }));
+              
+              return (
+                <Card 
+                  key={section.id} 
+                  className="border-2 hover:shadow-strong transition-all duration-300"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-4 flex-1">
-                      <div className={`p-3 rounded-lg bg-gradient-to-br ${section.color} flex-shrink-0`}>
-                        <Icon className="h-6 w-6 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 flex-wrap mb-2">
-                          <CardTitle className="text-2xl">
-                            קטגוריה {section.id}: {section.title}
-                          </CardTitle>
-                          <Badge variant="outline" className="text-sm">
-                            <Clock className="h-3 w-3 ml-1" />
-                            {section.time}
-                          </Badge>
+                  <CardHeader 
+                    className="cursor-pointer"
+                    onClick={() => toggleSection(section.id)}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-start gap-4 flex-1">
+                        <div className={`p-3 rounded-lg bg-gradient-to-br ${section.color} flex-shrink-0`}>
+                          <Icon className="h-6 w-6 text-white" />
                         </div>
-                        <CardDescription className="text-base">
-                          {section.description}
-                        </CardDescription>
-                        <div className="mt-3 flex items-center gap-2">
-                          <span className="text-sm font-medium text-muted-foreground">
-                            בחר עד 5 פעילויות, יחד נקבע את האטרקציה הכי מתאימה בהיתחשב בזמנים ואפשרויות בשטח ומזג אויר
-                          </span>
-                          <div 
-                            className={`font-bold text-lg px-4 py-2 rounded-full ${
-                              currentSelections.length === 0 
-                                ? 'bg-muted text-muted-foreground border-2 border-border' 
-                                : 'bg-primary text-primary-foreground shadow-lg'
-                            }`}
-                          >
-                            {currentSelections.length}/5 נבחרו
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 flex-wrap mb-2">
+                            <CardTitle className="text-2xl">
+                              קטגוריה {section.id}: {section.title}
+                            </CardTitle>
+                            <Badge variant="outline" className="text-sm">
+                              <Clock className="h-3 w-3 ml-1" />
+                              {section.time}
+                            </Badge>
                           </div>
+                          <CardDescription className="text-base">
+                            {section.description}
+                          </CardDescription>
+                          <div className="mt-3 flex items-center gap-2">
+                            <span className="text-sm font-medium text-muted-foreground">
+                              בחר עד 5 פעילויות, יחד נקבע את האטרקציה הכי מתאימה בהיתחשב בזמנים ואפשרויות בשטח ומזג אויר
+                            </span>
+                            <div 
+                              className={`font-bold text-lg px-4 py-2 rounded-full ${
+                                currentSelections.length === 0 
+                                  ? 'bg-muted text-muted-foreground border-2 border-border' 
+                                  : 'bg-primary text-primary-foreground shadow-lg'
+                              }`}
+                            >
+                              {currentSelections.length}/5 נבחרו
+                            </div>
+                          </div>
+                          {quizResults && !showAllActivities && (
+                            <p className="text-xs text-muted-foreground mt-2">
+                              מציג {displayActivities.length} פעילויות מומלצות מתוך {section.activities.length}
+                            </p>
+                          )}
                         </div>
                       </div>
+                      <div className="flex flex-col items-center gap-0 flex-shrink-0 p-2 rounded-md bg-primary/10 border-2 border-primary/20">
+                        <ChevronUp className={`h-4 w-4 transition-opacity ${isExpanded ? 'opacity-100 text-primary' : 'opacity-40'}`} />
+                        <ChevronDown className={`h-4 w-4 transition-opacity ${!isExpanded ? 'opacity-100 text-primary' : 'opacity-40'}`} />
+                      </div>
                     </div>
-                    <div className="flex flex-col items-center gap-0 flex-shrink-0 p-2 rounded-md bg-primary/10 border-2 border-primary/20">
-                      <ChevronUp className={`h-4 w-4 transition-opacity ${isExpanded ? 'opacity-100 text-primary' : 'opacity-40'}`} />
-                      <ChevronDown className={`h-4 w-4 transition-opacity ${!isExpanded ? 'opacity-100 text-primary' : 'opacity-40'}`} />
-                    </div>
-                  </div>
-                </CardHeader>
-                
-                {isExpanded && (
-                  <CardContent className="space-y-4">
-                    {/* Activities Grid */}
-                    <div className="grid md:grid-cols-2 gap-3">
-                      {section.activities.map((activity, index) => {
-                        const isSelected = currentSelections.includes(index);
-                        const isDisabled = !isSelected && currentSelections.length >= 5;
+                  </CardHeader>
+                  
+                  {isExpanded && (
+                    <CardContent className="space-y-4">
+                      {/* Activities Grid */}
+                      <div className="grid md:grid-cols-2 gap-3">
+                        {displayActivities.map(({ text: activity, index }) => {
+                          const isSelected = currentSelections.includes(index);
+                          const isDisabled = !isSelected && currentSelections.length >= 5;
                         
                         return (
                           <div
@@ -651,7 +753,8 @@ export const ChooseYourDay = () => {
           </Card>
         </div>
 
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 };
