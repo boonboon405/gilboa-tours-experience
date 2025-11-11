@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Phone, MessageCircle, Sparkles, Calendar, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -25,8 +25,20 @@ export const Hero = () => {
   }, [images]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showImageSelector, setShowImageSelector] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
+  const heroRef = useRef<HTMLElement>(null);
   const whatsappNumber = '972537314235';
   const phoneNumber = '053-7314235';
+
+  // Parallax scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Auto-rotate images every 10 seconds
   useEffect(() => {
@@ -56,9 +68,15 @@ export const Hero = () => {
   }, [images.length]);
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      {/* Background Images with Fade Transition */}
-      <div className="absolute inset-0">
+    <section ref={heroRef} id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+      {/* Background Images with Fade Transition and Parallax */}
+      <div 
+        className="absolute inset-0"
+        style={{
+          transform: `translateY(${scrollY * 0.5}px)`,
+          transition: 'transform 0.1s ease-out'
+        }}
+      >
         {images.map((image, index) => (
           <img
             key={`${image}-${index}`}
@@ -86,10 +104,10 @@ export const Hero = () => {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 animate-fade-in">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 animate-fade-in hero-glow">
             חוויה קבוצתית מיוחדת, בונה ובלתי נשכחת
           </h1>
-          <h2 className="text-3xl md:text-5xl font-semibold text-accent mb-6 animate-fade-in">
+          <h2 className="text-3xl md:text-5xl font-semibold text-accent mb-6 animate-fade-in hero-glow-accent">
             בצפון א״י היפה ובלב הגלבוע הגליל וסובב כנרת
           </h2>
           <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">

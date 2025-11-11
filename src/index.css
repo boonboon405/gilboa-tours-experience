@@ -151,4 +151,19 @@ All colors MUST be HSL.
     height: 300px;
     transition: width 0s, height 0s;
   }
+  
+  /* Hero text glow effects */
+  .hero-glow {
+    text-shadow: 
+      0 0 20px hsl(var(--primary) / 0.3),
+      0 0 40px hsl(var(--primary) / 0.2),
+      0 0 60px hsl(var(--primary) / 0.1);
+  }
+
+  .hero-glow-accent {
+    text-shadow: 
+      0 0 20px hsl(var(--accent) / 0.4),
+      0 0 40px hsl(var(--accent) / 0.3),
+      0 0 60px hsl(var(--accent) / 0.2);
+  }
 }
