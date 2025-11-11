@@ -40,8 +40,8 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     // Send initial greeting
     if (messages.length === 0) {
       const greeting = quizResults
-        ? `שלום! ראיתי שעשית את הQuiz שלנו - מעולה! 🎯\n\nלפי התוצאות, נראה שאתם מחפשים חוויה ${getTopCategoryDescription(quizResults.top_categories[0])}.\n\nספרו לי קצת יותר - מה הסיטואציה? כמה אנשים? מה מעניין אתכם?`
-        : 'שלום! 👋 אני הסוכן הדיגיטלי של חוויות גלבוע-בית שאן.\n\nאני כאן לעזור לכם למצוא את החוויה המושלמת לצוות שלכם!\n\nספרו לי - כמה אנשים אתם? מה מעניין אתכם?';
+        ? `שלום. ראיתי שעשית את הQuiz שלנו - מעולה.\n\nלפי התוצאות, נראה שאתם מחפשים חוויה ${getTopCategoryDescription(quizResults.top_categories[0])}.\n\nספרו לי קצת יותר - מה הסיטואציה, כמה אנשים, מה מעניין אתכם`
+        : 'שלום. אני הסוכן הדיגיטלי של חוויות באזור נחל המעינות, הר גלבוע, הגליל וסובב כנרת.\n\nאני כאן לעזור לכם למצוא את החוויה המושלמת לצוות שלכם.\n\nספרו לי - כמה אנשים אתם, מה מעניין אתכם';
 
       setMessages([{
         id: '0',
