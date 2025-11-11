@@ -24,12 +24,12 @@ export const EmergencyContactButton = () => {
       <SheetTrigger asChild>
         <Button
           size="lg"
-          className="fixed bottom-6 left-6 z-50 rounded-full h-16 w-16 shadow-glow bg-gradient-hero hover:opacity-90 hover:scale-110 transition-all duration-300 group"
+          className="fixed bottom-6 left-6 z-50 rounded-full h-16 w-16 bg-gradient-hero transition-all duration-300 group hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.6)] hover:scale-110 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
           aria-label="דברו עם הבעלים"
         >
           <div className="relative">
-            <HeadphonesIcon className="h-7 w-7 text-white" />
-            <Badge className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1">
+            <HeadphonesIcon className="h-7 w-7 text-white group-hover:scale-110 transition-transform" />
+            <Badge className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 group-hover:scale-110 transition-transform">
               !
             </Badge>
           </div>
