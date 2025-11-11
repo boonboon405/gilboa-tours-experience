@@ -104,13 +104,13 @@ export const ExitIntentModal = () => {
       <DialogContent className="sm:max-w-md border-2 border-primary/20 shadow-glow">
         <DialogHeader>
           <div className="flex items-center gap-2 mb-2">
-            <div className="p-2 rounded-full bg-gradient-hero animate-pulse">
+            <div className="p-2 rounded-full bg-gradient-hero">
               <AlertCircle className="h-5 w-5 text-white" />
             </div>
-            <DialogTitle className="text-2xl">רגע לפני שאתם הולכים...</DialogTitle>
+            <DialogTitle className="text-2xl">יש לכם שאלות?</DialogTitle>
           </div>
           <DialogDescription className="text-right text-base leading-relaxed pt-2">
-            נראה שיש לכם שאלות או שאתם מהססים? 
+            נראה שאתם מהססים או צריכים ייעוץ נוסף
             <strong className="block text-foreground mt-2 text-lg">
               דברו ישירות עם {ownerName}
             </strong>
