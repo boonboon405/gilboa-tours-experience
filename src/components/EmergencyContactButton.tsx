@@ -55,7 +55,7 @@ export const EmergencyContactButton = () => {
             </span>
             <div className="mt-4 p-4 bg-muted rounded-lg border-r-4 border-primary">
               <p className="text-sm text-foreground">
-                💬 אני כאן בשבילכם! אם יש שאלות, מהסוסים, או רוצים ייעוץ אישי - 
+                💬 אני כאן בשבילכם! אם יש שאלות, רוצים ליווי באתר יחד איתי? רוצים ייעוץ אישי - 
                 אל תהססו לפנות אליי ישירות. אענה בשמחה!
               </p>
             </div>
