@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { AIChat } from '@/components/AIChat';
+import { VoiceChat } from '@/components/VoiceChat';
+import { VoiceChatComparison } from '@/components/VoiceChatComparison';
 import { Button } from '@/components/ui/button';
-import { Phone, ArrowRight } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Phone, ArrowRight, Mic, MessageSquare, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
   AlertDialog,
@@ -56,11 +59,38 @@ const Chat = () => {
           )}
         </div>
 
-        {/* Chat Interface */}
-        <AIChat 
-          quizResults={quizResults} 
-          onRequestHumanAgent={() => setShowHumanHandoff(true)}
-        />
+        {/* Chat Interface with Tabs */}
+        <Tabs defaultValue="voice" className="w-full max-w-4xl mx-auto">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsTrigger value="voice" className="gap-2">
+              <Mic className="w-4 h-4" />
+              צ'אט קולי
+            </TabsTrigger>
+            <TabsTrigger value="text" className="gap-2">
+              <MessageSquare className="w-4 h-4" />
+              צ'אט טקסט
+            </TabsTrigger>
+            <TabsTrigger value="compare" className="gap-2">
+              <Info className="w-4 h-4" />
+              השוואה
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="voice">
+            <VoiceChat quizResults={quizResults} />
+          </TabsContent>
+
+          <TabsContent value="text">
+            <AIChat 
+              quizResults={quizResults} 
+              onRequestHumanAgent={() => setShowHumanHandoff(true)}
+            />
+          </TabsContent>
+
+          <TabsContent value="compare">
+            <VoiceChatComparison />
+          </TabsContent>
+        </Tabs>
 
         {/* Quick Actions */}
         <div className="mt-8 flex flex-wrap justify-center gap-4">

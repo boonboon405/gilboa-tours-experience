@@ -126,8 +126,7 @@ export const EmergencyContactButton = () => {
 
           <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
             <p className="text-sm text-amber-900 dark:text-amber-100 text-center">
-              <strong>🎯 המטרה שלי:</strong> שתמצאו את החוויה המושלמת! 
-              אני לא אתן לכם לאבד בתהליך.
+              <strong>🎯 המטרה שלי:</strong> שתמצאו את החוויה המושלמת!
             </p>
           </div>
         </div>
