@@ -24,6 +24,7 @@ import AdminTestimonials from "./pages/AdminTestimonials";
 import AdminEmailTemplates from "./pages/AdminEmailTemplates";
 import AdminEmailAutomation from "./pages/AdminEmailAutomation";
 import MasterDashboard from "./pages/MasterDashboard";
+import AdminAIResponses from "./pages/AdminAIResponses";
 import NotFound from "./pages/NotFound";
 import { LiveChatWidget } from "./components/LiveChatWidget";
 
@@ -125,6 +126,14 @@ const App = () => {
                   element={
                     <ProtectedRoute requireAdmin>
                       <MasterDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin/ai-responses" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <AdminAIResponses />
                     </ProtectedRoute>
                   } 
                 />

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, MessageSquare, Key, Database, Users, BarChart, Mail, Star, Activity } from "lucide-react";
+import { Shield, Database, Key, BarChart, Activity, MessageSquare, Star, Mail, Users, Bot } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 const AdminDashboard = () => {
@@ -36,6 +36,13 @@ const AdminDashboard = () => {
       icon: MessageSquare,
       path: "/admin/chat",
       color: "text-purple-500"
+    },
+    {
+      title: "תגובות AI",
+      description: "צפייה ועריכת תגובות AI",
+      icon: Bot,
+      path: "/admin/ai-responses",
+      color: "text-teal-500"
     },
     {
       title: "ניהול לידים",
