@@ -10,6 +10,7 @@ import { Footer } from '@/components/Footer';
 import SEOKeywords from '@/components/SEOKeywords';
 import { ExitIntentModal } from '@/components/ExitIntentModal';
 import { EmergencyContactButton } from '@/components/EmergencyContactButton';
+import { PublicFAQ } from '@/components/PublicFAQ';
 
 const Index = () => {
   return (
@@ -33,6 +34,7 @@ const Index = () => {
       </div>
       
       <Testimonials />
+      <PublicFAQ />
       <ContactSection />
       <Footer />
     </div>

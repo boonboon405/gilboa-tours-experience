@@ -19,6 +19,7 @@ import AdminChat from "./pages/AdminChat";
 import ChatAnalytics from "./pages/ChatAnalytics";
 import AdminKnowledgeBase from "./pages/AdminKnowledgeBase";
 import AdminDashboard from "./pages/AdminDashboard";
+import BookingAnalytics from "./pages/BookingAnalytics";
 import NotFound from "./pages/NotFound";
 import { LiveChatWidget } from "./components/LiveChatWidget";
 
@@ -80,6 +81,14 @@ const App = () => {
                   element={
                     <ProtectedRoute requireAdmin>
                       <ChatAnalytics />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/booking-analytics" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <BookingAnalytics />
                     </ProtectedRoute>
                   } 
                 />

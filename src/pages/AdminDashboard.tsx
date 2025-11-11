@@ -39,10 +39,17 @@ const AdminDashboard = () => {
     },
     {
       title: "אנליטיקס צ'אט",
-      description: "סטטיסטיקות ודוחות",
+      description: "סטטיסטיקות צ'אט AI",
       icon: BarChart,
       path: "/chat-analytics",
       color: "text-pink-500"
+    },
+    {
+      title: "אנליטיקס הזמנות",
+      description: "נתוני הזמנות וטיולים",
+      icon: BarChart,
+      path: "/booking-analytics",
+      color: "text-cyan-500"
     }
   ];
 
