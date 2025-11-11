@@ -126,6 +126,10 @@ export const Navigation = () => {
                         <Shield className="ml-2 h-4 w-4" />
                         ניהול לידים
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate('/admin/ai-responses')}>
+                        <Shield className="ml-2 h-4 w-4" />
+                        עריכת תגובות AI
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                     </>
                   )}
