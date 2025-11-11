@@ -52,6 +52,7 @@ const AdminChat = () => {
   const [agentName, setAgentName] = useState('דוד רחימי');
   const [activeTab, setActiveTab] = useState('active');
   const [isTyping, setIsTyping] = useState(false);
+  const [confidenceFilter, setConfidenceFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -90,7 +91,7 @@ const AdminChat = () => {
     return () => {
       supabase.removeChannel(conversationsChannel);
     };
-  }, [activeTab]);
+  }, [activeTab, confidenceFilter]);
 
   // Subscribe to messages for selected conversation
   useEffect(() => {
@@ -125,6 +126,40 @@ const AdminChat = () => {
     };
   }, [selectedConversation]);
 
+  // Real-time notifications for low AI confidence
+  useEffect(() => {
+    const lowConfidenceChannel = supabase
+      .channel('low-confidence-alerts')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'live_chat_messages'
+        },
+        (payload) => {
+          const newMessage = payload.new as Message;
+          
+          // Alert if AI response has low confidence
+          if (newMessage.sender_name === 'AI Assistant' && 
+              newMessage.ai_confidence_score !== null && 
+              newMessage.ai_confidence_score < 0.4) {
+            toast({
+              title: "⚠️ ביטחון נמוך - נדרש סוכן",
+              description: `שיחה חדשה דורשת התייחסות אנושית (ביטחון: ${Math.round(newMessage.ai_confidence_score * 100)}%)`,
+              variant: "destructive",
+              duration: 8000,
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(lowConfidenceChannel);
+    };
+  }, [toast]);
+
   const loadConversations = async () => {
     const { data, error } = await supabase
       .from('live_chat_conversations')
@@ -155,7 +190,33 @@ const AdminChat = () => {
       })
     );
 
-    setConversations(conversationsWithUnread);
+    // Apply confidence filter
+    let filtered = conversationsWithUnread;
+    if (confidenceFilter !== 'all') {
+      const filteredResults = await Promise.all(
+        conversationsWithUnread.map(async (conv) => {
+          const { data: convMessages } = await supabase
+            .from('live_chat_messages')
+            .select('ai_confidence_score')
+            .eq('conversation_id', conv.id)
+            .not('ai_confidence_score', 'is', null);
+
+          if (!convMessages || convMessages.length === 0) return null;
+
+          const avgConfidence = convMessages.reduce((sum, m) => sum + (m.ai_confidence_score || 0), 0) / convMessages.length;
+          
+          if (confidenceFilter === 'high' && avgConfidence >= 0.7) return conv;
+          if (confidenceFilter === 'medium' && avgConfidence >= 0.4 && avgConfidence < 0.7) return conv;
+          if (confidenceFilter === 'low' && avgConfidence < 0.4) return conv;
+          
+          return null;
+        })
+      );
+      
+      filtered = filteredResults.filter((c): c is typeof conversationsWithUnread[0] => c !== null);
+    }
+
+    setConversations(filtered);
   };
 
   const loadMessages = async (conversationId: string) => {
@@ -276,9 +337,19 @@ const AdminChat = () => {
       <Navigation />
       
       <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">ניהול צ'אט חי</h1>
-          <p className="text-muted-foreground">נהל שיחות עם לקוחות בזמן אמת</p>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">ניהול צ'אט חי</h1>
+            <p className="text-muted-foreground">נהל שיחות עם לקוחות בזמן אמת</p>
+          </div>
+          <Button
+            onClick={() => window.location.href = '/chat-analytics'}
+            variant="outline"
+            className="gap-2"
+          >
+            <Brain className="w-4 h-4" />
+            אנליטיקה
+          </Button>
         </div>
 
         {/* Stats Cards */}
@@ -323,7 +394,7 @@ const AdminChat = () => {
         <div className="grid md:grid-cols-3 gap-6 h-[700px]">
           {/* Conversations List */}
           <Card className="col-span-1 flex flex-col">
-            <div className="p-4 border-b">
+            <div className="p-4 border-b space-y-3">
               <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="active">פעילות</TabsTrigger>
@@ -331,6 +402,20 @@ const AdminChat = () => {
                   <TabsTrigger value="closed">סגורות</TabsTrigger>
                 </TabsList>
               </Tabs>
+              
+              <div>
+                <label className="text-sm text-muted-foreground mb-2 block">סנן לפי ביטחון AI</label>
+                <select
+                  value={confidenceFilter}
+                  onChange={(e) => setConfidenceFilter(e.target.value as any)}
+                  className="w-full p-2 rounded-md border bg-background text-sm"
+                >
+                  <option value="all">הכל</option>
+                  <option value="high">ביטחון גבוה (70%+)</option>
+                  <option value="medium">ביטחון בינוני (40-70%)</option>
+                  <option value="low">ביטחון נמוך (&lt;40%)</option>
+                </select>
+              </div>
             </div>
 
             <ScrollArea className="flex-1">
