@@ -18,6 +18,7 @@ import LeadManagement from "./pages/LeadManagement";
 import AdminChat from "./pages/AdminChat";
 import ChatAnalytics from "./pages/ChatAnalytics";
 import AdminKnowledgeBase from "./pages/AdminKnowledgeBase";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import { LiveChatWidget } from "./components/LiveChatWidget";
 
@@ -43,7 +44,15 @@ const App = () => {
                 <Route path="/chat" element={<Chat />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route 
-                  path="/admin/keywords" 
+                  path="/admin" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin/keywords"
                   element={
                     <ProtectedRoute requireAdmin>
                       <AdminKeywords />

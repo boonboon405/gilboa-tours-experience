@@ -105,6 +105,11 @@ export const Navigation = () => {
                   <DropdownMenuSeparator />
                   {isAdmin && (
                     <>
+                      <DropdownMenuItem onClick={() => navigate('/admin')}>
+                        <Shield className="ml-2 h-4 w-4" />
+                        לוח בקרה
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => navigate('/admin/knowledge')}>
                         <Shield className="ml-2 h-4 w-4" />
                         מאגר ידע
@@ -193,6 +198,17 @@ export const Navigation = () => {
               <>
                 {isAdmin && (
                   <div className="mt-2 space-y-2">
+                    <Button 
+                      variant="default" 
+                      className="w-full gap-2"
+                      onClick={() => {
+                        navigate('/admin');
+                        setIsOpen(false);
+                      }}
+                    >
+                      <Shield className="h-4 w-4" />
+                      לוח בקרה
+                    </Button>
                     <Button 
                       variant="outline" 
                       className="w-full gap-2"
