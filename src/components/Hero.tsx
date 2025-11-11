@@ -95,10 +95,10 @@ export const Hero = () => {
       <Button
         variant="outline"
         size="sm"
-        className="absolute top-20 right-4 z-20 bg-background/80 backdrop-blur-sm animate-fade-in [animation-delay:0.5s] opacity-0 [animation-fill-mode:forwards] hover:scale-105 transition-all hover:shadow-lg animate-[float_3s_ease-in-out_infinite]"
+        className="absolute top-20 right-4 z-20 bg-background/80 backdrop-blur-sm animate-fade-in [animation-delay:0.5s] opacity-0 [animation-fill-mode:forwards] hover:scale-105 transition-all hover:shadow-lg animate-[float_8s_ease-in-out_infinite]"
         onClick={() => setShowImageSelector(true)}
       >
-        <Sparkles className="ml-2 h-4 w-4 animate-[spin_3s_linear_infinite]" />
+        <Sparkles className="ml-2 h-4 w-4 animate-[spin_12s_linear_infinite]" />
         צור תמונת רקע ב-AI
       </Button>
 
