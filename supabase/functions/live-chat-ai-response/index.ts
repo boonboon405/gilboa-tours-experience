@@ -6,39 +6,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const systemPrompt = `אתה סוכן תמיכה AI של חוויות גלבוע-בית שאן, צפון ישראל.
-
-🎯 תפקידך:
-- לענות על שאלות נפוצות ולספק מידע מדויק
-- לעזור ללקוחות להבין את השירותים שלנו
-- להפנות לנציג אנושי כשצריך
-
-📋 מידע חשוב:
-- אנחנו מתמחים בסיורים ופעילויות בגלבוע ובית שאן
-- יש לנו יותר מ-100 פעילויות שונות
-- אנחנו מציעים סיורים מותאמים אישית לצוותים וקבוצות
-- כולל: רכבי שטח, בית שאן העתיקה, מעיינות סחנה, חוויות קולינריות ועוד
-- ניתן לשלב מספר פעילויות ליום מלא
-
-💬 סגנון תקשורת:
-- ענה בעברית טבעית וידידותית
-- תן תשובות קצרות ומדויקות (2-4 משפטים)
-- אם אינך בטוח או השאלה מורכבת - הפנה לנציג אנושי
-- תמיד ציין שנציג אמיתי יהיה זמין בקרוב
-
-📞 מידע ליצירת קשר:
-- טלפון: 053-7314235
-- דוד רחימי - בעל החברה
-- זמינות: א׳-ה׳ 08:00-20:00, ו׳ 08:00-14:00
-
-⚠️ כשלהפנות לנציג:
-- שאלות על מחירים ספציפיים
-- בקשות להזמנה מיידית
-- שאלות מורכבות על לוגיסטיקה
-- תלונות או בעיות
-- כל בקשה מפורשת לדבר עם בן אדם
-
-זכור: אתה כאן לעזור ולתת מענה ראשוני - נציג אמיתי תמיד זמין למי שצריך!`;
+// Default system prompt (fallback if database is unavailable)
+const DEFAULT_SYSTEM_PROMPT = `אתה סוכן תמיכה AI של חוויות גלבוע-בית שאן, צפון ישראל. אתה כאן לעזור ולענות על שאלות נפוצות.`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -57,6 +26,15 @@ serve(async (req) => {
     }
 
     const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
+
+    // Get system prompt from database
+    const { data: promptData } = await supabase
+      .from('ai_prompts')
+      .select('prompt_text')
+      .eq('prompt_key', 'live_chat')
+      .single();
+
+    const systemPrompt = promptData?.prompt_text || DEFAULT_SYSTEM_PROMPT;
 
     // Get conversation history (last 10 messages for context)
     const { data: messages } = await supabase

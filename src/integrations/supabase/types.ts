@@ -46,6 +46,33 @@ export type Database = {
           },
         ]
       }
+      ai_prompts: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          prompt_key: string
+          prompt_text: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          prompt_key: string
+          prompt_text: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          prompt_key?: string
+          prompt_text?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           created_at: string

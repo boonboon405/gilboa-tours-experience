@@ -25,6 +25,7 @@ import AdminEmailTemplates from "./pages/AdminEmailTemplates";
 import AdminEmailAutomation from "./pages/AdminEmailAutomation";
 import MasterDashboard from "./pages/MasterDashboard";
 import AdminAIResponses from "./pages/AdminAIResponses";
+import AISettings from "./pages/AISettings";
 import NotFound from "./pages/NotFound";
 import { LiveChatWidget } from "./components/LiveChatWidget";
 
@@ -146,6 +147,7 @@ const App = () => {
                     </ProtectedRoute>
                   } 
                 />
+                <Route path="/ai-settings" element={<AISettings />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
