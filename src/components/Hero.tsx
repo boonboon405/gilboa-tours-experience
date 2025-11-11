@@ -120,7 +120,7 @@ export const Hero = () => {
               <Button
                 variant="hero"
                 size="lg"
-                className="text-lg px-8 py-6 gap-2 animate-[pulse_8s_cubic-bezier(0.4,0,0.6,1)_infinite] transition-all hover:scale-105 hover:shadow-xl ripple-effect"
+                className="text-lg px-8 py-6 gap-2 animate-[pulse_8s_cubic-bezier(0.4,0,0.6,1)_infinite] transition-all hover:scale-105 hover:shadow-xl ripple-effect animate-fade-in [animation-delay:0.2s] opacity-0 [animation-fill-mode:forwards]"
               >
                 <Bot className="h-5 w-5" />
                 שוחח עם הסוכן החכם
@@ -130,7 +130,7 @@ export const Hero = () => {
               <Button
                 variant="hero"
                 size="lg"
-                className="text-lg px-8 py-6 gap-2 transition-all hover:scale-105 hover:shadow-xl ripple-effect"
+                className="text-lg px-8 py-6 gap-2 transition-all hover:scale-105 hover:shadow-xl ripple-effect animate-fade-in [animation-delay:0.4s] opacity-0 [animation-fill-mode:forwards]"
               >
                 <Calendar className="h-5 w-5" />
                 הזמן סיור
@@ -139,7 +139,7 @@ export const Hero = () => {
             <Button
               variant="hero"
               size="lg"
-              className="text-lg px-8 py-6 transition-all hover:scale-105 hover:shadow-xl ripple-effect"
+              className="text-lg px-8 py-6 transition-all hover:scale-105 hover:shadow-xl ripple-effect animate-fade-in [animation-delay:0.6s] opacity-0 [animation-fill-mode:forwards]"
               onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
             >
               <Phone className="h-5 w-5" />
@@ -152,7 +152,7 @@ export const Hero = () => {
             <Button
               variant="whatsapp"
               size="lg"
-              className="text-lg px-8 py-6 transition-all hover:scale-105 hover:shadow-xl ripple-effect"
+              className="text-lg px-8 py-6 transition-all hover:scale-105 hover:shadow-xl ripple-effect animate-fade-in [animation-delay:0.8s] opacity-0 [animation-fill-mode:forwards]"
               onClick={() => window.open(`https://wa.me/${whatsappNumber}`, '_blank')}
             >
               <MessageCircle className="ml-2 h-5 w-5" />
@@ -163,7 +163,7 @@ export const Hero = () => {
           {/* Phone Number */}
           <a
             href={`tel:${phoneNumber}`}
-            className="inline-flex items-center text-white text-xl font-semibold hover:text-accent transition-colors"
+            className="inline-flex items-center text-white text-xl font-semibold hover:text-accent transition-colors animate-fade-in [animation-delay:1s] opacity-0 [animation-fill-mode:forwards]"
           >
             <Phone className="ml-2 h-6 w-6" />
             {phoneNumber}
@@ -172,9 +172,9 @@ export const Hero = () => {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse" />
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce animate-fade-in [animation-delay:1.2s] opacity-0 [animation-fill-mode:forwards]">
+        <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center cursor-pointer hover:border-accent transition-colors" onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}>
+          <div className="w-1 h-3 bg-white rounded-full mt-2 animate-[scroll-indicator_2s_ease-in-out_infinite]" />
         </div>
       </div>
 
