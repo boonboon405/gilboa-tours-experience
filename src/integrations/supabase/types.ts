@@ -46,6 +46,41 @@ export type Database = {
           },
         ]
       }
+      ai_prompt_versions: {
+        Row: {
+          change_note: string | null
+          changed_by: string | null
+          created_at: string
+          id: string
+          prompt_id: string
+          prompt_text: string
+        }
+        Insert: {
+          change_note?: string | null
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          prompt_id: string
+          prompt_text: string
+        }
+        Update: {
+          change_note?: string | null
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          prompt_id?: string
+          prompt_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_prompt_versions_prompt_id_fkey"
+            columns: ["prompt_id"]
+            isOneToOne: false
+            referencedRelation: "ai_prompts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_prompts: {
         Row: {
           created_at: string

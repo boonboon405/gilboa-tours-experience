@@ -130,6 +130,10 @@ export const Navigation = () => {
                         <Shield className="ml-2 h-4 w-4" />
                         עריכת תגובות AI
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate('/ai-settings')}>
+                        <Shield className="ml-2 h-4 w-4" />
+                        הגדרות טקסטי AI
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                     </>
                   )}
