@@ -121,7 +121,7 @@ export const Hero = () => {
               <Button
                 variant="hero"
                 size="lg"
-                className="text-lg px-8 py-6 gap-2 animate-[pulse_12s_cubic-bezier(0.4,0,0.6,1)_infinite] transition-all hover:scale-105 hover:shadow-xl ripple-effect animate-fade-in [animation-delay:0.2s] opacity-0 [animation-fill-mode:forwards]"
+                className="text-lg px-8 py-6 gap-2 animate-[slow-pulse_4s_ease-in-out_infinite] transition-all hover:scale-105 hover:shadow-xl ripple-effect animate-fade-in [animation-delay:0.2s] opacity-0 [animation-fill-mode:forwards]"
               >
                 <Bot className="h-5 w-5" />
                 שוחח עם הסוכן החכם
