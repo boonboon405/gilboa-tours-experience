@@ -237,6 +237,197 @@ export type Database = {
         }
         Relationships: []
       }
+      email_queue: {
+        Row: {
+          booking_id: string | null
+          created_at: string
+          error_message: string | null
+          html_content: string
+          id: string
+          lead_id: string | null
+          recipient_email: string
+          scheduled_for: string
+          sent_at: string | null
+          sequence_id: string | null
+          status: string
+          step_id: string | null
+          subject: string
+        }
+        Insert: {
+          booking_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          html_content: string
+          id?: string
+          lead_id?: string | null
+          recipient_email: string
+          scheduled_for: string
+          sent_at?: string | null
+          sequence_id?: string | null
+          status?: string
+          step_id?: string | null
+          subject: string
+        }
+        Update: {
+          booking_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          html_content?: string
+          id?: string
+          lead_id?: string | null
+          recipient_email?: string
+          scheduled_for?: string
+          sent_at?: string | null
+          sequence_id?: string | null
+          status?: string
+          step_id?: string | null
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_queue_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_queue_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_queue_sequence_id_fkey"
+            columns: ["sequence_id"]
+            isOneToOne: false
+            referencedRelation: "email_sequences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_queue_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "email_sequence_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_sequence_steps: {
+        Row: {
+          created_at: string
+          delay_hours: number
+          html_content: string
+          id: string
+          sequence_id: string
+          step_order: number
+          subject: string
+          template_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          delay_hours?: number
+          html_content: string
+          id?: string
+          sequence_id: string
+          step_order: number
+          subject: string
+          template_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          delay_hours?: number
+          html_content?: string
+          id?: string
+          sequence_id?: string
+          step_order?: number
+          subject?: string
+          template_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_sequence_steps_sequence_id_fkey"
+            columns: ["sequence_id"]
+            isOneToOne: false
+            referencedRelation: "email_sequences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_sequence_steps_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "email_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_sequences: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          trigger_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          trigger_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          trigger_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      email_templates: {
+        Row: {
+          created_at: string
+          html_content: string
+          id: string
+          is_active: boolean
+          name: string
+          subject: string
+          template_type: string
+          updated_at: string
+          variables: Json | null
+        }
+        Insert: {
+          created_at?: string
+          html_content: string
+          id?: string
+          is_active?: boolean
+          name: string
+          subject: string
+          template_type: string
+          updated_at?: string
+          variables?: Json | null
+        }
+        Update: {
+          created_at?: string
+          html_content?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          subject?: string
+          template_type?: string
+          updated_at?: string
+          variables?: Json | null
+        }
+        Relationships: []
+      }
       knowledge_base: {
         Row: {
           answer: string
@@ -529,6 +720,60 @@ export type Database = {
           id?: string
           is_active?: boolean
           keyword?: string
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          customer_company: string | null
+          customer_email: string | null
+          customer_name: string
+          id: string
+          image_url: string | null
+          is_featured: boolean
+          rating: number
+          status: string
+          testimonial_text: string
+          tour_date: string | null
+          tour_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          customer_company?: string | null
+          customer_email?: string | null
+          customer_name: string
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          rating: number
+          status?: string
+          testimonial_text: string
+          tour_date?: string | null
+          tour_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          customer_company?: string | null
+          customer_email?: string | null
+          customer_name?: string
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          rating?: number
+          status?: string
+          testimonial_text?: string
+          tour_date?: string | null
+          tour_type?: string | null
+          updated_at?: string
         }
         Relationships: []
       }

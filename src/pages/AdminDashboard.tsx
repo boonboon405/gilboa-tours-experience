@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, MessageSquare, Key, Database, Users, BarChart } from "lucide-react";
+import { Shield, MessageSquare, Key, Database, Users, BarChart, Mail, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const AdminDashboard = () => {
@@ -50,6 +50,27 @@ const AdminDashboard = () => {
       icon: BarChart,
       path: "/booking-analytics",
       color: "text-cyan-500"
+    },
+    {
+      title: "ניהול המלצות",
+      description: "אישור והצגת המלצות לקוחות",
+      icon: Star,
+      path: "/admin/testimonials",
+      color: "text-yellow-500"
+    },
+    {
+      title: "תבניות אימייל",
+      description: "עריכת תבניות אימייל",
+      icon: Mail,
+      path: "/admin/email-templates",
+      color: "text-indigo-500"
+    },
+    {
+      title: "אוטומציה",
+      description: "רצפי אימיילים אוטומטיים",
+      icon: Mail,
+      path: "/admin/email-automation",
+      color: "text-violet-500"
     }
   ];
 

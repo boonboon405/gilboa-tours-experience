@@ -11,6 +11,7 @@ import SEOKeywords from '@/components/SEOKeywords';
 import { ExitIntentModal } from '@/components/ExitIntentModal';
 import { EmergencyContactButton } from '@/components/EmergencyContactButton';
 import { PublicFAQ } from '@/components/PublicFAQ';
+import { TestimonialSubmissionForm } from '@/components/TestimonialSubmissionForm';
 
 const Index = () => {
   return (
@@ -35,6 +36,11 @@ const Index = () => {
       
       <Testimonials />
       <PublicFAQ />
+      <div id="testimonial-form" className="scroll-mt-20 py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <TestimonialSubmissionForm />
+        </div>
+      </div>
       <ContactSection />
       <Footer />
     </div>

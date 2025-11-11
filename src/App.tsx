@@ -20,6 +20,9 @@ import ChatAnalytics from "./pages/ChatAnalytics";
 import AdminKnowledgeBase from "./pages/AdminKnowledgeBase";
 import AdminDashboard from "./pages/AdminDashboard";
 import BookingAnalytics from "./pages/BookingAnalytics";
+import AdminTestimonials from "./pages/AdminTestimonials";
+import AdminEmailTemplates from "./pages/AdminEmailTemplates";
+import AdminEmailAutomation from "./pages/AdminEmailAutomation";
 import NotFound from "./pages/NotFound";
 import { LiveChatWidget } from "./components/LiveChatWidget";
 
@@ -89,6 +92,30 @@ const App = () => {
                   element={
                     <ProtectedRoute requireAdmin>
                       <BookingAnalytics />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin/testimonials" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <AdminTestimonials />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin/email-templates" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <AdminEmailTemplates />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin/email-automation" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <AdminEmailAutomation />
                     </ProtectedRoute>
                   } 
                 />
