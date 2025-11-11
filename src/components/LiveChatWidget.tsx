@@ -109,7 +109,7 @@ export const LiveChatWidget = () => {
           conversation_id: data.id,
           sender_type: 'system',
           sender_name: 'מערכת',
-          message: `שלום ${visitorName}! 👋\n\nאנחנו כאן לעזור לכם. נציג שלנו יהיה זמין בקרוב.\n\nאתם מוזמנים לכתוב את השאלה שלכם ואנחנו נחזור אליכם תוך זמן קצר.`,
+          message: `שלום ${visitorName}! 👋\n\nאנחנו כאן לעזור לכם.\n\n🤖 עונה אוטומטית חכמה תענה על שאלותיכם הראשונות\n👤 נציג אמיתי יצטרף בקרוב במידת הצורך\n\nאתם מוזמנים לכתוב את השאלה שלכם!`,
           read_by_visitor: true
         });
 
@@ -130,6 +130,7 @@ export const LiveChatWidget = () => {
     setInput('');
 
     try {
+      // Store visitor message
       await supabase
         .from('live_chat_messages')
         .insert({
@@ -145,6 +146,34 @@ export const LiveChatWidget = () => {
         .from('live_chat_conversations')
         .update({ updated_at: new Date().toISOString() })
         .eq('id', conversationId);
+
+      // Trigger AI auto-response
+      // Using background task pattern to not block the UI
+      setTimeout(async () => {
+        try {
+          const { data, error } = await supabase.functions.invoke('live-chat-ai-response', {
+            body: {
+              conversationId,
+              message: messageText
+            }
+          });
+
+          if (error) {
+            console.error('AI response error:', error);
+            return;
+          }
+
+          // If AI suggests human agent is needed, show a notification
+          if (data?.needsHumanAgent) {
+            toast({
+              title: "📞 נציג אנושי יחזור אליכם בקרוב",
+              description: "השאלה שלכם הועברה לנציג שלנו",
+            });
+          }
+        } catch (error) {
+          console.error('Error triggering AI response:', error);
+        }
+      }, 2000); // 2 second delay to simulate "agent is typing"
 
     } catch (error) {
       console.error('Error sending message:', error);
@@ -309,6 +338,7 @@ export const LiveChatWidget = () => {
                       {msg.sender_name && msg.sender_type !== 'visitor' && (
                         <p className="text-xs font-semibold mb-1 opacity-70">
                           {msg.sender_name}
+                          {msg.sender_name === 'AI Assistant' && ' 🤖'}
                         </p>
                       )}
                       <p className="whitespace-pre-wrap text-sm">{msg.message}</p>
@@ -345,7 +375,7 @@ export const LiveChatWidget = () => {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground mt-2 text-center">
-              זמן תגובה ממוצע: 2-5 דקות
+              🤖 מענה אוטומטי מיידי • 👤 נציג אמיתי זמין בקרוב
             </p>
           </div>
         </>
