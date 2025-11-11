@@ -5,12 +5,18 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
-import { Lock, Save, Eye, EyeOff, History, RotateCcw } from 'lucide-react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Lock, Save, Eye, EyeOff, History, RotateCcw, Clock } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { format } from 'date-fns';
 
-const SETTINGS_PASSWORD = 'odt2025'; // Simple password protection
+const SETTINGS_PASSWORD = 'odt2025';
 
 interface AIPrompt {
   id: string;
@@ -21,6 +27,7 @@ interface AIPrompt {
 
 interface PromptVersion {
   id: string;
+  prompt_id: string;
   prompt_text: string;
   changed_by: string | null;
   change_note: string | null;
@@ -31,11 +38,9 @@ const AISettings = () => {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [password, setPassword] = useState('');
   const [prompts, setPrompts] = useState<AIPrompt[]>([]);
+  const [versions, setVersions] = useState<Record<string, PromptVersion[]>>({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedPromptHistory, setSelectedPromptHistory] = useState<string | null>(null);
-  const [versionHistory, setVersionHistory] = useState<PromptVersion[]>([]);
-  const [loadingHistory, setLoadingHistory] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -59,8 +64,23 @@ const AISettings = () => {
       });
     } else {
       setPrompts(data || []);
+      // Load versions for each prompt
+      data?.forEach(prompt => loadVersions(prompt.id));
     }
     setLoading(false);
+  };
+
+  const loadVersions = async (promptId: string) => {
+    const { data, error } = await supabase
+      .from('ai_prompt_versions')
+      .select('*')
+      .eq('prompt_id', promptId)
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    if (!error && data) {
+      setVersions(prev => ({ ...prev, [promptId]: data }));
+    }
   };
 
   const handleUnlock = () => {
@@ -94,32 +114,10 @@ const AISettings = () => {
     } else {
       toast({
         title: 'נשמר בהצלחה',
-        description: 'הטקסט עודכן והגרסה הקודמת נשמרה בהיסטוריה',
+        description: 'הטקסט עודכן וגרסה חדשה נוצרה',
       });
       loadPrompts();
     }
-  };
-
-  const loadVersionHistory = async (promptId: string) => {
-    setLoadingHistory(true);
-    setSelectedPromptHistory(promptId);
-    
-    const { data, error } = await supabase
-      .from('ai_prompt_versions')
-      .select('*')
-      .eq('prompt_id', promptId)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      toast({
-        title: 'שגיאה',
-        description: 'לא ניתן לטעון את ההיסטוריה',
-        variant: 'destructive',
-      });
-    } else {
-      setVersionHistory(data || []);
-    }
-    setLoadingHistory(false);
   };
 
   const restoreVersion = async (promptId: string, versionText: string) => {
@@ -136,12 +134,22 @@ const AISettings = () => {
       });
     } else {
       toast({
-        title: 'שוחזר בהצלחה',
-        description: 'הטקסט שוחזר לגרסה קודמת',
+        title: 'גרסה שוחזרה',
+        description: 'הטקסט חזר לגרסה הישנה',
       });
-      setSelectedPromptHistory(null);
       loadPrompts();
     }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('he-IL', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   if (!isUnlocked) {
@@ -196,10 +204,69 @@ const AISettings = () => {
           prompts.map((prompt) => (
             <Card key={prompt.id}>
               <CardHeader>
-                <CardTitle>
-                  {prompt.prompt_key === 'live_chat' ? 'צ\'אט תמיכה חיה' : 'עוזר טיולים AI'}
-                </CardTitle>
-                <CardDescription>{prompt.description}</CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>
+                      {prompt.prompt_key === 'live_chat' ? 'צ\'אט תמיכה חיה' : 'עוזר טיולים AI'}
+                    </CardTitle>
+                    <CardDescription>{prompt.description}</CardDescription>
+                  </div>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <History className="w-4 h-4 ml-2" />
+                        היסטוריה
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-3xl max-h-[80vh]">
+                      <DialogHeader>
+                        <DialogTitle>היסטוריית שינויים</DialogTitle>
+                        <DialogDescription>
+                          גרסאות קודמות של הטקסט - לחץ לשחזור
+                        </DialogDescription>
+                      </DialogHeader>
+                      <ScrollArea className="h-[500px] pr-4">
+                        <div className="space-y-4">
+                          {versions[prompt.id]?.map((version, index) => (
+                            <Card key={version.id}>
+                              <CardHeader>
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <Clock className="w-4 h-4 text-muted-foreground" />
+                                    <span className="text-sm text-muted-foreground">
+                                      {formatDate(version.created_at)}
+                                    </span>
+                                    {index === 0 && (
+                                      <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
+                                        גרסה נוכחית
+                                      </span>
+                                    )}
+                                  </div>
+                                  {index !== 0 && (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => restoreVersion(prompt.id, version.prompt_text)}
+                                    >
+                                      <RotateCcw className="w-4 h-4 ml-2" />
+                                      שחזר
+                                    </Button>
+                                  )}
+                                </div>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="bg-muted p-3 rounded text-sm font-mono whitespace-pre-wrap max-h-40 overflow-auto">
+                                  {version.prompt_text.substring(0, 200)}
+                                  {version.prompt_text.length > 200 && '...'}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <Textarea
@@ -214,90 +281,18 @@ const AISettings = () => {
                   className="font-mono text-sm"
                   dir="rtl"
                 />
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => handleSave(prompt.id, prompt.prompt_text)}
-                    className="flex-1"
-                  >
-                    <Save className="w-4 h-4 ml-2" />
-                    שמור שינויים
-                  </Button>
-                  <Button
-                    onClick={() => loadVersionHistory(prompt.id)}
-                    variant="outline"
-                  >
-                    <History className="w-4 h-4 ml-2" />
-                    היסטוריה
-                  </Button>
-                </div>
+                <Button
+                  onClick={() => handleSave(prompt.id, prompt.prompt_text)}
+                  className="w-full"
+                >
+                  <Save className="w-4 h-4 ml-2" />
+                  שמור שינויים
+                </Button>
               </CardContent>
             </Card>
           ))
         )}
       </div>
-
-      {/* Version History Dialog */}
-      <Dialog open={selectedPromptHistory !== null} onOpenChange={() => setSelectedPromptHistory(null)}>
-        <DialogContent className="max-w-4xl max-h-[80vh]">
-          <DialogHeader>
-            <DialogTitle>היסטוריית שינויים</DialogTitle>
-            <DialogDescription>
-              כל השינויים שבוצעו בטקסט נשמרים אוטומטית. ניתן לשחזר כל גרסה קודמת.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <ScrollArea className="h-[500px] pr-4">
-            {loadingHistory ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">טוען היסטוריה...</p>
-              </div>
-            ) : versionHistory.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">אין שינויים קודמים</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {versionHistory.map((version, index) => (
-                  <Card key={version.id}>
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-sm">
-                          גרסה מ-{format(new Date(version.created_at), 'dd/MM/yyyy HH:mm')}
-                        </CardTitle>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            const promptId = selectedPromptHistory;
-                            if (promptId) {
-                              restoreVersion(promptId, version.prompt_text);
-                            }
-                          }}
-                        >
-                          <RotateCcw className="w-3 h-3 ml-1" />
-                          שחזר גרסה זו
-                        </Button>
-                      </div>
-                      {version.change_note && (
-                        <CardDescription className="text-xs">
-                          {version.change_note}
-                        </CardDescription>
-                      )}
-                    </CardHeader>
-                    <CardContent>
-                      <div className="bg-muted p-3 rounded-md">
-                        <pre className="text-xs whitespace-pre-wrap font-mono" dir="rtl">
-                          {version.prompt_text}
-                        </pre>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

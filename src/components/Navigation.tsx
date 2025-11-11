@@ -132,7 +132,7 @@ export const Navigation = () => {
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/ai-settings')}>
                         <Shield className="ml-2 h-4 w-4" />
-                        הגדרות טקסטי AI
+                        הגדרות AI (טקסטים)
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                     </>
