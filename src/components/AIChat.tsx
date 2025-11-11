@@ -29,6 +29,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [sessionId] = useState(() => `session-${Date.now()}-${Math.random()}`);
+  const [quickReplies, setQuickReplies] = useState<string[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -112,6 +113,11 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
       };
 
       setMessages(prev => [...prev, aiMessage]);
+      
+      // Update quick replies
+      if (data.quickReplies && data.quickReplies.length > 0) {
+        setQuickReplies(data.quickReplies);
+      }
 
       // Check if human agent is needed
       if (data.message.includes('דוד') || data.message.includes('053-7314235')) {
@@ -190,6 +196,27 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
 
       {/* Input */}
       <div className="p-4 border-t border-border/50 bg-background">
+        {/* Quick Replies */}
+        {quickReplies.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-3">
+            {quickReplies.map((reply, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setInput(reply);
+                  setTimeout(() => handleSend(), 100);
+                }}
+                className="text-xs"
+                disabled={isLoading}
+              >
+                {reply}
+              </Button>
+            ))}
+          </div>
+        )}
+        
         <div className="flex gap-2">
           <Input
             value={input}

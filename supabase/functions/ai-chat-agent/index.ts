@@ -79,6 +79,13 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
 
+    // Fetch knowledge base entries
+    const { data: knowledgeBase } = await supabase
+      .from('knowledge_base')
+      .select('*')
+      .eq('is_active', true)
+      .order('priority', { ascending: false });
+
     // Get or create conversation
     let conversation;
     if (conversationId) {
@@ -133,6 +140,15 @@ serve(async (req) => {
       quizContext += categoryDescriptions[topCategory as keyof typeof categoryDescriptions] || "מגוונת ומעניינת";
     }
 
+    // Build knowledge base context
+    let knowledgeContext = "\n\nמאגר ידע וQ&A:\n";
+    if (knowledgeBase && knowledgeBase.length > 0) {
+      knowledgeBase.forEach((entry: any) => {
+        knowledgeContext += `\nשאלה: ${entry.question}\nתשובה: ${entry.answer}\n`;
+      });
+      knowledgeContext += "\nהשתמש במידע זה כדי לענות על שאלות הלקוחות בצורה מדויקת ועקבית.";
+    }
+
     // Store user message
     await supabase
       .from('chat_messages')
@@ -159,7 +175,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
-          { role: "system", content: systemPrompt + quizContext },
+          { role: "system", content: systemPrompt + quizContext + knowledgeContext },
           ...conversationHistory,
           { role: "user", content: message }
         ],
@@ -167,6 +183,33 @@ serve(async (req) => {
         max_tokens: 1000
       }),
     });
+
+    // Generate quick reply suggestions based on context
+    const quickReplies = [];
+    if (!messages || messages.length <= 1) {
+      // First interaction - offer main options
+      quickReplies.push(
+        "מה אתם מציעים?",
+        "כמה עולה?",
+        "איפה אתם ממוקמים?",
+        "רוצה לדבר עם בן אדם"
+      );
+    } else {
+      // Context-aware suggestions
+      const lastMessages = messages?.slice(-3).map((m: any) => m.message).join(' ') || '';
+      if (lastMessages.includes('מחיר') || lastMessages.includes('עולה')) {
+        quickReplies.push("תנו לי הצעת מחיר", "מה כלול במחיר?");
+      }
+      if (lastMessages.includes('זמן') || lastMessages.includes('משך')) {
+        quickReplies.push("כמה זמן נמשך?", "מתי אפשר להתחיל?");
+      }
+      if (lastMessages.includes('קבוצה') || lastMessages.includes('צוות')) {
+        quickReplies.push("כמה אנשים מינימום?", "מה מתאים לקבוצה שלנו?");
+      }
+      if (quickReplies.length < 3) {
+        quickReplies.push("מעניין, ספרו עוד", "רוצה לדבר עם בן אדם");
+      }
+    }
 
     if (!response.ok) {
       if (response.status === 429) {
@@ -230,7 +273,8 @@ serve(async (req) => {
       JSON.stringify({
         message: aiMessage,
         conversationId: conversation.id,
-        sentiment: sentiment
+        sentiment: sentiment,
+        quickReplies: quickReplies.slice(0, 4)
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

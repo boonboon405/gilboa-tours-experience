@@ -14,6 +14,7 @@ import KeywordsList from "./pages/KeywordsList";
 import LeadManagement from "./pages/LeadManagement";
 import AdminChat from "./pages/AdminChat";
 import ChatAnalytics from "./pages/ChatAnalytics";
+import AdminKnowledgeBase from "./pages/AdminKnowledgeBase";
 import NotFound from "./pages/NotFound";
 import { LiveChatWidget } from "./components/LiveChatWidget";
 
@@ -38,6 +39,7 @@ const App = () => {
               <Route path="/chat" element={<Chat />} />
               <Route path="/admin/keywords" element={<AdminKeywords />} />
               <Route path="/admin/chat" element={<AdminChat />} />
+              <Route path="/admin/knowledge" element={<AdminKnowledgeBase />} />
               <Route path="/chat-analytics" element={<ChatAnalytics />} />
               <Route path="/keywords" element={<KeywordsList />} />
               <Route path="/leads" element={<LeadManagement />} />

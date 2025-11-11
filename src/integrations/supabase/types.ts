@@ -237,6 +237,45 @@ export type Database = {
         }
         Relationships: []
       }
+      knowledge_base: {
+        Row: {
+          answer: string
+          category: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          keywords: string[] | null
+          priority: number | null
+          question: string
+          updated_at: string
+          usage_count: number | null
+        }
+        Insert: {
+          answer: string
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          keywords?: string[] | null
+          priority?: number | null
+          question: string
+          updated_at?: string
+          usage_count?: number | null
+        }
+        Update: {
+          answer?: string
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          keywords?: string[] | null
+          priority?: number | null
+          question?: string
+          updated_at?: string
+          usage_count?: number | null
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           assigned_to: string | null
