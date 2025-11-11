@@ -51,11 +51,11 @@ export const EmergencyContactButton = () => {
               {ownerName}
             </strong>
             <span className="block text-muted-foreground">
-              בעל המערכת ומומחה הטיולים
+              מומחה הטיולים שלנו
             </span>
             <div className="mt-4 p-4 bg-muted rounded-lg border-r-4 border-primary">
               <p className="text-sm text-foreground">
-                💬 אני כאן בשבילכם! אם יש לכם שאלות, מהסוסים, או רוצים ייעוץ אישי - 
+                💬 אני כאן בשבילכם! אם יש שאלות, מהסוסים, או רוצים ייעוץ אישי - 
                 אל תהססו לפנות אליי ישירות. אענה בשמחה!
               </p>
             </div>

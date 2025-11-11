@@ -107,7 +107,7 @@ export const ExitIntentModal = () => {
             <div className="p-2 rounded-full bg-gradient-hero">
               <AlertCircle className="h-5 w-5 text-white" />
             </div>
-            <DialogTitle className="text-2xl">יש לכם שאלות?</DialogTitle>
+            <DialogTitle className="text-2xl">יש שאלות?</DialogTitle>
           </div>
           <DialogDescription className="text-right text-base leading-relaxed pt-2">
             נראה שאתם מהססים או צריכים ייעוץ נוסף
@@ -115,7 +115,7 @@ export const ExitIntentModal = () => {
               דברו ישירות עם {ownerName}
             </strong>
             <span className="block mt-1 text-muted-foreground">
-              בעל המערכת ומומחה הטיולים שלנו - זמין עכשיו!
+              מומחה הטיולים שלנו - זמין עכשיו!
             </span>
           </DialogDescription>
         </DialogHeader>
