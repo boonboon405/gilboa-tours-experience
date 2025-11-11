@@ -34,7 +34,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
   }, [messages]);
 
   useEffect(() => {
@@ -239,7 +239,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
           </Button>
         </div>
         <p className="text-xs text-muted-foreground mt-2 text-center">
-          רוצים לדבר עם בן אדם? רק תגידו 😊
+          רוצים לדבר עם בן אדם? רק תגידו
         </p>
       </div>
     </Card>
