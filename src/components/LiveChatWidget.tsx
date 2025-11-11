@@ -214,7 +214,7 @@ export const LiveChatWidget = () => {
         {unreadCount > 0 && (
           <Badge 
             variant="destructive" 
-            className="absolute -top-2 -right-2 w-6 h-6 flex items-center justify-center p-0 animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]"
+            className="absolute -top-2 -right-2 w-6 h-6 flex items-center justify-center p-0 animate-[pulse_6s_cubic-bezier(0.4,0,0.6,1)_infinite]"
           >
             {unreadCount}
           </Badge>
