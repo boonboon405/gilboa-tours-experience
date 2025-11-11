@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
-import { ArrowLeft, Bot, User, Save, Search, Calendar } from 'lucide-react';
+import { ArrowLeft, Bot, User, Save, Search, Calendar, Download } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 
@@ -135,6 +135,56 @@ export default function AdminAIResponses() {
     conv.session_id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const exportConversation = () => {
+    if (!selectedConversation || messages.length === 0) {
+      toast({
+        title: "שגיאה",
+        description: "אין שיחה לייצוא",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const conversation = conversations.find(c => c.id === selectedConversation);
+    
+    // Create text content
+    let content = `שיחה עם AI - ${new Date().toLocaleDateString('he-IL')}\n`;
+    content += `${'-'.repeat(60)}\n\n`;
+    
+    if (conversation) {
+      content += `שם: ${conversation.user_name || 'אורח'}\n`;
+      content += `אימייל: ${conversation.user_email || 'ללא אימייל'}\n`;
+      content += `תאריך יצירה: ${new Date(conversation.created_at).toLocaleString('he-IL')}\n`;
+      content += `סטטוס: ${conversation.status}\n`;
+      if (conversation.detected_mood && conversation.detected_mood.length > 0) {
+        content += `מצב רוח: ${conversation.detected_mood.join(', ')}\n`;
+      }
+      content += `\n${'-'.repeat(60)}\n\n`;
+    }
+    
+    messages.forEach((msg) => {
+      const sender = msg.sender === 'user' ? 'לקוח' : 'AI';
+      const time = new Date(msg.created_at).toLocaleString('he-IL');
+      content += `[${time}] ${sender}:\n${msg.message}\n\n`;
+    });
+    
+    // Create and download file
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `conversation-${selectedConversation}-${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "הצלחה",
+      description: "השיחה יוצאה בהצלחה",
+    });
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
@@ -221,10 +271,22 @@ export default function AdminAIResponses() {
           {/* Messages */}
           <Card className="lg:col-span-2">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Bot className="w-5 h-5" />
-                הודעות בשיחה
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Bot className="w-5 h-5" />
+                  הודעות בשיחה
+                </CardTitle>
+                {selectedConversation && messages.length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={exportConversation}
+                  >
+                    <Download className="w-4 h-4 ml-2" />
+                    ייצא שיחה
+                  </Button>
+                )}
+              </div>
             </CardHeader>
             <CardContent>
               {!selectedConversation ? (
