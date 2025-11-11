@@ -285,6 +285,83 @@ export type Database = {
         }
         Relationships: []
       }
+      live_chat_conversations: {
+        Row: {
+          assigned_to: string | null
+          created_at: string
+          id: string
+          session_id: string
+          status: string
+          updated_at: string
+          visitor_email: string | null
+          visitor_name: string | null
+          visitor_phone: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string
+          id?: string
+          session_id: string
+          status?: string
+          updated_at?: string
+          visitor_email?: string | null
+          visitor_name?: string | null
+          visitor_phone?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string
+          id?: string
+          session_id?: string
+          status?: string
+          updated_at?: string
+          visitor_email?: string | null
+          visitor_name?: string | null
+          visitor_phone?: string | null
+        }
+        Relationships: []
+      }
+      live_chat_messages: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          id: string
+          message: string
+          read_by_agent: boolean | null
+          read_by_visitor: boolean | null
+          sender_name: string | null
+          sender_type: string
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          id?: string
+          message: string
+          read_by_agent?: boolean | null
+          read_by_visitor?: boolean | null
+          sender_name?: string | null
+          sender_type: string
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          read_by_agent?: boolean | null
+          read_by_visitor?: boolean | null
+          sender_name?: string | null
+          sender_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_chat_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "live_chat_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       message_logs: {
         Row: {
           created_at: string

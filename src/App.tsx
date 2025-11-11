@@ -12,7 +12,9 @@ import Chat from "./pages/Chat";
 import AdminKeywords from "./pages/AdminKeywords";
 import KeywordsList from "./pages/KeywordsList";
 import LeadManagement from "./pages/LeadManagement";
+import AdminChat from "./pages/AdminChat";
 import NotFound from "./pages/NotFound";
+import { LiveChatWidget } from "./components/LiveChatWidget";
 
 const queryClient = new QueryClient();
 
@@ -34,11 +36,13 @@ const App = () => {
               <Route path="/booking" element={<Booking />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/admin/keywords" element={<AdminKeywords />} />
+              <Route path="/admin/chat" element={<AdminChat />} />
               <Route path="/keywords" element={<KeywordsList />} />
               <Route path="/leads" element={<LeadManagement />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <LiveChatWidget />
           </BrowserRouter>
         </TooltipProvider>
       </Provider>

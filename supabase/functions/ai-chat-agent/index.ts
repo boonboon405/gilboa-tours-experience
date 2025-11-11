@@ -120,7 +120,7 @@ serve(async (req) => {
       quizContext += `זה אומר שהלקוח מחפש חוויה ש`;
       
       const topCategory = quizResults.top_categories[0];
-      const categoryDescriptions = {
+      const categoryDescriptions: Record<string, string> = {
         adventure: "מלאת אדרנלין והרפתקאות מרגשות",
         nature: "מתחברת לטבע ונופים יפים",
         history: "עשירה בהיסטוריה ולימוד",
@@ -130,7 +130,7 @@ serve(async (req) => {
         wellness: "מרגיעה ומחזקת בריאות"
       };
       
-      quizContext += categoryDescriptions[topCategory] || "מגוונת ומעניינת";
+      quizContext += categoryDescriptions[topCategory as keyof typeof categoryDescriptions] || "מגוונת ומעניינת";
     }
 
     // Store user message
