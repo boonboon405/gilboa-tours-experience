@@ -110,7 +110,7 @@ export const ExitIntentModal = () => {
             <DialogTitle className="text-2xl">יש שאלות?</DialogTitle>
           </div>
           <DialogDescription className="text-right text-base leading-relaxed pt-2">
-            נראה שאתם מהססים או צריכים ייעוץ נוסף
+            ?צריכים ייעוץ נוסף
             <strong className="block text-foreground mt-2 text-lg">
               דברו ישירות עם {ownerName}
             </strong>
