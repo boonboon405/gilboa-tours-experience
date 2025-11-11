@@ -94,20 +94,20 @@ export const Hero = () => {
       <Button
         variant="outline"
         size="sm"
-        className="absolute top-20 right-4 z-20 bg-background/80 backdrop-blur-sm"
+        className="absolute top-20 right-4 z-20 bg-background/80 backdrop-blur-sm animate-fade-in [animation-delay:0.5s] opacity-0 [animation-fill-mode:forwards] hover:scale-105 transition-all hover:shadow-lg animate-[float_3s_ease-in-out_infinite]"
         onClick={() => setShowImageSelector(true)}
       >
-        <Sparkles className="ml-2 h-4 w-4" />
+        <Sparkles className="ml-2 h-4 w-4 animate-[spin_3s_linear_infinite]" />
         צור תמונת רקע ב-AI
       </Button>
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 animate-fade-in hero-glow">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 animate-[zoom-fade-in_0.8s_ease-out] hero-glow">
             חוויה קבוצתית מיוחדת, בונה ובלתי נשכחת
           </h1>
-          <h2 className="text-3xl md:text-5xl font-semibold text-accent mb-6 animate-fade-in hero-glow-accent">
+          <h2 className="text-3xl md:text-5xl font-semibold text-accent mb-6 animate-[zoom-fade-in_0.8s_ease-out_0.2s] opacity-0 [animation-fill-mode:forwards] hero-glow-accent">
             בצפון א״י היפה ובלב הגלבוע הגליל וסובב כנרת
           </h2>
           <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
