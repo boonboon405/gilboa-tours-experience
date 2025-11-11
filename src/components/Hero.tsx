@@ -102,7 +102,7 @@ export const Hero = () => {
               <Button
                 variant="hero"
                 size="lg"
-                className="text-lg px-8 py-6 gap-2 animate-pulse"
+                className="text-lg px-8 py-6 gap-2 animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite]"
               >
                 <Bot className="h-5 w-5" />
                 שוחח עם הסוכן החכם
