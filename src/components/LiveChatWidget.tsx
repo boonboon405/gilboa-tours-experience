@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, X, Send, Minimize2, User, Headphones } from 'lucide-react';
+import { MessageCircle, X, Send, Minimize2, User, Headphones, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -26,6 +26,7 @@ export const LiveChatWidget = () => {
   const [visitorName, setVisitorName] = useState('');
   const [showNameForm, setShowNameForm] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isAgentTyping, setIsAgentTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -147,8 +148,8 @@ export const LiveChatWidget = () => {
         .update({ updated_at: new Date().toISOString() })
         .eq('id', conversationId);
 
-      // Trigger AI auto-response
-      // Using background task pattern to not block the UI
+      // Trigger AI auto-response with typing indicator
+      setIsAgentTyping(true);
       setTimeout(async () => {
         try {
           const { data, error } = await supabase.functions.invoke('live-chat-ai-response', {
@@ -172,6 +173,8 @@ export const LiveChatWidget = () => {
           }
         } catch (error) {
           console.error('Error triggering AI response:', error);
+        } finally {
+          setIsAgentTyping(false);
         }
       }, 2000); // 2 second delay to simulate "agent is typing"
 
@@ -352,6 +355,20 @@ export const LiveChatWidget = () => {
                   </div>
                 </div>
               ))}
+              {isAgentTyping && (
+                <div className="flex gap-2">
+                  <div className="w-8 h-8 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center">
+                    <Headphones className="w-4 h-4" />
+                  </div>
+                  <div className="bg-secondary/20 p-3 rounded-lg">
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                  </div>
+                </div>
+              )}
               <div ref={scrollRef} />
             </div>
           </ScrollArea>

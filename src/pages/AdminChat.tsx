@@ -15,7 +15,9 @@ import {
   Clock, 
   MessageCircle,
   Headphones,
-  CheckCheck
+  CheckCheck,
+  Brain,
+  Loader2
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -39,6 +41,7 @@ interface Message {
   read_by_agent: boolean;
   read_by_visitor: boolean;
   created_at: string;
+  ai_confidence_score: number | null;
 }
 
 const AdminChat = () => {
@@ -48,8 +51,17 @@ const AdminChat = () => {
   const [input, setInput] = useState('');
   const [agentName, setAgentName] = useState('דוד רחימי');
   const [activeTab, setActiveTab] = useState('active');
+  const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  const quickReplies = [
+    'תודה על הפנייה! אחזור אליך בהקדם',
+    'אשמח לעזור לך עם זה',
+    'נשמח לארגן עבורך את הפעילות',
+    'כמובן! ניצור איתך קשר בקרוב',
+    'מעולה! נתאם את כל הפרטים',
+  ];
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -181,11 +193,12 @@ const AdminChat = () => {
       .eq('id', messageId);
   };
 
-  const sendMessage = async () => {
-    if (!input.trim() || !selectedConversation) return;
+  const sendMessage = async (messageText?: string) => {
+    const textToSend = messageText || input.trim();
+    if (!textToSend || !selectedConversation) return;
 
-    const messageText = input.trim();
     setInput('');
+    setIsTyping(true);
 
     try {
       await supabase
@@ -194,7 +207,7 @@ const AdminChat = () => {
           conversation_id: selectedConversation,
           sender_type: 'agent',
           sender_name: agentName,
-          message: messageText,
+          message: textToSend,
           read_by_visitor: false,
           read_by_agent: true
         });
@@ -215,6 +228,20 @@ const AdminChat = () => {
         description: "לא הצלחנו לשלוח את ההודעה",
         variant: "destructive"
       });
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  const getConfidenceBadge = (score: number | null) => {
+    if (!score) return null;
+    
+    if (score >= 0.7) {
+      return <Badge variant="default" className="text-xs bg-green-500/20 text-green-700 dark:text-green-400">AI ביטחון: {Math.round(score * 100)}%</Badge>;
+    } else if (score >= 0.4) {
+      return <Badge variant="secondary" className="text-xs bg-yellow-500/20 text-yellow-700 dark:text-yellow-400">AI ביטחון: {Math.round(score * 100)}%</Badge>;
+    } else {
+      return <Badge variant="destructive" className="text-xs bg-red-500/20 text-red-700 dark:text-red-400">צריך בדיקה: {Math.round(score * 100)}%</Badge>;
     }
   };
 
@@ -354,7 +381,7 @@ const AdminChat = () => {
                 {/* Messages */}
                 <ScrollArea className="flex-1 p-4">
                   <div className="space-y-4">
-                    {messages.map((msg) => (
+                     {messages.map((msg) => (
                       <div
                         key={msg.id}
                         className={`flex gap-2 ${
@@ -384,51 +411,84 @@ const AdminChat = () => {
                               ? 'bg-secondary/20'
                               : 'bg-muted'
                           }`}>
-                            {msg.sender_name && (
-                              <p className="text-xs font-semibold mb-1 opacity-70">
+                             {msg.sender_name && (
+                              <p className="text-xs font-semibold mb-1 opacity-70 flex items-center gap-1">
                                 {msg.sender_name}
+                                {msg.sender_name === 'AI Assistant' && msg.ai_confidence_score && (
+                                  <Brain className="w-3 h-3" />
+                                )}
                               </p>
                             )}
                             <p className="whitespace-pre-wrap text-sm">{msg.message}</p>
-                            <div className="flex items-center gap-2 mt-1">
+                            <div className="flex items-center gap-2 mt-1 flex-wrap">
                               <p className="text-xs opacity-60">
                                 {new Date(msg.created_at).toLocaleTimeString('he-IL', {
                                   hour: '2-digit',
                                   minute: '2-digit'
                                 })}
                               </p>
-                              {msg.sender_type === 'agent' && (
+                              {msg.sender_type === 'agent' && msg.sender_name !== 'AI Assistant' && (
                                 msg.read_by_visitor ? (
                                   <CheckCheck className="w-3 h-3 opacity-60" />
                                 ) : (
                                   <Check className="w-3 h-3 opacity-60" />
                                 )
                               )}
+                              {msg.sender_name === 'AI Assistant' && getConfidenceBadge(msg.ai_confidence_score)}
                             </div>
                           </div>
                         </div>
                       </div>
                     ))}
+                    {isTyping && (
+                      <div className="flex gap-2">
+                        <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                          <Headphones className="w-4 h-4" />
+                        </div>
+                        <div className="bg-secondary/20 p-3 rounded-lg">
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        </div>
+                      </div>
+                    )}
                     <div ref={scrollRef} />
                   </div>
                 </ScrollArea>
 
                 {/* Input */}
-                <div className="p-4 border-t">
+                <div className="p-4 border-t space-y-2">
+                  {/* Quick Replies */}
+                  <div className="flex flex-wrap gap-2">
+                    {quickReplies.map((reply, idx) => (
+                      <Button
+                        key={idx}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => sendMessage(reply)}
+                        className="text-xs"
+                      >
+                        {reply}
+                      </Button>
+                    ))}
+                  </div>
+                  
                   <div className="flex gap-2">
                     <Input
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                      onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
                       placeholder="כתוב הודעה..."
                       className="flex-1"
                     />
                     <Button
-                      onClick={sendMessage}
-                      disabled={!input.trim()}
+                      onClick={() => sendMessage()}
+                      disabled={!input.trim() || isTyping}
                       size="icon"
                     >
-                      <Send className="w-4 h-4" />
+                      {isTyping ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Send className="w-4 h-4" />
+                      )}
                     </Button>
                   </div>
                 </div>

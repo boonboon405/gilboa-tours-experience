@@ -126,7 +126,26 @@ serve(async (req) => {
       message.includes('מחיר') ||
       message.includes('כמה עולה');
 
-    // Store AI response in database
+    // Calculate confidence score based on response quality
+    let confidenceScore = 0.8; // Default high confidence
+    
+    // Lower confidence if suggesting human agent
+    if (needsHumanAgent) confidenceScore = 0.4;
+    
+    // Lower confidence for pricing/booking questions
+    if (message.includes('מחיר') || message.includes('כמה עולה') || message.includes('להזמין')) {
+      confidenceScore = 0.3;
+    }
+    
+    // Lower confidence if response is too short (might be unclear)
+    if (aiMessage.length < 50) confidenceScore = 0.5;
+    
+    // Higher confidence for informational questions
+    if (message.includes('מה זה') || message.includes('איך') || message.includes('איפה')) {
+      confidenceScore = Math.min(confidenceScore + 0.2, 0.95);
+    }
+
+    // Store AI response in database with confidence score
     await supabase
       .from('live_chat_messages')
       .insert({
@@ -135,7 +154,8 @@ serve(async (req) => {
         sender_name: 'AI Assistant',
         message: aiMessage,
         read_by_visitor: false,
-        read_by_agent: true
+        read_by_agent: true,
+        ai_confidence_score: confidenceScore
       });
 
     // Update conversation timestamp
@@ -148,7 +168,8 @@ serve(async (req) => {
       JSON.stringify({
         message: aiMessage,
         needsHumanAgent,
-        isAiResponse: true
+        isAiResponse: true,
+        confidenceScore
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
