@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Phone, MessageCircle, Sparkles, Calendar } from 'lucide-react';
+import { Phone, MessageCircle, Sparkles, Calendar, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import heroImage from '@/assets/hero-gilboa.jpg';
@@ -98,6 +98,16 @@ export const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+            <Link to="/chat">
+              <Button
+                variant="hero"
+                size="lg"
+                className="text-lg px-8 py-6 gap-2 animate-pulse"
+              >
+                <Bot className="h-5 w-5" />
+                שוחח עם הסוכן החכם
+              </Button>
+            </Link>
             <Link to="/booking">
               <Button
                 variant="hero"

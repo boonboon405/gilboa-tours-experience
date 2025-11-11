@@ -6,6 +6,9 @@ verify_jwt = false
 [functions.send-preferences-email]
 verify_jwt = false
 
+[functions.ai-chat-agent]
+verify_jwt = false
+
 [functions.generate-odt-image]
 verify_jwt = false
 

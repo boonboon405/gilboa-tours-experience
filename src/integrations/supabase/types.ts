@@ -14,6 +14,38 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_interaction_metrics: {
+        Row: {
+          conversation_id: string
+          details: Json | null
+          id: string
+          interaction_type: string
+          timestamp: string
+        }
+        Insert: {
+          conversation_id: string
+          details?: Json | null
+          id?: string
+          interaction_type: string
+          timestamp?: string
+        }
+        Update: {
+          conversation_id?: string
+          details?: Json | null
+          id?: string
+          interaction_type?: string
+          timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_interaction_metrics_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           created_at: string
@@ -70,6 +102,107 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          detected_emotions: Json | null
+          id: string
+          message: string
+          message_type: string
+          sender: string
+          sentiment_score: number | null
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          detected_emotions?: Json | null
+          id?: string
+          message: string
+          message_type?: string
+          sender: string
+          sentiment_score?: number | null
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          detected_emotions?: Json | null
+          id?: string
+          message?: string
+          message_type?: string
+          sender?: string
+          sentiment_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          detected_mood: string[] | null
+          id: string
+          last_message_at: string
+          lead_id: string | null
+          quiz_results_id: string | null
+          session_id: string
+          started_at: string
+          status: string
+          user_email: string | null
+          user_name: string | null
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          detected_mood?: string[] | null
+          id?: string
+          last_message_at?: string
+          lead_id?: string | null
+          quiz_results_id?: string | null
+          session_id: string
+          started_at?: string
+          status?: string
+          user_email?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          detected_mood?: string[] | null
+          id?: string
+          last_message_at?: string
+          lead_id?: string | null
+          quiz_results_id?: string | null
+          session_id?: string
+          started_at?: string
+          status?: string
+          user_email?: string | null
+          user_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_quiz_results_id_fkey"
+            columns: ["quiz_results_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_results"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_archive: {
         Row: {

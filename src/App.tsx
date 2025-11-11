@@ -8,6 +8,7 @@ import { Provider } from "react-redux";
 import { store } from "@/store";
 import Index from "./pages/Index";
 import Booking from "./pages/Booking";
+import Chat from "./pages/Chat";
 import AdminKeywords from "./pages/AdminKeywords";
 import KeywordsList from "./pages/KeywordsList";
 import LeadManagement from "./pages/LeadManagement";
@@ -31,6 +32,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/booking" element={<Booking />} />
+              <Route path="/chat" element={<Chat />} />
               <Route path="/admin/keywords" element={<AdminKeywords />} />
               <Route path="/keywords" element={<KeywordsList />} />
               <Route path="/leads" element={<LeadManagement />} />
