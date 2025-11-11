@@ -17,7 +17,9 @@ import {
   Headphones,
   CheckCheck,
   Brain,
-  Loader2
+  Loader2,
+  ThumbsUp,
+  ThumbsDown
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -42,6 +44,7 @@ interface Message {
   read_by_visitor: boolean;
   created_at: string;
   ai_confidence_score: number | null;
+  agent_feedback: 'helpful' | 'not_helpful' | null;
 }
 
 const AdminChat = () => {
@@ -233,7 +236,8 @@ const AdminChat = () => {
 
     const typedMessages = (data || []).map(msg => ({
       ...msg,
-      sender_type: msg.sender_type as 'visitor' | 'agent' | 'system'
+      sender_type: msg.sender_type as 'visitor' | 'agent' | 'system',
+      agent_feedback: msg.agent_feedback as 'helpful' | 'not_helpful' | null
     }));
 
     setMessages(typedMessages);
@@ -327,6 +331,34 @@ const AdminChat = () => {
       if (conversationId === selectedConversation) {
         setSelectedConversation(null);
       }
+    }
+  };
+
+  const rateFeedback = async (messageId: string, feedback: 'helpful' | 'not_helpful') => {
+    try {
+      const { error } = await supabase
+        .from('live_chat_messages')
+        .update({ agent_feedback: feedback })
+        .eq('id', messageId);
+
+      if (error) throw error;
+
+      // Update local state
+      setMessages(prev => prev.map(m => 
+        m.id === messageId ? { ...m, agent_feedback: feedback } : m
+      ));
+
+      toast({
+        title: "תודה על המשוב",
+        description: feedback === 'helpful' ? "סומנה כמועילה ✓" : "סומנה כלא מועילה",
+      });
+    } catch (error) {
+      console.error('Error rating feedback:', error);
+      toast({
+        title: "שגיאה",
+        description: "לא הצלחנו לשמור את המשוב",
+        variant: "destructive"
+      });
     }
   };
 
@@ -543,7 +575,7 @@ const AdminChat = () => {
                                 )}
                               </p>
                             )}
-                            <p className="whitespace-pre-wrap text-sm">{msg.message}</p>
+                             <p className="whitespace-pre-wrap text-sm">{msg.message}</p>
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
                               <p className="text-xs opacity-60">
                                 {new Date(msg.created_at).toLocaleTimeString('he-IL', {
@@ -560,6 +592,30 @@ const AdminChat = () => {
                               )}
                               {msg.sender_name === 'AI Assistant' && getConfidenceBadge(msg.ai_confidence_score)}
                             </div>
+                            
+                            {/* AI Feedback Buttons */}
+                            {msg.sender_name === 'AI Assistant' && (
+                              <div className="flex gap-1 mt-2">
+                                <Button
+                                  variant={msg.agent_feedback === 'helpful' ? 'default' : 'ghost'}
+                                  size="sm"
+                                  onClick={() => rateFeedback(msg.id, 'helpful')}
+                                  className="h-7 px-2 text-xs"
+                                >
+                                  <ThumbsUp className="w-3 h-3 ml-1" />
+                                  מועיל
+                                </Button>
+                                <Button
+                                  variant={msg.agent_feedback === 'not_helpful' ? 'destructive' : 'ghost'}
+                                  size="sm"
+                                  onClick={() => rateFeedback(msg.id, 'not_helpful')}
+                                  className="h-7 px-2 text-xs"
+                                >
+                                  <ThumbsDown className="w-3 h-3 ml-1" />
+                                  לא מועיל
+                                </Button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>

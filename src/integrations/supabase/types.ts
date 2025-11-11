@@ -323,6 +323,7 @@ export type Database = {
       }
       live_chat_messages: {
         Row: {
+          agent_feedback: string | null
           ai_confidence_score: number | null
           conversation_id: string
           created_at: string
@@ -334,6 +335,7 @@ export type Database = {
           sender_type: string
         }
         Insert: {
+          agent_feedback?: string | null
           ai_confidence_score?: number | null
           conversation_id: string
           created_at?: string
@@ -345,6 +347,7 @@ export type Database = {
           sender_type: string
         }
         Update: {
+          agent_feedback?: string | null
           ai_confidence_score?: number | null
           conversation_id?: string
           created_at?: string

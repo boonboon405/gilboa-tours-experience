@@ -145,6 +145,38 @@ serve(async (req) => {
       confidenceScore = Math.min(confidenceScore + 0.2, 0.95);
     }
 
+    console.log("AI Response:", aiMessage, "Confidence:", confidenceScore);
+
+    // Get conversation details for email alert
+    const { data: conversation } = await supabase
+      .from('live_chat_conversations')
+      .select('visitor_name')
+      .eq('id', conversationId)
+      .single();
+
+    // Send email alert if confidence is low
+    if (confidenceScore < 0.4) {
+      try {
+        console.log("Triggering low confidence email alert");
+        await fetch(`${SUPABASE_URL}/functions/v1/send-low-confidence-alert`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+          },
+          body: JSON.stringify({
+            conversationId,
+            visitorName: conversation?.visitor_name,
+            message: aiMessage,
+            confidenceScore,
+          }),
+        });
+      } catch (emailError) {
+        console.error("Failed to send email alert:", emailError);
+        // Don't fail the response if email fails
+      }
+    }
+
     // Store AI response in database with confidence score
     await supabase
       .from('live_chat_messages')
