@@ -23,6 +23,7 @@ import BookingAnalytics from "./pages/BookingAnalytics";
 import AdminTestimonials from "./pages/AdminTestimonials";
 import AdminEmailTemplates from "./pages/AdminEmailTemplates";
 import AdminEmailAutomation from "./pages/AdminEmailAutomation";
+import MasterDashboard from "./pages/MasterDashboard";
 import NotFound from "./pages/NotFound";
 import { LiveChatWidget } from "./components/LiveChatWidget";
 
@@ -116,6 +117,14 @@ const App = () => {
                   element={
                     <ProtectedRoute requireAdmin>
                       <AdminEmailAutomation />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/dashboard" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <MasterDashboard />
                     </ProtectedRoute>
                   } 
                 />

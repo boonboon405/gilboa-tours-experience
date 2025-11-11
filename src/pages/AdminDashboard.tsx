@@ -2,13 +2,20 @@ import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, MessageSquare, Key, Database, Users, BarChart, Mail, Star } from "lucide-react";
+import { Shield, MessageSquare, Key, Database, Users, BarChart, Mail, Star, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
 
   const adminTools = [
+    {
+      title: "לוח בקרה מרכזי",
+      description: "כל המדדים במקום אחד",
+      icon: Activity,
+      path: "/dashboard",
+      color: "text-red-500"
+    },
     {
       title: "מאגר ידע",
       description: "ניהול שאלות ותשובות עבור צ'אט AI",
