@@ -6,9 +6,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import { Provider } from "react-redux";
 import { store } from "@/store";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Booking from "./pages/Booking";
 import Chat from "./pages/Chat";
+import Auth from "./pages/Auth";
 import AdminKeywords from "./pages/AdminKeywords";
 import KeywordsList from "./pages/KeywordsList";
 import LeadManagement from "./pages/LeadManagement";
@@ -29,26 +32,64 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/booking" element={<Booking />} />
-              <Route path="/chat" element={<Chat />} />
-              <Route path="/admin/keywords" element={<AdminKeywords />} />
-              <Route path="/admin/chat" element={<AdminChat />} />
-              <Route path="/admin/knowledge" element={<AdminKnowledgeBase />} />
-              <Route path="/chat-analytics" element={<ChatAnalytics />} />
-              <Route path="/keywords" element={<KeywordsList />} />
-              <Route path="/leads" element={<LeadManagement />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <LiveChatWidget />
-          </BrowserRouter>
-        </TooltipProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/booking" element={<Booking />} />
+                <Route path="/chat" element={<Chat />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route 
+                  path="/admin/keywords" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <AdminKeywords />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin/chat" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <AdminChat />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin/knowledge" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <AdminKnowledgeBase />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/chat-analytics" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <ChatAnalytics />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route path="/keywords" element={<KeywordsList />} />
+                <Route 
+                  path="/leads" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <LeadManagement />
+                    </ProtectedRoute>
+                  } 
+                />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <LiveChatWidget />
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthProvider>
       </Provider>
     </QueryClientProvider>
   );

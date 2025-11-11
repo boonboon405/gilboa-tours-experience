@@ -1,14 +1,25 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Calendar, Sparkles } from 'lucide-react';
+import { Menu, X, Calendar, Sparkles, LogOut, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { TeamDNAQuiz } from '@/components/TeamDNAQuiz';
 import { QuizResults } from '@/utils/quizScoring';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, isAdmin, signOut } = useAuth();
+  const navigate = useNavigate();
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizCount, setQuizCount] = useState<number>(0);
 
@@ -25,6 +36,11 @@ export const Navigation = () => {
   const handleQuizComplete = (results: QuizResults) => {
     console.log('Quiz completed with results:', results);
     setQuizCount(prev => prev + 1);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
   };
 
   const navItems = [
@@ -75,6 +91,53 @@ export const Navigation = () => {
                 הזמן סיור
               </Button>
             </Link>
+            
+            {/* Auth Menu */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Shield className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>חשבון שלי</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuItem onClick={() => navigate('/admin/knowledge')}>
+                        <Shield className="ml-2 h-4 w-4" />
+                        מאגר ידע
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate('/admin/keywords')}>
+                        <Shield className="ml-2 h-4 w-4" />
+                        מילות מפתח
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate('/admin/chat')}>
+                        <Shield className="ml-2 h-4 w-4" />
+                        צ'אט מנהל
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate('/leads')}>
+                        <Shield className="ml-2 h-4 w-4" />
+                        ניהול לידים
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="ml-2 h-4 w-4" />
+                    התנתק
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link to="/auth">
+                <Button variant="outline" className="gap-2">
+                  <Shield className="h-4 w-4" />
+                  כניסת מנהלים
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -124,6 +187,45 @@ export const Navigation = () => {
                 הזמן סיור
               </Button>
             </Link>
+            
+            {/* Mobile Auth */}
+            {user ? (
+              <>
+                {isAdmin && (
+                  <div className="mt-2 space-y-2">
+                    <Button 
+                      variant="outline" 
+                      className="w-full gap-2"
+                      onClick={() => {
+                        navigate('/admin/knowledge');
+                        setIsOpen(false);
+                      }}
+                    >
+                      <Shield className="h-4 w-4" />
+                      מאגר ידע
+                    </Button>
+                  </div>
+                )}
+                <Button 
+                  variant="outline" 
+                  className="w-full mt-2 gap-2"
+                  onClick={() => {
+                    handleSignOut();
+                    setIsOpen(false);
+                  }}
+                >
+                  <LogOut className="h-4 w-4" />
+                  התנתק
+                </Button>
+              </>
+            ) : (
+              <Link to="/auth" onClick={() => setIsOpen(false)}>
+                <Button variant="outline" className="w-full mt-2 gap-2">
+                  <Shield className="h-4 w-4" />
+                  כניסת מנהלים
+                </Button>
+              </Link>
+            )}
           </div>
         )}
       </div>
