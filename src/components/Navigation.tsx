@@ -70,7 +70,7 @@ export const Navigation = () => {
             >
               <Sparkles className="h-4 w-4 animate-pulse" />
               Quiz
-              {quizCount > 0 && (
+              {isAdmin && quizCount > 0 && (
                 <Badge variant="secondary" className="ml-1 bg-white/20 text-white border-white/30">
                   {quizCount}
                 </Badge>
@@ -178,7 +178,7 @@ export const Navigation = () => {
             >
               <Sparkles className="h-4 w-4 animate-pulse" />
               Quiz
-              {quizCount > 0 && (
+              {isAdmin && quizCount > 0 && (
                 <Badge variant="secondary" className="ml-1 bg-white/20 text-white border-white/30">
                   {quizCount}
                 </Badge>
