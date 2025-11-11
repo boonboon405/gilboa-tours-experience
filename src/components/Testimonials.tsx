@@ -1,67 +1,97 @@
+import { useEffect, useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { getLanguage } from '@/store/slices/languageSlice';
 import { Card, CardContent } from '@/components/ui/card';
 import { Star, Quote } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+
+interface Testimonial {
+  id: string;
+  customer_name: string;
+  customer_company: string | null;
+  testimonial_text: string;
+  rating: number;
+  is_featured: boolean;
+}
 
 const Testimonials = () => {
   const language = useAppSelector(getLanguage);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const testimonials = [
+  useEffect(() => {
+    fetchTestimonials();
+  }, []);
+
+  const fetchTestimonials = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('testimonials')
+        .select('*')
+        .eq('status', 'approved')
+        .order('is_featured', { ascending: false })
+        .order('created_at', { ascending: false })
+        .limit(6);
+
+      if (error) throw error;
+      
+      // If we have database testimonials, use them
+      if (data && data.length > 0) {
+        setTestimonials(data);
+      } else {
+        // Fallback to default testimonials if none in database
+        setTestimonials(getDefaultTestimonials());
+      }
+    } catch (error) {
+      console.error('Error fetching testimonials:', error);
+      setTestimonials(getDefaultTestimonials());
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getDefaultTestimonials = () => [
     {
-      name: { he: 'רונית כהן', en: 'Ronit Cohen' },
-      company: { he: 'מנהלת משאבי אנוש, חברת הייטק', en: 'HR Manager, Tech Company' },
-      text: { 
-        he: 'יום מדהים! הצוות שלנו חזר מאוחד ומלא אנרגיה. השילוב של פעילויות גיבוש והיסטוריה היה מושלם. דייויד וצוותו היו מקצועיים ומלאי התלהבות.',
-        en: 'Amazing day! Our team came back united and energized. The combination of team-building and history was perfect. David and his team were professional and enthusiastic.'
-      },
+      id: '1',
+      customer_name: language === 'he' ? 'רונית כהן' : 'Ronit Cohen',
+      customer_company: language === 'he' ? 'מנהלת משאבי אנוש, חברת הייטק' : 'HR Manager, Tech Company',
+      testimonial_text: language === 'he' 
+        ? 'יום מדהים! הצוות שלנו חזר מאוחד ומלא אנרגיה. השילוב של פעילויות גיבוש והיסטוריה היה מושלם.'
+        : 'Amazing day! Our team came back united and energized. The combination of team-building and history was perfect.',
       rating: 5,
+      is_featured: true,
     },
     {
-      name: { he: 'יוסי לוי', en: 'Yossi Levi' },
-      company: { he: 'מנכ"ל, חברת ייצור', en: 'CEO, Manufacturing Company' },
-      text: { 
-        he: 'חוויה בלתי נשכחת! הפעילויות היו מגוונות והמדריכים היו מעולים. המקום מושלם לטיול גיבוש והעובדים שלנו כבר שואלים מתי נחזור.',
-        en: 'Unforgettable experience! The activities were diverse and the guides were excellent. The place is perfect for team building and our employees are already asking when we\'ll return.'
-      },
+      id: '2',
+      customer_name: language === 'he' ? 'יוסי לוי' : 'Yossi Levi',
+      customer_company: language === 'he' ? 'מנכ"ל, חברת ייצור' : 'CEO, Manufacturing Company',
+      testimonial_text: language === 'he'
+        ? 'חוויה בלתי נשכחת! הפעילויות היו מגוונות והמדריכים היו מעולים.'
+        : 'Unforgettable experience! The activities were diverse and the guides were excellent.',
       rating: 5,
+      is_featured: false,
     },
     {
-      name: { he: 'מיכל אברהם', en: 'Michal Avraham' },
-      company: { he: 'סמנכ"לית שיווק, חברה בינלאומית', en: 'VP Marketing, International Company' },
-      text: { 
-        he: 'ארגון מושלם מתחילה ועד סוף. תשומת הלב לפרטים, הגמישות בהתאמת התוכנית, והאווירה החמה - הכל היה ברמה הכי גבוהה. ממליצה בחום!',
-        en: 'Perfect organization from start to finish. Attention to detail, flexibility in customizing the program, and warm atmosphere - everything was top-notch. Highly recommend!'
-      },
+      id: '3',
+      customer_name: language === 'he' ? 'מיכל אברהם' : 'Michal Avraham',
+      customer_company: language === 'he' ? 'סמנכ"לית שיווק' : 'VP Marketing',
+      testimonial_text: language === 'he'
+        ? 'ארגון מושלם מתחילה ועד סוף. תשומת הלב לפרטים, הגמישות בהתאמת התוכנית - הכל היה ברמה הכי גבוהה.'
+        : 'Perfect organization from start to finish. Attention to detail and flexibility - everything was top-notch.',
       rating: 5,
-    },
-    {
-      name: { he: 'דן שמואל', en: 'Dan Shmuel' },
-      company: { he: 'מנהל פיתוח עסקי, סטארטאפ', en: 'Business Development Manager, Startup' },
-      text: { 
-        he: 'המקום הכי טוב לטיול צוות! השילוב של אתגר, כיף, והיסטוריה יצר חוויה משמעותית. הצוות שלנו מדבר על זה עד היום.',
-        en: 'The best place for a team trip! The combination of challenge, fun, and history created a meaningful experience. Our team still talks about it.'
-      },
-      rating: 5,
-    },
-    {
-      name: { he: 'שרה גולדשטיין', en: 'Sara Goldstein' },
-      company: { he: 'מנהלת פרויקטים, חברת ייעוץ', en: 'Project Manager, Consulting Firm' },
-      text: { 
-        he: 'יום מעולה! הפעילויות היו מאתגרות ומהנות, והצוות של דייויד דאג שכולם ירגישו חלק. החוויה הקולינרית בסוף הייתה דובדבן שבקצפת.',
-        en: 'Excellent day! The activities were challenging and fun, and David\'s team made sure everyone felt included. The culinary experience at the end was the cherry on top.'
-      },
-      rating: 5,
-    },
-    {
-      name: { he: 'אלון ברק', en: 'Alon Barak' },
-      company: { he: 'מנהל מכירות, חברת מסחר', en: 'Sales Manager, Trading Company' },
-      text: { 
-        he: 'חוויה מדהימה! הצוות שלנו נהנה מכל רגע. המקום מרהיב, הפעילויות מגוונות, והארגון היה מושלם. בהחלט נחזור!',
-        en: 'Amazing experience! Our team enjoyed every moment. The location is stunning, activities diverse, and organization was perfect. We\'ll definitely return!'
-      },
-      rating: 5,
+      is_featured: false,
     },
   ];
+
+  if (loading) {
+    return (
+      <section className="py-20 px-4 bg-gradient-to-b from-background to-muted/20">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 px-4 bg-gradient-to-b from-background to-muted/20">
@@ -95,16 +125,21 @@ const Testimonials = () => {
                 </div>
 
                 <p className="text-muted-foreground mb-6 leading-relaxed">
-                  "{testimonial.text[language]}"
+                  "{testimonial.testimonial_text}"
                 </p>
 
                 <div className="border-t pt-4">
                   <p className="font-semibold text-foreground">
-                    {testimonial.name[language]}
+                    {testimonial.customer_name}
                   </p>
-                  <p className="text-sm text-muted-foreground">
-                    {testimonial.company[language]}
-                  </p>
+                  {testimonial.customer_company && (
+                    <p className="text-sm text-muted-foreground">
+                      {testimonial.customer_company}
+                    </p>
+                  )}
+                  {testimonial.is_featured && (
+                    <span className="text-xs text-primary font-semibold">⭐ המלצה מודגשת</span>
+                  )}
                 </div>
               </CardContent>
             </Card>
