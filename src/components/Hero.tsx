@@ -90,7 +90,7 @@ export const Hero = () => {
             חוויה קבוצתית מיוחדת, בונה ובלתי נשכחת
           </h1>
           <h2 className="text-3xl md:text-5xl font-semibold text-accent mb-6 animate-fade-in">
-            בלב הגלבוע הגליל וסובב כנרת
+            בצפון א״י היפה ובלב הגלבוע הגליל וסובב כנרת
           </h2>
           <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
             יום חווייתי, מהנה ומשמעותי שמשלב היסטוריה, טבע, גיבוש והרבה זיכרונות טובים לחברה שלכם.
@@ -102,7 +102,7 @@ export const Hero = () => {
               <Button
                 variant="hero"
                 size="lg"
-                className="text-lg px-8 py-6 gap-2 animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite] transition-all hover:scale-105 hover:shadow-xl ripple-effect"
+                className="text-lg px-8 py-6 gap-2 animate-[pulse_8s_cubic-bezier(0.4,0,0.6,1)_infinite] transition-all hover:scale-105 hover:shadow-xl ripple-effect"
               >
                 <Bot className="h-5 w-5" />
                 שוחח עם הסוכן החכם
