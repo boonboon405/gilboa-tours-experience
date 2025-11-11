@@ -74,7 +74,8 @@ export const Hero = () => {
         className="absolute inset-0"
         style={{
           transform: `translateY(${scrollY * 0.5}px)`,
-          transition: 'transform 0.1s ease-out'
+          filter: `blur(${Math.min(scrollY / 100, 8)}px)`,
+          transition: 'transform 0.1s ease-out, filter 0.3s ease-out'
         }}
       >
         {images.map((image, index) => (
@@ -163,9 +164,9 @@ export const Hero = () => {
           {/* Phone Number */}
           <a
             href={`tel:${phoneNumber}`}
-            className="inline-flex items-center text-white text-xl font-semibold hover:text-accent transition-colors animate-fade-in [animation-delay:1s] opacity-0 [animation-fill-mode:forwards]"
+            className="inline-flex items-center text-white text-xl font-semibold hover:text-accent transition-all duration-300 animate-fade-in [animation-delay:1s] opacity-0 [animation-fill-mode:forwards] hover:scale-110 hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] group"
           >
-            <Phone className="ml-2 h-6 w-6" />
+            <Phone className="ml-2 h-6 w-6 group-hover:animate-[ring_1s_ease-in-out]" />
             {phoneNumber}
           </a>
         </div>
