@@ -102,7 +102,7 @@ export const Hero = () => {
               <Button
                 variant="hero"
                 size="lg"
-                className="text-lg px-8 py-6 gap-2 animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite] transition-all hover:scale-105 hover:shadow-xl"
+                className="text-lg px-8 py-6 gap-2 animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite] transition-all hover:scale-105 hover:shadow-xl ripple-effect"
               >
                 <Bot className="h-5 w-5" />
                 שוחח עם הסוכן החכם
@@ -112,7 +112,7 @@ export const Hero = () => {
               <Button
                 variant="hero"
                 size="lg"
-                className="text-lg px-8 py-6 gap-2 transition-all hover:scale-105 hover:shadow-xl"
+                className="text-lg px-8 py-6 gap-2 transition-all hover:scale-105 hover:shadow-xl ripple-effect"
               >
                 <Calendar className="h-5 w-5" />
                 הזמן סיור
@@ -121,7 +121,7 @@ export const Hero = () => {
             <Button
               variant="hero"
               size="lg"
-              className="text-lg px-8 py-6 transition-all hover:scale-105 hover:shadow-xl"
+              className="text-lg px-8 py-6 transition-all hover:scale-105 hover:shadow-xl ripple-effect"
               onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
             >
               <Phone className="h-5 w-5" />
@@ -134,7 +134,7 @@ export const Hero = () => {
             <Button
               variant="whatsapp"
               size="lg"
-              className="text-lg px-8 py-6 transition-all hover:scale-105 hover:shadow-xl"
+              className="text-lg px-8 py-6 transition-all hover:scale-105 hover:shadow-xl ripple-effect"
               onClick={() => window.open(`https://wa.me/${whatsappNumber}`, '_blank')}
             >
               <MessageCircle className="ml-2 h-5 w-5" />

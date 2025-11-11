@@ -208,7 +208,7 @@ export const LiveChatWidget = () => {
       <Button
         onClick={handleOpen}
         size="lg"
-        className="fixed bottom-6 left-6 rounded-full w-16 h-16 shadow-lg hover:shadow-xl transition-all z-50"
+        className="fixed bottom-6 left-6 rounded-full w-16 h-16 shadow-lg hover:shadow-xl transition-all z-50 ripple-effect"
       >
         <MessageCircle className="w-6 h-6" />
         {unreadCount > 0 && (
@@ -225,9 +225,9 @@ export const LiveChatWidget = () => {
 
   if (isMinimized) {
     return (
-      <div className="fixed bottom-6 left-6 z-50">
+      <div className="fixed bottom-6 left-6 z-50 animate-scale-in">
         <Card 
-          className="w-80 cursor-pointer hover:shadow-lg transition-all"
+          className="w-80 cursor-pointer hover:shadow-lg transition-all ripple-effect"
           onClick={() => setIsMinimized(false)}
         >
           <div className="flex items-center justify-between p-4 bg-gradient-to-r from-primary to-secondary text-primary-foreground">
@@ -247,7 +247,7 @@ export const LiveChatWidget = () => {
   }
 
   return (
-    <Card className="fixed bottom-6 left-6 w-96 h-[600px] flex flex-col shadow-2xl z-50 border-2">
+    <Card className="fixed bottom-6 left-6 w-96 h-[600px] flex flex-col shadow-2xl z-50 border-2 animate-fade-in">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-primary to-secondary text-primary-foreground">
         <div className="flex items-center gap-2">
@@ -262,7 +262,7 @@ export const LiveChatWidget = () => {
             variant="ghost"
             size="icon"
             onClick={handleMinimize}
-            className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20"
+            className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20 ripple-effect"
           >
             <Minimize2 className="w-4 h-4" />
           </Button>
@@ -270,7 +270,7 @@ export const LiveChatWidget = () => {
             variant="ghost"
             size="icon"
             onClick={handleClose}
-            className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20"
+            className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20 ripple-effect"
           >
             <X className="w-4 h-4" />
           </Button>
@@ -296,7 +296,7 @@ export const LiveChatWidget = () => {
             />
             <Button
               onClick={startConversation}
-              className="w-full"
+              className="w-full ripple-effect"
               disabled={!visitorName.trim()}
             >
               התחל שיחה
@@ -387,6 +387,7 @@ export const LiveChatWidget = () => {
                 onClick={sendMessage}
                 disabled={!input.trim()}
                 size="icon"
+                className="ripple-effect"
               >
                 <Send className="w-4 h-4" />
               </Button>
