@@ -281,6 +281,45 @@ const AdminChat = () => {
           <p className="text-muted-foreground">נהל שיחות עם לקוחות בזמן אמת</p>
         </div>
 
+        {/* Stats Cards */}
+        <div className="grid md:grid-cols-3 gap-4 mb-6">
+          <Card className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">כשביטחון</p>
+                <p className="text-2xl font-bold">
+                  {messages.filter(m => (m.ai_confidence_score || 0) > 0.7).length}
+                </p>
+              </div>
+              <Brain className="w-8 h-8 text-green-500" />
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">הוסף סינון שיחות לפי ציון ביטחון</p>
+                <p className="text-2xl font-bold">
+                  {messages.filter(m => (m.ai_confidence_score || 0) > 0 && (m.ai_confidence_score || 0) < 0.4).length}
+                </p>
+              </div>
+              <MessageCircle className="w-8 h-8 text-yellow-500" />
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">הוסף דשבורד אנליטיקה לצ'אט</p>
+                <p className="text-2xl font-bold">
+                  {messages.length > 0 ? Math.round((messages.filter(m => m.sender_name === 'AI Assistant').length / messages.length) * 100) : 0}%
+                </p>
+              </div>
+              <Headphones className="w-8 h-8 text-primary" />
+            </div>
+          </Card>
+        </div>
+
         <div className="grid md:grid-cols-3 gap-6 h-[700px]">
           {/* Conversations List */}
           <Card className="col-span-1 flex flex-col">
