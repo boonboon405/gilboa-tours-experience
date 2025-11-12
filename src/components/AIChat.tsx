@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { CategorySelector } from '@/components/CategorySelector';
 import { CategoryBadge } from '@/components/CategoryBadge';
+import { LanguageQualityBadge } from '@/components/LanguageQualityBadge';
 import { categoryMetadata, DNACategory } from '@/utils/activityCategories';
 import { detectCategoriesInMessage } from '@/utils/categoryDetector';
 
@@ -16,6 +17,11 @@ interface Message {
   sender: 'user' | 'ai';
   message: string;
   created_at: string;
+  languageQuality?: {
+    hebrewScore: number;
+    arabicDetected: boolean;
+    arabicWords?: string[];
+  };
 }
 
 interface AIChatProps {
@@ -119,10 +125,20 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
         id: `ai-${Date.now()}`,
         sender: 'ai',
         message: data.message,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        languageQuality: data.languageQuality
       };
 
       setMessages(prev => [...prev, aiMessage]);
+      
+      // Show alert if Arabic detected
+      if (data.languageQuality?.arabicDetected) {
+        toast({
+          title: "⚠️ זוהתה שפה לא תקינה",
+          description: `זוהו מילים ערביות: ${data.languageQuality.arabicWords?.join(', ')}`,
+          variant: "destructive",
+        });
+      }
       
       if (data.quickReplies && data.quickReplies.length > 0) {
         setQuickReplies(data.quickReplies);
@@ -184,10 +200,20 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
         id: `ai-${Date.now()}`,
         sender: 'ai',
         message: data.message,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        languageQuality: data.languageQuality
       };
 
       setMessages(prev => [...prev, aiMessage]);
+      
+      // Show alert if Arabic detected
+      if (data.languageQuality?.arabicDetected) {
+        toast({
+          title: "⚠️ זוהתה שפה לא תקינה",
+          description: `זוהו מילים ערביות: ${data.languageQuality.arabicWords?.join(', ')}`,
+          variant: "destructive",
+        });
+      }
       
       // Update quick replies
       if (data.quickReplies && data.quickReplies.length > 0) {
@@ -250,17 +276,33 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
                 }`}>
                   <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.message}</p>
                   
-                  {/* Category badges for AI messages */}
-                  {msg.sender === 'ai' && (() => {
-                    const categories = detectCategoriesInMessage(msg.message);
-                    return categories.length > 0 ? (
-                      <div className="flex flex-wrap gap-1 mt-2 pt-2 border-t border-border/30">
-                        {categories.map((category) => (
-                          <CategoryBadge key={category} category={category} size="sm" />
-                        ))}
-                      </div>
-                    ) : null;
-                  })()}
+                  {/* Category badges and language quality for AI messages */}
+                  {msg.sender === 'ai' && (
+                    <div className="space-y-2 mt-2">
+                      {/* Category badges */}
+                      {(() => {
+                        const categories = detectCategoriesInMessage(msg.message);
+                        return categories.length > 0 ? (
+                          <div className="flex flex-wrap gap-1 pt-2 border-t border-border/30">
+                            {categories.map((category) => (
+                              <CategoryBadge key={category} category={category} size="sm" />
+                            ))}
+                          </div>
+                        ) : null;
+                      })()}
+                      
+                      {/* Language quality indicator */}
+                      {msg.languageQuality && (
+                        <div className="flex justify-start pt-1">
+                          <LanguageQualityBadge 
+                            hebrewScore={msg.languageQuality.hebrewScore}
+                            arabicDetected={msg.languageQuality.arabicDetected}
+                            arabicWords={msg.languageQuality.arabicWords}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
