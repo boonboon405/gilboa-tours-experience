@@ -18,10 +18,26 @@ export const ttsConfig: TTSConfig = {
   enableLogging: true,
   
   // Word replacements for better TTS pronunciation
+  // Pure Hebrew replacements - avoiding Arabic-origin slang
   wordReplacements: {
-    'יאללה': 'קדימה',
     'DNA': 'רצונות',
     'דנא': 'רצונות',
+    'תכלס': 'בעצם',
+    'באסה': 'רע',
+    'מגניב': 'נחמד',
+    'סבבה': 'בסדר',
+    'וואלה': 'באמת',
+    'דאבל': 'כפול',
+    'פרטנר': 'שותף',
+    'סטטוס': 'מצב',
+    'טופ': 'מעולה',
+    'קול': 'מגניב',
+    'וייב': 'אווירה',
+    'צ\'יל': 'רגוע',
+    'סטרס': 'לחץ',
+    'פאן': 'כיף',
+    'קאמבק': 'חזרה',
+    'סטורי': 'סיפור',
   }
 };
 

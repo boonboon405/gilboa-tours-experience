@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
-import { Lock, Save, Eye, EyeOff, History, RotateCcw, Clock } from 'lucide-react';
+import { Lock, Save, Eye, EyeOff, History, RotateCcw, Clock, Volume2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -15,6 +15,9 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { ttsConfig, setTTSLogging, addWordReplacement, removeWordReplacement } from '@/utils/ttsConfig';
 
 const SETTINGS_PASSWORD = 'odt2025';
 
@@ -41,6 +44,9 @@ const AISettings = () => {
   const [versions, setVersions] = useState<Record<string, PromptVersion[]>>({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [ttsLogging, setTtsLogging] = useState(ttsConfig.enableLogging);
+  const [newWord, setNewWord] = useState('');
+  const [newReplacement, setNewReplacement] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -152,6 +158,41 @@ const AISettings = () => {
     });
   };
 
+  const handleTTSLoggingToggle = (checked: boolean) => {
+    setTtsLogging(checked);
+    setTTSLogging(checked);
+    toast({
+      title: checked ? 'לוגים הופעלו' : 'לוגים כובו',
+      description: checked ? 'לוגי TTS יוצגו בקונסול' : 'לוגי TTS לא יוצגו',
+    });
+  };
+
+  const handleAddReplacement = () => {
+    if (!newWord || !newReplacement) {
+      toast({
+        title: 'שגיאה',
+        description: 'יש למלא את שני השדות',
+        variant: 'destructive',
+      });
+      return;
+    }
+    addWordReplacement(newWord, newReplacement);
+    toast({
+      title: 'התווסף בהצלחה',
+      description: `"${newWord}" יוחלף ב-"${newReplacement}"`,
+    });
+    setNewWord('');
+    setNewReplacement('');
+  };
+
+  const handleRemoveReplacement = (word: string) => {
+    removeWordReplacement(word);
+    toast({
+      title: 'הוסר בהצלחה',
+      description: `ההחלפה של "${word}" הוסרה`,
+    });
+  };
+
   if (!isUnlocked) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -195,6 +236,64 @@ const AISettings = () => {
           <h1 className="text-3xl font-bold mb-2">הגדרות טקסטי AI</h1>
           <p className="text-muted-foreground">ערוך את טקסטי ה-AI המשמשים בצ'אט ובתמיכה החיה</p>
         </div>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Volume2 className="w-5 h-5 text-primary" />
+              <CardTitle>הגדרות TTS (Text-to-Speech)</CardTitle>
+            </div>
+            <CardDescription>ניהול הגדרות קריאת טקסט לדיבור</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="tts-logging">לוגי TTS</Label>
+              <Switch
+                id="tts-logging"
+                checked={ttsLogging}
+                onCheckedChange={handleTTSLoggingToggle}
+              />
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold">החלפת מילים</h3>
+              <div className="grid gap-3">
+                {Object.entries(ttsConfig.wordReplacements).map(([word, replacement]) => (
+                  <div key={word} className="flex items-center justify-between bg-muted p-3 rounded">
+                    <div className="text-sm">
+                      <span className="font-mono">{word}</span>
+                      <span className="mx-2 text-muted-foreground">→</span>
+                      <span className="font-mono">{replacement}</span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveReplacement(word)}
+                    >
+                      הסר
+                    </Button>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <Input
+                  placeholder="מילה מקורית"
+                  value={newWord}
+                  onChange={(e) => setNewWord(e.target.value)}
+                />
+                <Input
+                  placeholder="מילה חלופית"
+                  value={newReplacement}
+                  onChange={(e) => setNewReplacement(e.target.value)}
+                />
+              </div>
+              <Button onClick={handleAddReplacement} className="w-full">
+                הוסף החלפה
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {loading ? (
           <div className="text-center py-12">
