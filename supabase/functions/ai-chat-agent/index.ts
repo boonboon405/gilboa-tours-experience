@@ -17,6 +17,79 @@ const activityKnowledge = {
   "יוגה בטבע": { dna: { wellness: 10, nature: 8, mindfulness: 9 }, description: "שיעור יוגה מרגיע בטבע הגלבוע" }
 };
 
+// Forbidden Arabic-origin words for detection
+const ARABIC_SLANG_WORDS = [
+  'יאללה', 'אחלה', 'סחתיין', 'סבבה', 'חלאס', 'וואלה', 'מסכין', 'חביבי',
+  'יאלה', 'אללה', 'סאבבה', 'חארה', 'כיף', 'סבבות', 'כיפאק'
+];
+
+// Hebrew quality indicators
+const HEBREW_QUALITY_INDICATORS = {
+  good: ['מצוין', 'נהדר', 'מעולה', 'נפלא', 'מדהים', 'קדימה', 'בואו', 'הבה', 'בסדר', 'טוב', 'יפה'],
+  formal: ['שלום', 'תודה', 'בבקשה', 'ברוך', 'כן', 'לא', 'אפשר', 'צריך'],
+};
+
+// Function to detect Arabic slang
+function detectArabicSlang(text: string): { found: boolean; words: string[] } {
+  const foundWords: string[] = [];
+  const lowerText = text.toLowerCase();
+  
+  ARABIC_SLANG_WORDS.forEach(word => {
+    if (lowerText.includes(word.toLowerCase())) {
+      foundWords.push(word);
+    }
+  });
+  
+  return { found: foundWords.length > 0, words: foundWords };
+}
+
+// Function to score Hebrew language quality (0-100)
+function scoreHebrewQuality(text: string): { score: number; details: any } {
+  let score = 50; // Base score
+  const lowerText = text.toLowerCase();
+  const details: any = {
+    goodWordCount: 0,
+    formalWordCount: 0,
+    arabicSlangDetected: false,
+    arabicWords: [],
+    textLength: text.length
+  };
+  
+  // Check for good Hebrew words (+2 points each, max 30)
+  HEBREW_QUALITY_INDICATORS.good.forEach(word => {
+    const count = (lowerText.match(new RegExp(word.toLowerCase(), 'g')) || []).length;
+    details.goodWordCount += count;
+  });
+  score += Math.min(details.goodWordCount * 2, 30);
+  
+  // Check for formal Hebrew words (+1 point each, max 10)
+  HEBREW_QUALITY_INDICATORS.formal.forEach(word => {
+    const count = (lowerText.match(new RegExp(word.toLowerCase(), 'g')) || []).length;
+    details.formalWordCount += count;
+  });
+  score += Math.min(details.formalWordCount, 10);
+  
+  // Penalize for Arabic slang (-30 points per word)
+  const arabicDetection = detectArabicSlang(text);
+  if (arabicDetection.found) {
+    details.arabicSlangDetected = true;
+    details.arabicWords = arabicDetection.words;
+    score -= arabicDetection.words.length * 30;
+  }
+  
+  // Bonus for reasonable length (10-20 points)
+  if (text.length > 50 && text.length < 500) {
+    score += 10;
+  } else if (text.length >= 500 && text.length < 1000) {
+    score += 15;
+  }
+  
+  // Ensure score is between 0-100
+  score = Math.max(0, Math.min(100, score));
+  
+  return { score, details };
+}
+
 // Default system prompt (fallback if database is unavailable)
 const DEFAULT_SYSTEM_PROMPT = `אתה מדריך טיולים AI מומחה לצפון ישראל. אתה עוזר למשתמשים לתכנן את חוויית הטיול המושלמת שלהם.
 
@@ -26,21 +99,24 @@ const DEFAULT_SYSTEM_PROMPT = `אתה מדריך טיולים AI מומחה לצ
 
 חוקי תקשורת קריטיים - חובה לקרוא ולציית:
 1. **חל איסור מוחלט** על שימוש במילים מערביות או סלנג ממקור ערבי
-2. **אסור לחלוטין** להשתמש במילים כמו: יאללה, אחלה, סחתיין, סבבה, או כל ביטוי ממקור ערבי
+2. **אסור לחלוטין** להשתמש במילים כמו: יאללה, אחלה, סחתיין, סבבה, חלאס, וואלה, או כל ביטוי ממקור ערבי
 3. **השתמש אך ורק** בעברית תקנית ופשוטה - מילים עבריות בלבד
 4. אם אתה מזהה שהלקוח מדבר עברית - דבר **רק בעברית תקנית וטהורה**
 5. שאל **לא יותר מ-3 שאלות** בכל תגובה - אל תציף את המשתמש
-6. היה בטוח ועוזר, אבל **לא לוחץ או אגרסיבי** במכירה
-7. תן למשתמש זמן לענות - אל תמהר לשאלה הבאה
-8. התאם את טון הדיבור להיות חם ומזמין אבל מקצועי
+6. **תן ללקוח זמן רב לענות** - אל תמהר עם שאלות נוספות. המתן בסבלנות לתשובתו
+7. **אל תלחץ** על הלקוח - היה סבלני, מכבד ונעים
+8. היה בטוח ועוזר, אבל **לא לוחץ או אגרסיבי** במכירה
+9. התאם את טון הדיבור להיות חם, מזמין, סבלני ומקצועי
 
 דוגמאות למילים שאסור להשתמש בהן:
-❌ יאללה → ✓ קדימה, בואו, הבה
+❌ יאללה, יאלה → ✓ קדימה, בואו, הבה
 ❌ אחלה → ✓ מצוין, נהדר, מעולה
 ❌ סחתיין → ✓ מדהים, נפלא, יפה מאוד
-❌ סבבה → ✓ בסדר, מצוין, טוב
+❌ סבבה, סאבבה → ✓ בסדר, מצוין, טוב, נפלא
+❌ חלאס → ✓ נגמר, זהו, סיימנו
+❌ וואלה → ✓ באמת, אכן, כן
 
-זכור: המטרה היא לעזור ולייעץ בעברית טהורה, לא ללחוץ. תן למשתמש להוביל את השיחה בקצב שלו.`;
+זכור: **סבלנות היא המפתח**. המטרה היא לעזור ולייעץ בעברית טהורה, לא ללחוץ. תן ללקוח את כל הזמן שהוא צריך להוביל את השיחה בקצב שלו.`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -220,6 +296,35 @@ serve(async (req) => {
     const aiResponse = await response.json();
     const aiMessage = aiResponse.choices[0].message.content;
 
+    // Detect Arabic slang and score Hebrew quality
+    const arabicDetection = detectArabicSlang(aiMessage);
+    const hebrewQuality = scoreHebrewQuality(aiMessage);
+    
+    console.log('Language Quality Analysis:', {
+      arabicSlangDetected: arabicDetection.found,
+      arabicWords: arabicDetection.words,
+      hebrewQualityScore: hebrewQuality.score,
+      qualityDetails: hebrewQuality.details
+    });
+    
+    // Send low confidence alert if Arabic detected
+    if (arabicDetection.found) {
+      console.error('🚨 ARABIC SLANG DETECTED:', arabicDetection.words);
+      try {
+        await supabase.functions.invoke('send-low-confidence-alert', {
+          body: {
+            conversationId: conversation.id,
+            message: aiMessage,
+            issue: 'Arabic slang detected',
+            arabicWords: arabicDetection.words,
+            hebrewQualityScore: hebrewQuality.score
+          }
+        });
+      } catch (alertError) {
+        console.error('Failed to send Arabic detection alert:', alertError);
+      }
+    }
+
     // Analyze sentiment (simple keyword-based)
     let sentiment = 0;
     const positiveWords = ['מעולה', 'נהדר', 'מעניין', 'כן', 'בטח', 'אשמח'];
@@ -234,7 +339,7 @@ serve(async (req) => {
     });
     sentiment = Math.max(-1, Math.min(1, sentiment));
 
-    // Store AI response
+    // Store AI response with quality metrics
     await supabase
       .from('chat_messages')
       .insert({
@@ -242,10 +347,16 @@ serve(async (req) => {
         sender: 'ai',
         message: aiMessage,
         message_type: 'text',
-        sentiment_score: sentiment
+        sentiment_score: sentiment,
+        detected_emotions: {
+          hebrewQualityScore: hebrewQuality.score,
+          arabicSlangDetected: arabicDetection.found,
+          arabicWords: arabicDetection.words,
+          qualityDetails: hebrewQuality.details
+        }
       });
 
-    // Log interaction
+    // Log interaction with language quality metrics
     await supabase
       .from('ai_interaction_metrics')
       .insert({
@@ -255,7 +366,11 @@ serve(async (req) => {
           user_message_length: message.length,
           ai_response_length: aiMessage.length,
           sentiment: sentiment,
-          quiz_context_used: !!quizResults
+          quiz_context_used: !!quizResults,
+          hebrewQualityScore: hebrewQuality.score,
+          arabicSlangDetected: arabicDetection.found,
+          arabicWords: arabicDetection.words,
+          languageQualityDetails: hebrewQuality.details
         }
       });
 
@@ -264,7 +379,12 @@ serve(async (req) => {
         message: aiMessage,
         conversationId: conversation.id,
         sentiment: sentiment,
-        quickReplies: quickReplies.slice(0, 4)
+        quickReplies: quickReplies.slice(0, 4),
+        languageQuality: {
+          hebrewScore: hebrewQuality.score,
+          arabicDetected: arabicDetection.found,
+          arabicWords: arabicDetection.words
+        }
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
