@@ -5,6 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { sanitizeForTTS } from '@/utils/ttsSanitizer';
 
 interface Message {
   id: string;
@@ -122,10 +123,19 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const speakText = (text: string) => {
     if (!window.speechSynthesis) return;
 
+    // Sanitize text for TTS - remove emojis, special characters, and markdown
+    const cleanText = sanitizeForTTS(text);
+    
+    // Don't speak if text is empty after sanitization
+    if (!cleanText.trim()) {
+      console.log('Text was empty after sanitization, skipping TTS');
+      return;
+    }
+
     // Cancel any ongoing speech
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(text);
+    const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'he-IL'; // Hebrew language
     utterance.rate = 0.9; // Slightly slower for clarity
     utterance.pitch = 1;
