@@ -50,6 +50,13 @@ const cleanSpecialCharacters = (text: string): string => {
 };
 
 /**
+ * Replaces colloquial words with more appropriate alternatives for TTS
+ */
+const replaceColloquialWords = (text: string): string => {
+  return text.replace(/יאללה/g, 'קדימה');
+};
+
+/**
  * Normalizes whitespace
  */
 const normalizeWhitespace = (text: string): string => {
@@ -66,16 +73,28 @@ const normalizeWhitespace = (text: string): string => {
  */
 export const sanitizeForTTS = (text: string): string => {
   if (!text || typeof text !== 'string') {
+    console.log('[TTS Sanitizer] Empty or invalid text input');
     return '';
   }
 
+  console.log('[TTS Sanitizer] Original text:', text);
   let sanitized = text;
   
   // Apply all sanitization steps in order
   sanitized = removeEmojis(sanitized);
+  console.log('[TTS Sanitizer] After emoji removal:', sanitized);
+  
   sanitized = removeMarkdown(sanitized);
+  console.log('[TTS Sanitizer] After markdown removal:', sanitized);
+  
   sanitized = cleanSpecialCharacters(sanitized);
+  console.log('[TTS Sanitizer] After special chars cleanup:', sanitized);
+  
+  sanitized = replaceColloquialWords(sanitized);
+  console.log('[TTS Sanitizer] After colloquial word replacement:', sanitized);
+  
   sanitized = normalizeWhitespace(sanitized);
+  console.log('[TTS Sanitizer] Final sanitized text:', sanitized);
 
   return sanitized;
 };
