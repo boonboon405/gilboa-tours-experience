@@ -6,6 +6,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Send, Bot, User, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { CategorySelector } from '@/components/CategorySelector';
+import { categoryMetadata } from '@/utils/activityCategories';
 
 interface Message {
   id: string;
@@ -30,6 +32,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [sessionId] = useState(() => `session-${Date.now()}-${Math.random()}`);
   const [quickReplies, setQuickReplies] = useState<string[]>([]);
+  const [showCategorySelector, setShowCategorySelector] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -42,7 +45,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     if (messages.length === 0) {
       const greeting = quizResults
         ? `שלום. ראיתי שעשית את הQuiz שלנו - מעולה.\n\nלפי התוצאות, נראה שאתם מחפשים חוויה ${getTopCategoryDescription(quizResults.top_categories[0])}.\n\nספרו לי קצת יותר - מה הסיטואציה, כמה אנשים, מה מעניין אתכם`
-        : 'שלום. אני הסוכן הדיגיטלי של חוויות באזור נחל המעינות, הר גלבוע, הגליל וסובב כנרת.\n\nאני כאן לעזור לכם למצוא את החוויה המושלמת לצוות שלכם.\n\nספרו לי - כמה אנשים אתם, מה מעניין אתכם';
+        : 'שלום! אני הסוכן הדיגיטלי של החברה - טיולים עם דויד.\n\nאנחנו משלבים 7 קטגוריות של פעילויות: הרפתקאות, טבע, היסטוריה, קולינריה, ספורט, יצירתיות, ובריאות ורוגע.\n\nחשוב לנו לדעת מה מעניין אתכם?';
 
       setMessages([{
         id: '0',
@@ -50,6 +53,11 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
         message: greeting,
         created_at: new Date().toISOString()
       }]);
+      
+      // Show category selector only if no quiz results
+      if (!quizResults) {
+        setShowCategorySelector(true);
+      }
     }
   }, []);
 
@@ -66,11 +74,76 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     return descriptions[category] || 'מגוונת ומעניינת';
   };
 
+  const handleCategorySelect = async (categories: string[]) => {
+    setShowCategorySelector(false);
+    
+    const categoryNames = categories.map(cat => categoryMetadata[cat as keyof typeof categoryMetadata].name).join(', ');
+    const userMessage = `מעניין אותי: ${categoryNames}`;
+    
+    // Add user message to UI
+    const tempUserMsg: Message = {
+      id: `temp-${Date.now()}`,
+      sender: 'user',
+      message: userMessage,
+      created_at: new Date().toISOString()
+    };
+    setMessages(prev => [...prev, tempUserMsg]);
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-chat-agent', {
+        body: {
+          message: userMessage,
+          conversationId,
+          sessionId,
+          quizResults
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.error) {
+        toast({
+          title: "שגיאה",
+          description: data.fallback || data.error,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setConversationId(data.conversationId);
+
+      const aiMessage: Message = {
+        id: `ai-${Date.now()}`,
+        sender: 'ai',
+        message: data.message,
+        created_at: new Date().toISOString()
+      };
+
+      setMessages(prev => [...prev, aiMessage]);
+      
+      if (data.quickReplies && data.quickReplies.length > 0) {
+        setQuickReplies(data.quickReplies);
+      }
+
+    } catch (error) {
+      console.error('Chat error:', error);
+      toast({
+        title: "שגיאה בשליחה",
+        description: "אנא נסו שוב או צרו קשר בטלפון 053-7314235",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
     const userMessage = input.trim();
     setInput('');
+    setShowCategorySelector(false);
     
     // Add user message to UI immediately
     const tempUserMsg: Message = {
@@ -196,6 +269,15 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
 
       {/* Input */}
       <div className="p-4 border-t border-border/50 bg-background">
+        {/* Category Selector */}
+        {showCategorySelector && (
+          <div className="mb-4">
+            <CategorySelector 
+              onSelect={handleCategorySelect}
+              disabled={isLoading}
+            />
+          </div>
+        )}
         {/* Quick Replies */}
         {quickReplies.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
