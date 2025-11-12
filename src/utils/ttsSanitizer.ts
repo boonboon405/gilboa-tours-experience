@@ -3,6 +3,8 @@
  * emojis, markdown formatting, and other elements that interfere with natural speech.
  */
 
+import { ttsConfig } from './ttsConfig';
+
 /**
  * Removes emojis from text
  */
@@ -51,9 +53,18 @@ const cleanSpecialCharacters = (text: string): string => {
 
 /**
  * Replaces colloquial words with more appropriate alternatives for TTS
+ * Uses the configuration from ttsConfig for easy maintenance
  */
 const replaceColloquialWords = (text: string): string => {
-  return text.replace(/יאללה/g, 'קדימה');
+  let result = text;
+  
+  // Apply all word replacements from config
+  Object.entries(ttsConfig.wordReplacements).forEach(([original, replacement]) => {
+    const regex = new RegExp(original, 'g');
+    result = result.replace(regex, replacement);
+  });
+  
+  return result;
 };
 
 /**
@@ -67,34 +78,43 @@ const normalizeWhitespace = (text: string): string => {
 };
 
 /**
+ * Conditional logging based on config
+ */
+const log = (...args: any[]) => {
+  if (ttsConfig.enableLogging) {
+    console.log(...args);
+  }
+};
+
+/**
  * Main function to sanitize text for TTS
  * @param text - The raw text to sanitize
  * @returns Clean text suitable for TTS
  */
 export const sanitizeForTTS = (text: string): string => {
   if (!text || typeof text !== 'string') {
-    console.log('[TTS Sanitizer] Empty or invalid text input');
+    log('[TTS Sanitizer] Empty or invalid text input');
     return '';
   }
 
-  console.log('[TTS Sanitizer] Original text:', text);
+  log('[TTS Sanitizer] Original text:', text);
   let sanitized = text;
   
   // Apply all sanitization steps in order
   sanitized = removeEmojis(sanitized);
-  console.log('[TTS Sanitizer] After emoji removal:', sanitized);
+  log('[TTS Sanitizer] After emoji removal:', sanitized);
   
   sanitized = removeMarkdown(sanitized);
-  console.log('[TTS Sanitizer] After markdown removal:', sanitized);
+  log('[TTS Sanitizer] After markdown removal:', sanitized);
   
   sanitized = cleanSpecialCharacters(sanitized);
-  console.log('[TTS Sanitizer] After special chars cleanup:', sanitized);
+  log('[TTS Sanitizer] After special chars cleanup:', sanitized);
   
   sanitized = replaceColloquialWords(sanitized);
-  console.log('[TTS Sanitizer] After colloquial word replacement:', sanitized);
+  log('[TTS Sanitizer] After colloquial word replacement:', sanitized);
   
   sanitized = normalizeWhitespace(sanitized);
-  console.log('[TTS Sanitizer] Final sanitized text:', sanitized);
+  log('[TTS Sanitizer] Final sanitized text:', sanitized);
 
   return sanitized;
 };
