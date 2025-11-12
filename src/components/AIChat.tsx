@@ -7,7 +7,9 @@ import { Loader2, Send, Bot, User, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { CategorySelector } from '@/components/CategorySelector';
-import { categoryMetadata } from '@/utils/activityCategories';
+import { CategoryBadge } from '@/components/CategoryBadge';
+import { categoryMetadata, DNACategory } from '@/utils/activityCategories';
+import { detectCategoriesInMessage } from '@/utils/categoryDetector';
 
 interface Message {
   id: string;
@@ -247,6 +249,18 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
                     : 'bg-muted'
                 }`}>
                   <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.message}</p>
+                  
+                  {/* Category badges for AI messages */}
+                  {msg.sender === 'ai' && (() => {
+                    const categories = detectCategoriesInMessage(msg.message);
+                    return categories.length > 0 ? (
+                      <div className="flex flex-wrap gap-1 mt-2 pt-2 border-t border-border/30">
+                        {categories.map((category) => (
+                          <CategoryBadge key={category} category={category} size="sm" />
+                        ))}
+                      </div>
+                    ) : null;
+                  })()}
                 </div>
               </div>
             </div>
