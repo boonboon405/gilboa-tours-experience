@@ -90,16 +90,20 @@ const AISettings = () => {
   };
 
   const handleUnlock = () => {
-    if (password === SETTINGS_PASSWORD) {
+    const trimmedPassword = password.trim();
+    console.log('🔐 Attempting unlock with password length:', trimmedPassword.length);
+    
+    if (trimmedPassword === SETTINGS_PASSWORD) {
       setIsUnlocked(true);
       toast({
         title: 'התחברות מצליחה',
         description: 'ניתן כעת לערוך את טקסטי ה-AI',
       });
     } else {
+      console.log('❌ Password incorrect. Expected:', SETTINGS_PASSWORD);
       toast({
         title: 'סיסמה שגויה',
-        description: 'נסה שוב',
+        description: `הסיסמה הנכונה היא: ${SETTINGS_PASSWORD}`,
         variant: 'destructive',
       });
     }
