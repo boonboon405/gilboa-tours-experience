@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import heroImage from '@/assets/hero-gilboa.jpg';
 import { LandscapeImageSelector } from './LandscapeImageSelector';
+import { openWhatsApp, whatsappTemplates, trackPhoneCall } from '@/utils/contactTracking';
 
 const STORAGE_KEY = 'landscape-images';
 
@@ -154,7 +155,7 @@ export const Hero = () => {
               variant="whatsapp"
               size="lg"
               className="text-lg px-8 py-6 transition-all hover:scale-105 hover:shadow-xl ripple-effect animate-fade-in [animation-delay:0.8s] opacity-0 [animation-fill-mode:forwards]"
-              onClick={() => window.open(`https://wa.me/${whatsappNumber}`, '_blank')}
+              onClick={() => openWhatsApp('972537314235', whatsappTemplates.general, 'hero')}
             >
               <MessageCircle className="ml-2 h-5 w-5" />
               וואטסאפ
@@ -164,6 +165,7 @@ export const Hero = () => {
           {/* Phone Number */}
           <a
             href={`tel:${phoneNumber}`}
+            onClick={() => trackPhoneCall(phoneNumber, 'hero')}
             className="inline-flex items-center text-white text-xl font-semibold hover:text-accent transition-all duration-300 animate-fade-in [animation-delay:1s] opacity-0 [animation-fill-mode:forwards] hover:scale-110 hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] group"
           >
             <Phone className="ml-2 h-6 w-6 group-hover:animate-[ring_1s_ease-in-out]" />

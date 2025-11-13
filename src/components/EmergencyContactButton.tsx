@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/sheet';
 import { Phone, Mail, MessageCircle, HeadphonesIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { openWhatsApp, whatsappTemplates, trackPhoneCall } from '@/utils/contactTracking';
 
 export const EmergencyContactButton = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -70,30 +71,29 @@ export const EmergencyContactButton = () => {
               variant="whatsapp"
               size="lg"
               className="w-full text-lg shadow-strong justify-start"
-              asChild
+              onClick={() => openWhatsApp(ownerWhatsApp, whatsappTemplates.inquiry, 'emergency-contact-button')}
             >
-              <a href={`https://wa.me/${ownerWhatsApp}`} target="_blank" rel="noopener noreferrer">
-                <MessageCircle className="ml-2 h-6 w-6" />
-                <div className="flex-1 text-right">
-                  <div>שלחו הודעה בוואטסאפ</div>
-                  <div className="text-xs opacity-80">מומלץ - תגובה מהירה!</div>
-                </div>
-              </a>
+              <MessageCircle className="ml-2 h-6 w-6" />
+              <div className="flex-1 text-right">
+                <div>שלחו הודעה בוואטסאפ</div>
+                <div className="text-xs opacity-80">מומלץ - תגובה מהירה!</div>
+              </div>
             </Button>
 
             <Button
               variant="hero"
               size="lg"
               className="w-full text-lg justify-start"
-              asChild
+              onClick={() => {
+                trackPhoneCall(ownerPhone, 'emergency-contact-button');
+                window.location.href = `tel:${ownerPhone}`;
+              }}
             >
-              <a href={`tel:${ownerPhone}`}>
-                <Phone className="ml-2 h-6 w-6" />
-                <div className="flex-1 text-right">
-                  <div>התקשרו ישירות</div>
-                  <div className="text-xs opacity-80">{ownerPhone}</div>
-                </div>
-              </a>
+              <Phone className="ml-2 h-6 w-6" />
+              <div className="flex-1 text-right">
+                <div>התקשרו ישירות</div>
+                <div className="text-xs opacity-80">{ownerPhone}</div>
+              </div>
             </Button>
 
             <Button

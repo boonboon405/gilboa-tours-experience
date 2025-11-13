@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Phone, Mail, MessageCircle, AlertCircle } from 'lucide-react';
+import { openWhatsApp, whatsappTemplates, trackPhoneCall } from '@/utils/contactTracking';
 
 export const ExitIntentModal = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -125,26 +126,27 @@ export const ExitIntentModal = () => {
             variant="whatsapp"
             size="lg"
             className="w-full text-lg shadow-strong animate-bounce-slow"
-            asChild
-            onClick={() => handleContact('whatsapp')}
+            onClick={() => {
+              handleContact('whatsapp');
+              openWhatsApp(ownerWhatsApp, whatsappTemplates.inquiry, 'exit-intent-modal');
+            }}
           >
-            <a href={`https://wa.me/${ownerWhatsApp}`} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="ml-2 h-5 w-5" />
-              שלחו הודעה בוואטסאפ עכשיו
-            </a>
+            <MessageCircle className="ml-2 h-5 w-5" />
+            שלחו הודעה בוואטסאפ עכשיו
           </Button>
 
           <Button
             variant="hero"
             size="lg"
             className="w-full text-lg"
-            asChild
-            onClick={() => handleContact('phone')}
+            onClick={() => {
+              handleContact('phone');
+              trackPhoneCall(ownerPhone, 'exit-intent-modal');
+              window.location.href = `tel:${ownerPhone}`;
+            }}
           >
-            <a href={`tel:${ownerPhone}`}>
-              <Phone className="ml-2 h-5 w-5" />
-              התקשרו ישירות: {ownerPhone}
-            </a>
+            <Phone className="ml-2 h-5 w-5" />
+            התקשרו ישירות: {ownerPhone}
           </Button>
 
           <Button

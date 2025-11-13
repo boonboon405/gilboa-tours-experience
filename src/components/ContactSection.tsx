@@ -7,6 +7,7 @@ import { Mail, Phone, MessageCircle, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
+import { openWhatsApp, whatsappTemplates, trackPhoneCall } from '@/utils/contactTracking';
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, 'שם נדרש').max(100, 'שם ארוך מדי'),
@@ -79,6 +80,7 @@ export const ContactSection = () => {
                     <p className="text-sm text-muted-foreground">טלפון</p>
                     <a
                       href={`tel:${phoneNumber}`}
+                      onClick={() => trackPhoneCall(phoneNumber, 'contact-section')}
                       className="text-lg font-semibold text-foreground hover:text-primary transition-colors"
                     >
                       {phoneNumber}
@@ -111,12 +113,10 @@ export const ContactSection = () => {
               variant="whatsapp"
               size="lg"
               className="w-full text-lg"
-              asChild
+              onClick={() => openWhatsApp('972537314235', whatsappTemplates.inquiry, 'contact-section')}
             >
-              <a href="https://wa.me/972537314235" target="_blank" rel="noopener noreferrer">
-                <MessageCircle className="ml-2 h-5 w-5" />
-                וואטסאפ
-              </a>
+              <MessageCircle className="ml-2 h-5 w-5" />
+              וואטסאפ
             </Button>
           </div>
 

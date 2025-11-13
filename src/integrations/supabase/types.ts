@@ -206,6 +206,42 @@ export type Database = {
           },
         ]
       }
+      contact_tracking: {
+        Row: {
+          contact_type: string
+          contact_value: string
+          created_at: string
+          id: string
+          message_template: string | null
+          referrer: string | null
+          source_page: string | null
+          user_agent: string | null
+          user_session: string | null
+        }
+        Insert: {
+          contact_type: string
+          contact_value: string
+          created_at?: string
+          id?: string
+          message_template?: string | null
+          referrer?: string | null
+          source_page?: string | null
+          user_agent?: string | null
+          user_session?: string | null
+        }
+        Update: {
+          contact_type?: string
+          contact_value?: string
+          created_at?: string
+          id?: string
+          message_template?: string | null
+          referrer?: string | null
+          source_page?: string | null
+          user_agent?: string | null
+          user_session?: string | null
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           confidence_score: number | null

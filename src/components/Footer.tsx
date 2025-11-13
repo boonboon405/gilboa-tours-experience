@@ -1,4 +1,5 @@
 import { Mail, Phone } from 'lucide-react';
+import { trackPhoneCall } from '@/utils/contactTracking';
 
 export const Footer = () => {
   const email = 'davidisraeltours@gmail.com';
@@ -26,6 +27,7 @@ export const Footer = () => {
             <div className="space-y-3">
               <a
                 href={`tel:${phoneNumber}`}
+                onClick={() => trackPhoneCall(phoneNumber, 'footer')}
                 className="flex items-center space-x-2 space-x-reverse text-muted-foreground hover:text-primary transition-colors"
               >
                 <Phone className="h-4 w-4" />
