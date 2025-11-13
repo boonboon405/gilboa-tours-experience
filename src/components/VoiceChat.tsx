@@ -474,8 +474,8 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
         </form>
 
         {/* Voice Control */}
-        <div className="p-4">
-          <div className="flex flex-col items-center gap-3">
+        <div className="p-6 bg-muted/20">
+          <div className="flex flex-col items-center gap-4">
             <Button
               onClick={isListening ? stopListening : startListening}
               disabled={isProcessing || isSpeaking}
@@ -494,31 +494,33 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
                 <MicOff className="w-8 h-8" />
               )}
             </Button>
-            <p className="text-sm text-muted-foreground text-center">
-              {language === 'he' ? (
-                isListening 
-                  ? '🎤 מקשיב...' 
-                  : isSpeaking 
-                  ? '🔊 מדבר...'
-                  : isProcessing
-                  ? '⚙️ מעבד...'
-                  : 'לחצו על המיקרופון להתחלת שיחה'
-              ) : (
-                isListening 
-                  ? '🎤 Listening...' 
-                  : isSpeaking 
-                  ? '🔊 Speaking...'
-                  : isProcessing
-                  ? '⚙️ Processing...'
-                  : 'Click the microphone to start conversation'
-              )}
-            </p>
-            <p className="text-xs text-muted-foreground text-center">
-              {language === 'he' 
-                ? 'תכונה זו פועלת בעברית ובאנגלית • ללא צורך ב-API Key'
-                : 'Works in Hebrew and English • No API Key required'
-              }
-            </p>
+            <div className="space-y-2 w-full max-w-md">
+              <p className="text-base font-medium text-foreground text-center px-4 py-2 bg-background/80 rounded-lg border border-border/50">
+                {language === 'he' ? (
+                  isListening 
+                    ? '🎤 מקשיב...' 
+                    : isSpeaking 
+                    ? '🔊 מדבר...'
+                    : isProcessing
+                    ? '⚙️ מעבד...'
+                    : 'לחצו על המיקרופון להתחלת שיחה'
+                ) : (
+                  isListening 
+                    ? '🎤 Listening...' 
+                    : isSpeaking 
+                    ? '🔊 Speaking...'
+                    : isProcessing
+                    ? '⚙️ Processing...'
+                    : 'Click the microphone to start conversation'
+                )}
+              </p>
+              <p className="text-sm text-foreground/70 text-center px-3 py-1.5 bg-accent/10 rounded-md">
+                {language === 'he' 
+                  ? 'תכונה זו פועלת בעברית ובאנגלית • ללא צורך ב-API Key'
+                  : 'Works in Hebrew and English • No API Key required'
+                }
+              </p>
+            </div>
           </div>
         </div>
       </div>
