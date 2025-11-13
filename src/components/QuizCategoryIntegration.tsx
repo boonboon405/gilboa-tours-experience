@@ -82,7 +82,7 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
                   onClick={handleRetakeQuiz}
                   size="sm"
                 >
-                  {language === 'he' ? 'עשה שוב את ה-Quiz' : 'Retake Quiz'}
+                  {language === 'he' ? 'עשה שוב את ה-Quiz (שנה או הוסף אטרקציות)' : 'Retake Quiz (Change or Add Attractions)'}
                 </Button>
               </div>
             </div>
