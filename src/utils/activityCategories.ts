@@ -6,7 +6,8 @@ export type DNACategory =
   | 'culinary'     // קולינריה, יין וטעמים
   | 'sports'       // ספורט, תחרות וצוותיות
   | 'creative'     // יצירה ורוחניות
-  | 'wellness';    // בריאות ופינוק
+  | 'wellness'     // בריאות ופינוק
+  | 'teambuilding'; // בניית צוות ומנהיגות
 
 export interface ActivityTag {
   adventure: number;
@@ -16,12 +17,13 @@ export interface ActivityTag {
   sports: number;
   creative: number;
   wellness: number;
+  teambuilding: number;
 }
 
 // Map of activity text to DNA scores
 export const activityDNAMap: Record<string, Partial<ActivityTag>> = {
   // Section 1 - Morning Activities
-  "הליכה במי הנחל הצלולים לאורך נחל הקיבוצים (ראלי מכשולים צוותי) - מומלץ מאד": { adventure: 5, sports: 4, nature: 3 },
+  "הליכה במי הנחל הצלולים לאורך נחל הקיבוצים (ראלי מכשולים צוותי) - מומלץ מאד": { adventure: 5, sports: 4, nature: 3, teambuilding: 4 },
   "אתגר רכבי שטח דרך גבעות הגלבוע": { adventure: 5, sports: 3 },
   "ג'יפים בדרכי עמק בית שאן ניווט": { adventure: 4, nature: 2 },
   "ביקור בבית אהרון אהרונסון (רוכש וגואל אדמות הארץ)": { history: 5, creative: 2 },
@@ -52,11 +54,11 @@ export const activityDNAMap: Record<string, Partial<ActivityTag>> = {
   "אתגר רכבים חשמלים דרך 4 מעיינות-ניווט לרגלי הגלבוע המערבי - מומלץ מאד": { adventure: 4, nature: 3, sports: 2 },
   "שחייה בגן השלושה (סחנה)": { nature: 5, wellness: 4 },
   "פיקניק תחת עצי דקל ליד מעיין עין מודע": { nature: 4, wellness: 3 },
-  "בניית צוות 'אתגר בניית רפסודה' במעיין רדוד": { sports: 5, adventure: 3 },
+  "בניית צוות 'אתגר בניית רפסודה' במעיין רדוד": { sports: 5, adventure: 3, teambuilding: 5 },
   "מרוץ שליחים בין צינורות נחל הקיבוצים": { sports: 5, adventure: 2 },
   "גלישת סאפ במקטע הרגוע של נהר הירדן": { sports: 4, nature: 4, wellness: 2 },
   "שיעור יוגה במעיינות הגלבוע": { wellness: 5, nature: 3 },
-  "משחקי מים מיני-אולימפיים בדשאי גן השלושה": { sports: 5, adventure: 3 },
+  "משחקי מים מיני-אולימפיים בדשאי גן השלושה": { sports: 5, adventure: 3, teambuilding: 4 },
   "תחרות 'שף המעיין' – אפיית לחם על אבנים טבעיות": { culinary: 4, creative: 3, sports: 2 },
   "הקמת אזור חברתי לערסלים וקפה קר": { wellness: 4, nature: 2 },
   "פינת עיסוי עם מטפלים מקצועיים (רוטציה קבוצתית)": { wellness: 5 },
@@ -68,7 +70,7 @@ export const activityDNAMap: Record<string, Partial<ActivityTag>> = {
   "מפגש מיינדפולנס תחת עצי אקליפטוס": { wellness: 5, creative: 2 },
   "פינת אמנות יצירתית: 'צייר את המעיין'": { creative: 5, wellness: 2 },
   "בר מיצים טריים וסמוזי המופעל על ידי חברי הצוות": { culinary: 3, wellness: 2 },
-  "'אתגר שקת' – תקשורת ללא מילים במהלך הליכת הנהר": { sports: 3, creative: 3, wellness: 2 },
+  "'אתגר שקת' – תקשורת ללא מילים במהלך הליכת הנהר": { sports: 3, creative: 3, wellness: 2, teambuilding: 5 },
   "זמן מדיטציה והתבוננות ליד נחל הקיבוצים": { wellness: 5, nature: 3 },
   "טעימת בירה מקררת ממבשלת בירה מקומית": { culinary: 4 },
   "פעילות טיפול בוץ טבעי (כיף וידידותי לצילום)": { wellness: 4, nature: 2 },
@@ -83,7 +85,7 @@ export const activityDNAMap: Record<string, Partial<ActivityTag>> = {
   "סיור מודרך בעיר הרומית בית שאן (סקיתופוליס)": { history: 5, creative: 2 },
   "עצירה בתצפית הר הגלבוע – הסיפור של הקרב האחרון של המלך שאול": { history: 5, nature: 2 },
   "ביקור במוזיאון האמנות של קיבוץ עין חרוד (הפסקה יצירתית)": { creative: 5, history: 3 },
-  "מעגל סיפורים: 'ממלכות שאול לעם הסטארטאפים – מנהיגות לאורך הדורות'": { history: 5, creative: 3 },
+  "מעגל סיפורים: 'ממלכות שאול לעם הסטארטאפים – מנהיגות לאורך הדורות'": { history: 5, creative: 3, teambuilding: 4 },
   "ביקור בגן גארו אוסטרלי לכיף קל": { nature: 4, creative: 2 },
   "ביקור בחוות חלב קיבוצית מקומית – טעימה, למידה וצחוק": { culinary: 3, history: 2 },
   "מפגש סיפור מקראי על רכס הגלבוע - ממלכת שאול": { history: 5, creative: 2 },
@@ -94,7 +96,7 @@ export const activityDNAMap: Record<string, Partial<ActivityTag>> = {
   "ביקור במוזיאון חומה ומגדל בניר דוד": { history: 5 },
   "פעילות 'קפסולת זמן' – השוואה בין עבודת צוות עתיקה ומודרנית": { history: 4, creative: 3 },
   "ביקור במרחצאות הרומיים של חמת גדר (הרחבה אופציונלית)": { history: 5, wellness: 2 },
-  "דיון מנהיגות: 'מה צוותים מודרניים יכולים ללמוד מהקיבוץ?'": { history: 4, creative: 3 },
+  "דיון מנהיגות: 'מה צוותים מודרניים יכולים ללמוד מהקיבוץ?'": { history: 4, creative: 3, teambuilding: 5 },
 
   // Section 4 - Culinary Activities
   "חוויה קולינרית: ארוחה עשירה במסעדה כשרה עם אוכל מזרחי אותנטי - בבית שאן- מומלץ מאד": { culinary: 5 },
@@ -102,7 +104,7 @@ export const activityDNAMap: Record<string, Partial<ActivityTag>> = {
   "סדנת שמן זית וטעימה + כריכי איכות מפנקים": { culinary: 5, creative: 2 },
   "תחרות בניית טבון בטבע 'אתגר חביטות של מאסטר שף הצוות' + כריכי איכות מפנקים": { culinary: 4, sports: 3, creative: 2 },
   "'מסע טעמים בגליל' – טעימה עיוורת של מוצרים מקומיים + כריכי איכות מפנקים": { culinary: 5, creative: 2 },
-  "אתגר בישול פויקה מסורתי (צוותים מתחרים) + כריכי איכות מפנקים": { culinary: 5, sports: 3 },
+  "אתגר בישול פויקה מסורתי (צוותים מתחרים) + כריכי איכות מפנקים": { culinary: 5, sports: 3, teambuilding: 4 },
   "פינת בריבקיו -BBQ שלך על הגילבוע + כריכי איכות מפנקים": { culinary: 5 },
   "מזנון צהריים קיבוצי – תוצרת מקומית עונתית בניר דוד + כריכי איכות מפנקים": { culinary: 5, wellness: 2 },
   "אתגר קינוחים צוותי עם תמרים, דבש ויוגורט מקומיים + כריכי איכות מפנקים": { culinary: 4, sports: 2, creative: 2 },
@@ -164,6 +166,12 @@ export const categoryMetadata = {
     icon: '🌿',
     description: 'רוגע, עיסויים ופינוק',
     color: 'from-teal-500 to-green-400'
+  },
+  teambuilding: {
+    name: 'בניית צוות ומנהיגות',
+    icon: '🤝',
+    description: 'פעילויות לחיזוק קבוצות, תקשורת וליווי ארגוני',
+    color: 'from-indigo-500 to-blue-500'
   }
 };
 

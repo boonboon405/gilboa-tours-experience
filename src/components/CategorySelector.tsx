@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Flame, Droplets, Landmark, Wine, Zap, Palette, Leaf } from 'lucide-react';
+import { Flame, Droplets, Landmark, Wine, Zap, Palette, Leaf, Handshake } from 'lucide-react';
 import { categoryMetadata, DNACategory } from '@/utils/activityCategories';
 
 interface CategorySelectorProps {
@@ -16,7 +16,8 @@ const categoryIcons: Record<DNACategory, any> = {
   culinary: Wine,
   sports: Zap,
   creative: Palette,
-  wellness: Leaf
+  wellness: Leaf,
+  teambuilding: Handshake
 };
 
 export const CategorySelector = ({ onSelect, disabled }: CategorySelectorProps) => {

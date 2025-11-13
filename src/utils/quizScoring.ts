@@ -210,7 +210,8 @@ export function calculateQuizResults(answers: number[][]): QuizResults {
     culinary: 0,
     sports: 0,
     creative: 0,
-    wellness: 0
+    wellness: 0,
+    teambuilding: 0
   };
 
   // Sum up all scores from answers
