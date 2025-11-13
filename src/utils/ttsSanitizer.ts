@@ -45,9 +45,10 @@ const cleanSpecialCharacters = (text: string): string => {
   return text
     .replace(/[!]{2,}/g, '.') // Multiple exclamation marks to period
     .replace(/[?]{2,}/g, '?') // Multiple question marks to single
-    .replace(/[.]{2,}/g, '.') // Multiple periods to single
+    .replace(/[.]{3,}/g, '... ... ...') // Make existing pauses even longer
+    .replace(/[.]{2,}/g, '...') // Multiple periods to three for pause
     .replace(/[-]{2,}/g, ' ') // Multiple dashes to space
-    .replace(/\|/g, '...') // Convert pipe to multiple periods for longer pause
+    .replace(/\|/g, '.....') // Convert pipe to five periods for long pause
     .replace(/[*#@$%^&+=<>{}[\]\\~`]/g, '') // Remove special chars
     .replace(/[:;]/g, ','); // Convert colons/semicolons to commas for natural pauses
 };

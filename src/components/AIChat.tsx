@@ -161,7 +161,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'he-IL';
-    utterance.rate = 0.44; // 30% slower than current 0.63
+    utterance.rate = 0.7; // Slower speech for better clarity
     utterance.pitch = 1;
     utterance.volume = 1;
 

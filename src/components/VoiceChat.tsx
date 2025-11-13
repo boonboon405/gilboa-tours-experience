@@ -46,7 +46,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const [speechSupported, setSpeechSupported] = useState(true);
   const [textInput, setTextInput] = useState('');
   const [language, setLanguage] = useState<'he' | 'en'>('he');
-  const [voiceSpeed, setVoiceSpeed] = useState(0.44);
+  const [voiceSpeed, setVoiceSpeed] = useState(0.7);
   const [showSettings, setShowSettings] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);

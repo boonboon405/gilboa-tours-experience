@@ -5,17 +5,22 @@
 
 export interface TTSConfig {
   enableLogging: boolean;
+  defaultRate: number; // Speech rate (0.1 to 10, default 1)
   wordReplacements: Record<string, string>;
 }
 
 /**
  * TTS Configuration
  * - enableLogging: Set to false in production to disable console logs
+ * - defaultRate: Default speech rate (0.7 = 30% slower for better clarity)
  * - wordReplacements: Map of words to replace for better TTS pronunciation
  */
 export const ttsConfig: TTSConfig = {
   // Toggle logging on/off
   enableLogging: true,
+  
+  // Default speech rate (0.7 is 30% slower than normal for clarity)
+  defaultRate: 0.7,
   
   // Word replacements for better TTS pronunciation
   // Pure Hebrew replacements - avoiding Arabic-origin slang
@@ -46,6 +51,14 @@ export const ttsConfig: TTSConfig = {
  */
 export const setTTSLogging = (enabled: boolean) => {
   ttsConfig.enableLogging = enabled;
+};
+
+/**
+ * Update TTS speech rate at runtime
+ */
+export const setTTSRate = (rate: number) => {
+  // Ensure rate is between 0.1 and 10
+  ttsConfig.defaultRate = Math.max(0.1, Math.min(10, rate));
 };
 
 /**
