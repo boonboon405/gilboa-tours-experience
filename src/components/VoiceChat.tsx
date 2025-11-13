@@ -5,7 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Gauge } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Gauge, Download, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { sanitizeForTTS } from '@/utils/ttsSanitizer';
@@ -310,6 +310,47 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     });
   };
 
+  const handleExportChat = () => {
+    const chatText = messages.map(msg => {
+      const sender = msg.sender === 'user' ? (language === 'he' ? 'אני' : 'Me') : (language === 'he' ? 'עוזר' : 'Assistant');
+      const timestamp = new Date(msg.created_at).toLocaleString(language === 'he' ? 'he-IL' : 'en-US');
+      return `[${timestamp}] ${sender}: ${msg.message}`;
+    }).join('\n\n');
+
+    const blob = new Blob([chatText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `chat-${new Date().toISOString().slice(0, 10)}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: language === 'he' ? "שיחה יוצאה" : "Chat Exported",
+      description: language === 'he' ? "הקובץ הורד בהצלחה" : "File downloaded successfully"
+    });
+  };
+
+  const handleQuickReply = async (reply: string) => {
+    if (!isProcessing && !isSpeaking) {
+      await handleVoiceInput(reply);
+    }
+  };
+
+  const quickReplies = language === 'he' ? [
+    'ספר לי עוד',
+    'מה האפשרויות?',
+    'כמה זה עולה?',
+    'איפה זה?'
+  ] : [
+    'Tell me more',
+    'What are the options?',
+    'How much does it cost?',
+    'Where is it?'
+  ];
+
   if (!speechSupported) {
     return (
       <Card className="flex flex-col items-center justify-center h-[600px] max-w-4xl mx-auto p-8 text-center">
@@ -342,6 +383,15 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
             title={language === 'he' ? 'הגדרות' : 'Settings'}
           >
             <Gauge className="w-5 h-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleExportChat}
+            title={language === 'he' ? 'ייצא שיחה' : 'Export Chat'}
+            disabled={messages.length === 0}
+          >
+            <Download className="w-5 h-5" />
           </Button>
           <Button
             variant="ghost"
@@ -439,7 +489,14 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
               </div>
               <div className="flex-1">
                 <div className="inline-block p-3 rounded-lg bg-muted">
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+                    <div className="flex gap-1">
+                      <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                      <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                      <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -451,27 +508,45 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
       {/* Voice and Text Controls */}
       <div className="border-t border-border/50 bg-background">
         {/* Text Input */}
-        <form onSubmit={handleTextSubmit} className="flex gap-2 p-3 border-b border-border/50">
-          <Input
-            value={textInput}
-            onChange={(e) => setTextInput(e.target.value)}
-            placeholder={language === 'he' ? 'הקלידו את תשובתכם...' : 'Type your answer...'}
-            disabled={isProcessing || isSpeaking}
-            className={`flex-1 ${language === 'he' ? 'text-right' : 'text-left'}`}
-            dir={language === 'he' ? 'rtl' : 'ltr'}
-          />
-          <Button 
-            type="submit" 
-            size="icon" 
-            disabled={!textInput.trim() || isProcessing || isSpeaking}
-          >
-            {isProcessing ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
-          </Button>
-        </form>
+        <div className="space-y-2 border-b border-border/50">
+          <form onSubmit={handleTextSubmit} className="flex gap-2 p-3">
+            <Input
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
+              placeholder={language === 'he' ? 'הקלידו את תשובתכם...' : 'Type your answer...'}
+              disabled={isProcessing || isSpeaking}
+              className={`flex-1 ${language === 'he' ? 'text-right' : 'text-left'}`}
+              dir={language === 'he' ? 'rtl' : 'ltr'}
+            />
+            <Button 
+              type="submit" 
+              size="icon" 
+              disabled={!textInput.trim() || isProcessing || isSpeaking}
+            >
+              {isProcessing ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
+            </Button>
+          </form>
+          
+          {/* Quick Reply Buttons */}
+          <div className={`flex gap-2 px-3 pb-3 overflow-x-auto ${language === 'he' ? 'flex-row-reverse' : ''}`}>
+            {quickReplies.map((reply, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
+                onClick={() => handleQuickReply(reply)}
+                disabled={isProcessing || isSpeaking}
+                className="whitespace-nowrap text-xs hover:bg-primary/10 hover:border-primary transition-colors"
+              >
+                {reply}
+              </Button>
+            ))}
+          </div>
+        </div>
 
         {/* Voice Control */}
         <div className="p-6 bg-muted/20">
