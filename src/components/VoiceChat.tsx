@@ -205,7 +205,7 @@ Tell me - how many people? What interests you?`;
   const speakText = (text: string) => {
     if (!window.speechSynthesis) return;
 
-    // Sanitize text for TTS - remove emojis, special characters, and markdown
+    // Sanitize text for TTS (includes quality check for slang/Arabic)
     const cleanText = sanitizeForTTS(text);
     
     // Don't speak if text is empty after sanitization
@@ -219,7 +219,7 @@ Tell me - how many people? What interests you?`;
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = language === 'he' ? 'he-IL' : 'en-US';
-    utterance.rate = voiceSpeed;
+    utterance.rate = voiceSpeed; // User-controlled speed
     utterance.pitch = 1;
     utterance.volume = 1;
 

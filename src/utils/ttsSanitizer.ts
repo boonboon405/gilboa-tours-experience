@@ -4,6 +4,7 @@
  */
 
 import { ttsConfig } from './ttsConfig';
+import { checkTTSQuality, cleanForHighQualityTTS } from './ttsQualityChecker';
 
 /**
  * Removes emojis from text
@@ -102,7 +103,24 @@ export const sanitizeForTTS = (text: string): string => {
   log('[TTS Sanitizer] Original text:', text);
   let sanitized = text;
   
-  // Apply all sanitization steps in order
+  // Step 1: Quality check and fix slang/Arabic words
+  if (ttsConfig.enableQualityCheck) {
+    const qualityCheck = checkTTSQuality(sanitized);
+    log('[TTS Quality Check]', {
+      passed: qualityCheck.passed,
+      score: qualityCheck.score,
+      issues: qualityCheck.issues,
+      forbiddenWords: qualityCheck.details.forbiddenWordsFound
+    });
+    
+    // Use cleaned version if quality check found issues
+    if (!qualityCheck.passed || qualityCheck.details.forbiddenWordsFound.length > 0) {
+      sanitized = cleanForHighQualityTTS(sanitized);
+      log('[TTS Sanitizer] After quality fix:', sanitized);
+    }
+  }
+  
+  // Step 2: Apply all other sanitization steps
   sanitized = removeEmojis(sanitized);
   log('[TTS Sanitizer] After emoji removal:', sanitized);
   

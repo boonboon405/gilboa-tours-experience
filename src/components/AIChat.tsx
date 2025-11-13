@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Bot, User, Sparkles, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Loader2, Bot, User, Sparkles, RotateCcw, ChevronLeft, ChevronRight, Volume2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { CategorySelector } from '@/components/CategorySelector';
@@ -48,6 +48,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [quickReplies, setQuickReplies] = useState<string[]>([]);
   const [showCategorySelector, setShowCategorySelector] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceSpeed, setVoiceSpeed] = useState(0.7); // Default slow speed
   const [typingPreview, setTypingPreview] = useState('');
   const [conversationData, setConversationData] = useState<ConversationData>({});
   const [currentStep, setCurrentStep] = useState(0);
@@ -152,7 +153,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const speakText = (text: string) => {
     if (!window.speechSynthesis) return;
 
-    // Sanitize text for TTS
+    // Sanitize text for TTS (includes quality check for slang/Arabic)
     const cleanText = sanitizeForTTS(text);
     if (!cleanText.trim()) return;
 
@@ -161,7 +162,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'he-IL';
-    utterance.rate = 0.7; // Slower speech for better clarity
+    utterance.rate = voiceSpeed; // Use user-controlled speed
     utterance.pitch = 1;
     utterance.volume = 1;
 
@@ -758,6 +759,31 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
             ))}
           </div>
         )}
+        
+        {/* Voice Speed Control */}
+        <div className="mb-3 p-3 bg-muted/30 rounded-lg border border-border/50">
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm font-medium flex items-center gap-2">
+              <Volume2 className="h-4 w-4" />
+              מהירות דיבור
+              <span className="text-xs text-muted-foreground">({Math.round(voiceSpeed * 100)}%)</span>
+            </label>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-muted-foreground">איטי</span>
+            <input
+              type="range"
+              min="0.5"
+              max="1"
+              step="0.05"
+              value={voiceSpeed}
+              onChange={(e) => setVoiceSpeed(parseFloat(e.target.value))}
+              className="flex-1 h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+              dir="ltr"
+            />
+            <span className="text-xs text-muted-foreground">מהיר</span>
+          </div>
+        </div>
         
         {/* Typing Preview */}
         {typingPreview && !isLoading && (
