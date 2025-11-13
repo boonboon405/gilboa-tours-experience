@@ -4,9 +4,10 @@ import { Footer } from '@/components/Footer';
 import { AIChat } from '@/components/AIChat';
 import { VoiceChat } from '@/components/VoiceChat';
 import { VoiceChatComparison } from '@/components/VoiceChatComparison';
+import { QuizCategoryIntegration } from '@/components/QuizCategoryIntegration';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Phone, ArrowRight, Mic, MessageSquare, Info } from 'lucide-react';
+import { Phone, ArrowRight, Mic, MessageSquare, Info, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
   AlertDialog,
@@ -57,6 +58,11 @@ const Chat = () => {
               ✨ מזהה את העדפותיכם מה-Quiz שעשיתם
             </div>
           )}
+        </div>
+
+        {/* Quiz & Categories Section */}
+        <div className="mb-8 max-w-6xl mx-auto">
+          <QuizCategoryIntegration language="he" />
         </div>
 
         {/* Chat Interface with Tabs */}

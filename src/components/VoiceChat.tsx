@@ -5,13 +5,15 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Gauge, Download, Sparkles } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Gauge, Download, Sparkles, Eye } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { sanitizeForTTS } from '@/utils/ttsSanitizer';
 import { analyzeSentiment, getOverallSentiment } from '@/utils/sentimentAnalysis';
 import { WaveformVisualizer } from '@/components/WaveformVisualizer';
 import { ChatHistory } from '@/components/ChatHistory';
+import { CategoryShowcase } from '@/components/CategoryShowcase';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import companyLogo from '@/assets/company-logo.png';
 
 interface Message {
@@ -46,6 +48,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const [language, setLanguage] = useState<'he' | 'en'>('he');
   const [voiceSpeed, setVoiceSpeed] = useState(0.44);
   const [showSettings, setShowSettings] = useState(false);
+  const [showCategories, setShowCategories] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -129,31 +132,61 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   }, [language]);
 
   useEffect(() => {
-    // Send initial greeting with enhanced quiz integration
+    // Send initial greeting with enhanced quiz integration and categories
     if (messages.length === 0) {
       let greeting = '';
       
       if (language === 'he') {
         if (quizResults) {
-          const topCategory = quizResults.top_categories?.[0] || '';
-          const percentage = quizResults.percentages?.[topCategory] || 0;
-          greeting = `שלום! ראיתי שעשיתם את הQuiz שלנו ומצאתי משהו מעניין! 
-אתם מתאימים במיוחד ל${topCategory} עם ${Math.round(percentage)}% התאמה. 
-יש לנו כ-100 אפשרויות שונות בגלבוע ובית שאן, ואני כאן כדי למצוא את המושלם בשבילכם.
-ספרו לי - כמה אנשים אתם? ומה התקציב בערך?`;
+          const topCategories = quizResults.top_categories?.slice(0, 3) || [];
+          const categoryNames = topCategories.join(', ');
+          greeting = `שלום! ראיתי שעשיתם את הQuiz - מעולה! 
+זיהיתי שאתם מתאימים במיוחד ל-3 הקטגוריות הבאות: ${categoryNames}. 
+
+יש לנו 8 קטגוריות עם כ-100 אפשרויות פעילות שונות בגלבוע ובית שאן:
+🔥 הרפתקאות ואקסטרים
+💧 טבע, מים ורוגע  
+🏛️ היסטוריה ותרבות
+🍷 קולינריה ויין
+⚡ ספורט וצוותיות
+🎨 יצירה ורוחניות
+🌿 בריאות ופינוק
+🤝 בניית צוות
+
+לחצו על כפתור "הצג קטגוריות" כדי לראות את כולן. 
+עכשיו ספרו לי - כמה אנשים? מה התקציב?`;
         } else {
-          greeting = 'שלום! אני סוכן דיגיטלי מומחה בגלבוע ובית שאן. יש לי גישה לכ-100 חוויות שונות - מטיולים בטבע ועד פעילויות מים, ארכיאולוגיה ועוד. ספרו לי - כמה אנשים? מה מעניין אתכם?';
+          greeting = `שלום! אני מומחה לגלבוע ובית שאן עם גישה ל-8 קטגוריות של חוויות:
+🔥 הרפתקאות | 💧 טבע | 🏛️ היסטוריה | 🍷 קולינריה | ⚡ ספורט | 🎨 יצירה | 🌿 בריאות | 🤝 צוותיות
+
+כ-100 אפשרויות מחכות לכם! כדאי לעשות את ה-Quiz הקצר (7 שאלות) כדי שאוכל להמליץ בדיוק על מה שמתאים לכם.
+ספרו לי - כמה אנשים אתם? מה מעניין אתכם?`;
         }
       } else {
         if (quizResults) {
-          const topCategory = quizResults.top_categories?.[0] || '';
-          const percentage = quizResults.percentages?.[topCategory] || 0;
-          greeting = `Hello! I saw your Quiz results - very interesting! 
-You're especially suited for ${topCategory} with ${Math.round(percentage)}% match.
-I have access to about 100 different options in Gilboa and Beit Shean, and I'm here to find the perfect one for you.
-Tell me - how many people? What's your approximate budget?`;
+          const topCategories = quizResults.top_categories?.slice(0, 3) || [];
+          const categoryNames = topCategories.join(', ');
+          greeting = `Hello! I saw your Quiz results - excellent!
+I identified you're especially suited for these 3 categories: ${categoryNames}.
+
+We have 8 categories with ~100 different activity options in Gilboa and Beit Shean:
+🔥 Adventure & Extreme
+💧 Nature & Water
+🏛️ History & Culture
+🍷 Culinary & Wine
+⚡ Sports & Teamwork
+🎨 Creative & Spiritual
+🌿 Wellness & Pampering
+🤝 Team Building
+
+Click "View Categories" to see them all.
+Now tell me - how many people? What's your budget?`;
         } else {
-          greeting = 'Hello! I am a digital agent specializing in Gilboa and Beit Shean. I have access to about 100 different experiences - from nature hikes to water activities, archaeology and more. Tell me - how many people? What interests you?';
+          greeting = `Hello! I'm an expert on Gilboa and Beit Shean with access to 8 categories of experiences:
+🔥 Adventure | 💧 Nature | 🏛️ History | 🍷 Culinary | ⚡ Sports | 🎨 Creative | 🌿 Wellness | 🤝 Team Building
+
+~100 options waiting for you! It's worth taking our short Quiz (7 questions) so I can recommend exactly what suits you.
+Tell me - how many people? What interests you?`;
         }
       }
 
@@ -227,11 +260,16 @@ Tell me - how many people? What's your approximate budget?`;
     setIsProcessing(true);
 
     try {
-      // Enhanced context for AI with quiz results
+      // Enhanced context for AI with quiz results and categories
       let enhancedMessage = transcript;
-      if (quizResults && messages.length <= 2) {
-        const categories = quizResults.top_categories?.join(', ') || '';
-        enhancedMessage = `[User has quiz results showing preference for: ${categories}. Consider ~100 available options in Gilboa and Beit Shean region.] ${transcript}`;
+      if (quizResults && messages.length <= 3) {
+        const topCats = quizResults.top_categories?.slice(0, 3) || [];
+        const percentages = topCats.map(cat => `${cat}: ${quizResults.percentages?.[cat] || 0}%`).join(', ');
+        enhancedMessage = `[CONTEXT: User completed Quiz. Top 3 categories: ${percentages}. 
+8 total categories available: Adventure, Nature, History, Culinary, Sports, Creative, Wellness, Team Building.
+~100 activity options across these categories in Gilboa and Beit Shean region.
+Use this data to recommend from the most suitable categories.] 
+${transcript}`;
       }
 
       const { data, error } = await supabase.functions.invoke('ai-chat-agent', {
@@ -239,7 +277,11 @@ Tell me - how many people? What's your approximate budget?`;
           message: enhancedMessage,
           conversationId,
           sessionId,
-          quizResults
+          quizResults,
+          categories: {
+            all: ['adventure', 'nature', 'history', 'culinary', 'sports', 'creative', 'wellness', 'teambuilding'],
+            top: quizResults?.top_categories || []
+          }
         }
       });
 
@@ -457,6 +499,14 @@ Tell me - how many people? What's your approximate budget?`;
             currentConversationId={conversationId}
             language={language}
           />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowCategories(true)}
+            title={language === 'he' ? 'הצג קטגוריות' : 'View Categories'}
+          >
+            <Eye className="w-5 h-5" />
+          </Button>
           <Button
             variant="ghost"
             size="icon"
@@ -694,6 +744,37 @@ Tell me - how many people? What's your approximate budget?`;
           </div>
         </div>
       </div>
+
+      {/* Categories Dialog */}
+      <Dialog open={showCategories} onOpenChange={setShowCategories}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-center">
+              {language === 'he' ? '8 הקטגוריות שלנו' : 'Our 8 Categories'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-center text-muted-foreground">
+              {language === 'he'
+                ? 'כ-100 אפשרויות פעילות מחולקות ל-8 קטגוריות. הקטגוריות המודגשות הן המתאימות ביותר לפי ה-Quiz שלך.'
+                : '~100 activity options divided into 8 categories. Highlighted categories are best suited based on your Quiz results.'
+              }
+            </p>
+            <CategoryShowcase 
+              quizResults={quizResults ? {
+                topCategories: quizResults.top_categories || [],
+                percentages: quizResults.percentages || {}
+              } : undefined}
+              language={language}
+            />
+            <div className="text-center pt-4">
+              <Button onClick={() => setShowCategories(false)}>
+                {language === 'he' ? 'סגור' : 'Close'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };
