@@ -29,6 +29,18 @@ export const TeamDNAQuiz = ({ open, onClose, onComplete }: TeamDNAQuizProps) => 
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = [answerIndex]; // Single selection
     setAnswers(newAnswers);
+    
+    // Auto-advance to next question after a brief delay for visual feedback
+    setTimeout(() => {
+      if (currentQuestion < quizQuestions.length - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+      } else {
+        // Calculate and show results on last question
+        const calculatedResults = calculateQuizResults(newAnswers);
+        setResults(calculatedResults);
+        setShowResults(true);
+      }
+    }, 400); // 400ms delay for visual feedback
   };
 
   const handleNext = () => {
