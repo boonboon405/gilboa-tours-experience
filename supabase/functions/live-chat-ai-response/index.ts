@@ -82,7 +82,7 @@ serve(async (req) => {
         return new Response(
           JSON.stringify({ 
             error: "הבקשה ארכה יותר מדי זמן",
-            fallback: "מצטערים, זמן תגובה ארוך מדי. נציג יחזור אליכם או התקשרו ל-053-7314235" 
+            fallback: "מצטערים, זמן תגובה ארוך מדי. נציג יחזור אליכם או התקשרו ל-0537314235"
           }),
           { status: 504, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
@@ -96,7 +96,7 @@ serve(async (req) => {
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ 
-            error: "מצטערים, יש עומס רב כרגע. נציג אנושי יחזור אליכם בהקדם או התקשרו ישירות ל-053-7314235",
+            error: "מצטערים, יש עומס רב כרגע. נציג אנושי יחזור אליכם בהקדם או התקשרו ישירות ל-0537314235",
             fallback: "אנא המתינו לנציג או התקשרו ישירות"
           }), 
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -105,7 +105,7 @@ serve(async (req) => {
       if (response.status === 402) {
         return new Response(
           JSON.stringify({ 
-            error: "שירות AI זמנית לא זמין. נציג אמיתי יחזור אליכם בקרוב או התקשרו ל-053-7314235",
+            error: "שירות AI זמנית לא זמין. נציג אמיתי יחזור אליכם בקרוב או התקשרו ל-0537314235",
             fallback: "אנא המתינו לנציג אנושי"
           }), 
           { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -120,7 +120,7 @@ serve(async (req) => {
     // Check if AI suggests human agent (keywords detection)
     const needsHumanAgent = 
       aiMessage.includes('נציג') || 
-      aiMessage.includes('053-7314235') ||
+      aiMessage.includes('0537314235') ||
       aiMessage.includes('דוד') ||
       aiMessage.toLowerCase().includes('human') ||
       message.includes('להזמין') ||
@@ -216,7 +216,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: error instanceof Error ? error.message : 'Unknown error',
-        fallback: "מצטערים, נתקלנו בבעיה. נציג אמיתי יחזור אליכם בקרוב או התקשרו ל-053-7314235" 
+        fallback: "מצטערים, נתקלנו בבעיה. נציג אמיתי יחזור אליכם בקרוב או התקשרו ל-0537314235"
       }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

@@ -28,7 +28,7 @@ export const Hero = () => {
   const [scrollY, setScrollY] = useState(0);
   const heroRef = useRef<HTMLElement>(null);
   const whatsappNumber = '972537314235';
-  const phoneNumber = '053-7314235';
+  const phoneNumber = '0537314235';
 
   // Parallax scroll effect
   useEffect(() => {

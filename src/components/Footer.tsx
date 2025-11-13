@@ -2,7 +2,7 @@ import { Mail, Phone } from 'lucide-react';
 
 export const Footer = () => {
   const email = 'davidisraeltours@gmail.com';
-  const phoneNumber = '053-7314235';
+  const phoneNumber = '0537314235';
 
   return (
     <footer className="bg-card border-t border-border py-12">

@@ -13,7 +13,7 @@ export const ExitIntentModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [hasShown, setHasShown] = useState(false);
 
-  const ownerPhone = '053-7314235';
+  const ownerPhone = '0537314235';
   const ownerWhatsApp = '972537314235';
   const ownerEmail = 'DavidIsraelTours@gmail.com';
   const ownerName = 'דוד דניאל רחימי';

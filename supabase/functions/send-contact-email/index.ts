@@ -64,7 +64,7 @@ const handler = async (req: Request): Promise<Response> => {
           <br>
           <p>בברכה,</p>
           <p><strong>צוות David Tours</strong></p>
-          <p>טלפון: 053-7314235</p>
+          <p>טלפון: 0537314235</p>
           <p>אימייל: DavidIsraelTours@gmail.com</p>
         </div>
       `,

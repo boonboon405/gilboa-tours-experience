@@ -26,7 +26,7 @@ export const ContactSection = () => {
 
   const whatsappNumber = '972537314235';
   const email = 'DavidIsraelTours@gmail.com';
-  const phoneNumber = '053-7314235';
+  const phoneNumber = '0537314235';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

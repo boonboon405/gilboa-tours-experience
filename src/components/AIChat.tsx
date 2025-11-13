@@ -305,7 +305,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
       console.error('Chat error:', error);
       toast({
         title: "שגיאה בשליחה",
-        description: "אנא נסו שוב או צרו קשר בטלפון 053-7314235",
+        description: "אנא נסו שוב או צרו קשר בטלפון 0537314235",
         variant: "destructive"
       });
     } finally {
@@ -405,7 +405,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
       }
 
       // Check if human agent is needed
-      if (data.message.includes('דוד') || data.message.includes('053-7314235')) {
+      if (data.message.includes('דוד') || data.message.includes('0537314235')) {
         setTimeout(() => {
           onRequestHumanAgent?.();
         }, 1000);
@@ -415,7 +415,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
       console.error('Chat error:', error);
       toast({
         title: "שגיאה בשליחה",
-        description: "אנא נסו שוב או צרו קשר בטלפון 053-7314235",
+        description: "אנא נסו שוב או צרו קשר בטלפון 0537314235",
         variant: "destructive"
       });
     } finally {

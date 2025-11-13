@@ -294,8 +294,8 @@ serve(async (req) => {
         console.error('AI request timeout');
         return new Response(
           JSON.stringify({ 
-            error: "הבקשה ארכה יותר מדי זמן. אנא נסו שוב או צרו קשר ישירות ל-053-7314235",
-            fallback: "בקשה נכשלה - זמן תגובה ארוך מדי" 
+            error: "הבקשה ארכה יותר מדי זמן. אנא נסו שוב או צרו קשר ישירות ל-0537314235",
+            fallback: "בקשה נכשלה - זמן תגובה ארוך מדי"
           }),
           { status: 504, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
@@ -335,13 +335,13 @@ serve(async (req) => {
     if (!response.ok) {
       if (response.status === 429) {
         return new Response(
-          JSON.stringify({ error: "מצטערים, יש עומס רב כרגע. אנא נסו שוב בעוד רגע או התקשרו ישירות ל-053-7314235" }), 
+          JSON.stringify({ error: "מצטערים, יש עומס רב כרגע. אנא נסו שוב בעוד רגע או התקשרו ישירות ל-0537314235" }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
       if (response.status === 402) {
         return new Response(
-          JSON.stringify({ error: "שירות AI זמנית לא זמין. אנא צרו קשר ישירות בטלפון 053-7314235" }), 
+          JSON.stringify({ error: "שירות AI זמנית לא זמין. אנא צרו קשר ישירות בטלפון 0537314235" }),
           { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -501,7 +501,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: error instanceof Error ? error.message : 'Unknown error',
-        fallback: "מצטערים, נתקלנו בבעיה. אנא נסו שוב או צרו קשר ישירות ל-053-7314235" 
+        fallback: "מצטערים, נתקלנו בבעיה. אנא נסו שוב או צרו קשר ישירות ל-0537314235"
       }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

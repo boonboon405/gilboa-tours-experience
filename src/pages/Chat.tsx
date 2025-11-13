@@ -135,7 +135,7 @@ const Chat = () => {
               </p>
               <div className="p-4 bg-primary/10 rounded-lg text-right">
                 <p className="font-semibold text-foreground">דוד רחימי</p>
-                <p className="text-foreground">053-7314235</p>
+                <p className="text-foreground">0537314235</p>
                 <p className="text-sm text-muted-foreground mt-2">
                   זמין לשיחה בשעות העבודה
                 </p>

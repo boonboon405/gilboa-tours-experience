@@ -312,11 +312,11 @@ ${transcript}`;
 
     } catch (error) {
       console.error('Voice chat error:', error);
-      toast({
-        title: "שגיאה בעיבוד",
-        description: "אנא נסו שוב או צרו קשר בטלפון 053-7314235",
-        variant: "destructive"
-      });
+        toast({
+          title: "שגיאה בעיבוד",
+          description: "אנא נסו שוב או צרו קשר בטלפון 0537314235",
+          variant: "destructive"
+        });
     } finally {
       setIsProcessing(false);
     }
