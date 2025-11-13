@@ -40,6 +40,17 @@ export const RecommendedTours = ({ conversationData, onSelectTour }: Recommended
         rating: 4.9
       },
       {
+        id: '6',
+        title: '🤝 חבילת גיבוש צוות ארגוני',
+        description: 'יום מיוחד לבניית צוות ומנהיגות - אתגרים קבוצתיים, דיונים מקצועיים ופעילויות תקשורת',
+        duration: 'יום מלא (8-10 שעות)',
+        priceRange: '₪400-500 לאדם',
+        maxParticipants: 60,
+        highlights: ['אתגר בניית רפסודה', 'ראלי מכשולים צוותי', 'דיון מנהיגות', 'פעילות תקשורת ללא מילים'],
+        categories: ['teambuilding', 'sports', 'creative', 'nature'],
+        rating: 4.9
+      },
+      {
         id: '2',
         title: 'ODT חוויית טבע ופעילות',
         description: 'משלב פעילות ספורט, אתגרי צוות במים ופעילויות ODT באזור המעיינות',

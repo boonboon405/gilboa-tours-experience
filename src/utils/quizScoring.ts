@@ -169,6 +169,32 @@ export const quizQuestions: QuizQuestion[] = [
   },
   {
     id: 7,
+    question: "מהי המטרה העיקרית של יום הגיבוש?",
+    answers: [
+      {
+        text: "לחזק את העבודה הצוותית והתקשורת",
+        icon: "🤝",
+        scores: { teambuilding: 5, sports: 3, creative: 2 }
+      },
+      {
+        text: "לפתח מנהיגות ואחריות אישית",
+        icon: "👥",
+        scores: { teambuilding: 5, history: 3, creative: 3 }
+      },
+      {
+        text: "לשפר את האווירה והחיבור בין אנשים",
+        icon: "💫",
+        scores: { teambuilding: 4, wellness: 3, creative: 3 }
+      },
+      {
+        text: "להעביר את הזמן ביחד בצורה מהנה",
+        icon: "🎉",
+        scores: { culinary: 3, nature: 3, adventure: 2 }
+      }
+    ]
+  },
+  {
+    id: 8,
     question: "מה האווירה הרצויה ביום הגיבוש?",
     answers: [
       {
@@ -179,7 +205,7 @@ export const quizQuestions: QuizQuestion[] = [
       {
         text: "חברית ושיתופית",
         icon: "🤝",
-        scores: { sports: 3, creative: 3, culinary: 3 }
+        scores: { sports: 3, creative: 3, culinary: 3, teambuilding: 3 }
       },
       {
         text: "רגועה ומרגיעה",
