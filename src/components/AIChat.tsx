@@ -57,6 +57,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [conversationStartTime] = useState(new Date());
   const [visibleSuggestionIndex, setVisibleSuggestionIndex] = useState(0);
   const [faqQuestions, setFaqQuestions] = useState<string[]>([]);
+  const [isPausedOnHover, setIsPausedOnHover] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const { toast } = useToast();
@@ -97,14 +98,14 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
 
   // Rotate FAQ questions slowly
   useEffect(() => {
-    if (faqQuestions.length === 0) return;
+    if (faqQuestions.length === 0 || isPausedOnHover) return;
     
     const interval = setInterval(() => {
       setVisibleSuggestionIndex((prev) => (prev + 3) % faqQuestions.length);
     }, 5000); // Rotate every 5 seconds
 
     return () => clearInterval(interval);
-  }, [faqQuestions.length]);
+  }, [faqQuestions.length, isPausedOnHover]);
 
   useEffect(() => {
     // Send initial greeting with recommendations
@@ -604,7 +605,11 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
         )}
         {/* Frequent Questions - Rotating */}
         {messages.length > 0 && !showCategorySelector && faqQuestions.length > 0 && (
-          <div className="mb-3 overflow-hidden">
+          <div 
+            className="mb-3 overflow-hidden"
+            onMouseEnter={() => setIsPausedOnHover(true)}
+            onMouseLeave={() => setIsPausedOnHover(false)}
+          >
             <div className="flex flex-wrap gap-2 transition-all duration-700 ease-in-out">
               {faqQuestions
                 .slice(visibleSuggestionIndex, visibleSuggestionIndex + 3)
