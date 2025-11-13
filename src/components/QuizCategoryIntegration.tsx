@@ -142,7 +142,7 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
                 {language === 'he' ? 'שלב 3: המלצות' : 'Step 3: Recommendations'}
               </h4>
               <p className="text-xs text-muted-foreground">
-                {language === 'he' ? 'רק 7 אפשרויות המתאימות ביותר מתוך 100' : 'Only 7 best matching options out of 100'}
+                {language === 'he' ? '7 אפשרויות המתאימות ביותר מתוך 100' : 'Only 7 best matching options out of 100'}
               </p>
             </div>
           </div>
