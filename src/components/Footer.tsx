@@ -12,7 +12,7 @@ export const Footer = () => {
           {/* Brand */}
           <div>
             <h3 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-4">
-              דוד טורס
+              דויד טורס
             </h3>
             <p className="text-muted-foreground">
               יום חווייתי, מהנה ומשמעותי שמשלב היסטוריה, טבע, גיבוש, והרבה זיכרונות טובים לחברה שלכם.
@@ -74,7 +74,7 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-border pt-8 text-center text-muted-foreground">
-          <p>© 2025 דוד טורס. כל הזכויות שמורות.</p>
+          <p>© 2025 דויד טורס. כל הזכויות שמורות.</p>
         </div>
       </div>
     </footer>

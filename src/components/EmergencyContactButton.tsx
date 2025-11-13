@@ -18,7 +18,7 @@ export const EmergencyContactButton = () => {
   const ownerPhone = '0537314235';
   const ownerWhatsApp = '972537314235';
   const ownerEmail = 'DavidIsraelTours@gmail.com';
-  const ownerName = 'דוד דניאל רחימי';
+  const ownerName = 'דויד דניאל רחימי';
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>

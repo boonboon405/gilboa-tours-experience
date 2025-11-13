@@ -130,7 +130,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     if (messages.length === 0) {
       const greeting = quizResults
         ? `שלום! ראיתי שעשית את הQuiz שלנו - מעולה.\n\n**4 ההמלצות המובילות שלנו:**\n1. 🌊 ביקור במעיינות סחנה - חוויה בטבע\n2. 🚙 רכבי שטח באזור הגלבוע - אדרנלין\n3. 🏛️ סיור בבית שאן העתיקה - תרבות\n4. 🍽️ ארוחה במושב נהלל - קולינריה\n\nספרו לי - כמה אנשים אתם ומה הסיטואציה?`
-        : `שלום! אני הסוכן הדיגיטלי של טיולים עם דוד.\n\n**4 ההמלצות המובילות שלנו:**\n1. 🌊 ביקור במעיינות סחנה - חוויה בטבע\n2. 🚙 רכבי שטח באזור הגלבוע - אדרנלין\n3. 🏛️ סיור בבית שאן העתיקה - תרבות\n4. 🍽️ ארוחה במושב נהלל - קולינריה\n\nספרו לי - מה מעניין אתכם?`;
+        : `שלום! אני הסוכן הדיגיטלי של טיולים עם דויד.\n\n**4 ההמלצות המובילות שלנו:**\n1. 🌊 ביקור במעיינות סחנה - חוויה בטבע\n2. 🚙 רכבי שטח באזור הגלבוע - אדרנלין\n3. 🏛️ סיור בבית שאן העתיקה - תרבות\n4. 🍽️ ארוחה במושב נהלל - קולינריה\n\nספרו לי - מה מעניין אתכם?`;
 
       setMessages([{
         id: '0',
@@ -405,7 +405,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
       }
 
       // Check if human agent is needed
-      if (data.message.includes('דוד') || data.message.includes('0537314235')) {
+      if (data.message.includes('דויד') || data.message.includes('0537314235')) {
         setTimeout(() => {
           onRequestHumanAgent?.();
         }, 1000);
@@ -514,13 +514,13 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     <Card className="flex flex-col h-[600px] max-w-4xl mx-auto border-border/50 shadow-xl">
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b border-border/50 bg-gradient-to-r from-primary/10 to-secondary/10">
-        <img src={companyLogo} alt="טיולים עם דוד" className="w-10 h-10 rounded-lg object-cover" />
+        <img src={companyLogo} alt="טיולים עם דויד" className="w-10 h-10 rounded-lg object-cover" />
         <div className="relative">
           <Bot className="w-8 h-8 text-primary" />
           <Sparkles className="w-4 h-4 text-accent absolute -top-1 -right-1 animate-pulse-slow" />
         </div>
         <div className="flex-1">
-          <h3 className="font-semibold text-lg">סוכן חכם - טיולים עם דוד</h3>
+          <h3 className="font-semibold text-lg">סוכן חכם - טיולים עם דויד</h3>
           <p className="text-sm text-muted-foreground">חוויות בטבע עם הדרכה מקצועית 🌿</p>
         </div>
         <div className="flex items-center gap-2">

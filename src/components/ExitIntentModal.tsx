@@ -17,7 +17,7 @@ export const ExitIntentModal = () => {
   const ownerPhone = '0537314235';
   const ownerWhatsApp = '972537314235';
   const ownerEmail = 'DavidIsraelTours@gmail.com';
-  const ownerName = 'דוד דניאל רחימי';
+  const ownerName = 'דויד דניאל רחימי';
 
   useEffect(() => {
     if (hasShown) return;

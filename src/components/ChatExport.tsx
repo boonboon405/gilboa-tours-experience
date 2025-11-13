@@ -45,7 +45,7 @@ export const ChatExport = ({ messages, conversationData, conversationId }: ChatE
   };
 
   const generateTextContent = () => {
-    let content = '=== שיחה עם סוכן טיולים עם דוד ===\n\n';
+    let content = '=== שיחה עם סוכן טיולים עם דויד ===\n\n';
     content += `תאריך: ${formatDate(new Date().toISOString())}\n`;
     content += `מזהה שיחה: ${conversationId || 'לא זמין'}\n\n`;
 
@@ -83,7 +83,7 @@ export const ChatExport = ({ messages, conversationData, conversationId }: ChatE
     });
 
     content += '\n--- סוף השיחה ---\n';
-    content += 'טיולים עם דוד - חוויות בטבע עם הדרכה מקצועית 🌿\n';
+    content += 'טיולים עם דויד - חוויות בטבע עם הדרכה מקצועית 🌿\n';
     
     return content;
   };
@@ -134,7 +134,7 @@ export const ChatExport = ({ messages, conversationData, conversationId }: ChatE
   const sendByEmail = () => {
     try {
       const content = generateTextContent();
-      const subject = encodeURIComponent('שיחה עם טיולים עם דוד');
+      const subject = encodeURIComponent('שיחה עם טיולים עם דויד');
       const body = encodeURIComponent(content);
       window.location.href = `mailto:?subject=${subject}&body=${body}`;
       

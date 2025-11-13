@@ -116,7 +116,7 @@ const Chat = () => {
             className="gap-2"
           >
             <Phone className="w-4 h-4" />
-            התקשרו ישירות לדוד
+            התקשרו ישירות לדויד
           </Button>
         </div>
       </main>
@@ -131,10 +131,10 @@ const Chat = () => {
             <AlertDialogDescription className="space-y-4">
               <p>
                 הסוכן החכם שלנו הבין שתרצו לדבר עם בן אדם. 
-                דוד, בעל החברה, ישמח לעזור לכם אישית!
+                דויד, בעל החברה, ישמח לעזור לכם אישית!
               </p>
               <div className="p-4 bg-primary/10 rounded-lg text-right">
-                <p className="font-semibold text-foreground">דוד רחימי</p>
+                <p className="font-semibold text-foreground">דויד רחימי</p>
                 <p className="text-foreground">0537314235</p>
                 <p className="text-sm text-muted-foreground mt-2">
                   זמין לשיחה בשעות העבודה

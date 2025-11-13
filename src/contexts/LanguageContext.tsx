@@ -121,7 +121,7 @@ const translations = {
     'odt.activities': 'הפעילויות שלנו',
     
     // Why Choose Us
-    'why.title': 'למה לבחור בדוד טורס?',
+    'why.title': 'למה לבחור בדויד טורס?',
     'why.certified': 'מקצועי ומוסמך',
     'why.certified.desc': 'מדריך טיולים מורשה עם שנות ניסיון',
     'why.custom': 'חוויות מותאמות אישית',
@@ -135,7 +135,7 @@ const translations = {
     'footer.contact': 'צור קשר',
     'footer.phone': 'טלפון',
     'footer.email': 'אימייל',
-    'footer.rights': '© 2025 דוד טורס. כל הזכויות שמורות.',
+    'footer.rights': '© 2025 דויד טורס. כל הזכויות שמורות.',
   },
 };
 

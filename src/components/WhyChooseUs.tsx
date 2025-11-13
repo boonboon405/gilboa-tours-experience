@@ -30,7 +30,7 @@ export const WhyChooseUs = () => {
     <section className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl md:text-5xl font-bold text-center text-foreground mb-16">
-          למה לבחור בדוד טורס?
+          למה לבחור בדויד טורס?
         </h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">

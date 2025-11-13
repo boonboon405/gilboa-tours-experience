@@ -499,10 +499,10 @@ ${transcript}`;
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-border/50 bg-gradient-to-r from-primary/10 to-secondary/10">
         <div className="flex items-center gap-3">
-          <img src={companyLogo} alt="טיולים עם דוד" className="w-10 h-10 rounded-lg object-cover" />
+          <img src={companyLogo} alt="טיולים עם דויד" className="w-10 h-10 rounded-lg object-cover" />
           <Bot className="w-8 h-8 text-primary" />
           <div className="flex-1">
-            <h3 className="font-semibold text-lg">{language === 'he' ? 'צ\'אט קולי - טיולים עם דוד' : 'Voice Chat - Tours with David'}</h3>
+            <h3 className="font-semibold text-lg">{language === 'he' ? 'צ\'אט קולי - טיולים עם דויד' : 'Voice Chat - Tours with David'}</h3>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>{language === 'he' ? 'חוויות בטבע עם הדרכה מקצועית 🌿' : 'Nature experiences with professional guidance 🌿'}</span>
               {messages.length > 2 && (
