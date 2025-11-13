@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Pencil, Plus, Trash2, BarChart3, TrendingUp, Tag } from 'lucide-react';
+import { Pencil, Plus, Trash2, BarChart3, TrendingUp, Tag, Sparkles } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 interface Category {
@@ -39,6 +39,7 @@ export default function AdminCategories() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newRecommendation, setNewRecommendation] = useState('');
+  const [generatingDescription, setGeneratingDescription] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -118,6 +119,42 @@ export default function AdminCategories() {
         title: 'שגיאה',
         description: error.message
       });
+    }
+  };
+
+  const generateDescription = async () => {
+    if (!editingCategory) return;
+    
+    setGeneratingDescription(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-category-description', {
+        body: {
+          categoryName: editingCategory.name,
+          categoryKey: editingCategory.category_key,
+          currentDescription: editingCategory.description
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.description) {
+        setEditingCategory({
+          ...editingCategory,
+          description: data.description
+        });
+        toast({
+          title: 'תיאור נוצר בהצלחה',
+          description: 'התיאור עודכן על ידי AI'
+        });
+      }
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'שגיאה',
+        description: error.message || 'שגיאה ביצירת תיאור'
+      });
+    } finally {
+      setGeneratingDescription(false);
     }
   };
 
@@ -348,7 +385,20 @@ export default function AdminCategories() {
               </div>
 
               <div className="space-y-2">
-                <Label>תיאור</Label>
+                <div className="flex items-center justify-between">
+                  <Label>תיאור</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={generateDescription}
+                    disabled={generatingDescription}
+                    className="gap-2"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    {generatingDescription ? 'מייצר...' : 'צור עם AI'}
+                  </Button>
+                </div>
                 <Textarea
                   value={editingCategory.description}
                   onChange={(e) => setEditingCategory({ ...editingCategory, description: e.target.value })}
