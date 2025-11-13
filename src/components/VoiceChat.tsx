@@ -450,37 +450,68 @@ ${transcript}`;
 
   const overallSentiment = getOverallSentiment(messages);
 
-  const quickReplies = language === 'he' ? [
-    'ספר לי עוד',
-    'מה האפשרויות?',
-    'כמה זה עולה?',
-    'איפה זה?',
-    'כמה זמן זה לוקח?',
-    'מה כולל במחיר?',
-    'איזו רמה פיזית נדרשת?',
-    'מתאים לכל הגילאים?',
-    'מה עם מזג האויר?',
-    'איך מזמינים?',
-    'איך מגיעים?',
-    'יש חניה?',
-    'אפשר לבטל?',
-    'יש הנחות לקבוצות?'
+  const allQuickReplies = language === 'he' ? [
+    'ספרו לי עוד על הפעילות',
+    'אילו אפשרויות יש?',
+    'מה עולה הפעילות?',
+    'איפה נמצא המקום?',
+    'כמה זמן נמשכת הפעילות?',
+    'מה כלול במחיר?',
+    'איזו רמה פיזית דרושה?',
+    'האם מתאים לכל הגילאים?',
+    'איך מזג האוויר משפיע?',
+    'איך מבצעים הזמנה?',
+    'איך מגיעים למקום?',
+    'האם יש חניה במקום?',
+    'מה מדיניות הביטול?',
+    'יש הנחה לקבוצות?',
+    'מה צריך להביא לפעילות?',
+    'איזה ביגוד מומלץ?',
+    'צריך להגיע עם ציוד מיוחד?',
+    'איך להתכונן לפעילות?',
+    'האם מספקים ציוד במקום?',
+    'מה צריך ללבוש?',
+    'האם צריך נעליים מיוחדות?'
   ] : [
-    'Tell me more',
-    'What are the options?',
-    'How much does it cost?',
-    'Where is it?',
-    'How long does it take?',
-    'What\'s included in the price?',
-    'What physical level required?',
-    'Suitable for all ages?',
-    'What about weather?',
-    'How to book?',
-    'How to get there?',
-    'Is there parking?',
-    'Can I cancel?',
-    'Are there group discounts?'
+    'Tell me more about the activity',
+    'What options are available?',
+    'What is the cost?',
+    'Where is the location?',
+    'How long is the activity?',
+    'What is included in the price?',
+    'What physical level is required?',
+    'Is it suitable for all ages?',
+    'How does weather affect it?',
+    'How do I book?',
+    'How do I get there?',
+    'Is parking available?',
+    'What is the cancellation policy?',
+    'Are there group discounts?',
+    'What should I bring?',
+    'What clothing is recommended?',
+    'Do I need special equipment?',
+    'How should I prepare?',
+    'Do you provide equipment?',
+    'What should I wear?',
+    'Do I need special shoes?'
   ];
+
+  // Rotate quick replies randomly every 10 seconds
+  const [visibleReplies, setVisibleReplies] = useState<string[]>([]);
+  
+  useEffect(() => {
+    const shuffleReplies = () => {
+      const shuffled = [...allQuickReplies].sort(() => Math.random() - 0.5);
+      setVisibleReplies(shuffled.slice(0, 10));
+    };
+    
+    shuffleReplies();
+    const interval = setInterval(shuffleReplies, 10000);
+    
+    return () => clearInterval(interval);
+  }, [language]);
+
+  const quickReplies = visibleReplies;
 
   if (!speechSupported) {
     return (
