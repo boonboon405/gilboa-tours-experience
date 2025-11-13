@@ -148,6 +148,7 @@ const App = () => {
                   } 
                 />
                 <Route path="/ai-settings" element={<AISettings />} />
+                <Route path="/settings/ai" element={<AISettings />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
