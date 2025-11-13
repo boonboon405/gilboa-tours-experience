@@ -124,7 +124,7 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
                 {language === 'he' ? 'שלב 1: Quiz' : 'Step 1: Quiz'}
               </h4>
               <p className="text-xs text-muted-foreground">
-                {language === 'he' ? '7 שאלות על הצוות שלך' : '7 questions about your team'}
+                {language === 'he' ? 'שאלות על הצוות שלך' : 'Questions about your team'}
               </p>
             </div>
             <div className="space-y-2">
