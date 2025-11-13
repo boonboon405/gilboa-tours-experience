@@ -1,17 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Send, Bot, User, Sparkles } from 'lucide-react';
+import { Loader2, Bot, User, Sparkles, Volume2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { CategorySelector } from '@/components/CategorySelector';
 import { CategoryBadge } from '@/components/CategoryBadge';
 import { LanguageQualityBadge } from '@/components/LanguageQualityBadge';
+import { VoiceTextInput } from '@/components/VoiceTextInput';
 import companyLogo from '@/assets/company-logo.png';
 import { categoryMetadata, DNACategory } from '@/utils/activityCategories';
 import { detectCategoriesInMessage } from '@/utils/categoryDetector';
+import { sanitizeForTTS } from '@/utils/ttsSanitizer';
 
 interface Message {
   id: string;
@@ -36,13 +37,15 @@ interface AIChatProps {
 
 export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [sessionId] = useState(() => `session-${Date.now()}-${Math.random()}`);
   const [quickReplies, setQuickReplies] = useState<string[]>([]);
   const [showCategorySelector, setShowCategorySelector] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [typingPreview, setTypingPreview] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
+  const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -50,11 +53,11 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   }, [messages]);
 
   useEffect(() => {
-    // Send initial greeting
+    // Send initial greeting with recommendations
     if (messages.length === 0) {
       const greeting = quizResults
-        ? `שלום. ראיתי שעשית את הQuiz שלנו - מעולה.\n\nלפי התוצאות, נראה שאתם מחפשים חוויה ${getTopCategoryDescription(quizResults.top_categories[0])}.\n\nספרו לי קצת יותר - מה הסיטואציה, כמה אנשים, מה מעניין אתכם`
-        : 'שלום! אני הסוכן הדיגיטלי של החברה - טיולים עם דויד.\n\nאנחנו משלבים 7 קטגוריות של פעילויות: הרפתקאות, טבע, היסטוריה, קולינריה, ספורט, יצירתיות, ובריאות ורוגע.\n\nחשוב לנו לדעת מה מעניין אתכם?';
+        ? `שלום! ראיתי שעשית את הQuiz שלנו - מעולה.\n\n**4 ההמלצות המובילות שלנו:**\n1. 🌊 ביקור במעיינות סחנה - חוויה בטבע\n2. 🚙 רכבי שטח באזור הגלבוע - אדרנלין\n3. 🏛️ סיור בבית שאן העתיקה - תרבות\n4. 🍽️ ארוחה בכפר נחלל - קולינריה\n\nספרו לי - כמה אנשים אתם ומה הסיטואציה?`
+        : `שלום! אני הסוכן הדיגיטלי של טיולים עם דוד.\n\n**4 ההמלצות המובילות שלנו:**\n1. 🌊 ביקור במעיינות סחנה - חוויה בטבע\n2. 🚙 רכבי שטח באזור הגלבוע - אדרנלין\n3. 🏛️ סיור בבית שאן העתיקה - תרבות\n4. 🍽️ ארוחה בכפר נחלל - קולינריה\n\nספרו לי - מה מעניין אתכם?`;
 
       setMessages([{
         id: '0',
@@ -67,8 +70,47 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
       if (!quizResults) {
         setShowCategorySelector(true);
       }
+      
+      // Speak the greeting
+      setTimeout(() => speakText(greeting), 500);
     }
   }, []);
+
+  const speakText = (text: string) => {
+    if (!window.speechSynthesis) return;
+
+    // Sanitize text for TTS
+    const cleanText = sanitizeForTTS(text);
+    if (!cleanText.trim()) return;
+
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = 'he-IL';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    // Try to find a Hebrew voice
+    const voices = window.speechSynthesis.getVoices();
+    const hebrewVoice = voices.find(voice => voice.lang === 'he-IL' || voice.lang.startsWith('he'));
+    if (hebrewVoice) {
+      utterance.voice = hebrewVoice;
+    }
+
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    synthesisRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const handleTyping = (text: string) => {
+    // Show typing preview in real-time
+    setTypingPreview(text);
+  };
 
   const getTopCategoryDescription = (category: string): string => {
     const descriptions: Record<string, string> = {
@@ -157,12 +199,11 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     }
   };
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleSend = async (userMessage: string) => {
+    if (!userMessage.trim() || isLoading) return;
 
-    const userMessage = input.trim();
-    setInput('');
     setShowCategorySelector(false);
+    setTypingPreview(''); // Clear typing preview
     
     // Add user message to UI immediately
     const tempUserMsg: Message = {
@@ -238,6 +279,10 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleQuickReply = (reply: string) => {
+    handleSend(reply);
   };
 
   return (
@@ -344,10 +389,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
                 key={index}
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  setInput(reply);
-                  setTimeout(() => handleSend(), 100);
-                }}
+                onClick={() => handleQuickReply(reply)}
                 className="text-xs"
                 disabled={isLoading}
               >
@@ -357,31 +399,26 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
           </div>
         )}
         
-        <div className="flex gap-2">
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="כתבו את ההודעה שלכם..."
-            disabled={isLoading}
-            className="flex-1"
-          />
-          <Button
-            onClick={handleSend}
-            disabled={isLoading || !input.trim()}
-            size="icon"
-          >
-            {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
-          </Button>
-        </div>
-        <p className="text-xs text-muted-foreground mt-2 text-center">
-          רוצים לדבר עם בן אדם? רק תגידו
-        </p>
+        {/* Typing Preview */}
+        {typingPreview && !isLoading && (
+          <div className="mb-2 p-2 bg-muted/30 rounded-lg text-sm text-muted-foreground italic border border-dashed border-border">
+            מקליד: {typingPreview}
+          </div>
+        )}
       </div>
+
+      {/* Voice & Text Input */}
+      <VoiceTextInput
+        onSend={handleSend}
+        onTyping={handleTyping}
+        isLoading={isLoading}
+        placeholder="הקלידו או דברו את התשובה שלכם..."
+        disabled={isLoading}
+      />
+
+      <p className="text-xs text-muted-foreground p-2 text-center">
+        רוצים לדבר עם בן אדם? רק תגידו • {isSpeaking && '🔊 מדבר...'}
+      </p>
     </Card>
   );
 };
