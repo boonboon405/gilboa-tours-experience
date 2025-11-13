@@ -51,7 +51,7 @@ const Chat = () => {
             שיחה עם הסוכן החכם שלנו
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            ספרו לנו מה אתם מחפשים ואני אמליץ לכם על החוויה המושלמת בגלבוע ובית שאן
+            ספרו, מה אתם מחפשים ואני אמליץ לכם על החוויה המושלמת בצפון, סובב כנרת, גלבוע, גליל ועמק המעינות
           </p>
           {quizResults && (
             <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm">
