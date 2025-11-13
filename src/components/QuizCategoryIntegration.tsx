@@ -47,8 +47,8 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
         <CardContent className="space-y-4">
           <p className="text-center text-muted-foreground">
             {language === 'he' 
-              ? 'יש לנו כ-100 אפשרויות פעילות בגלבוע ובית שאן, מחולקות ל-8 קטגוריות. ענו על Quiz קצר ונציג לכם רק את המתאים ביותר!'
-              : 'We have ~100 activity options in Gilboa and Beit Shean, divided into 8 categories. Take a quick Quiz and we\'ll show you only the best matches!'
+              ? '100 אפשרויות ופעילויות שמחכות לכם בגלבוע ובית שאן, מחולקות ל-8 קטגוריות. ענו על Quiz קצר ונציג לכם רק את המתאים ביותר!'
+              : 'We have 100+ activity options in Gilboa and Beit Shean, divided into 8 categories. Take a quick Quiz and we\'ll show you only the best matches!'
             }
           </p>
           
