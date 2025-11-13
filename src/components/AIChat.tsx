@@ -58,6 +58,8 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [visibleSuggestionIndex, setVisibleSuggestionIndex] = useState(0);
   const [faqQuestions, setFaqQuestions] = useState<string[]>([]);
   const [isPausedOnHover, setIsPausedOnHover] = useState(false);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const { toast } = useToast();
@@ -106,6 +108,22 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
 
     return () => clearInterval(interval);
   }, [faqQuestions.length, isPausedOnHover]);
+
+  // Keyboard navigation for FAQ
+  useEffect(() => {
+    if (faqQuestions.length === 0) return;
+
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        handleNavigateFAQ('next');
+      } else if (e.key === 'ArrowRight') {
+        handleNavigateFAQ('prev');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [faqQuestions.length]);
 
   useEffect(() => {
     // Send initial greeting with recommendations
@@ -178,6 +196,35 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
       }
     });
   };
+
+  // Swipe handlers for mobile
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    
+    if (isLeftSwipe) {
+      handleNavigateFAQ('next');
+    } else if (isRightSwipe) {
+      handleNavigateFAQ('prev');
+    }
+  };
+
+  const getCurrentSet = () => Math.floor(visibleSuggestionIndex / 3) + 1;
+  const getTotalSets = () => Math.ceil(faqQuestions.length / 3);
 
   const getTopCategoryDescription = (category: string): string => {
     const descriptions: Record<string, string> = {
@@ -617,55 +664,79 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
         )}
         {/* Frequent Questions - Rotating */}
         {messages.length > 0 && !showCategorySelector && faqQuestions.length > 0 && (
-          <div 
-            className="mb-3 overflow-hidden"
-            onMouseEnter={() => setIsPausedOnHover(true)}
-            onMouseLeave={() => setIsPausedOnHover(false)}
-          >
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleNavigateFAQ('prev')}
-                disabled={isLoading}
-                className="flex-shrink-0 h-8 w-8 hover:bg-muted"
-                aria-label="שאלות קודמות"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-              
-              <div className="flex flex-wrap gap-2 flex-1 transition-all duration-700 ease-in-out">
-                {faqQuestions
-                  .slice(visibleSuggestionIndex, visibleSuggestionIndex + 3)
-                  .concat(
-                    visibleSuggestionIndex + 3 > faqQuestions.length
-                      ? faqQuestions.slice(0, (visibleSuggestionIndex + 3) % faqQuestions.length)
-                      : []
-                  )
-                  .map((question, index) => (
-                    <Button
-                      key={`${visibleSuggestionIndex}-${index}`}
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleSend(question)}
-                      className="text-xs animate-in fade-in slide-in-from-bottom-2 duration-500"
-                      disabled={isLoading}
-                    >
-                      {question}
-                    </Button>
-                  ))}
+          <div className="mb-3">
+            <div 
+              className="overflow-hidden"
+              onMouseEnter={() => setIsPausedOnHover(true)}
+              onMouseLeave={() => setIsPausedOnHover(false)}
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
+            >
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleNavigateFAQ('prev')}
+                  disabled={isLoading}
+                  className="flex-shrink-0 h-8 w-8 hover:bg-muted"
+                  aria-label="שאלות קודמות"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                
+                <div className="flex flex-wrap gap-2 flex-1 transition-all duration-700 ease-in-out">
+                  {faqQuestions
+                    .slice(visibleSuggestionIndex, visibleSuggestionIndex + 3)
+                    .concat(
+                      visibleSuggestionIndex + 3 > faqQuestions.length
+                        ? faqQuestions.slice(0, (visibleSuggestionIndex + 3) % faqQuestions.length)
+                        : []
+                    )
+                    .map((question, index) => (
+                      <Button
+                        key={`${visibleSuggestionIndex}-${index}`}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleSend(question)}
+                        className="text-xs animate-in fade-in slide-in-from-bottom-2 duration-500"
+                        disabled={isLoading}
+                      >
+                        {question}
+                      </Button>
+                    ))}
+                </div>
+                
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleNavigateFAQ('next')}
+                  disabled={isLoading}
+                  className="flex-shrink-0 h-8 w-8 hover:bg-muted"
+                  aria-label="שאלות הבאות"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
               </div>
-              
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleNavigateFAQ('next')}
-                disabled={isLoading}
-                className="flex-shrink-0 h-8 w-8 hover:bg-muted"
-                aria-label="שאלות הבאות"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
+            </div>
+            
+            {/* Progress Indicator */}
+            <div className="flex items-center justify-center gap-2 mt-2">
+              <div className="flex gap-1">
+                {Array.from({ length: getTotalSets() }).map((_, index) => (
+                  <div
+                    key={index}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      index === getCurrentSet() - 1
+                        ? 'w-6 bg-primary'
+                        : 'w-1.5 bg-muted-foreground/30'
+                    }`}
+                  />
+                ))}
+              </div>
+              <span className="text-xs text-muted-foreground">
+                {getCurrentSet()}/{getTotalSets()}
+              </span>
             </div>
           </div>
         )}
