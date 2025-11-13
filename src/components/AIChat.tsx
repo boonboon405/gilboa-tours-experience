@@ -55,9 +55,23 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [editingField, setEditingField] = useState<keyof ConversationData | null>(null);
   const [showRecommendedTours, setShowRecommendedTours] = useState(false);
   const [conversationStartTime] = useState(new Date());
+  const [visibleSuggestionIndex, setVisibleSuggestionIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const { toast } = useToast();
+
+  const frequentQuestions = [
+    "מה כלול במחיר?",
+    "תנו לי הצעת מחיר",
+    "מה להביא ביום הטיול?",
+    "איך מגיעים למעיינות סחנה?",
+    "האם יש אפשרות לטיול פרטי?",
+    "כמה זמן לוקח הטיול?",
+    "מה האקלים באזור?",
+    "יש מסלולים מותאמים למשפחות?",
+    "האם אפשר לשלב פעילות בניית צוות?",
+    "מה השעות המומלצות לטיול?"
+  ];
 
   const steps = [
     { id: 'categories', label: 'תחומי עניין', completed: !!conversationData.categories?.length, current: currentStep === 0 },
@@ -69,6 +83,15 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
   }, [messages]);
+
+  // Rotate frequent questions slowly
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisibleSuggestionIndex((prev) => (prev + 3) % frequentQuestions.length);
+    }, 5000); // Rotate every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [frequentQuestions.length]);
 
   useEffect(() => {
     // Send initial greeting with recommendations
@@ -566,6 +589,33 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
             />
           </div>
         )}
+        {/* Frequent Questions - Rotating */}
+        {messages.length > 0 && !showCategorySelector && (
+          <div className="mb-3 overflow-hidden">
+            <div className="flex flex-wrap gap-2 transition-all duration-700 ease-in-out">
+              {frequentQuestions
+                .slice(visibleSuggestionIndex, visibleSuggestionIndex + 3)
+                .concat(
+                  visibleSuggestionIndex + 3 > frequentQuestions.length
+                    ? frequentQuestions.slice(0, (visibleSuggestionIndex + 3) % frequentQuestions.length)
+                    : []
+                )
+                .map((question, index) => (
+                  <Button
+                    key={`${visibleSuggestionIndex}-${index}`}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleSend(question)}
+                    className="text-xs animate-in fade-in slide-in-from-bottom-2 duration-500"
+                    disabled={isLoading}
+                  >
+                    {question}
+                  </Button>
+                ))}
+            </div>
+          </div>
+        )}
+        
         {/* Quick Replies */}
         {quickReplies.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
