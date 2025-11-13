@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { sanitizeForTTS } from '@/utils/ttsSanitizer';
@@ -31,6 +32,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [sessionId] = useState(() => `session-${Date.now()}-${Math.random()}`);
   const [speechSupported, setSpeechSupported] = useState(true);
+  const [textInput, setTextInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -240,6 +242,16 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     }
   };
 
+  const handleTextSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const message = textInput.trim();
+    
+    if (message && !isProcessing) {
+      setTextInput('');
+      await handleVoiceInput(message);
+    }
+  };
+
   if (!speechSupported) {
     return (
       <Card className="flex flex-col items-center justify-center h-[600px] max-w-4xl mx-auto p-8 text-center">
@@ -316,40 +328,66 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
         </div>
       </ScrollArea>
 
-      {/* Voice Controls */}
-      <div className="p-4 border-t border-border/50 bg-background">
-        <div className="flex flex-col items-center gap-3">
-          <Button
-            onClick={isListening ? stopListening : startListening}
+      {/* Voice and Text Controls */}
+      <div className="border-t border-border/50 bg-background">
+        {/* Text Input */}
+        <form onSubmit={handleTextSubmit} className="flex gap-2 p-3 border-b border-border/50">
+          <Input
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
+            placeholder="הקלידו את תשובתכם..."
             disabled={isProcessing || isSpeaking}
-            size="lg"
-            className={`w-20 h-20 rounded-full ${
-              isListening 
-                ? 'bg-red-500 hover:bg-red-600 animate-pulse-slow' 
-                : 'bg-primary hover:bg-primary/90'
-            }`}
+            className="flex-1 text-right"
+            dir="rtl"
+          />
+          <Button 
+            type="submit" 
+            size="icon" 
+            disabled={!textInput.trim() || isProcessing || isSpeaking}
           >
-            {isListening ? (
-              <Mic className="w-8 h-8" />
-            ) : isProcessing ? (
-              <Loader2 className="w-8 h-8 animate-spin" />
+            {isProcessing ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              <MicOff className="w-8 h-8" />
+              <Send className="w-4 h-4" />
             )}
           </Button>
-          <p className="text-sm text-muted-foreground text-center">
-            {isListening 
-              ? '🎤 מקשיב...' 
-              : isSpeaking 
-              ? '🔊 מדבר...'
-              : isProcessing
-              ? '⚙️ מעבד...'
-              : 'לחצו על המיקרופון להתחלת שיחה'
-            }
-          </p>
-          <p className="text-xs text-muted-foreground text-center">
-            תכונה זו פועלת בעברית ובאנגלית • ללא צורך ב-API Key
-          </p>
+        </form>
+
+        {/* Voice Control */}
+        <div className="p-4">
+          <div className="flex flex-col items-center gap-3">
+            <Button
+              onClick={isListening ? stopListening : startListening}
+              disabled={isProcessing || isSpeaking}
+              size="lg"
+              className={`w-20 h-20 rounded-full ${
+                isListening 
+                  ? 'bg-red-500 hover:bg-red-600 animate-pulse-slow' 
+                  : 'bg-primary hover:bg-primary/90'
+              }`}
+            >
+              {isListening ? (
+                <Mic className="w-8 h-8" />
+              ) : isProcessing ? (
+                <Loader2 className="w-8 h-8 animate-spin" />
+              ) : (
+                <MicOff className="w-8 h-8" />
+              )}
+            </Button>
+            <p className="text-sm text-muted-foreground text-center">
+              {isListening 
+                ? '🎤 מקשיב...' 
+                : isSpeaking 
+                ? '🔊 מדבר...'
+                : isProcessing
+                ? '⚙️ מעבד...'
+                : 'לחצו על המיקרופון להתחלת שיחה'
+              }
+            </p>
+            <p className="text-xs text-muted-foreground text-center">
+              תכונה זו פועלת בעברית ובאנגלית • ללא צורך ב-API Key
+            </p>
+          </div>
         </div>
       </div>
     </Card>
