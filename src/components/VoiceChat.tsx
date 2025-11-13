@@ -9,6 +9,9 @@ import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Langua
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { sanitizeForTTS } from '@/utils/ttsSanitizer';
+import { analyzeSentiment, getOverallSentiment } from '@/utils/sentimentAnalysis';
+import { WaveformVisualizer } from '@/components/WaveformVisualizer';
+import { ChatHistory } from '@/components/ChatHistory';
 import companyLogo from '@/assets/company-logo.png';
 
 interface Message {
@@ -16,6 +19,11 @@ interface Message {
   sender: 'user' | 'ai';
   message: string;
   created_at: string;
+  sentiment?: {
+    type: 'positive' | 'neutral' | 'negative';
+    icon: string;
+    color: string;
+  };
 }
 
 interface VoiceChatProps {
@@ -42,6 +50,16 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const recognitionRef = useRef<any>(null);
   const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const { toast } = useToast();
+
+  // Save conversation to history periodically
+  useEffect(() => {
+    if (messages.length > 1 && conversationId) {
+      const saveToHistory = (window as any).saveChatHistory;
+      if (saveToHistory) {
+        saveToHistory(conversationId, messages, quizResults);
+      }
+    }
+  }, [messages, conversationId, quizResults]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -111,15 +129,33 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   }, [language]);
 
   useEffect(() => {
-    // Send initial greeting
+    // Send initial greeting with enhanced quiz integration
     if (messages.length === 0) {
-      const greeting = language === 'he'
-        ? quizResults
-          ? `שלום! ראיתי שעשית את הQuiz שלנו - מעולה! לפי התוצאות, נראה שאתם מחפשים חוויה מיוחדת. ספרו לי קצת יותר - מה הסיטואציה? כמה אנשים?`
-          : 'שלום! אני סוכן דיגיטלי. אני כאן לעזור לכם למצוא את החוויה המושלמת ליום הצוות שלכם! כיתבו לי או ספרו לי - כמה אנשים אתם? מה מעניין אתכם?'
-        : quizResults
-          ? `Hello! I saw you took our quiz - excellent! Based on the results, it seems you're looking for a special experience. Tell me a bit more - what's the situation? How many people?`
-          : 'Hello! I am a digital agent. I am here to help you find the perfect experience for your team day! Write or tell me - how many people are you? What interests you?';
+      let greeting = '';
+      
+      if (language === 'he') {
+        if (quizResults) {
+          const topCategory = quizResults.top_categories?.[0] || '';
+          const percentage = quizResults.percentages?.[topCategory] || 0;
+          greeting = `שלום! ראיתי שעשיתם את הQuiz שלנו ומצאתי משהו מעניין! 
+אתם מתאימים במיוחד ל${topCategory} עם ${Math.round(percentage)}% התאמה. 
+יש לנו כ-100 אפשרויות שונות בגלבוע ובית שאן, ואני כאן כדי למצוא את המושלם בשבילכם.
+ספרו לי - כמה אנשים אתם? ומה התקציב בערך?`;
+        } else {
+          greeting = 'שלום! אני סוכן דיגיטלי מומחה בגלבוע ובית שאן. יש לי גישה לכ-100 חוויות שונות - מטיולים בטבע ועד פעילויות מים, ארכיאולוגיה ועוד. ספרו לי - כמה אנשים? מה מעניין אתכם?';
+        }
+      } else {
+        if (quizResults) {
+          const topCategory = quizResults.top_categories?.[0] || '';
+          const percentage = quizResults.percentages?.[topCategory] || 0;
+          greeting = `Hello! I saw your Quiz results - very interesting! 
+You're especially suited for ${topCategory} with ${Math.round(percentage)}% match.
+I have access to about 100 different options in Gilboa and Beit Shean, and I'm here to find the perfect one for you.
+Tell me - how many people? What's your approximate budget?`;
+        } else {
+          greeting = 'Hello! I am a digital agent specializing in Gilboa and Beit Shean. I have access to about 100 different experiences - from nature hikes to water activities, archaeology and more. Tell me - how many people? What interests you?';
+        }
+      }
 
       const initialMsg: Message = {
         id: '0',
@@ -129,7 +165,6 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
       };
       setMessages([initialMsg]);
       
-      // Speak the greeting
       setTimeout(() => speakText(greeting), 500);
     }
   }, []);
@@ -177,20 +212,31 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const handleVoiceInput = async (transcript: string) => {
     if (!transcript.trim() || isProcessing) return;
 
-    // Add user message to UI
+    // Analyze sentiment of user message
+    const sentiment = analyzeSentiment(transcript);
+
+    // Add user message to UI with sentiment
     const tempUserMsg: Message = {
       id: `temp-${Date.now()}`,
       sender: 'user',
       message: transcript,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      sentiment
     };
     setMessages(prev => [...prev, tempUserMsg]);
     setIsProcessing(true);
 
     try {
+      // Enhanced context for AI with quiz results
+      let enhancedMessage = transcript;
+      if (quizResults && messages.length <= 2) {
+        const categories = quizResults.top_categories?.join(', ') || '';
+        enhancedMessage = `[User has quiz results showing preference for: ${categories}. Consider ~100 available options in Gilboa and Beit Shean region.] ${transcript}`;
+      }
+
       const { data, error } = await supabase.functions.invoke('ai-chat-agent', {
         body: {
-          message: transcript,
+          message: enhancedMessage,
           conversationId,
           sessionId,
           quizResults
@@ -285,14 +331,25 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     setIsSpeaking(false);
     setIsProcessing(false);
 
-    // Send new greeting
-    const greeting = language === 'he'
-      ? quizResults
-        ? `שלום! ראיתי שעשית את הQuiz שלנו - מעולה! לפי התוצאות, נראה שאתם מחפשים חוויה מיוחדת. ספרו לי קצת יותר - מה הסיטואציה? כמה אנשים?`
-        : 'שלום! אני סוכן דיגיטלי. אני כאן לעזור לכם למצוא את החוויה המושלמת ליום הצוות שלכם! כיתבו לי או ספרו לי - כמה אנשים אתם? מה מעניין אתכם?'
-      : quizResults
-        ? `Hello! I saw you took our quiz - excellent! Based on the results, it seems you're looking for a special experience. Tell me a bit more - what's the situation? How many people?`
-        : 'Hello! I am a digital agent. I am here to help you find the perfect experience for your team day! Write or tell me - how many people are you? What interests you?';
+    // Send enhanced greeting
+    let greeting = '';
+    if (language === 'he') {
+      if (quizResults) {
+        const topCategory = quizResults.top_categories?.[0] || '';
+        const percentage = quizResults.percentages?.[topCategory] || 0;
+        greeting = `שלום! ראיתי שעשיתם את הQuiz שלנו ומצאתי משהו מעניין! אתם מתאימים במיוחד ל${topCategory} עם ${Math.round(percentage)}% התאמה. יש לנו כ-100 אפשרויות שונות, ואני כאן למצוא את המושלם. ספרו לי - כמה אנשים? תקציב?`;
+      } else {
+        greeting = 'שלום! אני סוכן דיגיטלי מומחה. יש לי גישה לכ-100 חוויות שונות בגלבוע ובית שאן. ספרו לי - כמה אנשים? מה מעניין אתכם?';
+      }
+    } else {
+      if (quizResults) {
+        const topCategory = quizResults.top_categories?.[0] || '';
+        const percentage = quizResults.percentages?.[topCategory] || 0;
+        greeting = `Hello! I saw your Quiz results - interesting! You're suited for ${topCategory} with ${Math.round(percentage)}% match. I have ~100 options. Tell me - how many people? Budget?`;
+      } else {
+        greeting = 'Hello! I am a digital expert. I have access to ~100 experiences in Gilboa and Beit Shean. Tell me - how many people? What interests you?';
+      }
+    }
 
     const initialMsg: Message = {
       id: '0',
@@ -333,11 +390,23 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     });
   };
 
+  const handleLoadConversation = (item: any) => {
+    setMessages(item.messages);
+    setConversationId(item.id);
+    
+    toast({
+      title: language === 'he' ? "שיחה נטענה" : "Conversation loaded",
+      description: language === 'he' ? "השיחה שוחזרה בהצלחה" : "Conversation restored successfully"
+    });
+  };
+
   const handleQuickReply = async (reply: string) => {
     if (!isProcessing && !isSpeaking) {
       await handleVoiceInput(reply);
     }
   };
+
+  const overallSentiment = getOverallSentiment(messages);
 
   const quickReplies = language === 'he' ? [
     'ספר לי עוד',
@@ -370,12 +439,24 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
         <div className="flex items-center gap-3">
           <img src={companyLogo} alt="טיולים עם דוד" className="w-10 h-10 rounded-lg object-cover" />
           <Bot className="w-8 h-8 text-primary" />
-          <div>
+          <div className="flex-1">
             <h3 className="font-semibold text-lg">{language === 'he' ? 'צ\'אט קולי - טיולים עם דוד' : 'Voice Chat - Tours with David'}</h3>
-            <p className="text-sm text-muted-foreground">{language === 'he' ? 'חוויות בטבע עם הדרכה מקצועית 🌿' : 'Nature experiences with professional guidance 🌿'}</p>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>{language === 'he' ? 'חוויות בטבע עם הדרכה מקצועית 🌿' : 'Nature experiences with professional guidance 🌿'}</span>
+              {messages.length > 2 && (
+                <span className={`text-lg ${overallSentiment.color}`} title={language === 'he' ? 'מצב רוח' : 'Mood'}>
+                  {overallSentiment.icon}
+                </span>
+              )}
+            </div>
           </div>
         </div>
         <div className="flex gap-2">
+          <ChatHistory 
+            onLoadConversation={handleLoadConversation}
+            currentConversationId={conversationId}
+            language={language}
+          />
           <Button
             variant="ghost"
             size="icon"
@@ -477,7 +558,14 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted'
                 }`}>
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.message}</p>
+                  <div className="flex items-start gap-2">
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed flex-1">{msg.message}</p>
+                    {msg.sentiment && msg.sender === 'user' && (
+                      <span className={`text-base ${msg.sentiment.color}`} title={msg.sentiment.type}>
+                        {msg.sentiment.icon}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -551,24 +639,31 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
         {/* Voice Control */}
         <div className="p-6 bg-muted/20">
           <div className="flex flex-col items-center gap-4">
-            <Button
-              onClick={isListening ? stopListening : startListening}
-              disabled={isProcessing || isSpeaking}
-              size="lg"
-              className={`w-20 h-20 rounded-full ${
-                isListening 
-                  ? 'bg-red-500 hover:bg-red-600 animate-pulse-slow' 
-                  : 'bg-primary hover:bg-primary/90'
-              }`}
-            >
-              {isListening ? (
-                <Mic className="w-8 h-8" />
-              ) : isProcessing ? (
-                <Loader2 className="w-8 h-8 animate-spin" />
-              ) : (
-                <MicOff className="w-8 h-8" />
+            <div className="relative">
+              <Button
+                onClick={isListening ? stopListening : startListening}
+                disabled={isProcessing || isSpeaking}
+                size="lg"
+                className={`w-20 h-20 rounded-full ${
+                  isListening 
+                    ? 'bg-red-500 hover:bg-red-600 animate-pulse-slow' 
+                    : 'bg-primary hover:bg-primary/90'
+                }`}
+              >
+                {isListening ? (
+                  <Mic className="w-8 h-8" />
+                ) : isProcessing ? (
+                  <Loader2 className="w-8 h-8 animate-spin" />
+                ) : (
+                  <MicOff className="w-8 h-8" />
+                )}
+              </Button>
+              {isListening && (
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
+                  <WaveformVisualizer isActive={isListening} />
+                </div>
               )}
-            </Button>
+            </div>
             <div className="space-y-2 w-full max-w-md">
               <p className="text-base font-medium text-foreground text-center px-4 py-2 bg-background/80 rounded-lg border border-border/50">
                 {language === 'he' ? (
