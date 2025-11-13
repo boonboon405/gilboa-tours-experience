@@ -460,7 +460,11 @@ ${transcript}`;
     'איזו רמה פיזית נדרשת?',
     'מתאים לכל הגילאים?',
     'מה עם מזג האויר?',
-    'איך מזמינים?'
+    'איך מזמינים?',
+    'איך מגיעים?',
+    'יש חניה?',
+    'אפשר לבטל?',
+    'יש הנחות לקבוצות?'
   ] : [
     'Tell me more',
     'What are the options?',
@@ -471,7 +475,11 @@ ${transcript}`;
     'What physical level required?',
     'Suitable for all ages?',
     'What about weather?',
-    'How to book?'
+    'How to book?',
+    'How to get there?',
+    'Is there parking?',
+    'Can I cancel?',
+    'Are there group discounts?'
   ];
 
   if (!speechSupported) {
