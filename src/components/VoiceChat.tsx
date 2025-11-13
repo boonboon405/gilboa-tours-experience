@@ -258,7 +258,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
         <div className="flex items-center gap-3">
           <Bot className="w-8 h-8 text-primary" />
           <div>
-            <h3 className="font-semibold text-lg">צ'אט קולי - חוויות גלבוע</h3>
+            <h3 className="font-semibold text-lg">צ'אט קולי - טיולים עם דוד</h3>
             <p className="text-sm text-muted-foreground">דברו איתי בעברית או אנגלית</p>
           </div>
         </div>

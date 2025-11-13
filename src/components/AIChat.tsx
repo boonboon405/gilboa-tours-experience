@@ -248,7 +248,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
           <Sparkles className="w-4 h-4 text-accent absolute -top-1 -right-1 animate-pulse" />
         </div>
         <div>
-          <h3 className="font-semibold text-lg">סוכן חכם - חוויות גלבוע</h3>
+          <h3 className="font-semibold text-lg">סוכן חכם - טיולים עם דוד</h3>
           <p className="text-sm text-muted-foreground">מומחה לסיורים מותאמים אישית</p>
         </div>
       </div>

@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 // Default system prompt (fallback if database is unavailable)
-const DEFAULT_SYSTEM_PROMPT = `אתה סוכן תמיכה AI של חוויות גלבוע-בית שאן, צפון ישראל. אתה כאן לעזור ולענות על שאלות נפוצות.`;
+const DEFAULT_SYSTEM_PROMPT = `אתה סוכן תמיכה AI של טיולים עם דוד, צפון ישראל. אתה כאן לעזור ולענות על שאלות נפוצות.`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {

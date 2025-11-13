@@ -135,7 +135,7 @@ export default function Auth() {
           <div className="flex justify-center mb-4">
             <Shield className="w-12 h-12 text-primary" />
           </div>
-          <CardTitle className="text-2xl font-bold">חוויות גלבוע - מערכת ניהול</CardTitle>
+          <CardTitle className="text-2xl font-bold">טיולים עם דוד - מערכת ניהול</CardTitle>
           <CardDescription>התחבר או הירשם כדי לגשת למערכת</CardDescription>
         </CardHeader>
         <CardContent>
