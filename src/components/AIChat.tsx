@@ -220,6 +220,8 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const handleSend = async (userMessage: string) => {
     if (!userMessage.trim() || isLoading) return;
 
+    console.log('📝 User message received:', userMessage);
+    
     setShowCategorySelector(false);
     setTypingPreview(''); // Clear typing preview
     
@@ -234,20 +236,25 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     setIsLoading(true);
 
     try {
+      console.log('🚀 Sending to AI agent...');
       const { data, error } = await supabase.functions.invoke('ai-chat-agent', {
         body: {
           message: userMessage,
-      conversationId,
-      sessionId,
-      quizResults,
-      conversationData,
-      currentStep
-    }
-  });
+          conversationId,
+          sessionId,
+          quizResults,
+          conversationData,
+          currentStep
+        }
+      });
 
-  if (error) throw error;
+      if (error) {
+        console.error('❌ Supabase error:', error);
+        throw error;
+      }
 
       if (data.error) {
+        console.error('❌ AI agent error:', data.error);
         toast({
           title: "שגיאה",
           description: data.fallback || data.error,
@@ -256,6 +263,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
         return;
       }
 
+      console.log('✅ AI response received:', data.message?.substring(0, 50) + '...');
       setConversationId(data.conversationId);
 
       const aiMessage: Message = {

@@ -122,23 +122,34 @@ export const VoiceTextInput = ({
       clearTimeout(typingTimeoutRef.current);
     }
     
-    // Set new timeout for real-time typing detection
-    typingTimeoutRef.current = setTimeout(() => {
-      if (onTyping && value.trim()) {
-        onTyping(value);
-      }
-    }, 500); // Wait 500ms after user stops typing
+    // Immediately update typing preview if callback provided
+    if (onTyping) {
+      onTyping(value);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (input.trim() && !isLoading && !disabled) {
-      onSend(input.trim());
+    const messageToSend = input.trim();
+    
+    console.log('📤 Submitting message:', messageToSend);
+    
+    if (messageToSend && !isLoading && !disabled) {
+      // Clear input immediately for better UX
       setInput('');
+      
+      // Clear typing preview
+      if (onTyping) {
+        onTyping('');
+      }
+      
       // Clear typing timeout
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
+      
+      // Send the message
+      onSend(messageToSend);
     }
   };
 
@@ -163,6 +174,11 @@ export const VoiceTextInput = ({
         disabled={disabled || isLoading}
         className="flex-1 text-right"
         dir="rtl"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            handleSubmit(e as any);
+          }
+        }}
       />
       <Button 
         type="submit" 
