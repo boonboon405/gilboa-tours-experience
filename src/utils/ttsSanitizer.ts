@@ -47,7 +47,8 @@ const cleanSpecialCharacters = (text: string): string => {
     .replace(/[?]{2,}/g, '?') // Multiple question marks to single
     .replace(/[.]{2,}/g, '.') // Multiple periods to single
     .replace(/[-]{2,}/g, ' ') // Multiple dashes to space
-    .replace(/[*#@$%^&+=<>{}[\]\\|~`]/g, '') // Remove special chars
+    .replace(/\|/g, '...') // Convert pipe to multiple periods for longer pause
+    .replace(/[*#@$%^&+=<>{}[\]\\~`]/g, '') // Remove special chars
     .replace(/[:;]/g, ','); // Convert colons/semicolons to commas for natural pauses
 };
 

@@ -112,8 +112,11 @@ export const Hero = () => {
           <h2 className="text-3xl md:text-5xl font-semibold text-accent mb-6 animate-[zoom-fade-in_0.8s_ease-out_0.2s] opacity-0 [animation-fill-mode:forwards] hero-glow-accent">
             בצפון א״י היפה ובלב הגלבוע הגליל וסובב כנרת
           </h2>
-          <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-white/90 mb-4 max-w-2xl mx-auto leading-relaxed">
             יום חווייתי, מהנה ומשמעותי שמשלב היסטוריה, טבע, גיבוש, והרבה זיכרונות טובים לחברה שלכם.
+          </p>
+          <p className="text-base md:text-lg text-white/80 mb-8 max-w-3xl mx-auto leading-relaxed">
+            🔥 הרפתקאות  |  💧 טבע  |  🏛️ היסטוריה  |  🍷 קולינריה  |  ⚡ ספורט  |  🎨 יצירה  |  🌿 בריאות  |  🤝 צוותיות
           </p>
 
           {/* CTA Buttons */}
