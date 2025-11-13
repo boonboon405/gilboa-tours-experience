@@ -138,7 +138,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'he-IL'; // Hebrew language
-    utterance.rate = 0.63; // 30% slower for better clarity
+    utterance.rate = 0.44; // 30% slower than current 0.63
     utterance.pitch = 1;
     utterance.volume = 1;
 
