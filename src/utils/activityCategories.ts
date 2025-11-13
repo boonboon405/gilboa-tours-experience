@@ -148,7 +148,7 @@ export const categoryMetadata = {
     color: 'from-purple-600 to-pink-500'
   },
   sports: {
-    name: 'ספורט, תחרות וצוותיות',
+    name: 'ODT ספורט, תחרות וצוותיות',
     icon: '⚡',
     description: 'תחרויות, משחקי צוות ואתגרים ספורטיביים',
     color: 'from-green-500 to-emerald-400'

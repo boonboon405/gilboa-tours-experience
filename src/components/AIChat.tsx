@@ -11,6 +11,9 @@ import { LanguageQualityBadge } from '@/components/LanguageQualityBadge';
 import { VoiceTextInput } from '@/components/VoiceTextInput';
 import { ProgressIndicator } from '@/components/ProgressIndicator';
 import { AnswerSummary, ConversationData } from '@/components/AnswerSummary';
+import { RecommendedTours } from '@/components/RecommendedTours';
+import { ChatExport } from '@/components/ChatExport';
+import { ConversationAnalytics } from '@/components/ConversationAnalytics';
 import companyLogo from '@/assets/company-logo.png';
 import { categoryMetadata, DNACategory } from '@/utils/activityCategories';
 import { detectCategoriesInMessage } from '@/utils/categoryDetector';
@@ -50,6 +53,8 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showSummary, setShowSummary] = useState(false);
   const [editingField, setEditingField] = useState<keyof ConversationData | null>(null);
+  const [showRecommendedTours, setShowRecommendedTours] = useState(false);
+  const [conversationStartTime] = useState(new Date());
   const scrollRef = useRef<HTMLDivElement>(null);
   const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const { toast } = useToast();
@@ -346,36 +351,23 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
 
   const handleConfirmSummary = async () => {
     setIsLoading(true);
+    setShowSummary(false);
     
     try {
-      // Generate final recommendation
-      const summaryMessage = `על סמך הפרטים שלכם, אני ממליץ על החבילה הבאה...`;
+      // Show recommended tours instead of text recommendation
+      setShowRecommendedTours(true);
       
-      const { data, error } = await supabase.functions.invoke('ai-chat-agent', {
-        body: {
-          message: 'צור המלצה סופית על סמך כל הפרטים',
-          conversationId,
-          sessionId,
-          quizResults,
-          conversationData,
-          requestFinalRecommendation: true
-        }
-      });
-
-      if (error) throw error;
-
-      if (data.message) {
-        const aiMessage: Message = {
-          id: `final-${Date.now()}`,
-          sender: 'ai',
-          message: data.message,
-          created_at: new Date().toISOString()
-        };
-        
-        setMessages(prev => [...prev, aiMessage]);
-        speakText(data.message);
-        setShowSummary(false);
-      }
+      // Add a message explaining the tours
+      const aiMessage: Message = {
+        id: `tours-${Date.now()}`,
+        sender: 'ai',
+        message: '🎉 מצוין! על סמך כל הפרטים שלכם, בחרתי את 3 החבילות המתאימות ביותר. צפו למטה:',
+        created_at: new Date().toISOString()
+      };
+      
+      setMessages(prev => [...prev, aiMessage]);
+      speakText(aiMessage.message);
+      
     } catch (error) {
       console.error('Error generating recommendation:', error);
       toast({
@@ -392,12 +384,26 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     setConversationData({});
     setCurrentStep(0);
     setShowSummary(false);
+    setShowRecommendedTours(false);
     setMessages([{
       id: '0',
       sender: 'ai',
       message: 'בואו נתחיל מחדש! מה מעניין אתכם?',
       created_at: new Date().toISOString()
     }]);
+  };
+
+  const handleSelectTour = (tour: any) => {
+    const message = `מעולה! בחרתם ב"${tour.title}". אשמח לתאם את הפרטים הסופיים איתכם. רוצים שאצור קשר טלפוני או להמשיך כאן?`;
+    const aiMessage: Message = {
+      id: `tour-selected-${Date.now()}`,
+      sender: 'ai',
+      message,
+      created_at: new Date().toISOString()
+    };
+    setMessages(prev => [...prev, aiMessage]);
+    speakText(message);
+    setShowRecommendedTours(false);
   };
 
   return (
@@ -413,23 +419,41 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
           <h3 className="font-semibold text-lg">סוכן חכם - טיולים עם דוד</h3>
           <p className="text-sm text-muted-foreground">חוויות בטבע עם הדרכה מקצועית 🌿</p>
         </div>
-        {conversationData.numberOfPeople && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleResetConversation}
-            className="text-xs"
-          >
-            <RotateCcw className="w-4 h-4 ml-1" />
-            התחל מחדש
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          <ChatExport 
+            messages={messages}
+            conversationData={conversationData}
+            conversationId={conversationId}
+          />
+          {conversationData.numberOfPeople && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleResetConversation}
+              className="text-xs"
+            >
+              <RotateCcw className="w-4 h-4 ml-1" />
+              התחל מחדש
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Progress Indicator */}
       <div className="p-4 border-b border-border/50 bg-background">
         <ProgressIndicator steps={steps} />
       </div>
+
+      {/* Analytics */}
+      {messages.length > 2 && (
+        <div className="px-4 pt-4">
+          <ConversationAnalytics 
+            messages={messages}
+            startTime={conversationStartTime}
+            conversationData={conversationData}
+          />
+        </div>
+      )}
 
       {/* Messages */}
       <ScrollArea className="flex-1 p-4">
@@ -442,6 +466,16 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
                 onEdit={handleEditField}
                 onConfirm={handleConfirmSummary}
                 isLoading={isLoading}
+              />
+            </div>
+          )}
+
+          {/* Show Recommended Tours */}
+          {showRecommendedTours && (
+            <div className="mb-4">
+              <RecommendedTours
+                conversationData={conversationData}
+                onSelectTour={handleSelectTour}
               />
             </div>
           )}
