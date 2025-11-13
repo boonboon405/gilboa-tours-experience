@@ -5,7 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Gauge, Download, Sparkles, Eye } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Gauge, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { sanitizeForTTS } from '@/utils/ttsSanitizer';
@@ -451,58 +451,66 @@ ${transcript}`;
   const overallSentiment = getOverallSentiment(messages);
 
   const allQuickReplies = language === 'he' ? [
-    'ספרו לי עוד על הפעילות',
-    'אילו אפשרויות יש?',
-    'מה עולה הפעילות?',
-    'איפה נמצא המקום?',
-    'כמה זמן נמשכת הפעילות?',
-    'מה כלול במחיר?',
-    'איזו רמה פיזית דרושה?',
-    'האם מתאים לכל הגילאים?',
-    'איך מזג האוויר משפיע?',
-    'איך מבצעים הזמנה?',
-    'איך מגיעים למקום?',
-    'האם יש חניה במקום?',
-    'מה מדיניות הביטול?',
-    'יש הנחה לקבוצות?',
-    'מה צריך להביא לפעילות?',
-    'איזה ביגוד מומלץ?',
-    'צריך להגיע עם ציוד מיוחד?',
-    'איך להתכונן לפעילות?',
-    'האם מספקים ציוד במקום?',
-    'מה צריך ללבוש?',
-    'האם צריך נעליים מיוחדות?'
+    { text: 'ספרו לי עוד על הפעילות', icon: Info },
+    { text: 'אילו אפשרויות יש?', icon: ListChecks },
+    { text: 'מה עולה הפעילות?', icon: DollarSign },
+    { text: 'איפה נמצא המקום?', icon: MapPin },
+    { text: 'כמה זמן נמשכת הפעילות?', icon: Clock },
+    { text: 'מה כלול במחיר?', icon: Package },
+    { text: 'איזו רמה פיזית דרושה?', icon: Activity },
+    { text: 'האם מתאים לכל הגילאים?', icon: Users },
+    { text: 'איך מזג האוויר משפיע?', icon: Cloud },
+    { text: 'איך מבצעים הזמנה?', icon: Calendar },
+    { text: 'איך מגיעים למקום?', icon: Navigation },
+    { text: 'האם יש חניה במקום?', icon: ParkingCircle },
+    { text: 'מה מדיניות הביטול?', icon: XCircle },
+    { text: 'יש הנחה לקבוצות?', icon: UsersRound },
+    { text: 'מה צריך להביא לפעילות?', icon: ShoppingBag },
+    { text: 'איזה ביגוד מומלץ?', icon: Shirt },
+    { text: 'צריך להגיע עם ציוד מיוחד?', icon: Backpack },
+    { text: 'איך להתכונן לפעילות?', icon: ListChecks },
+    { text: 'האם מספקים ציוד במקום?', icon: Box },
+    { text: 'מה צריך ללבוש?', icon: Shirt },
+    { text: 'האם צריך נעליים מיוחדות?', icon: Footprints }
   ] : [
-    'Tell me more about the activity',
-    'What options are available?',
-    'What is the cost?',
-    'Where is the location?',
-    'How long is the activity?',
-    'What is included in the price?',
-    'What physical level is required?',
-    'Is it suitable for all ages?',
-    'How does weather affect it?',
-    'How do I book?',
-    'How do I get there?',
-    'Is parking available?',
-    'What is the cancellation policy?',
-    'Are there group discounts?',
-    'What should I bring?',
-    'What clothing is recommended?',
-    'Do I need special equipment?',
-    'How should I prepare?',
-    'Do you provide equipment?',
-    'What should I wear?',
-    'Do I need special shoes?'
+    { text: 'Tell me more about the activity', icon: Info },
+    { text: 'What options are available?', icon: ListChecks },
+    { text: 'What is the cost?', icon: DollarSign },
+    { text: 'Where is the location?', icon: MapPin },
+    { text: 'How long is the activity?', icon: Clock },
+    { text: 'What is included in the price?', icon: Package },
+    { text: 'What physical level is required?', icon: Activity },
+    { text: 'Is it suitable for all ages?', icon: Users },
+    { text: 'How does weather affect it?', icon: Cloud },
+    { text: 'How do I book?', icon: Calendar },
+    { text: 'How do I get there?', icon: Navigation },
+    { text: 'Is parking available?', icon: ParkingCircle },
+    { text: 'What is the cancellation policy?', icon: XCircle },
+    { text: 'Are there group discounts?', icon: UsersRound },
+    { text: 'What should I bring?', icon: ShoppingBag },
+    { text: 'What clothing is recommended?', icon: Shirt },
+    { text: 'Do I need special equipment?', icon: Backpack },
+    { text: 'How should I prepare?', icon: ListChecks },
+    { text: 'Do you provide equipment?', icon: Box },
+    { text: 'What should I wear?', icon: Shirt },
+    { text: 'Do I need special shoes?', icon: Footprints }
   ];
 
-  // Rotate quick replies randomly every 10 seconds
-  const [visibleReplies, setVisibleReplies] = useState<string[]>([]);
+  // Rotate quick replies randomly every 10 seconds with fade animation
+  const [visibleReplies, setVisibleReplies] = useState<Array<{ text: string; icon: any }>>([]);
+  const [isAnimating, setIsAnimating] = useState(false);
   
   useEffect(() => {
     const shuffleReplies = () => {
-      const shuffled = [...allQuickReplies].sort(() => Math.random() - 0.5);
-      setVisibleReplies(shuffled.slice(0, 10));
+      // Trigger fade out
+      setIsAnimating(true);
+      
+      // After fade out completes, shuffle and fade in
+      setTimeout(() => {
+        const shuffled = [...allQuickReplies].sort(() => Math.random() - 0.5);
+        setVisibleReplies(shuffled.slice(0, 10));
+        setIsAnimating(false);
+      }, 300); // Match the CSS transition duration
     };
     
     shuffleReplies();
@@ -721,19 +729,24 @@ ${transcript}`;
           </form>
           
           {/* Quick Reply Buttons */}
-          <div className={`flex flex-wrap gap-2 px-3 pb-3 ${language === 'he' ? 'flex-row-reverse' : ''}`}>
-            {quickReplies.map((reply, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                size="sm"
-                onClick={() => handleQuickReply(reply)}
-                disabled={isProcessing || isSpeaking}
-                className="whitespace-nowrap text-xs hover:bg-primary/10 hover:border-primary transition-colors shadow-sm"
-              >
-                {reply}
-              </Button>
-            ))}
+          <div className={`flex flex-wrap gap-2 px-3 pb-3 ${language === 'he' ? 'flex-row-reverse' : ''} transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+            {quickReplies.map((reply, index) => {
+              const Icon = reply.icon;
+              return (
+                <Button
+                  key={`${reply.text}-${index}`}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleQuickReply(reply.text)}
+                  disabled={isProcessing || isSpeaking}
+                  className="whitespace-nowrap text-xs hover:bg-primary/10 hover:border-primary transition-all duration-200 shadow-sm flex items-center gap-1.5 animate-fade-in"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {reply.text}
+                </Button>
+              );
+            })}
           </div>
         </div>
 
