@@ -56,22 +56,10 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [showRecommendedTours, setShowRecommendedTours] = useState(false);
   const [conversationStartTime] = useState(new Date());
   const [visibleSuggestionIndex, setVisibleSuggestionIndex] = useState(0);
+  const [faqQuestions, setFaqQuestions] = useState<string[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const { toast } = useToast();
-
-  const frequentQuestions = [
-    "מה כלול במחיר?",
-    "תנו לי הצעת מחיר",
-    "מה להביא ביום הטיול?",
-    "איך מגיעים למעיינות סחנה?",
-    "האם יש אפשרות לטיול פרטי?",
-    "כמה זמן לוקח הטיול?",
-    "מה האקלים באזור?",
-    "יש מסלולים מותאמים למשפחות?",
-    "האם אפשר לשלב פעילות בניית צוות?",
-    "מה השעות המומלצות לטיול?"
-  ];
 
   const steps = [
     { id: 'categories', label: 'תחומי עניין', completed: !!conversationData.categories?.length, current: currentStep === 0 },
@@ -84,14 +72,39 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
   }, [messages]);
 
-  // Rotate frequent questions slowly
+  // Fetch FAQ questions from database
   useEffect(() => {
+    const fetchFAQs = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('knowledge_base')
+          .select('question')
+          .eq('is_active', true)
+          .order('priority', { ascending: false });
+
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          setFaqQuestions(data.map(faq => faq.question));
+        }
+      } catch (error) {
+        console.error('Error fetching FAQ questions:', error);
+      }
+    };
+
+    fetchFAQs();
+  }, []);
+
+  // Rotate FAQ questions slowly
+  useEffect(() => {
+    if (faqQuestions.length === 0) return;
+    
     const interval = setInterval(() => {
-      setVisibleSuggestionIndex((prev) => (prev + 3) % frequentQuestions.length);
+      setVisibleSuggestionIndex((prev) => (prev + 3) % faqQuestions.length);
     }, 5000); // Rotate every 5 seconds
 
     return () => clearInterval(interval);
-  }, [frequentQuestions.length]);
+  }, [faqQuestions.length]);
 
   useEffect(() => {
     // Send initial greeting with recommendations
@@ -590,14 +603,14 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
           </div>
         )}
         {/* Frequent Questions - Rotating */}
-        {messages.length > 0 && !showCategorySelector && (
+        {messages.length > 0 && !showCategorySelector && faqQuestions.length > 0 && (
           <div className="mb-3 overflow-hidden">
             <div className="flex flex-wrap gap-2 transition-all duration-700 ease-in-out">
-              {frequentQuestions
+              {faqQuestions
                 .slice(visibleSuggestionIndex, visibleSuggestionIndex + 3)
                 .concat(
-                  visibleSuggestionIndex + 3 > frequentQuestions.length
-                    ? frequentQuestions.slice(0, (visibleSuggestionIndex + 3) % frequentQuestions.length)
+                  visibleSuggestionIndex + 3 > faqQuestions.length
+                    ? faqQuestions.slice(0, (visibleSuggestionIndex + 3) % faqQuestions.length)
                     : []
                 )
                 .map((question, index) => (
