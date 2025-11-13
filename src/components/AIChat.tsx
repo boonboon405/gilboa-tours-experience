@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Bot, User, Sparkles, RotateCcw } from 'lucide-react';
+import { Loader2, Bot, User, Sparkles, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { CategorySelector } from '@/components/CategorySelector';
@@ -165,6 +165,18 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const handleTyping = (text: string) => {
     // Show typing preview in real-time
     setTypingPreview(text);
+  };
+
+  const handleNavigateFAQ = (direction: 'prev' | 'next') => {
+    if (faqQuestions.length === 0) return;
+    
+    setVisibleSuggestionIndex((prev) => {
+      if (direction === 'next') {
+        return (prev + 3) % faqQuestions.length;
+      } else {
+        return prev - 3 < 0 ? Math.max(0, faqQuestions.length - 3) : prev - 3;
+      }
+    });
   };
 
   const getTopCategoryDescription = (category: string): string => {
@@ -610,26 +622,50 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
             onMouseEnter={() => setIsPausedOnHover(true)}
             onMouseLeave={() => setIsPausedOnHover(false)}
           >
-            <div className="flex flex-wrap gap-2 transition-all duration-700 ease-in-out">
-              {faqQuestions
-                .slice(visibleSuggestionIndex, visibleSuggestionIndex + 3)
-                .concat(
-                  visibleSuggestionIndex + 3 > faqQuestions.length
-                    ? faqQuestions.slice(0, (visibleSuggestionIndex + 3) % faqQuestions.length)
-                    : []
-                )
-                .map((question, index) => (
-                  <Button
-                    key={`${visibleSuggestionIndex}-${index}`}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleSend(question)}
-                    className="text-xs animate-in fade-in slide-in-from-bottom-2 duration-500"
-                    disabled={isLoading}
-                  >
-                    {question}
-                  </Button>
-                ))}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleNavigateFAQ('prev')}
+                disabled={isLoading}
+                className="flex-shrink-0 h-8 w-8 hover:bg-muted"
+                aria-label="שאלות קודמות"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              
+              <div className="flex flex-wrap gap-2 flex-1 transition-all duration-700 ease-in-out">
+                {faqQuestions
+                  .slice(visibleSuggestionIndex, visibleSuggestionIndex + 3)
+                  .concat(
+                    visibleSuggestionIndex + 3 > faqQuestions.length
+                      ? faqQuestions.slice(0, (visibleSuggestionIndex + 3) % faqQuestions.length)
+                      : []
+                  )
+                  .map((question, index) => (
+                    <Button
+                      key={`${visibleSuggestionIndex}-${index}`}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleSend(question)}
+                      className="text-xs animate-in fade-in slide-in-from-bottom-2 duration-500"
+                      disabled={isLoading}
+                    >
+                      {question}
+                    </Button>
+                  ))}
+              </div>
+              
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleNavigateFAQ('next')}
+                disabled={isLoading}
+                className="flex-shrink-0 h-8 w-8 hover:bg-muted"
+                aria-label="שאלות הבאות"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         )}
