@@ -22,6 +22,7 @@ export const Navigation = () => {
   const navigate = useNavigate();
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizCount, setQuizCount] = useState<number>(0);
+  const [activeSection, setActiveSection] = useState<string>('home');
 
   useEffect(() => {
     const fetchQuizCount = async () => {
@@ -32,6 +33,51 @@ export const Navigation = () => {
     };
     fetchQuizCount();
   }, []);
+
+  // Intersection Observer for active section highlighting
+  useEffect(() => {
+    const sections = ['home', 'choose-your-day', 'vip-tours', 'odt-section', 'contact'];
+    
+    const observerOptions = {
+      root: null,
+      rootMargin: '-50% 0px -50% 0px',
+      threshold: 0
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    sections.forEach((sectionId) => {
+      const element = document.getElementById(sectionId);
+      if (element) observer.observe(element);
+    });
+
+    return () => {
+      sections.forEach((sectionId) => {
+        const element = document.getElementById(sectionId);
+        if (element) observer.unobserve(element);
+      });
+    };
+  }, []);
+
+  // Smooth scroll handler
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+    
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setIsOpen(false); // Close mobile menu after click
+    }
+  };
 
   const handleQuizComplete = (results: QuizResults) => {
     console.log('Quiz completed with results:', results);
@@ -76,15 +122,24 @@ export const Navigation = () => {
                 </Badge>
               )}
             </button>
-            {navItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-foreground hover:text-primary transition-colors font-medium whitespace-nowrap"
-              >
-                {item.label}
-              </a>
-            ))}
+            {navItems.map((item) => {
+              const isActive = activeSection === item.href.replace('#', '');
+              return (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  onClick={(e) => handleNavClick(e, item.href)}
+                  className={`text-foreground hover:text-primary transition-all font-medium whitespace-nowrap relative pb-1 ${
+                    isActive ? 'text-primary' : ''
+                  }`}
+                >
+                  {item.label}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-hero animate-in fade-in slide-in-from-bottom-1" />
+                  )}
+                </a>
+              );
+            })}
             <Link to="/booking">
               <Button variant="default" className="gap-2">
                 <Calendar className="h-4 w-4" />
@@ -184,16 +239,21 @@ export const Navigation = () => {
                 </Badge>
               )}
             </button>
-            {navItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="block py-2 text-foreground hover:text-primary transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                {item.label}
-              </a>
-            ))}
+            {navItems.map((item) => {
+              const isActive = activeSection === item.href.replace('#', '');
+              return (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  onClick={(e) => handleNavClick(e, item.href)}
+                  className={`block py-2 text-foreground hover:text-primary transition-all ${
+                    isActive ? 'text-primary font-semibold bg-primary/10 px-3 rounded-md' : ''
+                  }`}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
             <Link to="/booking">
               <Button variant="default" className="w-full mt-2 gap-2">
                 <Calendar className="h-4 w-4" />
