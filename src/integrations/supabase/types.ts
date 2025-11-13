@@ -165,6 +165,48 @@ export type Database = {
         }
         Relationships: []
       }
+      categories: {
+        Row: {
+          category_key: string
+          color: string
+          created_at: string
+          description: string
+          display_order: number | null
+          icon: string
+          id: string
+          is_active: boolean
+          name: string
+          recommendations: Json | null
+          updated_at: string
+        }
+        Insert: {
+          category_key: string
+          color?: string
+          created_at?: string
+          description: string
+          display_order?: number | null
+          icon?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          recommendations?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          category_key?: string
+          color?: string
+          created_at?: string
+          description?: string
+          display_order?: number | null
+          icon?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          recommendations?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       chat_messages: {
         Row: {
           conversation_id: string

@@ -26,6 +26,7 @@ import AdminEmailAutomation from "./pages/AdminEmailAutomation";
 import MasterDashboard from "./pages/MasterDashboard";
 import AdminAIResponses from "./pages/AdminAIResponses";
 import AISettings from "./pages/AISettings";
+import AdminCategories from "./pages/AdminCategories";
 import NotFound from "./pages/NotFound";
 import { LiveChatWidget } from "./components/LiveChatWidget";
 
@@ -135,6 +136,14 @@ const App = () => {
                   element={
                     <ProtectedRoute requireAdmin>
                       <AdminAIResponses />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin/categories" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <AdminCategories />
                     </ProtectedRoute>
                   } 
                 />
