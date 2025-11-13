@@ -20,7 +20,9 @@ const Index = () => {
       <ExitIntentModal />
       <EmergencyContactButton />
       <Navigation />
-      <Hero />
+      <div id="home">
+        <Hero />
+      </div>
       <ServiceCards />
       
       {/* Hidden sections - accessed via TourServices CTAs */}
@@ -41,7 +43,9 @@ const Index = () => {
           <TestimonialSubmissionForm />
         </div>
       </div>
-      <ContactSection />
+      <div id="contact" className="scroll-mt-20">
+        <ContactSection />
+      </div>
       <Footer />
     </div>
   );

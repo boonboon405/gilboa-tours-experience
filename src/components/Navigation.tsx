@@ -47,7 +47,7 @@ export const Navigation = () => {
     { label: 'בית', href: '#home' },
     { label: 'יום כייף וגיבוש לחברות', href: '#choose-your-day' },
     { label: 'טיולי VIP לאורחי חברות מחו״ל', href: '#vip-tours' },
-    { label: 'גיבוש ODT', href: '#odt' },
+    { label: 'גיבוש ODT', href: '#odt-section' },
     { label: 'צור קשר', href: '#contact' },
   ];
 
