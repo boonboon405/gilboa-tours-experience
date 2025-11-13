@@ -3,7 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
-import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Gauge } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { sanitizeForTTS } from '@/utils/ttsSanitizer';
@@ -30,9 +32,12 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
-  const [sessionId] = useState(() => `session-${Date.now()}-${Math.random()}`);
+  const [sessionId, setSessionId] = useState(() => `session-${Date.now()}-${Math.random()}`);
   const [speechSupported, setSpeechSupported] = useState(true);
   const [textInput, setTextInput] = useState('');
+  const [language, setLanguage] = useState<'he' | 'en'>('he');
+  const [voiceSpeed, setVoiceSpeed] = useState(0.44);
+  const [showSettings, setShowSettings] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -59,7 +64,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     const recognition = new SpeechRecognition();
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.lang = 'he-IL'; // Hebrew language
+    recognition.lang = language === 'he' ? 'he-IL' : 'en-US';
 
     recognition.onstart = () => {
       setIsListening(true);
@@ -95,11 +100,26 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
 
     recognitionRef.current = recognition;
 
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.abort();
+      }
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [language]);
+
+  useEffect(() => {
     // Send initial greeting
     if (messages.length === 0) {
-    const greeting = quizResults
-        ? `שלום! ראיתי שעשית את הQuiz שלנו - מעולה! לפי התוצאות, נראה שאתם מחפשים חוויה מיוחדת. ספרו לי קצת יותר - מה הסיטואציה? כמה אנשים?`
-        : 'שלום! אני סוכן דיגיטלי. אני כאן לעזור לכם למצוא את החוויה המושלמת ליום הצוות שלכם! כיתבו לי או ספרו לי - כמה אנשים אתם? מה מעניין אתכם?';
+      const greeting = language === 'he'
+        ? quizResults
+          ? `שלום! ראיתי שעשית את הQuiz שלנו - מעולה! לפי התוצאות, נראה שאתם מחפשים חוויה מיוחדת. ספרו לי קצת יותר - מה הסיטואציה? כמה אנשים?`
+          : 'שלום! אני סוכן דיגיטלי. אני כאן לעזור לכם למצוא את החוויה המושלמת ליום הצוות שלכם! כיתבו לי או ספרו לי - כמה אנשים אתם? מה מעניין אתכם?'
+        : quizResults
+          ? `Hello! I saw you took our quiz - excellent! Based on the results, it seems you're looking for a special experience. Tell me a bit more - what's the situation? How many people?`
+          : 'Hello! I am a digital agent. I am here to help you find the perfect experience for your team day! Write or tell me - how many people are you? What interests you?';
 
       const initialMsg: Message = {
         id: '0',
@@ -112,15 +132,6 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
       // Speak the greeting
       setTimeout(() => speakText(greeting), 500);
     }
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.abort();
-      }
-      if (window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
-    };
   }, []);
 
   const speakText = (text: string) => {
@@ -139,16 +150,20 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = 'he-IL'; // Hebrew language
-    utterance.rate = 0.44; // 30% slower than current 0.63
+    utterance.lang = language === 'he' ? 'he-IL' : 'en-US';
+    utterance.rate = voiceSpeed;
     utterance.pitch = 1;
     utterance.volume = 1;
 
-    // Try to find a Hebrew voice
+    // Try to find a voice matching the selected language
     const voices = window.speechSynthesis.getVoices();
-    const hebrewVoice = voices.find(voice => voice.lang === 'he-IL' || voice.lang.startsWith('he'));
-    if (hebrewVoice) {
-      utterance.voice = hebrewVoice;
+    const matchingVoice = voices.find(voice => 
+      language === 'he' 
+        ? (voice.lang === 'he-IL' || voice.lang.startsWith('he'))
+        : (voice.lang === 'en-US' || voice.lang.startsWith('en'))
+    );
+    if (matchingVoice) {
+      utterance.voice = matchingVoice;
     }
 
     utterance.onstart = () => setIsSpeaking(true);
@@ -252,6 +267,49 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     }
   };
 
+  const handleClearChat = () => {
+    // Stop any ongoing speech
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    if (recognitionRef.current && isListening) {
+      recognitionRef.current.stop();
+    }
+
+    // Reset conversation
+    setMessages([]);
+    setConversationId(null);
+    setSessionId(`session-${Date.now()}-${Math.random()}`);
+    setTextInput('');
+    setIsListening(false);
+    setIsSpeaking(false);
+    setIsProcessing(false);
+
+    // Send new greeting
+    const greeting = language === 'he'
+      ? quizResults
+        ? `שלום! ראיתי שעשית את הQuiz שלנו - מעולה! לפי התוצאות, נראה שאתם מחפשים חוויה מיוחדת. ספרו לי קצת יותר - מה הסיטואציה? כמה אנשים?`
+        : 'שלום! אני סוכן דיגיטלי. אני כאן לעזור לכם למצוא את החוויה המושלמת ליום הצוות שלכם! כיתבו לי או ספרו לי - כמה אנשים אתם? מה מעניין אתכם?'
+      : quizResults
+        ? `Hello! I saw you took our quiz - excellent! Based on the results, it seems you're looking for a special experience. Tell me a bit more - what's the situation? How many people?`
+        : 'Hello! I am a digital agent. I am here to help you find the perfect experience for your team day! Write or tell me - how many people are you? What interests you?';
+
+    const initialMsg: Message = {
+      id: '0',
+      sender: 'ai',
+      message: greeting,
+      created_at: new Date().toISOString()
+    };
+    setMessages([initialMsg]);
+    
+    setTimeout(() => speakText(greeting), 500);
+
+    toast({
+      title: language === 'he' ? "שיחה חדשה" : "New Conversation",
+      description: language === 'he' ? "השיחה אופסה בהצלחה" : "Chat cleared successfully"
+    });
+  };
+
   if (!speechSupported) {
     return (
       <Card className="flex flex-col items-center justify-center h-[600px] max-w-4xl mx-auto p-8 text-center">
@@ -272,19 +330,81 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
           <img src={companyLogo} alt="טיולים עם דוד" className="w-10 h-10 rounded-lg object-cover" />
           <Bot className="w-8 h-8 text-primary" />
           <div>
-            <h3 className="font-semibold text-lg">צ'אט קולי - טיולים עם דוד</h3>
-            <p className="text-sm text-muted-foreground">חוויות בטבע עם הדרכה מקצועית 🌿</p>
+            <h3 className="font-semibold text-lg">{language === 'he' ? 'צ\'אט קולי - טיולים עם דוד' : 'Voice Chat - Tours with David'}</h3>
+            <p className="text-sm text-muted-foreground">{language === 'he' ? 'חוויות בטבע עם הדרכה מקצועית 🌿' : 'Nature experiences with professional guidance 🌿'}</p>
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleSpeech}
-          disabled={!isSpeaking}
-        >
-          {isSpeaking ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowSettings(!showSettings)}
+            title={language === 'he' ? 'הגדרות' : 'Settings'}
+          >
+            <Gauge className="w-5 h-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleClearChat}
+            title={language === 'he' ? 'נקה שיחה' : 'Clear Chat'}
+          >
+            <Trash2 className="w-5 h-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleSpeech}
+            disabled={!isSpeaking}
+          >
+            {isSpeaking ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+          </Button>
+        </div>
       </div>
+
+      {/* Settings Panel */}
+      {showSettings && (
+        <div className="p-4 border-b border-border/50 bg-muted/30 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Languages className="w-4 h-4" />
+              <label className="text-sm font-medium">{language === 'he' ? 'שפה' : 'Language'}:</label>
+            </div>
+            <Select value={language} onValueChange={(value: 'he' | 'en') => setLanguage(value)}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="he">עברית</SelectItem>
+                <SelectItem value="en">English</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Gauge className="w-4 h-4" />
+                <label className="text-sm font-medium">{language === 'he' ? 'מהירות קול' : 'Voice Speed'}:</label>
+              </div>
+              <span className="text-sm text-muted-foreground">{voiceSpeed.toFixed(2)}x</span>
+            </div>
+            <Slider
+              value={[voiceSpeed]}
+              onValueChange={(value) => setVoiceSpeed(value[0])}
+              min={0.3}
+              max={1.5}
+              step={0.05}
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>{language === 'he' ? 'איטי' : 'Slow'}</span>
+              <span>{language === 'he' ? 'רגיל' : 'Normal'}</span>
+              <span>{language === 'he' ? 'מהיר' : 'Fast'}</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Messages */}
       <ScrollArea className="flex-1 p-4">
@@ -335,10 +455,10 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
           <Input
             value={textInput}
             onChange={(e) => setTextInput(e.target.value)}
-            placeholder="הקלידו את תשובתכם..."
+            placeholder={language === 'he' ? 'הקלידו את תשובתכם...' : 'Type your answer...'}
             disabled={isProcessing || isSpeaking}
-            className="flex-1 text-right"
-            dir="rtl"
+            className={`flex-1 ${language === 'he' ? 'text-right' : 'text-left'}`}
+            dir={language === 'he' ? 'rtl' : 'ltr'}
           />
           <Button 
             type="submit" 
@@ -375,17 +495,29 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
               )}
             </Button>
             <p className="text-sm text-muted-foreground text-center">
-              {isListening 
-                ? '🎤 מקשיב...' 
-                : isSpeaking 
-                ? '🔊 מדבר...'
-                : isProcessing
-                ? '⚙️ מעבד...'
-                : 'לחצו על המיקרופון להתחלת שיחה'
-              }
+              {language === 'he' ? (
+                isListening 
+                  ? '🎤 מקשיב...' 
+                  : isSpeaking 
+                  ? '🔊 מדבר...'
+                  : isProcessing
+                  ? '⚙️ מעבד...'
+                  : 'לחצו על המיקרופון להתחלת שיחה'
+              ) : (
+                isListening 
+                  ? '🎤 Listening...' 
+                  : isSpeaking 
+                  ? '🔊 Speaking...'
+                  : isProcessing
+                  ? '⚙️ Processing...'
+                  : 'Click the microphone to start conversation'
+              )}
             </p>
             <p className="text-xs text-muted-foreground text-center">
-              תכונה זו פועלת בעברית ובאנגלית • ללא צורך ב-API Key
+              {language === 'he' 
+                ? 'תכונה זו פועלת בעברית ובאנגלית • ללא צורך ב-API Key'
+                : 'Works in Hebrew and English • No API Key required'
+              }
             </p>
           </div>
         </div>
