@@ -454,12 +454,24 @@ ${transcript}`;
     'ספר לי עוד',
     'מה האפשרויות?',
     'כמה זה עולה?',
-    'איפה זה?'
+    'איפה זה?',
+    'כמה זמן זה לוקח?',
+    'מה כולל במחיר?',
+    'איזו רמה פיזית נדרשת?',
+    'מתאים לכל הגילאים?',
+    'מה עם מזג האויר?',
+    'איך מזמינים?'
   ] : [
     'Tell me more',
     'What are the options?',
     'How much does it cost?',
-    'Where is it?'
+    'Where is it?',
+    'How long does it take?',
+    'What\'s included in the price?',
+    'What physical level required?',
+    'Suitable for all ages?',
+    'What about weather?',
+    'How to book?'
   ];
 
   if (!speechSupported) {
@@ -670,7 +682,7 @@ ${transcript}`;
           </form>
           
           {/* Quick Reply Buttons */}
-          <div className={`flex gap-2 px-3 pb-3 overflow-x-auto ${language === 'he' ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex flex-wrap gap-2 px-3 pb-3 ${language === 'he' ? 'flex-row-reverse' : ''}`}>
             {quickReplies.map((reply, index) => (
               <Button
                 key={index}
@@ -678,7 +690,7 @@ ${transcript}`;
                 size="sm"
                 onClick={() => handleQuickReply(reply)}
                 disabled={isProcessing || isSpeaking}
-                className="whitespace-nowrap text-xs hover:bg-primary/10 hover:border-primary transition-colors"
+                className="whitespace-nowrap text-xs hover:bg-primary/10 hover:border-primary transition-colors shadow-sm"
               >
                 {reply}
               </Button>
