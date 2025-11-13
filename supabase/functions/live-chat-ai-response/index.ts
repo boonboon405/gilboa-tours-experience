@@ -15,6 +15,7 @@ serve(async (req) => {
   }
 
   try {
+    const startTime = Date.now();
     const { conversationId, message } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -50,24 +51,46 @@ serve(async (req) => {
       content: msg.message
     })) || [];
 
-    // Call Lovable AI
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...conversationHistory,
-          { role: "user", content: message }
-        ],
-        temperature: 0.7,
-        max_tokens: 500
-      }),
-    });
+    // Call Lovable AI with timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 25000); // 25 second timeout
+    
+    let response;
+    try {
+      response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          messages: [
+            { role: "system", content: systemPrompt },
+            ...conversationHistory,
+            { role: "user", content: message }
+          ],
+          temperature: 0.7,
+          max_tokens: 500
+        }),
+        signal: controller.signal
+      });
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.error('Live chat AI timeout');
+        return new Response(
+          JSON.stringify({ 
+            error: "הבקשה ארכה יותר מדי זמן",
+            fallback: "מצטערים, זמן תגובה ארוך מדי. נציג יחזור אליכם או התקשרו ל-053-7314235" 
+          }),
+          { status: 504, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      throw error;
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     if (!response.ok) {
       if (response.status === 429) {
@@ -174,12 +197,16 @@ serve(async (req) => {
       .update({ updated_at: new Date().toISOString() })
       .eq('id', conversationId);
 
+    const responseTime = Date.now() - startTime;
+    console.log(`Live chat response completed in ${responseTime}ms`);
+
     return new Response(
       JSON.stringify({
         message: aiMessage,
         needsHumanAgent,
         isAiResponse: true,
-        confidenceScore
+        confidenceScore,
+        responseTimeMs: responseTime
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

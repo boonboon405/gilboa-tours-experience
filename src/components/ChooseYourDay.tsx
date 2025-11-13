@@ -454,7 +454,7 @@ export const ChooseYourDay = () => {
                   >
                     {hasRecommendations && (
                       <Badge className="absolute top-4 left-4 bg-gradient-hero text-white border-none flex items-center gap-1 shadow-glow z-10">
-                        <Sparkles className="h-3 w-3 animate-pulse" />
+                        <Sparkles className="h-3 w-3 animate-pulse-slow" />
                         מומלץ
                       </Badge>
                     )}
@@ -537,7 +537,7 @@ export const ChooseYourDay = () => {
                                 {typeof activity === 'string' && activity.includes('מומלץ מאד') ? (
                                   <>
                                     {activity.split('מומלץ מאד')[0]}
-                                    <span className="text-yellow-500 font-bold animate-pulse">מומלץ מאד</span>
+                                    <span className="text-yellow-500 font-bold animate-pulse-slow">מומלץ מאד</span>
                                     {activity.split('מומלץ מאד')[1]}
                                   </>
                                 ) : (

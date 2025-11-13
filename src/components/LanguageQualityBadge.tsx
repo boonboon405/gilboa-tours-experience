@@ -62,7 +62,7 @@ export const LanguageQualityBadge = ({
                 className="
                   inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5
                   bg-red-500/30 text-red-800 border-red-500/50
-                  animate-pulse
+                  animate-pulse-slow
                 "
               >
                 <AlertTriangle className="w-3 h-3" />

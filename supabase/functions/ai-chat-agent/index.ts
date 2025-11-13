@@ -124,6 +124,7 @@ serve(async (req) => {
   }
 
   try {
+    const startTime = Date.now();
     const { message, conversationId, sessionId, quizResults } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -231,24 +232,46 @@ serve(async (req) => {
       content: msg.message
     })) || [];
 
-    // Call Lovable AI
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: systemPrompt + quizContext + knowledgeContext },
-          ...conversationHistory,
-          { role: "user", content: message }
-        ],
-        temperature: 0.8,
-        max_tokens: 1000
-      }),
-    });
+    // Call Lovable AI with timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+    
+    let response;
+    try {
+      response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          messages: [
+            { role: "system", content: systemPrompt + quizContext + knowledgeContext },
+            ...conversationHistory,
+            { role: "user", content: message }
+          ],
+          temperature: 0.8,
+          max_tokens: 1000
+        }),
+        signal: controller.signal
+      });
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.error('AI request timeout');
+        return new Response(
+          JSON.stringify({ 
+            error: "הבקשה ארכה יותר מדי זמן. אנא נסו שוב או צרו קשר ישירות ל-053-7314235",
+            fallback: "בקשה נכשלה - זמן תגובה ארוך מדי" 
+          }),
+          { status: 504, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      throw error;
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     // Generate quick reply suggestions based on context
     const quickReplies = [];
@@ -356,7 +379,8 @@ serve(async (req) => {
         }
       });
 
-    // Log interaction with language quality metrics
+    // Log interaction with language quality metrics and performance
+    const responseTime = Date.now() - startTime;
     await supabase
       .from('ai_interaction_metrics')
       .insert({
@@ -370,9 +394,13 @@ serve(async (req) => {
           hebrewQualityScore: hebrewQuality.score,
           arabicSlangDetected: arabicDetection.found,
           arabicWords: arabicDetection.words,
-          languageQualityDetails: hebrewQuality.details
+          languageQualityDetails: hebrewQuality.details,
+          responseTimeMs: responseTime,
+          timestamp: new Date().toISOString()
         }
       });
+    
+    console.log(`Performance: Request completed in ${responseTime}ms`);
 
     return new Response(
       JSON.stringify({

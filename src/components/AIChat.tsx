@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { CategorySelector } from '@/components/CategorySelector';
 import { CategoryBadge } from '@/components/CategoryBadge';
 import { LanguageQualityBadge } from '@/components/LanguageQualityBadge';
+import companyLogo from '@/assets/company-logo.png';
 import { categoryMetadata, DNACategory } from '@/utils/activityCategories';
 import { detectCategoriesInMessage } from '@/utils/categoryDetector';
 
@@ -243,13 +244,14 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     <Card className="flex flex-col h-[600px] max-w-4xl mx-auto border-border/50 shadow-xl">
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b border-border/50 bg-gradient-to-r from-primary/10 to-secondary/10">
+        <img src={companyLogo} alt="טיולים עם דוד" className="w-10 h-10 rounded-lg object-cover" />
         <div className="relative">
           <Bot className="w-8 h-8 text-primary" />
-          <Sparkles className="w-4 h-4 text-accent absolute -top-1 -right-1 animate-pulse" />
+          <Sparkles className="w-4 h-4 text-accent absolute -top-1 -right-1 animate-pulse-slow" />
         </div>
-        <div>
+        <div className="flex-1">
           <h3 className="font-semibold text-lg">סוכן חכם - טיולים עם דוד</h3>
-          <p className="text-sm text-muted-foreground">מומחה לסיורים מותאמים אישית</p>
+          <p className="text-sm text-muted-foreground">חוויות בטבע עם הדרכה מקצועית 🌿</p>
         </div>
       </div>
 

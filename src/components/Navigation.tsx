@@ -68,7 +68,7 @@ export const Navigation = () => {
               onClick={() => setShowQuiz(true)}
               className="relative px-4 py-2 rounded-lg bg-gradient-hero text-white font-medium whitespace-nowrap flex items-center gap-2 hover:opacity-90 transition-all hover:scale-105 shadow-glow group"
             >
-              <Sparkles className="h-4 w-4 animate-pulse" />
+              <Sparkles className="h-4 w-4 animate-pulse-slow" />
               Quiz
               {isAdmin && quizCount > 0 && (
                 <Badge variant="secondary" className="ml-1 bg-white/20 text-white border-white/30">
@@ -176,7 +176,7 @@ export const Navigation = () => {
               }}
               className="w-full mt-2 px-4 py-2 rounded-lg bg-gradient-hero text-white font-medium flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-glow"
             >
-              <Sparkles className="h-4 w-4 animate-pulse" />
+              <Sparkles className="h-4 w-4 animate-pulse-slow" />
               Quiz
               {isAdmin && quizCount > 0 && (
                 <Badge variant="secondary" className="ml-1 bg-white/20 text-white border-white/30">

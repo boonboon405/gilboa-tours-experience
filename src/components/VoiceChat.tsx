@@ -6,6 +6,7 @@ import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { sanitizeForTTS } from '@/utils/ttsSanitizer';
+import companyLogo from '@/assets/company-logo.png';
 
 interface Message {
   id: string;
@@ -256,10 +257,11 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-border/50 bg-gradient-to-r from-primary/10 to-secondary/10">
         <div className="flex items-center gap-3">
+          <img src={companyLogo} alt="טיולים עם דוד" className="w-10 h-10 rounded-lg object-cover" />
           <Bot className="w-8 h-8 text-primary" />
           <div>
             <h3 className="font-semibold text-lg">צ'אט קולי - טיולים עם דוד</h3>
-            <p className="text-sm text-muted-foreground">דברו איתי בעברית או אנגלית</p>
+            <p className="text-sm text-muted-foreground">חוויות בטבע עם הדרכה מקצועית 🌿</p>
           </div>
         </div>
         <Button
@@ -323,7 +325,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
             size="lg"
             className={`w-20 h-20 rounded-full ${
               isListening 
-                ? 'bg-red-500 hover:bg-red-600 animate-pulse' 
+                ? 'bg-red-500 hover:bg-red-600 animate-pulse-slow' 
                 : 'bg-primary hover:bg-primary/90'
             }`}
           >
