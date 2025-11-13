@@ -23,6 +23,7 @@ export const Navigation = () => {
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizCount, setQuizCount] = useState<number>(0);
   const [activeSection, setActiveSection] = useState<string>('home');
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const fetchQuizCount = async () => {
@@ -32,6 +33,16 @@ export const Navigation = () => {
       if (count !== null) setQuizCount(count);
     };
     fetchQuizCount();
+  }, []);
+
+  // Scroll detection for enhanced sticky effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Intersection Observer for active section highlighting
@@ -98,7 +109,11 @@ export const Navigation = () => {
   ];
 
   return (
-    <nav className="fixed top-0 w-full bg-card/95 backdrop-blur-sm shadow-soft z-50 border-b border-border">
+    <nav className={`fixed top-0 w-full z-50 border-b transition-all duration-300 ${
+      isScrolled 
+        ? 'bg-card/98 backdrop-blur-md shadow-lg border-border' 
+        : 'bg-card/95 backdrop-blur-sm shadow-soft border-border/50'
+    }`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -223,7 +238,7 @@ export const Navigation = () => {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden pb-4">
+          <div className="md:hidden pb-4 animate-in fade-in slide-in-from-top-2 duration-300">
             <button
               onClick={() => {
                 setShowQuiz(true);
@@ -239,21 +254,23 @@ export const Navigation = () => {
                 </Badge>
               )}
             </button>
-            {navItems.map((item) => {
-              const isActive = activeSection === item.href.replace('#', '');
-              return (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  onClick={(e) => handleNavClick(e, item.href)}
-                  className={`block py-2 text-foreground hover:text-primary transition-all ${
-                    isActive ? 'text-primary font-semibold bg-primary/10 px-3 rounded-md' : ''
-                  }`}
-                >
-                  {item.label}
-                </a>
-              );
-            })}
+            <div className="mt-2 space-y-1">
+              {navItems.map((item) => {
+                const isActive = activeSection === item.href.replace('#', '');
+                return (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    onClick={(e) => handleNavClick(e, item.href)}
+                    className={`block py-3 px-4 rounded-lg text-foreground hover:text-primary hover:bg-primary/5 transition-all duration-200 ${
+                      isActive ? 'text-primary font-semibold bg-primary/10 border-l-4 border-primary' : ''
+                    }`}
+                  >
+                    {item.label}
+                  </a>
+                );
+              })}
+            </div>
             <Link to="/booking">
               <Button variant="default" className="w-full mt-2 gap-2">
                 <Calendar className="h-4 w-4" />
