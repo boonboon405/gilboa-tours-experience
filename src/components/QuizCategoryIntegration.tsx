@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TeamDNAQuiz } from '@/components/TeamDNAQuiz';
 import { CategoryShowcase } from '@/components/CategoryShowcase';
-import { Sparkles, Brain } from 'lucide-react';
+import { Sparkles, Brain, CheckCircle2 } from 'lucide-react';
 import { QuizResults } from '@/utils/quizScoring';
+import { Badge } from '@/components/ui/badge';
 
 interface QuizCategoryIntegrationProps {
   onQuizComplete?: (results: QuizResults) => void;
@@ -17,6 +18,16 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
     const stored = localStorage.getItem('teamDNAResults');
     return stored ? JSON.parse(stored) : null;
   });
+
+  // Determine current step
+  const getCurrentStep = () => {
+    if (!quizResults && !showQuiz) return 1; // Not started or starting quiz
+    if (showQuiz) return 1; // Currently taking quiz
+    if (quizResults) return 3; // Quiz completed, showing recommendations
+    return 2; // Processing (transition state)
+  };
+
+  const currentStep = getCurrentStep();
 
   const handleQuizComplete = (results: QuizResults) => {
     setQuizResults(results);
@@ -118,7 +129,22 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
       <Card className="bg-muted/30">
         <CardContent className="pt-6">
           <div className="grid md:grid-cols-3 gap-4 text-center">
-            <div className="space-y-2">
+            {/* Step 1 */}
+            <div className={`relative space-y-2 p-4 rounded-lg transition-all duration-300 ${
+              currentStep === 1 
+                ? 'bg-primary/10 border-2 border-primary shadow-lg scale-105' 
+                : currentStep > 1 
+                ? 'bg-background border border-border/50 opacity-70'
+                : 'bg-background border border-border/50'
+            }`}>
+              {currentStep === 1 && (
+                <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground animate-pulse">
+                  {language === 'he' ? 'כאן אתם' : 'You are here'}
+                </Badge>
+              )}
+              {currentStep > 1 && (
+                <CheckCircle2 className="absolute -top-2 -right-2 w-6 h-6 text-green-500 bg-background rounded-full" />
+              )}
               <div className="text-3xl">📋</div>
               <h4 className="font-semibold text-sm">
                 {language === 'he' ? 'שלב 1: Quiz' : 'Step 1: Quiz'}
@@ -127,7 +153,23 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
                 {language === 'he' ? 'שאלות על הצוות שלך' : 'Questions about your team'}
               </p>
             </div>
-            <div className="space-y-2">
+
+            {/* Step 2 */}
+            <div className={`relative space-y-2 p-4 rounded-lg transition-all duration-300 ${
+              currentStep === 2 
+                ? 'bg-primary/10 border-2 border-primary shadow-lg scale-105' 
+                : currentStep > 2 
+                ? 'bg-background border border-border/50 opacity-70'
+                : 'bg-background border border-border/50 opacity-50'
+            }`}>
+              {currentStep === 2 && (
+                <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground animate-pulse">
+                  {language === 'he' ? 'כאן אתם' : 'You are here'}
+                </Badge>
+              )}
+              {currentStep > 2 && (
+                <CheckCircle2 className="absolute -top-2 -right-2 w-6 h-6 text-green-500 bg-background rounded-full" />
+              )}
               <div className="text-3xl">🎯</div>
               <h4 className="font-semibold text-sm">
                 {language === 'he' ? 'שלב 2: ניתוח' : 'Step 2: Analysis'}
@@ -136,7 +178,18 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
                 {language === 'he' ? 'הבוט מזהה את 3 הקטגוריות המובילות' : 'Bot identifies top 3 categories'}
               </p>
             </div>
-            <div className="space-y-2">
+
+            {/* Step 3 */}
+            <div className={`relative space-y-2 p-4 rounded-lg transition-all duration-300 ${
+              currentStep === 3 
+                ? 'bg-primary/10 border-2 border-primary shadow-lg scale-105' 
+                : 'bg-background border border-border/50 opacity-50'
+            }`}>
+              {currentStep === 3 && (
+                <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground animate-pulse">
+                  {language === 'he' ? 'כאן אתם' : 'You are here'}
+                </Badge>
+              )}
               <div className="text-3xl">✨</div>
               <h4 className="font-semibold text-sm">
                 {language === 'he' ? 'שלב 3: המלצות' : 'Step 3: Recommendations'}
