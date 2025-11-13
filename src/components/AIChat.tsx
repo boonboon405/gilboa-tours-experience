@@ -2,13 +2,15 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Bot, User, Sparkles, Volume2 } from 'lucide-react';
+import { Loader2, Bot, User, Sparkles, RotateCcw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { CategorySelector } from '@/components/CategorySelector';
 import { CategoryBadge } from '@/components/CategoryBadge';
 import { LanguageQualityBadge } from '@/components/LanguageQualityBadge';
 import { VoiceTextInput } from '@/components/VoiceTextInput';
+import { ProgressIndicator } from '@/components/ProgressIndicator';
+import { AnswerSummary, ConversationData } from '@/components/AnswerSummary';
 import companyLogo from '@/assets/company-logo.png';
 import { categoryMetadata, DNACategory } from '@/utils/activityCategories';
 import { detectCategoriesInMessage } from '@/utils/categoryDetector';
@@ -44,9 +46,20 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [showCategorySelector, setShowCategorySelector] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [typingPreview, setTypingPreview] = useState('');
+  const [conversationData, setConversationData] = useState<ConversationData>({});
+  const [currentStep, setCurrentStep] = useState(0);
+  const [showSummary, setShowSummary] = useState(false);
+  const [editingField, setEditingField] = useState<keyof ConversationData | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const { toast } = useToast();
+
+  const steps = [
+    { id: 'categories', label: 'תחומי עניין', completed: !!conversationData.categories?.length, current: currentStep === 0 },
+    { id: 'people', label: 'מספר אנשים', completed: !!conversationData.numberOfPeople, current: currentStep === 1 },
+    { id: 'details', label: 'פרטים נוספים', completed: !!(conversationData.dates && conversationData.budget), current: currentStep === 2 },
+    { id: 'summary', label: 'סיכום', completed: showSummary, current: currentStep === 3 }
+  ];
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
@@ -219,13 +232,15 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
       const { data, error } = await supabase.functions.invoke('ai-chat-agent', {
         body: {
           message: userMessage,
-          conversationId,
-          sessionId,
-          quizResults
-        }
-      });
+      conversationId,
+      sessionId,
+      quizResults,
+      conversationData,
+      currentStep
+    }
+  });
 
-      if (error) throw error;
+  if (error) throw error;
 
       if (data.error) {
         toast({
@@ -247,6 +262,21 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
       };
 
       setMessages(prev => [...prev, aiMessage]);
+      setQuickReplies(data.quickReplies || []);
+      
+      // Handle conversation data updates
+      if (data.conversationData) {
+        const updatedData = { ...conversationData, ...data.conversationData };
+        setConversationData(updatedData);
+        
+        // Update progress
+        if (updatedData.categories?.length) setCurrentStep(Math.max(currentStep, 1));
+        if (updatedData.numberOfPeople) setCurrentStep(Math.max(currentStep, 2));
+        if (updatedData.dates && updatedData.budget) {
+          setCurrentStep(3);
+          setTimeout(() => setShowSummary(true), 1000);
+        }
+      }
       
       // Show alert if Arabic detected
       if (data.languageQuality?.arabicDetected) {
@@ -256,6 +286,9 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
           variant: "destructive",
         });
       }
+      
+      // Speak the AI response
+      speakText(data.message);
       
       // Update quick replies
       if (data.quickReplies && data.quickReplies.length > 0) {
@@ -285,6 +318,88 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     handleSend(reply);
   };
 
+  const handleEditField = (field: keyof ConversationData) => {
+    setEditingField(field);
+    setShowSummary(false);
+    
+    const fieldPrompts: Record<keyof ConversationData, string> = {
+      categories: 'איזה קטגוריות מעניינות אותך?',
+      numberOfPeople: 'כמה אנשים משתתפים?',
+      situation: 'מה הסיטואציה? (יום צוות, יום גיבוש, וכו\')',
+      dates: 'מה התאריכים המועדפים?',
+      budget: 'מה התקציב המשוער לאדם?',
+      specificInterests: 'יש תחומי עניין ספציפיים?',
+      transport: 'יש צורך בהסעות?'
+    };
+    
+    const prompt = fieldPrompts[field];
+    const aiMessage: Message = {
+      id: `edit-${Date.now()}`,
+      sender: 'ai',
+      message: `בטח! בואו נעדכן את זה. ${prompt}`,
+      created_at: new Date().toISOString()
+    };
+    
+    setMessages(prev => [...prev, aiMessage]);
+    speakText(aiMessage.message);
+  };
+
+  const handleConfirmSummary = async () => {
+    setIsLoading(true);
+    
+    try {
+      // Generate final recommendation
+      const summaryMessage = `על סמך הפרטים שלכם, אני ממליץ על החבילה הבאה...`;
+      
+      const { data, error } = await supabase.functions.invoke('ai-chat-agent', {
+        body: {
+          message: 'צור המלצה סופית על סמך כל הפרטים',
+          conversationId,
+          sessionId,
+          quizResults,
+          conversationData,
+          requestFinalRecommendation: true
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.message) {
+        const aiMessage: Message = {
+          id: `final-${Date.now()}`,
+          sender: 'ai',
+          message: data.message,
+          created_at: new Date().toISOString()
+        };
+        
+        setMessages(prev => [...prev, aiMessage]);
+        speakText(data.message);
+        setShowSummary(false);
+      }
+    } catch (error) {
+      console.error('Error generating recommendation:', error);
+      toast({
+        title: "שגיאה",
+        description: "לא הצלחנו ליצור המלצה. אנא נסו שוב.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResetConversation = () => {
+    setConversationData({});
+    setCurrentStep(0);
+    setShowSummary(false);
+    setMessages([{
+      id: '0',
+      sender: 'ai',
+      message: 'בואו נתחיל מחדש! מה מעניין אתכם?',
+      created_at: new Date().toISOString()
+    }]);
+  };
+
   return (
     <Card className="flex flex-col h-[600px] max-w-4xl mx-auto border-border/50 shadow-xl">
       {/* Header */}
@@ -298,11 +413,39 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
           <h3 className="font-semibold text-lg">סוכן חכם - טיולים עם דוד</h3>
           <p className="text-sm text-muted-foreground">חוויות בטבע עם הדרכה מקצועית 🌿</p>
         </div>
+        {conversationData.numberOfPeople && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleResetConversation}
+            className="text-xs"
+          >
+            <RotateCcw className="w-4 h-4 ml-1" />
+            התחל מחדש
+          </Button>
+        )}
+      </div>
+
+      {/* Progress Indicator */}
+      <div className="p-4 border-b border-border/50 bg-background">
+        <ProgressIndicator steps={steps} />
       </div>
 
       {/* Messages */}
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
+          {/* Show Summary if ready */}
+          {showSummary && (
+            <div className="mb-4">
+              <AnswerSummary
+                data={conversationData}
+                onEdit={handleEditField}
+                onConfirm={handleConfirmSummary}
+                isLoading={isLoading}
+              />
+            </div>
+          )}
+
           {messages.map((msg) => (
             <div
               key={msg.id}

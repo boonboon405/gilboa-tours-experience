@@ -141,7 +141,7 @@ serve(async (req) => {
 
   try {
     const startTime = Date.now();
-    const { message, conversationId, sessionId, quizResults } = await req.json();
+    const { message, conversationId, sessionId, quizResults, conversationData, currentStep, requestFinalRecommendation } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
@@ -200,6 +200,22 @@ serve(async (req) => {
       .select('*')
       .eq('conversation_id', conversation.id)
       .order('created_at', { ascending: true });
+
+    // Build context from conversation data
+    let dataContext = "";
+    if (conversationData) {
+      dataContext = `\n\nמידע שנאסף עד כה:\n`;
+      if (conversationData.categories) dataContext += `קטגוריות: ${conversationData.categories.join(', ')}\n`;
+      if (conversationData.numberOfPeople) dataContext += `מספר אנשים: ${conversationData.numberOfPeople}\n`;
+      if (conversationData.situation) dataContext += `סיטואציה: ${conversationData.situation}\n`;
+      if (conversationData.dates) dataContext += `תאריכים: ${conversationData.dates}\n`;
+      if (conversationData.budget) dataContext += `תקציב: ${conversationData.budget}\n`;
+      if (conversationData.specificInterests) dataContext += `תחומי עניין: ${conversationData.specificInterests}\n`;
+      if (conversationData.transport) dataContext += `הסעות: ${conversationData.transport}\n`;
+      
+      dataContext += `\nשלב נוכחי: ${currentStep}/3\n`;
+      dataContext += `\nהנחיות: בדוק אם המשתמש מבקש לשנות מידע קיים (למשל "שנה ל-15 אנשים") ועדכן בהתאם.\n`;
+    }
 
     // Build context from quiz results
     let quizContext = "";
@@ -263,12 +279,12 @@ serve(async (req) => {
         body: JSON.stringify({
           model: "google/gemini-2.5-flash",
           messages: [
-            { role: "system", content: systemPrompt + quizContext + knowledgeContext },
+            { role: "system", content: systemPrompt + quizContext + knowledgeContext + dataContext },
             ...conversationHistory,
             { role: "user", content: message }
           ],
           temperature: 0.8,
-          max_tokens: 1000
+          max_tokens: requestFinalRecommendation ? 1500 : 1000
         }),
         signal: controller.signal
       });
@@ -334,6 +350,52 @@ serve(async (req) => {
 
     const aiResponse = await response.json();
     const aiMessage = aiResponse.choices[0].message.content;
+
+    // Extract structured data from conversation
+    const extractedData: any = {};
+    
+    // Extract number of people
+    const peopleMatch = message.match(/(\d+)\s*(אנשים|איש|משתתפים)/);
+    if (peopleMatch) {
+      extractedData.numberOfPeople = parseInt(peopleMatch[1]);
+    }
+    
+    // Extract categories from message (simple keyword matching)
+    const categoryKeywords: Record<string, string[]> = {
+      adventure: ['הרפתקה', 'אדרנלין', 'שטח', 'אתגר'],
+      nature: ['טבע', 'נוף', 'מעיינות', 'טיול'],
+      history: ['היסטוריה', 'עתיקות', 'בית שאן', 'תרבות'],
+      culinary: ['אוכל', 'קולינריה', 'ארוחה', 'מטעמים'],
+      sports: ['ספורט', 'פעיל', 'אקטיבי'],
+      creative: ['יצירה', 'אמנות', 'סדנה'],
+      wellness: ['רוגע', 'בריאות', 'מרגיע', 'יוגה']
+    };
+    
+    const detectedCategories: string[] = [];
+    Object.entries(categoryKeywords).forEach(([category, keywords]) => {
+      if (keywords.some(keyword => message.includes(keyword))) {
+        detectedCategories.push(category);
+      }
+    });
+    
+    if (detectedCategories.length > 0) {
+      extractedData.categories = detectedCategories;
+    }
+    
+    // Extract dates
+    if (message.includes('תאריך') || /\d{1,2}[\/\-\.]\d{1,2}/.test(message)) {
+      extractedData.dates = message;
+    }
+    
+    // Extract budget
+    if (message.includes('תקציב') || message.includes('₪') || message.includes('שקל')) {
+      extractedData.budget = message;
+    }
+    
+    // Extract situation
+    if (message.includes('צוות') || message.includes('גיבוש') || message.includes('חברה')) {
+      extractedData.situation = message;
+    }
 
     // Detect Arabic slang and score Hebrew quality
     const arabicDetection = detectArabicSlang(aiMessage);
@@ -424,6 +486,7 @@ serve(async (req) => {
         conversationId: conversation.id,
         sentiment: sentiment,
         quickReplies: quickReplies.slice(0, 4),
+        conversationData: extractedData,
         languageQuality: {
           hebrewScore: hebrewQuality.score,
           arabicDetected: arabicDetection.found,
