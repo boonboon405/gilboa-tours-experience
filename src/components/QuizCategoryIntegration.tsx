@@ -126,77 +126,100 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
       </Card>
 
       {/* How It Works */}
-      <Card className="bg-muted/30">
+      <Card className="bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
         <CardContent className="pt-6">
-          <div className="grid md:grid-cols-3 gap-4 text-center">
-            {/* Step 1 */}
-            <div className={`relative space-y-2 p-4 rounded-lg transition-all duration-300 ${
-              currentStep === 1 
-                ? 'bg-primary/10 border-2 border-primary shadow-lg scale-105' 
-                : currentStep > 1 
-                ? 'bg-background border border-border/50 opacity-70'
-                : 'bg-background border border-border/50'
-            }`}>
-              {currentStep === 1 && (
-                <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground animate-pulse">
-                  {language === 'he' ? 'כאן אתם' : 'You are here'}
-                </Badge>
-              )}
-              {currentStep > 1 && (
-                <CheckCircle2 className="absolute -top-2 -right-2 w-6 h-6 text-green-500 bg-background rounded-full" />
-              )}
-              <div className="text-3xl">📋</div>
-              <h4 className="font-semibold text-sm">
-                {language === 'he' ? 'שלב 1: Quiz' : 'Step 1: Quiz'}
-              </h4>
-              <p className="text-xs text-muted-foreground">
-                {language === 'he' ? 'שאלות על הצוות שלך' : 'Questions about your team'}
-              </p>
+          <div className="relative">
+            {/* Progress Line */}
+            <div className="absolute top-[52px] left-[calc(16.66%+20px)] right-[calc(16.66%+20px)] h-1 bg-muted-foreground/20 hidden md:block">
+              <div 
+                className="h-full bg-gradient-to-r from-primary via-primary to-secondary transition-all duration-700 ease-out"
+                style={{ 
+                  width: currentStep === 1 ? '0%' : currentStep === 2 ? '50%' : '100%',
+                  boxShadow: currentStep > 1 ? '0 0 10px hsl(var(--primary) / 0.5)' : 'none'
+                }}
+              />
             </div>
 
-            {/* Step 2 */}
-            <div className={`relative space-y-2 p-4 rounded-lg transition-all duration-300 ${
-              currentStep === 2 
-                ? 'bg-primary/10 border-2 border-primary shadow-lg scale-105' 
-                : currentStep > 2 
-                ? 'bg-background border border-border/50 opacity-70'
-                : 'bg-background border border-border/50 opacity-50'
-            }`}>
-              {currentStep === 2 && (
-                <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground animate-pulse">
-                  {language === 'he' ? 'כאן אתם' : 'You are here'}
-                </Badge>
-              )}
-              {currentStep > 2 && (
-                <CheckCircle2 className="absolute -top-2 -right-2 w-6 h-6 text-green-500 bg-background rounded-full" />
-              )}
-              <div className="text-3xl">🎯</div>
-              <h4 className="font-semibold text-sm">
-                {language === 'he' ? 'שלב 2: ניתוח' : 'Step 2: Analysis'}
-              </h4>
-              <p className="text-xs text-muted-foreground">
-                {language === 'he' ? 'הבוט מזהה את 3 הקטגוריות המובילות' : 'Bot identifies top 3 categories'}
-              </p>
-            </div>
+            <div className="grid md:grid-cols-3 gap-6 text-center relative">
+              {/* Step 1 */}
+              <div className={`relative space-y-3 p-5 rounded-xl transition-all duration-500 ${
+                currentStep === 1 
+                  ? 'bg-gradient-to-br from-primary/15 to-primary/5 border-2 border-primary shadow-xl scale-105 animate-pulse-slow' 
+                  : currentStep > 1 
+                  ? 'bg-background/50 border border-primary/30 backdrop-blur-sm'
+                  : 'bg-background/50 border border-border/30 backdrop-blur-sm'
+              }`}>
+                {currentStep === 1 && (
+                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg animate-bounce">
+                    {language === 'he' ? '🎯 כאן אתם' : '🎯 You are here'}
+                  </Badge>
+                )}
+                {currentStep > 1 && (
+                  <div className="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg animate-scale-in">
+                    <CheckCircle2 className="w-5 h-5 text-white" />
+                  </div>
+                )}
+                <div className={`text-4xl transition-transform duration-300 ${currentStep === 1 ? 'scale-110 animate-bounce' : ''}`}>
+                  📋
+                </div>
+                <h4 className="font-bold text-base">
+                  {language === 'he' ? 'שלב 1: Quiz' : 'Step 1: Quiz'}
+                </h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {language === 'he' ? 'שאלות על הצוות שלך' : 'Questions about your team'}
+                </p>
+              </div>
 
-            {/* Step 3 */}
-            <div className={`relative space-y-2 p-4 rounded-lg transition-all duration-300 ${
-              currentStep === 3 
-                ? 'bg-primary/10 border-2 border-primary shadow-lg scale-105' 
-                : 'bg-background border border-border/50 opacity-50'
-            }`}>
-              {currentStep === 3 && (
-                <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground animate-pulse">
-                  {language === 'he' ? 'כאן אתם' : 'You are here'}
-                </Badge>
-              )}
-              <div className="text-3xl">✨</div>
-              <h4 className="font-semibold text-sm">
-                {language === 'he' ? 'שלב 3: המלצות' : 'Step 3: Recommendations'}
-              </h4>
-              <p className="text-xs text-muted-foreground">
-                {language === 'he' ? '7 אפשרויות המתאימות ביותר מתוך 100' : 'Only 7 best matching options out of 100'}
-              </p>
+              {/* Step 2 */}
+              <div className={`relative space-y-3 p-5 rounded-xl transition-all duration-500 ${
+                currentStep === 2 
+                  ? 'bg-gradient-to-br from-primary/15 to-primary/5 border-2 border-primary shadow-xl scale-105 animate-pulse-slow' 
+                  : currentStep > 2 
+                  ? 'bg-background/50 border border-primary/30 backdrop-blur-sm'
+                  : 'bg-background/50 border border-border/30 backdrop-blur-sm opacity-60'
+              }`}>
+                {currentStep === 2 && (
+                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg animate-bounce">
+                    {language === 'he' ? '🎯 כאן אתם' : '🎯 You are here'}
+                  </Badge>
+                )}
+                {currentStep > 2 && (
+                  <div className="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg animate-scale-in">
+                    <CheckCircle2 className="w-5 h-5 text-white" />
+                  </div>
+                )}
+                <div className={`text-4xl transition-transform duration-300 ${currentStep === 2 ? 'scale-110 animate-bounce' : ''}`}>
+                  🎯
+                </div>
+                <h4 className="font-bold text-base">
+                  {language === 'he' ? 'שלב 2: ניתוח' : 'Step 2: Analysis'}
+                </h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {language === 'he' ? 'הבוט מזהה את 3 הקטגוריות המובילות' : 'Bot identifies top 3 categories'}
+                </p>
+              </div>
+
+              {/* Step 3 */}
+              <div className={`relative space-y-3 p-5 rounded-xl transition-all duration-500 ${
+                currentStep === 3 
+                  ? 'bg-gradient-to-br from-primary/15 to-primary/5 border-2 border-primary shadow-xl scale-105 animate-pulse-slow' 
+                  : 'bg-background/50 border border-border/30 backdrop-blur-sm opacity-60'
+              }`}>
+                {currentStep === 3 && (
+                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg animate-bounce">
+                    {language === 'he' ? '🎯 כאן אתם' : '🎯 You are here'}
+                  </Badge>
+                )}
+                <div className={`text-4xl transition-transform duration-300 ${currentStep === 3 ? 'scale-110 animate-bounce' : ''}`}>
+                  ✨
+                </div>
+                <h4 className="font-bold text-base">
+                  {language === 'he' ? 'שלב 3: המלצות' : 'Step 3: Recommendations'}
+                </h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {language === 'he' ? '7 אפשרויות המתאימות ביותר מתוך 100' : 'Only 7 best matching options out of 100'}
+                </p>
+              </div>
             </div>
           </div>
         </CardContent>
