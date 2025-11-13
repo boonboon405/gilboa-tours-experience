@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 // Default system prompt (fallback if database is unavailable)
-const DEFAULT_SYSTEM_PROMPT = `אתה סוכן תמיכה AI של טיולים עם דוד, צפון ישראל. אתה כאן לעזור ולענות על שאלות נפוצות.`;
+const DEFAULT_SYSTEM_PROMPT = `אתה סוכן תמיכה AI של טיולים עם דויד, צפון ישראל. אתה כאן לעזור ולענות על שאלות נפוצות.`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -121,7 +121,7 @@ serve(async (req) => {
     const needsHumanAgent = 
       aiMessage.includes('נציג') || 
       aiMessage.includes('0537314235') ||
-      aiMessage.includes('דוד') ||
+      aiMessage.includes('דויד') ||
       aiMessage.toLowerCase().includes('human') ||
       message.includes('להזמין') ||
       message.includes('מחיר') ||

@@ -82,7 +82,7 @@ const handler = async (req: Request): Promise<Response> => {
         </div>
 
         <div style="text-align: center; margin-top: 20px; color: #888; font-size: 12px;">
-          <p>© ${new Date().getFullYear()} דוד טורס - כל הזכויות שמורות</p>
+          <p>© ${new Date().getFullYear()} דויד טורס - כל הזכויות שמורות</p>
         </div>
       </div>
     `;
@@ -102,38 +102,16 @@ const handler = async (req: Request): Promise<Response> => {
       const leadEmailHtml = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 32px;">דוד טורס</h1>
+            <h1 style="color: white; margin: 0; font-size: 32px;">דויד טורס</h1>
             <p style="color: white; margin: 10px 0 0 0; font-size: 18px;">חוויית טיול בלתי נשכחת</p>
           </div>
           
           <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <h2 style="color: #333;">שלום ${name},</h2>
-            
-            <p style="color: #555; line-height: 1.8; font-size: 16px;">
-              תודה שפניתם אלינו! קיבלנו את פנייתכם ונציגינו ייצרו איתכם קשר בהקדם האפשרי.
-            </p>
-
-            <div style="margin: 30px 0; padding: 20px; background: #f8f9fa; border-right: 4px solid #667eea; border-radius: 4px;">
-              <h3 style="margin: 0 0 15px 0; color: #667eea;">למה לבחור בנו?</h3>
-              <ul style="margin: 0; padding: 0 20px; color: #555; line-height: 1.8;">
-                <li>מדריכים מקצועיים ומנוסים</li>
-                <li>טיולים מותאמים אישית</li>
-                <li>שירות VIP ברמה הגבוהה ביותר</li>
-                <li>ניסיון של שנים בארגון טיולי חברות</li>
-              </ul>
-            </div>
-
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="tel:+972-YOUR-PHONE" style="display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 16px;">צור קשר עכשיו</a>
-            </div>
-
-            <p style="color: #888; font-size: 14px; text-align: center; margin-top: 30px;">
-              נשמח לעמוד לשירותכם בכל שאלה
-            </p>
+...
           </div>
 
           <div style="text-align: center; margin-top: 20px; color: #888; font-size: 12px;">
-            <p>© ${new Date().getFullYear()} דוד טורס - כל הזכויות שמורות</p>
+            <p>© ${new Date().getFullYear()} דויד טורס - כל הזכויות שמורות</p>
           </div>
         </div>
       `;
@@ -141,7 +119,7 @@ const handler = async (req: Request): Promise<Response> => {
       leadEmail = await resend.emails.send({
         from: "David Tours <onboarding@resend.dev>",
         to: [email],
-        subject: "תודה על פנייתך - דוד טורס",
+        subject: "תודה על פנייתך - דויד טורס",
         html: leadEmailHtml,
       });
 
