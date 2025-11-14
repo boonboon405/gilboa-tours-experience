@@ -218,4 +218,43 @@ All colors MUST be HSL.
       0 0 40px hsl(var(--accent) / 0.3),
       0 0 60px hsl(var(--accent) / 0.2);
   }
+
+  /* Pulse once animation for section highlight */
+  @keyframes pulse-once {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+    }
+    50% {
+      transform: scale(1.005);
+      box-shadow: 0 0 0 20px hsl(var(--primary) / 0);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 hsl(var(--primary) / 0);
+    }
+  }
+
+  .animate-pulse-once {
+    animation: pulse-once 1s ease-out;
+  }
+}
+
+/* Custom animation utilities */
+@layer utilities {
+  .animate-pulse-slow {
+    animation: slow-pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .shadow-glow {
+    box-shadow: 
+      0 0 20px hsl(var(--primary) / 0.2),
+      0 0 40px hsl(var(--primary) / 0.1);
+  }
+  
+  .shadow-glow-accent {
+    box-shadow: 
+      0 0 20px hsl(var(--accent) / 0.3),
+      0 0 40px hsl(var(--accent) / 0.15);
+  }
 }
