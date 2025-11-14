@@ -12,6 +12,7 @@ import { ExitIntentModal } from '@/components/ExitIntentModal';
 import { EmergencyContactButton } from '@/components/EmergencyContactButton';
 import { PublicFAQ } from '@/components/PublicFAQ';
 import { TestimonialSubmissionForm } from '@/components/TestimonialSubmissionForm';
+import { LandscapeGallery } from '@/components/LandscapeGallery';
 
 const Index = () => {
   return (
@@ -34,6 +35,10 @@ const Index = () => {
       </div>
       <div id="odt-section" className="scroll-mt-20">
         <ODTSection />
+      </div>
+      
+      <div id="landscape-gallery" className="scroll-mt-20">
+        <LandscapeGallery />
       </div>
       
       <Testimonials />
