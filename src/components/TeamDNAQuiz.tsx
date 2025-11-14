@@ -8,6 +8,7 @@ import { categoryMetadata } from '@/utils/activityCategories';
 import { Sparkles, ArrowRight, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
+import { Badge } from '@/components/ui/badge';
 
 interface TeamDNAQuizProps {
   open: boolean;
@@ -24,6 +25,9 @@ export const TeamDNAQuiz = ({ open, onClose, onComplete }: TeamDNAQuizProps) => 
   const progress = ((currentQuestion + 1) / quizQuestions.length) * 100;
   const question = quizQuestions[currentQuestion];
   const selectedAnswers = answers[currentQuestion] || [];
+  
+  // Count how many questions have been answered
+  const answeredCount = answers.filter(answer => answer.length > 0).length;
 
   const handleAnswerSelect = (answerIndex: number) => {
     const newAnswers = [...answers];
@@ -155,10 +159,20 @@ export const TeamDNAQuiz = ({ open, onClose, onComplete }: TeamDNAQuizProps) => 
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-center flex items-center justify-center gap-2">
-            <Sparkles className="h-6 w-6 text-primary" />
-            בואו נכיר את הצוות שלכם! 
-          </DialogTitle>
+          <div className="flex items-center justify-center gap-3">
+            <DialogTitle className="text-2xl text-center flex items-center gap-2">
+              <Sparkles className="h-6 w-6 text-primary" />
+              בואו נכיר את הצוות שלכם! 
+            </DialogTitle>
+            {answeredCount > 0 && (
+              <Badge 
+                variant="default" 
+                className="animate-in zoom-in duration-300 bg-primary text-primary-foreground text-base px-3 py-1.5 font-bold"
+              >
+                {answeredCount}/{quizQuestions.length}
+              </Badge>
+            )}
+          </div>
           <DialogDescription className="text-center text-base">
             ענו על 7 שאלות קצרות ונציג לכם רק את הפעילויות המתאימות ביותר
           </DialogDescription>

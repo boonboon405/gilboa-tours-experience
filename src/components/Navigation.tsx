@@ -146,13 +146,18 @@ export const Navigation = () => {
               onClick={() => setShowQuiz(true)}
               className="relative px-4 py-2 rounded-lg bg-gradient-hero text-white font-medium whitespace-nowrap flex items-center gap-2 hover:opacity-90 transition-all hover:scale-105 shadow-glow group"
             >
-              <Sparkles className="h-4 w-4 animate-pulse-slow" />
+              <div className="relative">
+                <Sparkles className="h-4 w-4 animate-pulse-slow" />
+                {quizCount > 0 && (
+                  <Badge 
+                    variant="secondary" 
+                    className="absolute -top-3 -right-3 h-5 w-5 p-0 flex items-center justify-center text-xs animate-pulse bg-white text-primary font-bold border-2 border-primary"
+                  >
+                    {quizCount}
+                  </Badge>
+                )}
+              </div>
               Quiz
-              {isAdmin && quizCount > 0 && (
-                <Badge variant="secondary" className="ml-1 bg-white/20 text-white border-white/30">
-                  {quizCount}
-                </Badge>
-              )}
             </button>
             {navItems.map((item) => {
               const isActive = activeSection === item.href.replace('#', '');
@@ -261,15 +266,20 @@ export const Navigation = () => {
                 setShowQuiz(true);
                 setIsOpen(false);
               }}
-              className="w-full mt-2 px-4 py-2 rounded-lg bg-gradient-hero text-white font-medium flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-glow"
+              className="w-full mt-2 px-4 py-2 rounded-lg bg-gradient-hero text-white font-medium flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-glow relative"
             >
-              <Sparkles className="h-4 w-4 animate-pulse-slow" />
+              <div className="relative">
+                <Sparkles className="h-4 w-4 animate-pulse-slow" />
+                {quizCount > 0 && (
+                  <Badge 
+                    variant="secondary" 
+                    className="absolute -top-3 -right-3 h-5 w-5 p-0 flex items-center justify-center text-xs animate-pulse bg-white text-primary font-bold border-2 border-primary"
+                  >
+                    {quizCount}
+                  </Badge>
+                )}
+              </div>
               Quiz
-              {isAdmin && quizCount > 0 && (
-                <Badge variant="secondary" className="ml-1 bg-white/20 text-white border-white/30">
-                  {quizCount}
-                </Badge>
-              )}
             </button>
             <div className="mt-2 space-y-1">
               {navItems.map((item) => {
