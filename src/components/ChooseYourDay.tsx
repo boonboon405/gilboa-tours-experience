@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Sunrise, Waves, Landmark, Wine, Clock, CheckCircle2, ChevronDown, ChevronUp, Send, CalendarIcon, Sparkles, RefreshCw, Bike, Footprints, Mountain, Trophy, Target, Heart, Camera, Utensils, Coffee, BookOpen, Users, Palette, Dumbbell, TreePine } from 'lucide-react';
+import { Sunrise, Waves, Landmark, Wine, Clock, CheckCircle2, ChevronDown, ChevronUp, Send, CalendarIcon, Sparkles, RefreshCw, Bike, Footprints, Mountain, Trophy, Target, Heart, Camera, Utensils, Coffee, BookOpen, Users, Palette, Dumbbell, TreePine, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -18,6 +18,15 @@ import { filterActivitiesByDNA } from '@/utils/activityFiltering';
 import { categoryMetadata } from '@/utils/activityCategories';
 import { FavoritesManager } from '@/components/FavoritesManager';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { ImageGallery } from '@/components/ImageGallery';
+import heroImage from '@/assets/hero-gilboa.jpg';
+import clubCarsImage from '@/assets/club-cars.jpg';
+import odtTeamImage from '@/assets/odt-team.jpg';
+import culinaryImage from '@/assets/culinary-experience.jpg';
+import springsActivityImage from '@/assets/springs-activity.jpg';
+import pelicansImage from '@/assets/pelicans.jpg';
+import beitSheanImage from '@/assets/beit-shean.jpg';
+import springsCombinedImage from '@/assets/springs-clubcars-combined.jpg';
 
 const sections = [
   {
@@ -27,6 +36,12 @@ const sections = [
     description: "התחל את היום עם פעולה, אוויר צח וחיוכים.",
     time: "09:00 - 11:30",
     color: "from-orange-500 to-yellow-500",
+    images: [
+      { src: heroImage, alt: "נוף הגלבוע", title: "רכס הגלבוע המרהיב" },
+      { src: clubCarsImage, alt: "רכבי שטח", title: "אתגר רכבי שטח" },
+      { src: pelicansImage, alt: "נדידת ציפורים", title: "נדידת ציפורים" },
+      { src: springsCombinedImage, alt: "פעילויות", title: "פעילויות בטבע" }
+    ],
     activities: [
       "הליכה במי הנחל הצלולים לאורך נחל הקיבוצים (ראלי מכשולים צוותי) - מומלץ מאד",
       "אתגר רכבי שטח דרך גבעות הגלבוע",
