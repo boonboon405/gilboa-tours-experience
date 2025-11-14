@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { MegaMenu } from '@/components/MegaMenu';
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -87,11 +88,28 @@ export const Navigation = () => {
     };
   }, []);
 
-  // Smooth scroll handler - disabled for display only
+  // Smooth scroll handler with enhanced animation
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
-    // Navigation disabled - display only
-    setIsOpen(false); // Close mobile menu after click
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+    
+    if (element) {
+      const offsetTop = element.offsetTop - 80; // Account for fixed navbar
+      
+      window.scrollTo({
+        top: offsetTop,
+        behavior: 'smooth'
+      });
+      
+      setIsOpen(false); // Close mobile menu after click
+      
+      // Add a pulse animation to the target section
+      element.classList.add('animate-pulse-once');
+      setTimeout(() => {
+        element.classList.remove('animate-pulse-once');
+      }, 1000);
+    }
   };
 
   const handleQuizComplete = (results: QuizResults) => {
@@ -135,14 +153,14 @@ export const Navigation = () => {
             </span>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          {/* Desktop Navigation with Mega Menu */}
+          <div className="hidden lg:flex items-center gap-4">
             <button
               onClick={() => setShowQuiz(true)}
-              className="relative px-4 py-2 rounded-lg bg-gradient-hero text-white font-medium whitespace-nowrap flex items-center gap-2 hover:opacity-90 transition-all hover:scale-105 shadow-glow group"
+              className="relative px-4 py-2.5 rounded-lg bg-gradient-hero text-white font-medium whitespace-nowrap flex items-center gap-2 hover:opacity-90 transition-all duration-300 hover:scale-105 hover:shadow-xl shadow-glow group"
             >
               <div className="relative">
-                <Sparkles className="h-4 w-4 animate-pulse-slow" />
+                <Sparkles className="h-4 w-4 animate-pulse-slow group-hover:rotate-12 transition-transform duration-300" />
                 {quizCount > 0 && (
                   <Badge 
                     variant="secondary" 
@@ -154,27 +172,14 @@ export const Navigation = () => {
               </div>
               Quiz
             </button>
-            {navItems.map((item) => {
-              const isActive = false; // Disabled active state
-              return (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  onClick={(e) => handleNavClick(e, item.href)}
-                  className={`text-foreground/70 cursor-default transition-all font-medium whitespace-nowrap relative pb-1 ${
-                    isActive ? 'text-primary' : ''
-                  }`}
-                  style={{ pointerEvents: 'none' }}
-                >
-                  {item.label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-hero animate-in fade-in slide-in-from-bottom-1" />
-                  )}
-                </a>
-              );
-            })}
+            
+            <MegaMenu activeSection={activeSection} onNavClick={handleNavClick} />
+            
             <Link to="/booking">
-              <Button variant="default" className="gap-2">
+              <Button 
+                variant="default" 
+                className="gap-2 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl"
+              >
                 <Calendar className="h-4 w-4" />
                 הזמן סיור
               </Button>
@@ -279,16 +284,15 @@ export const Navigation = () => {
             </button>
             <div className="mt-2 space-y-1">
               {navItems.map((item) => {
-                const isActive = false; // Disabled active state
+                const isActive = activeSection === item.href.replace('#', '');
                 return (
                   <a
                     key={item.label}
                     href={item.href}
                     onClick={(e) => handleNavClick(e, item.href)}
-                    className={`block py-3 px-4 rounded-lg text-foreground/70 cursor-default transition-all duration-200 ${
-                      isActive ? 'text-primary font-semibold bg-primary/10 border-l-4 border-primary' : ''
+                    className={`block py-3 px-4 rounded-lg text-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 hover:translate-x-1 ${
+                      isActive ? 'text-primary font-semibold bg-primary/10 border-l-4 border-primary shadow-sm' : ''
                     }`}
-                    style={{ pointerEvents: 'none' }}
                   >
                     {item.label}
                   </a>
