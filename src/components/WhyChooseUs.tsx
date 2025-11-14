@@ -1,6 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Award, Settings, Shield, Truck } from 'lucide-react';
 import { useParallax } from '@/hooks/use-parallax';
+import { use3DTilt } from '@/hooks/use-3d-tilt';
 
 export const WhyChooseUs = () => {
   const parallaxSlow = useParallax(0.1);
@@ -51,10 +52,16 @@ export const WhyChooseUs = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {reasons.map((reason, index) => {
             const Icon = reason.icon;
+            const tilt = use3DTilt({ maxTilt: 8, scale: 1.02, speed: 400 });
+            
             return (
               <Card
                 key={index}
-                className="group hover:shadow-strong transition-all duration-300 hover:-translate-y-2 border-2 hover:border-primary/50"
+                ref={tilt.ref}
+                className="group hover:shadow-strong transition-all duration-300 border-2 hover:border-primary/50 overflow-hidden"
+                style={tilt.style}
+                onMouseMove={tilt.onMouseMove}
+                onMouseLeave={tilt.onMouseLeave}
               >
                 <CardContent className="p-6 text-center">
                   <div className="inline-block p-4 rounded-full bg-gradient-hero mb-4 group-hover:scale-110 transition-transform">

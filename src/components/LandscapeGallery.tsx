@@ -152,8 +152,11 @@ export const LandscapeGallery = () => {
         </div>
 
         {/* Gallery Content */}
-        <Card className="backdrop-blur-sm bg-card/50 border-2 border-border/50 shadow-2xl animate-in fade-in zoom-in-95 duration-500">
-          <CardHeader className="text-center">
+        <Card 
+          key={activeSection}
+          className="backdrop-blur-sm bg-card/50 border-2 border-border/50 shadow-2xl animate-in fade-in zoom-in-95 duration-700"
+        >
+          <CardHeader className="text-center animate-in slide-in-from-top-4 fade-in duration-500">
             <CardTitle className="text-3xl font-bold">{currentSection.title}</CardTitle>
             <CardDescription className="text-lg">{currentSection.description}</CardDescription>
           </CardHeader>

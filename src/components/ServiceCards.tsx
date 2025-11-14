@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Calendar, Users, Briefcase, CheckCircle2, ArrowLeft } from "lucide-react";
 import { useParallax } from '@/hooks/use-parallax';
+import { use3DTilt } from '@/hooks/use-3d-tilt';
 
 interface Service {
   id: string;
@@ -127,10 +128,16 @@ export const ServiceCards = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {services.map((service) => {
             const Icon = service.icon;
+            const tilt = use3DTilt({ maxTilt: 10, scale: 1.03, speed: 500 });
+            
             return (
               <Card 
                 key={service.id}
-                className="relative hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer group"
+                ref={tilt.ref}
+                className="relative hover:shadow-2xl transition-all duration-500 cursor-pointer group border-2 hover:border-primary/50 bg-card/80 backdrop-blur-sm overflow-hidden"
+                style={tilt.style}
+                onMouseMove={tilt.onMouseMove}
+                onMouseLeave={tilt.onMouseLeave}
                 onClick={() => setSelectedService(service)}
               >
                 <CardHeader className="text-center pb-4">
