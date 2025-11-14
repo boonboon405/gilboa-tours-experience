@@ -73,7 +73,13 @@ export const MegaMenu = ({ activeSection, onNavClick }: MegaMenuProps) => {
   const [imageLoaded, setImageLoaded] = useState<Record<string, boolean>>({});
 
   return (
-    <div className="hidden lg:flex items-center gap-1">
+    <>
+      {/* Backdrop blur overlay */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 bg-black/10 backdrop-blur-sm z-40 animate-in fade-in duration-300" />
+      )}
+      
+      <div className="hidden lg:flex items-center gap-1 relative z-50">
       {menuItems.map((item) => {
         const Icon = item.icon;
         const isActive = activeSection === item.href.replace('#', '');
@@ -180,11 +186,14 @@ export const MegaMenu = ({ activeSection, onNavClick }: MegaMenuProps) => {
                       {item.highlights.map((highlight, index) => (
                         <div 
                           key={index}
-                          className="flex items-center gap-2 text-sm text-foreground/80 animate-in slide-in-from-right-2 duration-300"
-                          style={{ animationDelay: `${index * 50}ms` }}
+                          className="flex items-center gap-2 text-sm text-foreground/80 animate-in slide-in-from-right-4 fade-in duration-500 opacity-0"
+                          style={{ 
+                            animationDelay: `${index * 100 + 200}ms`,
+                            animationFillMode: 'forwards'
+                          }}
                         >
-                          <Sparkles className="h-3.5 w-3.5 text-primary flex-shrink-0" />
-                          <span>{highlight}</span>
+                          <Sparkles className="h-3.5 w-3.5 text-primary flex-shrink-0 animate-in zoom-in duration-300" style={{ animationDelay: `${index * 100 + 300}ms` }} />
+                          <span className="animate-in slide-in-from-left-2 duration-400" style={{ animationDelay: `${index * 100 + 250}ms` }}>{highlight}</span>
                         </div>
                       ))}
                     </div>
@@ -212,6 +221,7 @@ export const MegaMenu = ({ activeSection, onNavClick }: MegaMenuProps) => {
           </div>
         );
       })}
-    </div>
+      </div>
+    </>
   );
 };

@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Calendar, Users, Briefcase, CheckCircle2, ArrowLeft } from "lucide-react";
+import { useParallax } from '@/hooks/use-parallax';
 
 interface Service {
   id: string;
@@ -87,6 +88,8 @@ const services: Service[] = [
 
 export const ServiceCards = () => {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const parallaxSlow = useParallax(0.15);
+  const parallaxMedium = useParallax(0.25);
 
   const handleCTA = (service: Service) => {
     setSelectedService(null);
@@ -98,8 +101,20 @@ export const ServiceCards = () => {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-b from-background to-muted/20">
-      <div className="container mx-auto px-4">
+    <section className="py-16 bg-gradient-to-b from-background to-muted/20 relative overflow-hidden">
+      {/* Background decorative elements with parallax */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div 
+          className="absolute top-40 left-10 w-72 h-72 bg-primary/5 rounded-full blur-[90px]"
+          style={parallaxSlow}
+        />
+        <div 
+          className="absolute bottom-40 right-10 w-96 h-96 bg-accent/5 rounded-full blur-[110px]"
+          style={parallaxMedium}
+        />
+      </div>
+
+      <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             השירותים שלנו

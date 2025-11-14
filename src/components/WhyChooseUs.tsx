@@ -1,7 +1,10 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Award, Settings, Shield, Truck } from 'lucide-react';
+import { useParallax } from '@/hooks/use-parallax';
 
 export const WhyChooseUs = () => {
+  const parallaxSlow = useParallax(0.1);
+  const parallaxFast = useParallax(0.2);
 
   const reasons = [
     {
@@ -27,8 +30,20 @@ export const WhyChooseUs = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
-      <div className="container mx-auto px-4">
+    <section className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5 relative overflow-hidden">
+      {/* Background decorative elements with parallax */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div 
+          className="absolute top-20 right-20 w-64 h-64 bg-primary/10 rounded-full blur-[80px]"
+          style={parallaxSlow}
+        />
+        <div 
+          className="absolute bottom-20 left-20 w-80 h-80 bg-accent/10 rounded-full blur-[100px]"
+          style={parallaxFast}
+        />
+      </div>
+
+      <div className="container mx-auto px-4 relative z-10">
         <h2 className="text-4xl md:text-5xl font-bold text-center text-foreground mb-16">
           למה לבחור בדויד טורס?
         </h2>

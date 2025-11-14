@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { Mountain, Sparkles } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Mountain, Sparkles, Search } from 'lucide-react';
 import { ImageGallery } from './ImageGallery';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import galileeNature from '@/assets/galilee-nature.jpg';
 import springsNature from '@/assets/springs-nature.jpg';
 import heroGilboa from '@/assets/hero-gilboa.jpg';
@@ -54,15 +55,46 @@ const gallerySections: GallerySection[] = [
 
 export const LandscapeGallery = () => {
   const [activeSection, setActiveSection] = useState<string>('galilee');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+      // Update CSS variable for parallax
+      document.documentElement.style.setProperty('--scroll-y', `${window.scrollY * 0.3}px`);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const currentSection = gallerySections.find(s => s.id === activeSection) || gallerySections[0];
 
+  const filteredImages = useMemo(() => {
+    if (!searchQuery.trim()) return currentSection.images;
+    
+    const query = searchQuery.toLowerCase();
+    return currentSection.images.filter(
+      img => 
+        img.title.toLowerCase().includes(query) ||
+        img.description.toLowerCase().includes(query) ||
+        img.alt.toLowerCase().includes(query)
+    );
+  }, [currentSection.images, searchQuery]);
+
   return (
     <section className="py-24 bg-gradient-to-b from-background via-accent/5 to-background relative overflow-hidden">
-      {/* Background decorative elements */}
+      {/* Background decorative elements with parallax */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 right-10 w-96 h-96 bg-primary/5 rounded-full blur-[100px] animate-pulse" />
-        <div className="absolute bottom-20 left-10 w-96 h-96 bg-accent/5 rounded-full blur-[100px] animate-pulse [animation-delay:2s]" />
+        <div 
+          className="absolute top-20 right-10 w-96 h-96 bg-primary/5 rounded-full blur-[100px] animate-pulse transition-transform duration-1000 ease-out"
+          style={{ transform: 'translateY(var(--scroll-y, 0))' }}
+        />
+        <div 
+          className="absolute bottom-20 left-10 w-96 h-96 bg-accent/5 rounded-full blur-[100px] animate-pulse [animation-delay:2s] transition-transform duration-1000 ease-out"
+          style={{ transform: 'translateY(calc(var(--scroll-y, 0) * -0.5))' }}
+        />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -79,6 +111,20 @@ export const LandscapeGallery = () => {
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             גלו את היופי הטבעי של אזור הגלבוע, הגליל והעמקים
           </p>
+        </div>
+
+        {/* Search Bar */}
+        <div className="max-w-md mx-auto mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '200ms' }}>
+          <div className="relative">
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="חפש תמונות לפי שם או תיאור..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pr-10 bg-card/50 backdrop-blur-sm border-2 border-border/50 focus:border-primary/50 transition-all duration-300"
+            />
+          </div>
         </div>
 
         {/* Category Tabs */}
@@ -112,10 +158,18 @@ export const LandscapeGallery = () => {
             <CardDescription className="text-lg">{currentSection.description}</CardDescription>
           </CardHeader>
           <CardContent>
-            <ImageGallery 
-              images={currentSection.images}
-              layout="grid"
-            />
+            {filteredImages.length > 0 ? (
+              <ImageGallery 
+                images={filteredImages}
+                layout="grid"
+              />
+            ) : (
+              <div className="text-center py-12">
+                <Search className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
+                <p className="text-lg text-muted-foreground">לא נמצאו תמונות התואמות לחיפוש</p>
+                <p className="text-sm text-muted-foreground/70 mt-2">נסה מילות חיפוש אחרות</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
