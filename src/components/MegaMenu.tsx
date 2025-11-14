@@ -100,51 +100,62 @@ export const MegaMenu = ({ activeSection, onNavClick }: MegaMenuProps) => {
                 setHoveredItem(null);
               }}
               className={cn(
-                "flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 relative group",
+                "flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-500 relative group overflow-hidden",
                 isActive 
-                  ? "text-primary bg-primary/10 shadow-sm" 
-                  : "text-foreground hover:text-primary hover:bg-accent/50"
+                  ? "text-primary bg-primary/10 shadow-[0_8px_30px_hsl(var(--primary)/0.2)] scale-105" 
+                  : "text-foreground hover:text-primary hover:bg-accent/50 hover:shadow-[0_4px_20px_hsl(var(--primary)/0.15)] hover:scale-105"
               )}
             >
+              {/* Animated background gradient */}
+              <span className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out" />
+              
               <Icon className={cn(
-                "h-4 w-4 transition-transform duration-300",
-                isHovered && "scale-110 rotate-6"
+                "h-4 w-4 transition-all duration-500 relative z-10",
+                isHovered && "scale-125 rotate-12 text-primary drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]",
+                isActive && "text-primary"
               )} />
-              <span className="whitespace-nowrap">{item.label}</span>
+              <span className="whitespace-nowrap relative z-10">{item.label}</span>
               <ChevronDown className={cn(
-                "h-3 w-3 transition-transform duration-300",
-                isHovered && "rotate-180"
+                "h-3 w-3 transition-all duration-500 relative z-10",
+                isHovered && "rotate-180 scale-110"
               )} />
               
               {isActive && (
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent animate-in fade-in slide-in-from-bottom-1" />
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2/3 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent animate-in fade-in slide-in-from-bottom-1 shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
               )}
 
-              {/* Hover Glow Effect */}
+              {/* Enhanced Hover Glow Effect */}
               {isHovered && (
-                <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 animate-in fade-in zoom-in-95 duration-300" />
+                <>
+                  <span className="absolute inset-0 rounded-lg bg-gradient-to-br from-primary/30 via-accent/20 to-primary/30 animate-in fade-in zoom-in-95 duration-300" />
+                  <span className="absolute inset-0 rounded-lg bg-gradient-to-tr from-transparent via-white/10 to-transparent animate-pulse" />
+                </>
               )}
             </a>
 
             {/* Mega Menu Dropdown */}
             {isHovered && isMenuOpen && (
               <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[380px] animate-in fade-in slide-in-from-top-2 duration-300 z-[100]">
-                <div className="bg-card/98 backdrop-blur-xl border-2 border-border rounded-xl shadow-2xl overflow-hidden">
+                <div className="bg-card/98 backdrop-blur-xl border-2 border-primary/20 rounded-xl shadow-[0_20px_70px_hsl(var(--primary)/0.3),0_0_40px_hsl(var(--primary)/0.1)] overflow-hidden relative group/dropdown">
+                  {/* Animated border glow */}
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 opacity-0 group-hover/dropdown:opacity-100 transition-opacity duration-500 -z-10 blur-xl" />
                   {/* Image Header with Skeleton */}
                   <div className="relative h-40 overflow-hidden group/image">
                     {!imageLoaded[item.href] && (
-                      <Skeleton className="absolute inset-0 w-full h-full" />
+                      <Skeleton className="absolute inset-0 w-full h-full animate-pulse" />
                     )}
                     <img 
                       src={item.image} 
                       alt={item.label}
                       className={cn(
-                        "w-full h-full object-cover transition-all duration-500 group-hover/image:scale-110",
+                        "w-full h-full object-cover transition-all duration-700 group-hover/image:scale-125 group-hover/image:rotate-2",
                         !imageLoaded[item.href] && "opacity-0"
                       )}
                       onLoad={() => setImageLoaded(prev => ({ ...prev, [item.href]: true }))}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent group-hover/image:from-black/60" />
+                    {/* Animated overlay shimmer */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover/image:translate-x-[100%] transition-transform duration-1000" />
                     <div className="absolute bottom-4 right-4 left-4">
                       <h3 className="text-xl font-bold text-white mb-1 flex items-center gap-2">
                         <Icon className="h-5 w-5" />
@@ -184,10 +195,12 @@ export const MegaMenu = ({ activeSection, onNavClick }: MegaMenuProps) => {
                         const anchor = e.currentTarget.closest('.relative')?.querySelector('a') as HTMLAnchorElement;
                         if (anchor) anchor.click();
                       }}
-                      className="w-full py-2.5 px-4 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:scale-[1.02] flex items-center justify-center gap-2"
+                      className="w-full py-2.5 px-4 bg-gradient-to-r from-primary via-primary to-primary/80 hover:from-primary/90 hover:via-primary hover:to-primary/70 text-primary-foreground rounded-lg font-medium transition-all duration-500 hover:shadow-[0_8px_30px_hsl(var(--primary)/0.4)] hover:scale-[1.03] flex items-center justify-center gap-2 relative overflow-hidden group/button"
                     >
-                      <span>עבור ל{item.label}</span>
-                      <ChevronDown className="h-4 w-4 -rotate-90" />
+                      {/* Button shimmer effect */}
+                      <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover/button:translate-x-[100%] transition-transform duration-700" />
+                      <span className="relative z-10">עבור ל{item.label}</span>
+                      <ChevronDown className="h-4 w-4 -rotate-90 relative z-10 transition-transform duration-300 group-hover/button:translate-x-1" />
                     </button>
                   </div>
 

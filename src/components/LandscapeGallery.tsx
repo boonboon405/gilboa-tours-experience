@@ -1,0 +1,150 @@
+import { useState } from 'react';
+import { Mountain, Sparkles } from 'lucide-react';
+import { ImageGallery } from './ImageGallery';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import galileeNature from '@/assets/galilee-nature.jpg';
+import springsNature from '@/assets/springs-nature.jpg';
+import heroGilboa from '@/assets/hero-gilboa.jpg';
+import clubCars from '@/assets/club-cars.jpg';
+import culinary from '@/assets/culinary-experience.jpg';
+import beitShean from '@/assets/beit-shean.jpg';
+import pelicans from '@/assets/pelicans.jpg';
+import springsActivity from '@/assets/springs-activity.jpg';
+import odtTeam from '@/assets/odt-team.jpg';
+
+interface GallerySection {
+  id: string;
+  title: string;
+  description: string;
+  images: { src: string; alt: string; title: string; description: string }[];
+}
+
+const gallerySections: GallerySection[] = [
+  {
+    id: 'galilee',
+    title: 'הגליל והכנרת',
+    description: 'נופים עוצרי נשימה של אזור הגליל והכנרת',
+    images: [
+      { src: galileeNature, alt: 'נופי הגליל', title: 'נופי הגליל', description: 'נוף פנורמי של הרי הגליל' },
+      { src: pelicans, alt: 'שמורת הפלמינגו', title: 'שמורת הפלמינגו', description: 'חיות בר באגמון החולה' },
+      { src: beitShean, alt: 'עמק בית שאן', title: 'עמק בית שאן', description: 'נוף היסטורי מרהיב' },
+    ]
+  },
+  {
+    id: 'gilboa',
+    title: 'הרי הגלבוע',
+    description: 'הפנינה הטבעית של צפון הארץ',
+    images: [
+      { src: heroGilboa, alt: 'הרי הגלבוע', title: 'הרי הגלבוע', description: 'שקיעה מדהימה מפסגות הגלבוע' },
+      { src: springsNature, alt: 'עמק המעיינות', title: 'עמק המעיינות', description: 'מעיינות צלולים בלב הטבע' },
+      { src: springsActivity, alt: 'פעילויות במעיינות', title: 'פעילויות במעיינות', description: 'חוויות ייחודיות במים' },
+    ]
+  },
+  {
+    id: 'activities',
+    title: 'פעילויות וחוויות',
+    description: 'מגוון פעילויות מרתקות בטבע',
+    images: [
+      { src: clubCars, alt: 'מועדוני רכב שטח', title: 'מועדוני רכב שטח', description: 'טיולים מאתגרים בשטח' },
+      { src: culinary, alt: 'חוויות קולינריות', title: 'חוויות קולינריות', description: 'טעמים אותנטיים של האזור' },
+      { src: odtTeam, alt: 'גיבוש ODT', title: 'גיבוש ODT', description: 'פעילויות גיבוש צוותיות' },
+    ]
+  }
+];
+
+export const LandscapeGallery = () => {
+  const [activeSection, setActiveSection] = useState<string>('galilee');
+
+  const currentSection = gallerySections.find(s => s.id === activeSection) || gallerySections[0];
+
+  return (
+    <section className="py-24 bg-gradient-to-b from-background via-accent/5 to-background relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 right-10 w-96 h-96 bg-primary/5 rounded-full blur-[100px] animate-pulse" />
+        <div className="absolute bottom-20 left-10 w-96 h-96 bg-accent/5 rounded-full blur-[100px] animate-pulse [animation-delay:2s]" />
+      </div>
+
+      <div className="container mx-auto px-4 relative z-10">
+        {/* Header */}
+        <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6 backdrop-blur-sm">
+            <Mountain className="h-5 w-5" />
+            <span className="font-medium">גלריית נופים</span>
+            <Sparkles className="h-4 w-4" />
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-l from-primary via-foreground to-primary bg-clip-text text-transparent">
+            הנופים המדהימים שלנו
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            גלו את היופי הטבעי של אזור הגלבוע, הגליל והעמקים
+          </p>
+        </div>
+
+        {/* Category Tabs */}
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
+          {gallerySections.map((section, index) => (
+            <button
+              key={section.id}
+              onClick={() => setActiveSection(section.id)}
+              className={`
+                px-6 py-3 rounded-xl font-medium transition-all duration-500 relative overflow-hidden group
+                ${activeSection === section.id 
+                  ? 'bg-primary text-primary-foreground shadow-[0_8px_30px_hsl(var(--primary)/0.3)] scale-105' 
+                  : 'bg-card hover:bg-accent border border-border hover:border-primary/50 hover:shadow-lg hover:scale-105'
+                }
+              `}
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              {/* Animated background */}
+              {activeSection !== section.id && (
+                <span className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/10 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+              )}
+              <span className="relative z-10">{section.title}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Gallery Content */}
+        <Card className="backdrop-blur-sm bg-card/50 border-2 border-border/50 shadow-2xl animate-in fade-in zoom-in-95 duration-500">
+          <CardHeader className="text-center">
+            <CardTitle className="text-3xl font-bold">{currentSection.title}</CardTitle>
+            <CardDescription className="text-lg">{currentSection.description}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ImageGallery 
+              images={currentSection.images}
+              layout="grid"
+            />
+          </CardContent>
+        </Card>
+
+        {/* Stats Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+          {[
+            { number: '100+', label: 'נופים מדהימים', icon: Mountain },
+            { number: '50+', label: 'מיקומים ייחודיים', icon: Sparkles },
+            { number: '10+', label: 'אזורי טבע', icon: Mountain },
+          ].map((stat, index) => {
+            const Icon = stat.icon;
+            return (
+              <Card 
+                key={index}
+                className="text-center backdrop-blur-sm bg-card/30 border-2 border-border/50 hover:border-primary/50 transition-all duration-500 hover:shadow-[0_8px_30px_hsl(var(--primary)/0.2)] hover:scale-105 group"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <CardContent className="pt-6">
+                  <Icon className="h-12 w-12 mx-auto mb-4 text-primary transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6" />
+                  <div className="text-4xl font-bold text-primary mb-2 group-hover:scale-110 transition-transform duration-300">
+                    {stat.number}
+                  </div>
+                  <div className="text-muted-foreground font-medium">{stat.label}</div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
