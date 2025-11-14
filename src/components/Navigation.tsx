@@ -24,6 +24,7 @@ export const Navigation = () => {
   const [quizCount, setQuizCount] = useState<number>(0);
   const [activeSection, setActiveSection] = useState<string>('home');
   const [isScrolled, setIsScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     const fetchQuizCount = async () => {
@@ -35,10 +36,18 @@ export const Navigation = () => {
     fetchQuizCount();
   }, []);
 
-  // Scroll detection for enhanced sticky effect
+  // Scroll detection for enhanced sticky effect and progress bar
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+      
+      // Calculate scroll progress
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.scrollY;
+      const maxScroll = documentHeight - windowHeight;
+      const progress = (scrollTop / maxScroll) * 100;
+      setScrollProgress(Math.min(progress, 100));
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -114,6 +123,14 @@ export const Navigation = () => {
         ? 'bg-card/98 backdrop-blur-md shadow-lg border-border' 
         : 'bg-card/95 backdrop-blur-sm shadow-soft border-border/50'
     }`}>
+      {/* Progress Bar */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-muted/30">
+        <div 
+          className="h-full bg-gradient-to-r from-primary via-primary/80 to-primary transition-all duration-300 ease-out shadow-glow"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+      
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}

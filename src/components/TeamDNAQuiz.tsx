@@ -92,13 +92,13 @@ export const TeamDNAQuiz = ({ open, onClose, onComplete }: TeamDNAQuizProps) => 
   if (showResults && results) {
     return (
       <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-500">
           <DialogHeader>
-            <DialogTitle className="text-3xl text-center flex items-center justify-center gap-2">
+            <DialogTitle className="text-3xl text-center flex items-center justify-center gap-2 animate-in slide-in-from-top-2 duration-700">
               <Sparkles className="h-8 w-8 text-primary" />
               נהדר! אנחנו מכירים אתכם יותר טוב עכשיו
             </DialogTitle>
-            <DialogDescription className="text-center text-lg pt-2">
+            <DialogDescription className="text-center text-lg pt-2 animate-in fade-in duration-700 delay-200">
               זיהינו את ה-DNA של הצוות שלכם. הנה ה-3 הקטגוריות המובילות:
             </DialogDescription>
           </DialogHeader>
