@@ -5,6 +5,8 @@ import heroImage from '@/assets/hero-gilboa.jpg';
 import clubCarsImage from '@/assets/club-cars.jpg';
 import odtTeamImage from '@/assets/odt-team.jpg';
 import culinaryImage from '@/assets/culinary-experience.jpg';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 
 interface MenuItem {
   label: string;
@@ -66,6 +68,7 @@ const menuItems: MenuItem[] = [
 export const MegaMenu = ({ activeSection, onNavClick }: MegaMenuProps) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState<Record<string, boolean>>({});
 
   return (
     <div className="hidden lg:flex items-center gap-1">
@@ -125,12 +128,19 @@ export const MegaMenu = ({ activeSection, onNavClick }: MegaMenuProps) => {
             {isHovered && isMenuOpen && (
               <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[380px] animate-in fade-in slide-in-from-top-2 duration-300 z-[100]">
                 <div className="bg-card/98 backdrop-blur-xl border-2 border-border rounded-xl shadow-2xl overflow-hidden">
-                  {/* Image Header */}
+                  {/* Image Header with Skeleton */}
                   <div className="relative h-40 overflow-hidden group/image">
+                    {!imageLoaded[item.href] && (
+                      <Skeleton className="absolute inset-0 w-full h-full" />
+                    )}
                     <img 
                       src={item.image} 
                       alt={item.label}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover/image:scale-110"
+                      className={cn(
+                        "w-full h-full object-cover transition-all duration-500 group-hover/image:scale-110",
+                        !imageLoaded[item.href] && "opacity-0"
+                      )}
+                      onLoad={() => setImageLoaded(prev => ({ ...prev, [item.href]: true }))}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                     <div className="absolute bottom-4 right-4 left-4">
@@ -144,6 +154,14 @@ export const MegaMenu = ({ activeSection, onNavClick }: MegaMenuProps) => {
 
                   {/* Content */}
                   <div className="p-5 space-y-4">
+                    {/* Breadcrumbs */}
+                    <Breadcrumbs
+                      items={[
+                        { label: item.label, active: true }
+                      ]}
+                      className="pb-3 border-b"
+                    />
+                    
                     {/* Highlights */}
                     <div className="space-y-2">
                       {item.highlights.map((highlight, index) => (

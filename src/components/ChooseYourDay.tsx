@@ -16,6 +16,8 @@ import { TeamDNAQuiz } from '@/components/TeamDNAQuiz';
 import { QuizResults } from '@/utils/quizScoring';
 import { filterActivitiesByDNA } from '@/utils/activityFiltering';
 import { categoryMetadata } from '@/utils/activityCategories';
+import { FavoritesManager } from '@/components/FavoritesManager';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 
 const sections = [
   {
@@ -421,8 +423,23 @@ export const ChooseYourDay = () => {
 
       <section id="choose-your-day" className="py-20 bg-gradient-to-br from-background to-muted">
         <div className="container mx-auto px-4">
+          {/* Breadcrumbs */}
+          <div className="mb-6 animate-in fade-in slide-in-from-top-2 duration-500">
+            <Breadcrumbs
+              items={[
+                { label: 'יום כייף וגיבוש', href: '#choose-your-day', active: true }
+              ]}
+              onNavigate={(href) => {
+                const element = document.getElementById(href.replace('#', ''));
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
+            />
+          </div>
+
           {/* Header */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-12">{/* existing header content... */}
             <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
               יום כייף וגיבוש לחברות - כ100 טיולים ואטרקציות לבחירה
             </h2>
@@ -635,6 +652,15 @@ export const ChooseYourDay = () => {
                                   activity
                                 )}
                               </p>
+                              
+                              {/* Favorites and Share */}
+                              <div className="mt-2 flex items-center justify-between">
+                                <FavoritesManager
+                                  activityId={`section-${section.id}-activity-${index}`}
+                                  activityText={typeof activity === 'string' ? activity : String(activity)}
+                                  sectionId={section.id}
+                                />
+                              </div>
                             </div>
                             
                             {isSelected && (
