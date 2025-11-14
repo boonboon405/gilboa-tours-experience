@@ -87,16 +87,11 @@ export const Navigation = () => {
     };
   }, []);
 
-  // Smooth scroll handler
+  // Smooth scroll handler - disabled for display only
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
-    const targetId = href.replace('#', '');
-    const element = document.getElementById(targetId);
-    
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setIsOpen(false); // Close mobile menu after click
-    }
+    // Navigation disabled - display only
+    setIsOpen(false); // Close mobile menu after click
   };
 
   const handleQuizComplete = (results: QuizResults) => {
@@ -160,15 +155,16 @@ export const Navigation = () => {
               Quiz
             </button>
             {navItems.map((item) => {
-              const isActive = activeSection === item.href.replace('#', '');
+              const isActive = false; // Disabled active state
               return (
                 <a
                   key={item.label}
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.href)}
-                  className={`text-foreground hover:text-primary transition-all font-medium whitespace-nowrap relative pb-1 ${
+                  className={`text-foreground/70 cursor-default transition-all font-medium whitespace-nowrap relative pb-1 ${
                     isActive ? 'text-primary' : ''
                   }`}
+                  style={{ pointerEvents: 'none' }}
                 >
                   {item.label}
                   {isActive && (
@@ -283,15 +279,16 @@ export const Navigation = () => {
             </button>
             <div className="mt-2 space-y-1">
               {navItems.map((item) => {
-                const isActive = activeSection === item.href.replace('#', '');
+                const isActive = false; // Disabled active state
                 return (
                   <a
                     key={item.label}
                     href={item.href}
                     onClick={(e) => handleNavClick(e, item.href)}
-                    className={`block py-3 px-4 rounded-lg text-foreground hover:text-primary hover:bg-primary/5 transition-all duration-200 ${
+                    className={`block py-3 px-4 rounded-lg text-foreground/70 cursor-default transition-all duration-200 ${
                       isActive ? 'text-primary font-semibold bg-primary/10 border-l-4 border-primary' : ''
                     }`}
+                    style={{ pointerEvents: 'none' }}
                   >
                     {item.label}
                   </a>
