@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { quizQuestions, calculateQuizResults, QuizResults } from '@/utils/quizScoring';
 import { categoryMetadata } from '@/utils/activityCategories';
-import { Sparkles, ArrowRight, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Sparkles, ArrowRight, ArrowLeft, CheckCircle2, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
+import confetti from 'canvas-confetti';
+import { QuizResultsDetail } from '@/components/QuizResultsDetail';
 
 interface TeamDNAQuizProps {
   open: boolean;
@@ -20,6 +22,7 @@ export const TeamDNAQuiz = ({ open, onClose, onComplete }: TeamDNAQuizProps) => 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<number[][]>(Array(quizQuestions.length).fill([]));
   const [showResults, setShowResults] = useState(false);
+  const [showDetailedResults, setShowDetailedResults] = useState(false);
   const [results, setResults] = useState<QuizResults | null>(null);
 
   const progress = ((currentQuestion + 1) / quizQuestions.length) * 100;
@@ -93,13 +96,59 @@ export const TeamDNAQuiz = ({ open, onClose, onComplete }: TeamDNAQuizProps) => 
 
   const canProceed = selectedAnswers.length > 0;
 
+  // Trigger confetti when results are shown
+  useEffect(() => {
+    if (showResults && results && !showDetailedResults) {
+      const duration = 3000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+      const randomInRange = (min: number, max: number) => {
+        return Math.random() * (max - min) + min;
+      };
+
+      const interval: NodeJS.Timeout = setInterval(() => {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+        });
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+        });
+      }, 250);
+
+      return () => clearInterval(interval);
+    }
+  }, [showResults, results, showDetailedResults]);
+
+  if (showDetailedResults && results) {
+    return (
+      <Dialog open={open} onOpenChange={onClose}>
+        <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto">
+          <QuizResultsDetail results={results} onClose={handleFinish} />
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   if (showResults && results) {
     return (
       <Dialog open={open} onOpenChange={onClose}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-500">
           <DialogHeader>
             <DialogTitle className="text-3xl text-center flex items-center justify-center gap-2 animate-in slide-in-from-top-2 duration-700">
-              <Sparkles className="h-8 w-8 text-primary" />
+              <Sparkles className="h-8 w-8 text-primary animate-spin" />
               נהדר! אנחנו מכירים אתכם יותר טוב עכשיו
             </DialogTitle>
             <DialogDescription className="text-center text-lg pt-2 animate-in fade-in duration-700 delay-200">
@@ -145,6 +194,15 @@ export const TeamDNAQuiz = ({ open, onClose, onComplete }: TeamDNAQuizProps) => 
           </div>
 
           <div className="flex gap-3 pt-4">
+            <Button 
+              onClick={() => setShowDetailedResults(true)} 
+              variant="outline" 
+              className="flex-1" 
+              size="lg"
+            >
+              <FileText className="ml-2 h-5 w-5" />
+              הצג ניתוח מפורט
+            </Button>
             <Button onClick={handleFinish} className="flex-1" size="lg">
               <CheckCircle2 className="ml-2 h-5 w-5" />
               בואו נתחיל לבחור פעילויות!
