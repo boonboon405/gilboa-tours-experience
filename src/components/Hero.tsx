@@ -110,7 +110,7 @@ export const Hero = () => {
             חוויה קבוצתית מיוחדת, בונה ובלתי נשכחת
           </h1>
           <h2 className="text-3xl md:text-5xl font-semibold text-accent mb-6 animate-[zoom-fade-in_0.8s_ease-out_0.2s] opacity-0 [animation-fill-mode:forwards] hero-glow-accent">
-            בצפון א״י היפה ובלב הגלבוע הגליל וסובב כנרת
+            בצפון א״י היפה ובלב הגלבוע, עמק המעיינות, הגליל וסובב כנרת
           </h2>
           <p className="text-lg md:text-xl text-white/90 mb-4 max-w-2xl mx-auto leading-relaxed">
             יום חווייתי, מהנה ומשמעותי שמשלב היסטוריה, טבע, גיבוש, והרבה זיכרונות טובים לחברה שלכם.
