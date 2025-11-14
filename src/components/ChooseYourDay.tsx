@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Sunrise, Waves, Landmark, Wine, Clock, CheckCircle2, ChevronDown, ChevronUp, Send, CalendarIcon, Sparkles, RefreshCw } from 'lucide-react';
+import { Sunrise, Waves, Landmark, Wine, Clock, CheckCircle2, ChevronDown, ChevronUp, Send, CalendarIcon, Sparkles, RefreshCw, Bike, Footprints, Mountain, Trophy, Target, Heart, Camera, Utensils, Coffee, BookOpen, Users, Palette, Dumbbell, TreePine } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -165,6 +165,74 @@ const sections = [
     ]
   }
 ];
+
+// Helper function to get activity icon based on keywords
+const getActivityIcon = (activity: string, sectionId: number) => {
+  const activityLower = activity.toLowerCase();
+  
+  // Adventure activities
+  if (activityLower.includes('רכב') || activityLower.includes('ג\'יפ') || activityLower.includes('אופניים')) {
+    return <Bike className="h-5 w-5 text-white" />;
+  }
+  if (activityLower.includes('הליכה') || activityLower.includes('טיול') || activityLower.includes('נדידה')) {
+    return <Footprints className="h-5 w-5 text-white" />;
+  }
+  if (activityLower.includes('טיפוס') || activityLower.includes('פסגת') || activityLower.includes('הר')) {
+    return <Mountain className="h-5 w-5 text-white" />;
+  }
+  if (activityLower.includes('תחרות') || activityLower.includes('מרוץ') || activityLower.includes('אתגר')) {
+    return <Trophy className="h-5 w-5 text-white" />;
+  }
+  if (activityLower.includes('קומנדו') || activityLower.includes('פיינטבול') || activityLower.includes('חץ וקשת')) {
+    return <Target className="h-5 w-5 text-white" />;
+  }
+  
+  // Nature & Wellness
+  if (activityLower.includes('יוגה') || activityLower.includes('ספא') || activityLower.includes('מתיחה')) {
+    return <Heart className="h-5 w-5 text-white" />;
+  }
+  if (activityLower.includes('טבע') || activityLower.includes('עצים') || activityLower.includes('פארק')) {
+    return <TreePine className="h-5 w-5 text-white" />;
+  }
+  
+  // History & Culture
+  if (activityLower.includes('מוזיאון') || activityLower.includes('ביקור') || activityLower.includes('היסטור')) {
+    return <BookOpen className="h-5 w-5 text-white" />;
+  }
+  if (activityLower.includes('צילום')) {
+    return <Camera className="h-5 w-5 text-white" />;
+  }
+  if (activityLower.includes('יצירה') || activityLower.includes('אמנות') || activityLower.includes('סדנה')) {
+    return <Palette className="h-5 w-5 text-white" />;
+  }
+  
+  // Food & Culinary
+  if (activityLower.includes('בישול') || activityLower.includes('אוכל') || activityLower.includes('מסעדה') || activityLower.includes('טעימה')) {
+    return <Utensils className="h-5 w-5 text-white" />;
+  }
+  if (activityLower.includes('קפה') || activityLower.includes('תה') || activityLower.includes('טוסט')) {
+    return <Coffee className="h-5 w-5 text-white" />;
+  }
+  
+  // Sports & Fitness
+  if (activityLower.includes('אימון') || activityLower.includes('ספורט') || activityLower.includes('כושר')) {
+    return <Dumbbell className="h-5 w-5 text-white" />;
+  }
+  
+  // Team activities
+  if (activityLower.includes('צוות') || activityLower.includes('קבוצ') || activityLower.includes('גיבוש')) {
+    return <Users className="h-5 w-5 text-white" />;
+  }
+  
+  // Default icons based on section
+  switch (sectionId) {
+    case 1: return <Mountain className="h-5 w-5 text-white" />;
+    case 2: return <Waves className="h-5 w-5 text-white" />;
+    case 3: return <Landmark className="h-5 w-5 text-white" />;
+    case 4: return <Wine className="h-5 w-5 text-white" />;
+    default: return <Sparkles className="h-5 w-5 text-white" />;
+  }
+};
 
 export const ChooseYourDay = () => {
   const { toast } = useToast();
@@ -525,33 +593,42 @@ export const ChooseYourDay = () => {
                         {displayActivities.map(({ text: activity, index }) => {
                           const isSelected = currentSelections.includes(index);
                           const isDisabled = !isSelected && currentSelections.length >= 5;
+                          const activityIcon = getActivityIcon(activity, section.id);
                         
                         return (
                           <div
                             key={index}
                             onClick={() => !isDisabled && toggleActivity(section.id, index)}
                             className={`
-                              flex items-start gap-3 p-4 rounded-lg border-2 transition-all cursor-pointer
+                              group relative flex items-start gap-3 p-4 rounded-lg border-2 transition-all cursor-pointer
                               ${isSelected 
-                                ? 'border-primary bg-primary/5' 
+                                ? 'border-primary bg-gradient-to-br from-primary/10 to-primary/5 shadow-md scale-[1.02]' 
                                 : isDisabled
                                   ? 'border-muted bg-muted/30 opacity-50 cursor-not-allowed'
-                                  : 'border-border hover:border-primary/50 hover:bg-accent/5'
+                                  : 'border-border hover:border-primary/50 hover:bg-accent/5 hover:scale-[1.01] hover:shadow-sm'
                               }
                             `}
                           >
-                            <Checkbox 
-                              checked={isSelected}
-                              disabled={isDisabled}
-                              className="mt-1"
-                            />
-                            <div className="flex-1">
+                            {/* Icon */}
+                            <div className={cn(
+                              "flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all",
+                              isSelected 
+                                ? `bg-gradient-to-br ${section.color} shadow-md` 
+                                : "bg-muted/50 group-hover:bg-muted"
+                            )}>
+                              {activityIcon}
+                            </div>
+                            
+                            <div className="flex-1 min-w-0">
                               <p className="text-sm leading-relaxed">
-                                <span className="font-medium ml-1">{index + 1}.</span>
+                                <span className="font-semibold text-primary ml-1">{index + 1}.</span>
                                 {typeof activity === 'string' && activity.includes('מומלץ מאד') ? (
                                   <>
                                     {activity.split('מומלץ מאד')[0]}
-                                    <span className="text-yellow-500 font-bold animate-pulse-slow">מומלץ מאד</span>
+                                    <span className="inline-flex items-center gap-1 text-yellow-600 font-bold animate-pulse-slow">
+                                      <Sparkles className="h-3 w-3 inline" />
+                                      מומלץ מאד
+                                    </span>
                                     {activity.split('מומלץ מאד')[1]}
                                   </>
                                 ) : (
@@ -559,8 +636,11 @@ export const ChooseYourDay = () => {
                                 )}
                               </p>
                             </div>
+                            
                             {isSelected && (
-                              <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                              <div className="absolute -top-1 -right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow-lg animate-in zoom-in duration-300">
+                                <CheckCircle2 className="h-4 w-4 text-primary-foreground" />
+                              </div>
                             )}
                           </div>
                         );
