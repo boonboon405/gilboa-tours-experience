@@ -5,6 +5,8 @@ import heroImage from '@/assets/hero-gilboa.jpg';
 import clubCarsImage from '@/assets/club-cars.jpg';
 import odtTeamImage from '@/assets/odt-team.jpg';
 import culinaryImage from '@/assets/culinary-experience.jpg';
+import galileeNature from '@/assets/galilee-nature.jpg';
+import springsNature from '@/assets/springs-nature.jpg';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 
@@ -27,7 +29,7 @@ const menuItems: MenuItem[] = [
     label: 'בית',
     href: '#home',
     icon: Home,
-    image: heroImage,
+    image: galileeNature,
     description: 'גלה את הגלבוע והעמק הירדן',
     highlights: ['נופים פנורמיים', 'חוויות ייחודיות', 'מקצועיות ואיכות']
   },
@@ -59,7 +61,7 @@ const menuItems: MenuItem[] = [
     label: 'צור קשר',
     href: '#contact',
     icon: Phone,
-    image: heroImage,
+    image: springsNature,
     description: 'נשמח לעזור ולייעץ',
     highlights: ['שירות אישי', 'מענה מהיר', 'ייעוץ מקצועי']
   }
