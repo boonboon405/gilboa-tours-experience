@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download, Share2 } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download, Share2, Maximize2, Minimize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -15,6 +15,7 @@ export const ImageLightbox = ({ images, initialIndex, isOpen, onClose }: ImageLi
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [zoom, setZoom] = useState(1);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -119,6 +120,44 @@ export const ImageLightbox = ({ images, initialIndex, isOpen, onClose }: ImageLi
     }
   };
 
+  const toggleFullscreen = async () => {
+    if (!document.fullscreenElement) {
+      try {
+        await document.documentElement.requestFullscreen();
+        setIsFullscreen(true);
+        toast({
+          title: "מצב מסך מלא הופעל ✓",
+          description: "לחץ ESC או על הכפתור כדי לצאת"
+        });
+      } catch (error) {
+        toast({
+          title: "שגיאה",
+          description: "לא הצלחנו להפעיל מסך מלא",
+          variant: "destructive"
+        });
+      }
+    } else {
+      try {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+        toast({
+          title: "יצאת ממצב מסך מלא ✓"
+        });
+      } catch (error) {
+        console.log('Error exiting fullscreen:', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
   if (!isOpen) return null;
 
   const currentImage = images[currentIndex];
@@ -187,6 +226,19 @@ export const ImageLightbox = ({ images, initialIndex, isOpen, onClose }: ImageLi
               className="text-white hover:bg-white/20"
             >
               <Share2 className="h-5 w-5" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFullscreen();
+              }}
+              className="text-white hover:bg-white/20"
+              title={isFullscreen ? "צא ממסך מלא" : "מסך מלא"}
+            >
+              {isFullscreen ? <Minimize2 className="h-5 w-5" /> : <Maximize2 className="h-5 w-5" />}
             </Button>
 
             <Button
