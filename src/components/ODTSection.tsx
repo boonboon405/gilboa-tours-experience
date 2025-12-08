@@ -26,7 +26,7 @@ export const ODTSection = () => {
             <div className="absolute inset-0 bg-gradient-hero rounded-2xl blur-2xl opacity-20 group-hover:opacity-30 transition-opacity" />
             <img
               src={odtImage}
-              alt="ODT Team Building"
+              alt="צוות עובדים משתתף בפעילות גיבוש ODT בטבע - אימון פיתוח חוץ לבניית צוות, מנהיגות ותקשורת בהרי הגלבוע"
               className="relative rounded-2xl shadow-strong w-full h-[500px] object-cover"
             />
           </div>

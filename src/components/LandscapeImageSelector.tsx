@@ -205,7 +205,7 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }:
                 {images[index] ? (
                   <img
                     src={images[index]}
-                    alt={`אפשרות ${index + 1}`}
+                    alt={`נוף פנורמי של הרי הגלבוע ועמק המעיינות בצפון ישראל - תמונה שנוצרה בבינה מלאכותית מספר ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
                 ) : generatingIndex === index ? (

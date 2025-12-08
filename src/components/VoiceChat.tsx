@@ -538,7 +538,7 @@ ${transcript}`;
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-border/50 bg-gradient-to-r from-primary/10 to-secondary/10">
         <div className="flex items-center gap-3">
-          <img src={companyLogo} alt="טיולים עם דויד" className="w-10 h-10 rounded-lg object-cover" />
+          <img src={companyLogo} alt="לוגו טיולים עם דויד - סיורים מודרכים בצפון ישראל, הגלבוע ועמק המעיינות" className="w-10 h-10 rounded-lg object-cover" />
           <Bot className="w-8 h-8 text-primary" />
           <div className="flex-1">
             <h3 className="font-semibold text-lg">{language === 'he' ? 'צ\'אט קולי - טיולים עם דויד' : 'Voice Chat - Tours with David'}</h3>

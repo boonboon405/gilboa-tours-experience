@@ -15,6 +15,7 @@ interface MenuItem {
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   image: string;
+  imageAlt: string;
   description: string;
   highlights: string[];
 }
@@ -30,6 +31,7 @@ const menuItems: MenuItem[] = [
     href: '#home',
     icon: Home,
     image: galileeNature,
+    imageAlt: 'נוף ירוק ופורח של הרי הגליל עם עצי אלון ואורנים צופים לעבר עמקים פוריים',
     description: 'גלה את הגלבוע והעמק הירדן',
     highlights: ['נופים פנורמיים', 'חוויות ייחודיות', 'מקצועיות ואיכות']
   },
@@ -38,6 +40,7 @@ const menuItems: MenuItem[] = [
     href: '#choose-your-day',
     icon: Users,
     image: clubCarsImage,
+    imageAlt: 'רכבי שטח חשמליים מתמרנים בשבילי הגלבוע במהלך פעילות גיבוש צוותית לחברות',
     description: 'יום מלא בפעילויות מגבשות',
     highlights: ['100+ פעילויות', 'Quiz מותאם אישית', 'חוויות בטבע']
   },
@@ -46,6 +49,7 @@ const menuItems: MenuItem[] = [
     href: '#vip-tours',
     icon: Star,
     image: culinaryImage,
+    imageAlt: 'שולחן ערוך עם מטעמים מקומיים - יין בוטיק, גבינות עזים וסלטים טריים לאורחי VIP',
     description: 'חוויות VIP מותאמות אישית',
     highlights: ['שירות יוקרתי', 'מדריכי שפות', 'התאמה אישית']
   },
@@ -54,6 +58,7 @@ const menuItems: MenuItem[] = [
     href: '#odt-section',
     icon: Target,
     image: odtTeamImage,
+    imageAlt: 'צוות עובדים משתתף בפעילות גיבוש ODT בטבע - אימון פיתוח חוץ לבניית צוות ומנהיגות',
     description: 'תוכניות גיבוש צוותיות מתקדמות',
     highlights: ['בניית צוות', 'אתגרים מקצועיים', 'חוויה משמעותית']
   },
@@ -62,6 +67,7 @@ const menuItems: MenuItem[] = [
     href: '#contact',
     icon: Phone,
     image: springsNature,
+    imageAlt: 'מעיינות צלולים וטבעיים בגן השלושה מוקפים בצמחייה טרופית ודקלים',
     description: 'נשמח לעזור ולייעץ',
     highlights: ['שירות אישי', 'מענה מהיר', 'ייעוץ מקצועי']
   }
@@ -167,7 +173,7 @@ export const MegaMenu = ({ activeSection, onNavClick }: MegaMenuProps) => {
                   )}
                   <img 
                     src={item.image} 
-                    alt={item.label}
+                    alt={item.imageAlt}
                     className={cn(
                       "w-full h-full object-cover transition-transform duration-500 ease-out group-hover/image:scale-110",
                       !imageLoaded[item.href] && "opacity-0"

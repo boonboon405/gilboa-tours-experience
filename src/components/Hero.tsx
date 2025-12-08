@@ -84,7 +84,7 @@ export const Hero = () => {
           <img
             key={`${image}-${index}`}
             src={image}
-            alt={`הרי הגלבוע ${index + 1}`}
+            alt={`נוף פנורמי מרהיב של הרי הגלבוע ועמק המעיינות בצפון ישראל - תמונה ${index + 1}`}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
               index === currentImageIndex ? 'opacity-100' : 'opacity-0'
             }`}
