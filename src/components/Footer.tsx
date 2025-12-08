@@ -69,6 +69,11 @@ export const Footer = () => {
                   צור קשר
                 </a>
               </li>
+              <li>
+                <a href="/accessibility" className="text-muted-foreground hover:text-primary transition-colors">
+                  הצהרת נגישות
+                </a>
+              </li>
             </ul>
           </div>
         </div>
