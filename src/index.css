@@ -258,3 +258,79 @@ All colors MUST be HSL.
       0 0 40px hsl(var(--accent) / 0.15);
   }
 }
+
+/* ===== ACCESSIBILITY STYLES ===== */
+
+/* High Contrast Mode */
+.high-contrast {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --primary: 60 100% 50%;
+  --primary-foreground: 0 0% 0%;
+  --muted: 0 0% 20%;
+  --muted-foreground: 0 0% 100%;
+  --accent: 60 100% 50%;
+  --accent-foreground: 0 0% 0%;
+  --border: 0 0% 100%;
+}
+
+.high-contrast * {
+  border-color: hsl(0 0% 100%) !important;
+}
+
+.high-contrast img {
+  filter: contrast(1.2);
+}
+
+/* Grayscale Mode */
+.grayscale-mode {
+  filter: grayscale(100%);
+}
+
+/* Highlight Links Mode */
+.highlight-links a,
+.highlight-links button {
+  outline: 3px solid hsl(var(--primary)) !important;
+  outline-offset: 2px;
+  text-decoration: underline !important;
+}
+
+/* Stop Animations Mode */
+.stop-animations,
+.stop-animations * {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Readable Font Mode */
+.readable-font,
+.readable-font * {
+  font-family: Arial, Helvetica, sans-serif !important;
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.1em !important;
+  line-height: 1.8 !important;
+}
+
+/* Large Cursor Mode */
+.large-cursor,
+.large-cursor * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='white' stroke-width='1' d='M5.5 3.21V20.8l4.86-4.86h6.21L5.5 3.21z'/%3E%3C/svg%3E") 0 0, auto !important;
+}
+
+/* Focus Styles for Keyboard Navigation */
+*:focus-visible {
+  outline: 3px solid hsl(var(--primary)) !important;
+  outline-offset: 2px !important;
+}
+
+/* Screen Reader Only (but visible on focus) */
+.sr-only-focusable:focus {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: inherit !important;
+  margin: inherit !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: normal !important;
+}
