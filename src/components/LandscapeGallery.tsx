@@ -26,9 +26,9 @@ const gallerySections: GallerySection[] = [
     title: 'הגליל והכנרת',
     description: 'נופים עוצרי נשימה של אזור הגליל והכנרת',
     images: [
-      { src: galileeNature, alt: 'נופי הגליל', title: 'נופי הגליל', description: 'נוף פנורמי של הרי הגליל' },
-      { src: pelicans, alt: 'שמורת הפלמינגו', title: 'שמורת הפלמינגו', description: 'חיות בר באגמון החולה' },
-      { src: beitShean, alt: 'עמק בית שאן', title: 'עמק בית שאן', description: 'נוף היסטורי מרהיב' },
+      { src: galileeNature, alt: 'נוף ירוק ופורח של הרי הגליל עם עצי אלון ואורנים צופים לעבר עמקים פוריים', title: 'נופי הגליל', description: 'נוף פנורמי של הרי הגליל' },
+      { src: pelicans, alt: 'להקת שקנאים ופלמינגו בנדידה מעל אגמון החולה בשבר הסורי אפריקאי', title: 'נדידת ציפורים', description: 'חיות בר באגמון החולה' },
+      { src: beitShean, alt: 'שרידי העיר הרומית סקיתופוליס בבית שאן - עמודים ופסיפסים עתיקים על רקע הרי הגלבוע', title: 'עמק בית שאן', description: 'נוף היסטורי מרהיב' },
     ]
   },
   {
@@ -36,9 +36,9 @@ const gallerySections: GallerySection[] = [
     title: 'הרי הגלבוע',
     description: 'הפנינה הטבעית של צפון הארץ',
     images: [
-      { src: heroGilboa, alt: 'הרי הגלבוע', title: 'הרי הגלבוע', description: 'שקיעה מדהימה מפסגות הגלבוע' },
-      { src: springsNature, alt: 'עמק המעיינות', title: 'עמק המעיינות', description: 'מעיינות צלולים בלב הטבע' },
-      { src: springsActivity, alt: 'פעילויות במעיינות', title: 'פעילויות במעיינות', description: 'חוויות ייחודיות במים' },
+      { src: heroGilboa, alt: 'תצפית עוצרת נשימה מפסגת הרי הגלבוע אל עמק המעיינות ועמק הירדן בשקיעה זהובה', title: 'הרי הגלבוע', description: 'שקיעה מדהימה מפסגות הגלבוע' },
+      { src: springsNature, alt: 'מעיינות צלולים וטבעיים בגן השלושה (סחנה) מוקפים בצמחייה טרופית ודקלים', title: 'עמק המעיינות', description: 'מעיינות צלולים בלב הטבע' },
+      { src: springsActivity, alt: 'קבוצת מטיילים נהנית מפעילות מים ושחייה במעיינות הטבעיים של עמק המעיינות', title: 'פעילויות במעיינות', description: 'חוויות ייחודיות במים' },
     ]
   },
   {
@@ -46,9 +46,9 @@ const gallerySections: GallerySection[] = [
     title: 'פעילויות וחוויות',
     description: 'מגוון פעילויות מרתקות בטבע',
     images: [
-      { src: clubCars, alt: 'מועדוני רכב שטח', title: 'מועדוני רכב שטח', description: 'טיולים מאתגרים בשטח' },
-      { src: culinary, alt: 'חוויות קולינריות', title: 'חוויות קולינריות', description: 'טעמים אותנטיים של האזור' },
-      { src: odtTeam, alt: 'גיבוש ODT', title: 'גיבוש ODT', description: 'פעילויות גיבוש צוותיות' },
+      { src: clubCars, alt: 'רכבי שטח חשמליים מתמרנים בשבילי הגלבוע במהלך פעילות גיבוש צוותית אתגרית', title: 'רכבי שטח חשמליים', description: 'טיולים מאתגרים בשטח' },
+      { src: culinary, alt: 'שולחן ערוך עם מטעמים מקומיים - יין בוטיק, גבינות עזים, שמן זית וסלטים טריים מהאזור', title: 'חוויות קולינריות', description: 'טעמים אותנטיים של האזור' },
+      { src: odtTeam, alt: 'צוות עובדים בפעילות גיבוש ODT - אימון פיתוח חוץ הכולל אתגרים קבוצתיים בטבע', title: 'גיבוש ODT', description: 'פעילויות גיבוש צוותיות' },
     ]
   }
 ];

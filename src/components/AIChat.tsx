@@ -523,7 +523,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     <Card className="flex flex-col h-[600px] max-w-4xl mx-auto border-border/50 shadow-xl">
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b border-border/50 bg-gradient-to-r from-primary/10 to-secondary/10">
-        <img src={companyLogo} alt="טיולים עם דויד" className="w-10 h-10 rounded-lg object-cover" />
+        <img src={companyLogo} alt="לוגו טיולים עם דויד - סיורים מודרכים בצפון ישראל, הגלבוע ועמק המעיינות" className="w-10 h-10 rounded-lg object-cover" />
         <div className="relative">
           <Bot className="w-8 h-8 text-primary" />
           <Sparkles className="w-4 h-4 text-accent absolute -top-1 -right-1 animate-pulse-slow" />
