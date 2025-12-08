@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Calendar, Sparkles, LogOut, Shield } from 'lucide-react';
+import { Menu, X, Calendar, Sparkles, LogOut, Shield, Accessibility } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { TeamDNAQuiz } from '@/components/TeamDNAQuiz';
@@ -139,6 +139,7 @@ export const Navigation = () => {
     { label: 'טיולי VIP לאורחי חברות מחו״ל', href: '#vip-tours' },
     { label: 'גיבוש ODT', href: '#odt-section' },
     { label: 'צור קשר', href: '#contact' },
+    { label: 'הצהרת נגישות', href: '/accessibility', isLink: true },
   ];
 
   return (
@@ -189,6 +190,15 @@ export const Navigation = () => {
             </button>
             
             <MegaMenu activeSection={activeSection} onNavClick={handleNavClick} />
+            
+            <Link 
+              to="/accessibility"
+              className="flex items-center gap-1 px-3 py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+              title="הצהרת נגישות"
+            >
+              <Accessibility className="h-4 w-4" />
+              <span className="sr-only lg:not-sr-only">נגישות</span>
+            </Link>
             
             <Link to="/booking">
               <Button 
@@ -306,6 +316,21 @@ export const Navigation = () => {
             <div className="mt-2 space-y-1" role="menuitem">
               {navItems.map((item) => {
                 const isActive = activeSection === item.href.replace('#', '');
+                
+                if ((item as any).isLink) {
+                  return (
+                    <Link
+                      key={item.label}
+                      to={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-2 py-3 px-4 rounded-lg text-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 hover:translate-x-1 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                    >
+                      <Accessibility className="h-4 w-4" />
+                      {item.label}
+                    </Link>
+                  );
+                }
+                
                 return (
                   <a
                     key={item.label}
