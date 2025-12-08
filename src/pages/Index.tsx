@@ -13,6 +13,7 @@ import { EmergencyContactButton } from '@/components/EmergencyContactButton';
 import { PublicFAQ } from '@/components/PublicFAQ';
 import { TestimonialSubmissionForm } from '@/components/TestimonialSubmissionForm';
 import { LandscapeGallery } from '@/components/LandscapeGallery';
+import { AccessibilityInfoSection } from '@/components/AccessibilityInfoSection';
 
 const Index = () => {
   return (
@@ -50,6 +51,9 @@ const Index = () => {
       </div>
       <div id="contact" className="scroll-mt-20">
         <ContactSection />
+      </div>
+      <div id="accessibility-info" className="scroll-mt-20">
+        <AccessibilityInfoSection />
       </div>
       <Footer />
     </div>
