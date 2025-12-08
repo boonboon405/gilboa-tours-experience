@@ -88,12 +88,17 @@ export const MegaMenu = ({ activeSection, onNavClick }: MegaMenuProps) => {
         return (
           <div
             key={item.href}
-            className="relative"
+            className="relative group/item"
             onMouseEnter={() => {
               setHoveredItem(item.href);
               setIsMenuOpen(true);
             }}
-            onMouseLeave={() => {
+            onMouseLeave={(e) => {
+              // Check if we're moving to the dropdown (child element)
+              const relatedTarget = e.relatedTarget as HTMLElement;
+              if (relatedTarget && e.currentTarget.contains(relatedTarget)) {
+                return; // Don't close if moving to dropdown
+              }
               setHoveredItem(null);
               setIsMenuOpen(false);
             }}
@@ -141,7 +146,7 @@ export const MegaMenu = ({ activeSection, onNavClick }: MegaMenuProps) => {
 
             {/* Mega Menu Dropdown */}
             {isHovered && isMenuOpen && (
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[380px] animate-in fade-in slide-in-from-top-2 duration-300 z-[100]">
+              <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[380px] animate-in fade-in slide-in-from-top-2 duration-300 z-[100]">
                 <div className="bg-card/98 backdrop-blur-xl border-2 border-primary/20 rounded-xl shadow-[0_20px_70px_hsl(var(--primary)/0.3),0_0_40px_hsl(var(--primary)/0.1)] overflow-hidden relative group/dropdown">
                   {/* Animated border glow */}
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 opacity-0 group-hover/dropdown:opacity-100 transition-opacity duration-500 -z-10 blur-xl" />
