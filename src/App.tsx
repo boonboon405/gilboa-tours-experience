@@ -8,6 +8,8 @@ import { Provider } from "react-redux";
 import { store } from "@/store";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AccessibilityProvider } from "@/hooks/use-accessibility";
+import { AccessibilityWidget } from "@/components/AccessibilityWidget";
 import Index from "./pages/Index";
 import Booking from "./pages/Booking";
 import Chat from "./pages/Chat";
@@ -27,6 +29,7 @@ import MasterDashboard from "./pages/MasterDashboard";
 import AdminAIResponses from "./pages/AdminAIResponses";
 import AISettings from "./pages/AISettings";
 import AdminCategories from "./pages/AdminCategories";
+import AccessibilityStatement from "./pages/AccessibilityStatement";
 import NotFound from "./pages/NotFound";
 import { LiveChatWidget } from "./components/LiveChatWidget";
 
@@ -42,12 +45,14 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
         <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
+          <AccessibilityProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/accessibility" element={<AccessibilityStatement />} />
                 <Route path="/booking" element={<Booking />} />
                 <Route path="/chat" element={<Chat />} />
                 <Route path="/auth" element={<Auth />} />
@@ -162,8 +167,10 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <LiveChatWidget />
+              <AccessibilityWidget />
             </BrowserRouter>
           </TooltipProvider>
+        </AccessibilityProvider>
         </AuthProvider>
       </Provider>
     </QueryClientProvider>
