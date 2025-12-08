@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, KeyboardEvent } from 'react';
 import { Phone, MessageCircle, Sparkles, Calendar, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import heroImage from '@/assets/hero-gilboa.jpg';
 import { LandscapeImageSelector } from './LandscapeImageSelector';
 import { openWhatsApp, whatsappTemplates, trackPhoneCall } from '@/utils/contactTracking';
+import { getClickableProps } from '@/hooks/use-keyboard-nav';
 
 const STORAGE_KEY = 'landscape-images';
 
@@ -178,8 +179,12 @@ export const Hero = () => {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce animate-fade-in [animation-delay:1.2s] opacity-0 [animation-fill-mode:forwards]">
-        <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center cursor-pointer hover:border-accent transition-colors" onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}>
+      <div 
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce animate-fade-in [animation-delay:1.2s] opacity-0 [animation-fill-mode:forwards]"
+        {...getClickableProps(() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' }))}
+        aria-label="גלול למטה לתוכן נוסף"
+      >
+        <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center cursor-pointer hover:border-accent transition-colors focus-visible:ring-2 focus-visible:ring-accent">
           <div className="w-1 h-3 bg-white rounded-full mt-2 animate-[scroll-indicator_2s_ease-in-out_infinite]" />
         </div>
       </div>
