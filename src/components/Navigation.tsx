@@ -89,7 +89,7 @@ export const Navigation = () => {
   }, []);
 
   // Smooth scroll handler with enhanced animation
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement> | React.KeyboardEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     const targetId = href.replace('#', '');
     const element = document.getElementById(targetId);
@@ -109,6 +109,17 @@ export const Navigation = () => {
       setTimeout(() => {
         element.classList.remove('animate-pulse-once');
       }, 1000);
+      
+      // Set focus to the target element for screen readers
+      element.setAttribute('tabindex', '-1');
+      element.focus();
+    }
+  };
+
+  // Keyboard handler for navigation items
+  const handleNavKeyDown = (e: React.KeyboardEvent<HTMLAnchorElement>, href: string) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      handleNavClick(e, href);
     }
   };
 
@@ -131,13 +142,17 @@ export const Navigation = () => {
   ];
 
   return (
-    <nav className={`fixed top-0 w-full z-50 border-b transition-all duration-300 ${
-      isScrolled 
-        ? 'bg-card/98 backdrop-blur-md shadow-lg border-border' 
-        : 'bg-card/95 backdrop-blur-sm shadow-soft border-border/50'
-    }`}>
+    <nav 
+      className={`fixed top-0 w-full z-50 border-b transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-card/98 backdrop-blur-md shadow-lg border-border' 
+          : 'bg-card/95 backdrop-blur-sm shadow-soft border-border/50'
+      }`}
+      role="navigation"
+      aria-label="תפריט ראשי"
+    >
       {/* Progress Bar */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-muted/30">
+      <div className="absolute top-0 left-0 w-full h-1 bg-muted/30" aria-hidden="true">
         <div 
           className="h-full bg-gradient-to-r from-primary via-primary/80 to-primary transition-all duration-300 ease-out shadow-glow"
           style={{ width: `${scrollProgress}%` }}
@@ -252,7 +267,9 @@ export const Navigation = () => {
               variant="ghost"
               size="icon"
               onClick={() => setIsOpen(!isOpen)}
-              aria-label="תפריט"
+              aria-label={isOpen ? 'סגור תפריט' : 'פתח תפריט'}
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
@@ -261,7 +278,11 @@ export const Navigation = () => {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden pb-4 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div 
+            id="mobile-menu"
+            className="md:hidden pb-4 animate-in fade-in slide-in-from-top-2 duration-300"
+            role="menu"
+          >
             <button
               onClick={() => {
                 setShowQuiz(true);
@@ -282,7 +303,7 @@ export const Navigation = () => {
               </div>
               Quiz
             </button>
-            <div className="mt-2 space-y-1">
+            <div className="mt-2 space-y-1" role="menuitem">
               {navItems.map((item) => {
                 const isActive = activeSection === item.href.replace('#', '');
                 return (
@@ -290,9 +311,11 @@ export const Navigation = () => {
                     key={item.label}
                     href={item.href}
                     onClick={(e) => handleNavClick(e, item.href)}
-                    className={`block py-3 px-4 rounded-lg text-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 hover:translate-x-1 ${
+                    onKeyDown={(e) => handleNavKeyDown(e, item.href)}
+                    className={`block py-3 px-4 rounded-lg text-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 hover:translate-x-1 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
                       isActive ? 'text-primary font-semibold bg-primary/10 border-l-4 border-primary shadow-sm' : ''
                     }`}
+                    aria-current={isActive ? 'page' : undefined}
                   >
                     {item.label}
                   </a>

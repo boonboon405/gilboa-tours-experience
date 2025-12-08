@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Calendar, Users, Briefcase, CheckCircle2, ArrowLeft } from "lucide-react";
 import { useParallax } from '@/hooks/use-parallax';
 import { use3DTilt } from '@/hooks/use-3d-tilt';
+import { getClickableProps } from '@/hooks/use-keyboard-nav';
 
 interface Service {
   id: string;
@@ -130,16 +131,17 @@ export const ServiceCards = () => {
             const Icon = service.icon;
             const tilt = use3DTilt({ maxTilt: 10, scale: 1.03, speed: 500 });
             
-            return (
-              <Card 
-                key={service.id}
-                ref={tilt.ref}
-                className="relative hover:shadow-2xl transition-all duration-500 cursor-pointer group border-2 hover:border-primary/50 bg-card/80 backdrop-blur-sm overflow-hidden"
-                style={tilt.style}
-                onMouseMove={tilt.onMouseMove}
-                onMouseLeave={tilt.onMouseLeave}
-                onClick={() => setSelectedService(service)}
-              >
+              return (
+                <Card 
+                  key={service.id}
+                  ref={tilt.ref}
+                  className="relative hover:shadow-2xl transition-all duration-500 cursor-pointer group border-2 hover:border-primary/50 bg-card/80 backdrop-blur-sm overflow-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                  style={tilt.style}
+                  onMouseMove={tilt.onMouseMove}
+                  onMouseLeave={tilt.onMouseLeave}
+                  {...getClickableProps(() => setSelectedService(service))}
+                  aria-label={`${service.title} - ${service.shortDesc}. לחץ Enter לפרטים נוספים`}
+                >
                 <CardHeader className="text-center pb-4">
                   <div className="mx-auto mb-4 p-6 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                     <Icon className="h-10 w-10" />
