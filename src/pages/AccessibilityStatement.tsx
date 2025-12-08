@@ -147,8 +147,8 @@ const AccessibilityStatement = () => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Phone className="h-5 w-5 text-primary" />
-                    <a href="tel:+972505340770" className="text-primary hover:underline">
-                      050-534-0770
+                    <a href="tel:+972537314235" className="text-primary hover:underline">
+                      053-731-4235
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
