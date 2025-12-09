@@ -3,9 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TeamDNAQuiz } from '@/components/TeamDNAQuiz';
 import { CategoryShowcase } from '@/components/CategoryShowcase';
-import { Sparkles, Brain, CheckCircle2 } from 'lucide-react';
+import { Sparkles, Brain, CheckCircle2, RotateCcw } from 'lucide-react';
 import { QuizResults } from '@/utils/quizScoring';
 import { Badge } from '@/components/ui/badge';
+import { forceResetClientData } from '@/utils/clientSession';
+import { useToast } from '@/hooks/use-toast';
 
 interface QuizCategoryIntegrationProps {
   onQuizComplete?: (results: QuizResults) => void;
@@ -18,6 +20,7 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
     const stored = localStorage.getItem('teamDNAResults');
     return stored ? JSON.parse(stored) : null;
   });
+  const { toast } = useToast();
 
   // Determine current step
   const getCurrentStep = () => {
@@ -43,6 +46,15 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
 
   const handleRetakeQuiz = () => {
     setShowQuiz(true);
+  };
+
+  const handleResetQuiz = () => {
+    forceResetClientData();
+    setQuizResults(null);
+    toast({
+      title: language === 'he' ? 'ה-Quiz אופס' : 'Quiz Reset',
+      description: language === 'he' ? 'כל הנתונים נמחקו, אפשר להתחיל מחדש' : 'All data cleared, you can start fresh',
+    });
   };
 
   return (
@@ -87,13 +99,22 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
                   }
                 </p>
               </div>
-              <div className="flex justify-center">
+              <div className="flex justify-center gap-2">
                 <Button 
                   variant="outline" 
                   onClick={handleRetakeQuiz}
                   size="sm"
                 >
-                  {language === 'he' ? 'עשה שוב את ה-Quiz (שנה או הוסף אטרקציות)' : 'Retake Quiz (Change or Add Attractions)'}
+                  {language === 'he' ? 'עשה שוב את ה-Quiz' : 'Retake Quiz'}
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={handleResetQuiz}
+                  size="sm"
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                >
+                  <RotateCcw className="w-4 h-4 ml-1" />
+                  {language === 'he' ? 'אפס הכל' : 'Reset All'}
                 </Button>
               </div>
             </div>
