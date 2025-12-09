@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Gauge, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { sanitizeForTTS } from '@/utils/ttsSanitizer';
+import { speakWithElevenLabs, stopElevenLabsSpeech } from '@/utils/elevenLabsTTS';
 import { analyzeSentiment, getOverallSentiment } from '@/utils/sentimentAnalysis';
 import { WaveformVisualizer } from '@/components/WaveformVisualizer';
 import { ChatHistory } from '@/components/ChatHistory';
@@ -202,44 +202,17 @@ Tell me - how many people? What interests you?`;
     }
   }, []);
 
-  const speakText = (text: string) => {
-    if (!window.speechSynthesis) return;
-
-    // Sanitize text for TTS (includes quality check for slang/Arabic)
-    const cleanText = sanitizeForTTS(text);
+  const speakText = async (text: string) => {
+    // Stop any ongoing speech
+    stopElevenLabsSpeech();
     
-    // Don't speak if text is empty after sanitization
-    if (!cleanText.trim()) {
-      console.log('Text was empty after sanitization, skipping TTS');
-      return;
-    }
-
-    // Cancel any ongoing speech
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = language === 'he' ? 'he-IL' : 'en-US';
-    utterance.rate = voiceSpeed; // User-controlled speed
-    utterance.pitch = 1;
-    utterance.volume = 1;
-
-    // Try to find a voice matching the selected language
-    const voices = window.speechSynthesis.getVoices();
-    const matchingVoice = voices.find(voice => 
-      language === 'he' 
-        ? (voice.lang === 'he-IL' || voice.lang.startsWith('he'))
-        : (voice.lang === 'en-US' || voice.lang.startsWith('en'))
+    // Use ElevenLabs for high-quality Hebrew TTS
+    await speakWithElevenLabs(
+      text,
+      'Rachel', // Best Hebrew voice
+      () => setIsSpeaking(true),
+      () => setIsSpeaking(false)
     );
-    if (matchingVoice) {
-      utterance.voice = matchingVoice;
-    }
-
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-
-    synthesisRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
   };
 
   const handleVoiceInput = async (transcript: string) => {

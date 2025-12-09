@@ -17,8 +17,7 @@ import { ConversationAnalytics } from '@/components/ConversationAnalytics';
 import companyLogo from '@/assets/company-logo.png';
 import { categoryMetadata, DNACategory } from '@/utils/activityCategories';
 import { detectCategoriesInMessage } from '@/utils/categoryDetector';
-import { sanitizeForTTS } from '@/utils/ttsSanitizer';
-
+import { speakWithElevenLabs, stopElevenLabsSpeech } from '@/utils/elevenLabsTTS';
 interface Message {
   id: string;
   sender: 'user' | 'ai';
@@ -158,35 +157,17 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     }
   }, []);
 
-  const speakText = (text: string) => {
-    if (!window.speechSynthesis) return;
-
-    // Sanitize text for TTS (includes quality check for slang/Arabic)
-    const cleanText = sanitizeForTTS(text);
-    if (!cleanText.trim()) return;
-
-    // Cancel any ongoing speech
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = 'he-IL';
-    utterance.rate = voiceSpeed; // Use user-controlled speed
-    utterance.pitch = 1;
-    utterance.volume = 1;
-
-    // Try to find a Hebrew voice
-    const voices = window.speechSynthesis.getVoices();
-    const hebrewVoice = voices.find(voice => voice.lang === 'he-IL' || voice.lang.startsWith('he'));
-    if (hebrewVoice) {
-      utterance.voice = hebrewVoice;
-    }
-
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-
-    synthesisRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
+  const speakText = async (text: string) => {
+    // Stop any ongoing speech
+    stopElevenLabsSpeech();
+    
+    // Use ElevenLabs for high-quality Hebrew TTS
+    await speakWithElevenLabs(
+      text,
+      'Rachel', // Best Hebrew voice
+      () => setIsSpeaking(true),
+      () => setIsSpeaking(false)
+    );
   };
 
   const handleTyping = (text: string) => {
