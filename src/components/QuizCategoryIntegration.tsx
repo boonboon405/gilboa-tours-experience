@@ -8,6 +8,8 @@ import { QuizResults } from '@/utils/quizScoring';
 import { Badge } from '@/components/ui/badge';
 import { forceResetClientData } from '@/utils/clientSession';
 import { useToast } from '@/hooks/use-toast';
+import { playSound } from '@/utils/soundEffects';
+import confetti from 'canvas-confetti';
 
 interface QuizCategoryIntegrationProps {
   onQuizComplete?: (results: QuizResults) => void;
@@ -42,14 +44,25 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
       top_categories: results.topCategories,
       percentages: results.percentages
     }));
+    
+    // Celebration effect
+    playSound('complete', 0.4);
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+    
     onQuizComplete?.(results);
   };
 
   const handleRetakeQuiz = () => {
+    playSound('click', 0.2);
     setShowQuiz(true);
   };
 
   const handleResetQuiz = () => {
+    playSound('whoosh', 0.2);
     setIsResetting(true);
     
     // Animate then reset
@@ -57,11 +70,17 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
       forceResetClientData();
       setQuizResults(null);
       setIsResetting(false);
+      playSound('notification', 0.3);
       toast({
         title: language === 'he' ? '✨ ה-Quiz אופס' : '✨ Quiz Reset',
         description: language === 'he' ? 'כל הנתונים נמחקו, אפשר להתחיל מחדש' : 'All data cleared, you can start fresh',
       });
     }, 600);
+  };
+
+  const handleStartQuiz = () => {
+    playSound('click', 0.2);
+    setShowQuiz(true);
   };
 
   return (
@@ -85,7 +104,7 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
           {!quizResults ? (
             <div className="flex justify-center pt-2">
               <Button 
-                onClick={() => setShowQuiz(true)} 
+                onClick={handleStartQuiz} 
                 size="lg"
                 className="gap-2"
               >
