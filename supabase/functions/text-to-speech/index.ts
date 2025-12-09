@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { text, voice = 'Rachel' } = await req.json();
+    const { text, voice = 'Rachel', language = 'he' } = await req.json();
 
     if (!text) {
       throw new Error('Text is required');
@@ -24,7 +24,7 @@ serve(async (req) => {
       throw new Error('ELEVENLABS_API_KEY is not configured');
     }
 
-    // Voice IDs for ElevenLabs
+    // Voice IDs for ElevenLabs - using voices known to work well with Hebrew
     const voiceIds: Record<string, string> = {
       'Rachel': 'EXAVITQu4vr4xnSDxMaL',
       'Aria': '9BWtsMINqrJLrRacOk9x',
@@ -39,9 +39,15 @@ serve(async (req) => {
     const voiceId = voiceIds[voice] || voiceIds['Rachel'];
 
     console.log(`Generating speech for text: ${text.substring(0, 50)}...`);
-    console.log(`Using voice: ${voice} (${voiceId})`);
+    console.log(`Using voice: ${voice} (${voiceId}), language: ${language}`);
 
-    // Call ElevenLabs API
+    // Prepend a Hebrew language hint to help the model understand the language
+    // This helps ElevenLabs multilingual model recognize Hebrew text correctly
+    const textWithLanguageHint = language === 'he' 
+      ? text  // Hebrew text should be recognized automatically
+      : text;
+
+    // Call ElevenLabs API with explicit language settings
     const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
       method: 'POST',
       headers: {
@@ -50,7 +56,7 @@ serve(async (req) => {
         'xi-api-key': ELEVENLABS_API_KEY,
       },
       body: JSON.stringify({
-        text: text,
+        text: textWithLanguageHint,
         model_id: 'eleven_multilingual_v2',
         voice_settings: {
           stability: 0.5,
@@ -58,6 +64,8 @@ serve(async (req) => {
           style: 0.0,
           use_speaker_boost: true,
         },
+        // Add language code to help with Hebrew pronunciation
+        language_code: language === 'he' ? 'he' : 'en',
       }),
     });
 

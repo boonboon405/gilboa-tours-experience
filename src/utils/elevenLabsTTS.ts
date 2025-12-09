@@ -29,7 +29,8 @@ export async function speakWithElevenLabs(
   text: string,
   voice: ElevenLabsVoice = 'Rachel',
   onStart?: () => void,
-  onEnd?: () => void
+  onEnd?: () => void,
+  language: 'he' | 'en' = 'he'
 ): Promise<boolean> {
   // Sanitize the text first
   const sanitizedText = sanitizeForTTS(text);
@@ -50,7 +51,7 @@ export async function speakWithElevenLabs(
     onStart?.();
 
     const { data, error } = await supabase.functions.invoke('text-to-speech', {
-      body: { text: sanitizedText, voice }
+      body: { text: sanitizedText, voice, language }
     });
 
     if (error) {
