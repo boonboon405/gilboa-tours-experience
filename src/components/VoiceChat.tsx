@@ -15,6 +15,7 @@ import { ChatHistory } from '@/components/ChatHistory';
 import { CategoryShowcase } from '@/components/CategoryShowcase';
 import { SpeakingAnimation } from '@/components/SpeakingAnimation';
 import { VoiceSelector } from '@/components/VoiceSelector';
+import { VolumeIndicator } from '@/components/VolumeIndicator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import companyLogo from '@/assets/company-logo.png';
 
@@ -528,7 +529,7 @@ ${transcript}`;
             <h3 className="font-semibold text-lg flex items-center gap-2">
               {language === 'he' ? 'צ\'אט קולי - טיולים עם דויד' : 'Voice Chat - Tours with David'}
               {isSpeaking && (
-                <span className="text-xs text-primary animate-pulse">{language === 'he' ? 'מדבר...' : 'Speaking...'}</span>
+                <VolumeIndicator isActive={isSpeaking} className="h-5" />
               )}
             </h3>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
