@@ -580,10 +580,14 @@ ${transcript}`;
           <Button
             variant="ghost"
             size="icon"
-            onClick={toggleSpeech}
-            disabled={!isSpeaking}
+            onClick={() => {
+              stopElevenLabsSpeech();
+              setIsSpeaking(false);
+            }}
+            title={language === 'he' ? 'השתק' : 'Mute'}
+            className={isSpeaking ? 'text-destructive hover:text-destructive' : ''}
           >
-            {isSpeaking ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+            {isSpeaking ? <VolumeX className="w-5 h-5 animate-pulse" /> : <Volume2 className="w-5 h-5" />}
           </Button>
         </div>
       </div>
