@@ -24,7 +24,8 @@ serve(async (req) => {
       throw new Error('ELEVENLABS_API_KEY is not configured');
     }
 
-    // Voice IDs for ElevenLabs - using multilingual voices
+    // Voice IDs for ElevenLabs - these are multilingual voices
+    // Using voices known to work well across languages
     const voiceIds: Record<string, string> = {
       'Rachel': 'EXAVITQu4vr4xnSDxMaL',
       'Aria': '9BWtsMINqrJLrRacOk9x',
@@ -41,15 +42,8 @@ serve(async (req) => {
     console.log(`Generating speech for text: ${text.substring(0, 50)}...`);
     console.log(`Using voice: ${voice} (${voiceId}), language: ${language}`);
 
-    // Add a language hint at the start to help the model understand the language
-    // For Hebrew, we add an invisible hint that helps the model recognize Hebrew text
-    let processedText = text;
-    if (language === 'he') {
-      // Adding Hebrew punctuation context helps the model recognize it's Hebrew
-      processedText = text;
-    }
-
-    // Call ElevenLabs API with turbo model for better multilingual support
+    // Call ElevenLabs API - use eleven_flash_v2_5 for better multilingual support
+    // This model has improved language detection from the text content
     const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
       method: 'POST',
       headers: {
@@ -58,11 +52,11 @@ serve(async (req) => {
         'xi-api-key': ELEVENLABS_API_KEY,
       },
       body: JSON.stringify({
-        text: processedText,
-        model_id: 'eleven_turbo_v2_5', // Use turbo v2.5 for better multilingual support including Hebrew
+        text: text,
+        model_id: 'eleven_flash_v2_5', // Flash v2.5 has excellent multilingual support with language auto-detection
         voice_settings: {
-          stability: 0.5,
-          similarity_boost: 0.75,
+          stability: 0.6,
+          similarity_boost: 0.8,
           style: 0.0,
           use_speaker_boost: true,
         },
