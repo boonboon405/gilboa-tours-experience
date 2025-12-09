@@ -14,10 +14,13 @@ import { AnswerSummary, ConversationData } from '@/components/AnswerSummary';
 import { RecommendedTours } from '@/components/RecommendedTours';
 import { ChatExport } from '@/components/ChatExport';
 import { ConversationAnalytics } from '@/components/ConversationAnalytics';
+import { SpeakingAnimation } from '@/components/SpeakingAnimation';
+import { VoiceSelector } from '@/components/VoiceSelector';
 import companyLogo from '@/assets/company-logo.png';
 import { categoryMetadata, DNACategory } from '@/utils/activityCategories';
 import { detectCategoriesInMessage } from '@/utils/categoryDetector';
-import { speakWithElevenLabs, stopElevenLabsSpeech } from '@/utils/elevenLabsTTS';
+import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice } from '@/utils/elevenLabsTTS';
+
 interface Message {
   id: string;
   sender: 'user' | 'ai';
@@ -47,7 +50,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [quickReplies, setQuickReplies] = useState<string[]>([]);
   const [showCategorySelector, setShowCategorySelector] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [voiceSpeed, setVoiceSpeed] = useState(0.7); // Default slow speed
+  const [selectedVoice, setSelectedVoice] = useState<ElevenLabsVoice>('Rachel');
   const [typingPreview, setTypingPreview] = useState('');
   const [conversationData, setConversationData] = useState<ConversationData>({});
   const [currentStep, setCurrentStep] = useState(0);
@@ -61,7 +64,6 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const { toast } = useToast();
 
   const steps = [
@@ -164,7 +166,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     // Use ElevenLabs for high-quality Hebrew TTS
     await speakWithElevenLabs(
       text,
-      'Rachel', // Best Hebrew voice
+      selectedVoice,
       () => setIsSpeaking(true),
       () => setIsSpeaking(false)
     );
@@ -507,10 +509,21 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
         <img src={companyLogo} alt="לוגו טיולים עם דויד - סיורים מודרכים בצפון ישראל, הגלבוע ועמק המעיינות" className="w-10 h-10 rounded-lg object-cover" />
         <div className="relative">
           <Bot className="w-8 h-8 text-primary" />
-          <Sparkles className="w-4 h-4 text-accent absolute -top-1 -right-1 animate-pulse-slow" />
+          {isSpeaking ? (
+            <div className="absolute -top-1 -right-1">
+              <SpeakingAnimation isActive={isSpeaking} size="sm" />
+            </div>
+          ) : (
+            <Sparkles className="w-4 h-4 text-accent absolute -top-1 -right-1 animate-pulse-slow" />
+          )}
         </div>
         <div className="flex-1">
-          <h3 className="font-semibold text-lg">סוכן חכם - טיולים עם דויד</h3>
+          <h3 className="font-semibold text-lg flex items-center gap-2">
+            סוכן חכם - טיולים עם דויד
+            {isSpeaking && (
+              <span className="text-xs text-primary animate-pulse">מדבר...</span>
+            )}
+          </h3>
           <p className="text-sm text-muted-foreground">חוויות בטבע עם הדרכה מקצועית 🌿</p>
         </div>
         <div className="flex items-center gap-2">
@@ -750,27 +763,22 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
         )}
         
         {/* Voice Speed Control */}
+        {/* Voice Settings */}
         <div className="mb-3 p-3 bg-muted/30 rounded-lg border border-border/50">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between">
             <label className="text-sm font-medium flex items-center gap-2">
               <Volume2 className="h-4 w-4" />
-              מהירות דיבור
-              <span className="text-xs text-muted-foreground">({Math.round(voiceSpeed * 100)}%)</span>
+              הגדרות קול
             </label>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-muted-foreground">איטי</span>
-            <input
-              type="range"
-              min="0.5"
-              max="1"
-              step="0.05"
-              value={voiceSpeed}
-              onChange={(e) => setVoiceSpeed(parseFloat(e.target.value))}
-              className="flex-1 h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
-              dir="ltr"
-            />
-            <span className="text-xs text-muted-foreground">מהיר</span>
+            <div className="flex items-center gap-2">
+              <VoiceSelector
+                selectedVoice={selectedVoice}
+                onVoiceChange={setSelectedVoice}
+              />
+              {isSpeaking && (
+                <SpeakingAnimation isActive={isSpeaking} size="sm" />
+              )}
+            </div>
           </div>
         </div>
         

@@ -81,11 +81,33 @@ export default {
             height: "0",
           },
         },
+        "speaking-bar": {
+          "0%, 100%": {
+            transform: "scaleY(0.3)",
+            opacity: "0.5",
+          },
+          "50%": {
+            transform: "scaleY(1)",
+            opacity: "1",
+          },
+        },
+        "pulse-ring": {
+          "0%": {
+            transform: "scale(1)",
+            opacity: "1",
+          },
+          "100%": {
+            transform: "scale(1.5)",
+            opacity: "0",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "speaking-bar": "speaking-bar 0.8s ease-in-out infinite",
+        "pulse-ring": "pulse-ring 1.5s ease-out infinite",
       },
     },
   },
