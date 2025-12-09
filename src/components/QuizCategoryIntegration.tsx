@@ -10,6 +10,7 @@ import { forceResetClientData } from '@/utils/clientSession';
 import { useToast } from '@/hooks/use-toast';
 import { playSound } from '@/utils/soundEffects';
 import confetti from 'canvas-confetti';
+import { SoundToggle } from '@/components/SoundToggle';
 
 interface QuizCategoryIntegrationProps {
   onQuizComplete?: (results: QuizResults) => void;
@@ -87,7 +88,10 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
     <div className="space-y-6">
       {/* Header Section */}
       <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5">
-        <CardHeader>
+        <CardHeader className="relative">
+          <div className="absolute top-4 left-4">
+            <SoundToggle />
+          </div>
           <CardTitle className="text-2xl text-center flex items-center justify-center gap-2">
             <Brain className="w-7 h-7 text-primary" />
             {language === 'he' ? '8 הקטגוריות שלנו + Quiz אישי' : '8 Categories + Personal Quiz'}
