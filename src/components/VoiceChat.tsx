@@ -48,7 +48,10 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const [speechSupported, setSpeechSupported] = useState(true);
   const [textInput, setTextInput] = useState('');
   const [language, setLanguage] = useState<'he' | 'en'>('he');
-  const [selectedVoice, setSelectedVoice] = useState<ElevenLabsVoice>('Rachel');
+  const [selectedVoice, setSelectedVoice] = useState<ElevenLabsVoice>(() => {
+    const saved = localStorage.getItem('preferred-voice');
+    return (saved as ElevenLabsVoice) || 'Rachel';
+  });
   const [showSettings, setShowSettings] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -622,7 +625,10 @@ ${transcript}`;
             </div>
             <VoiceSelector
               selectedVoice={selectedVoice}
-              onVoiceChange={setSelectedVoice}
+              onVoiceChange={(voice) => {
+                setSelectedVoice(voice);
+                localStorage.setItem('preferred-voice', voice);
+              }}
               className="w-full"
             />
           </div>
