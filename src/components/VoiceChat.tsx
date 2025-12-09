@@ -138,9 +138,12 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     };
   }, [language]);
 
+  // Track if greeting has been spoken to prevent duplicate TTS
+  const greetingSpokenRef = useRef(false);
+
   useEffect(() => {
     // Send initial greeting with enhanced quiz integration and categories
-    if (messages.length === 0) {
+    if (messages.length === 0 && !greetingSpokenRef.current) {
       let greeting = '';
       
       if (language === 'he') {
@@ -204,10 +207,11 @@ Tell me - how many people? What interests you?`;
         created_at: new Date().toISOString()
       };
       setMessages([initialMsg]);
+      greetingSpokenRef.current = true;
       
       setTimeout(() => speakText(greeting), 500);
     }
-  }, []);
+  }, [language, quizResults]);
 
   const speakText = async (text: string) => {
     // Stop any ongoing speech

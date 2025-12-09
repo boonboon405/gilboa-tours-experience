@@ -127,9 +127,12 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [faqQuestions.length]);
 
+  // Track if greeting has been spoken to prevent duplicate TTS
+  const greetingSpokenRef = useRef(false);
+
   useEffect(() => {
     // Send initial greeting with recommendations
-    if (messages.length === 0) {
+    if (messages.length === 0 && !greetingSpokenRef.current) {
       const greeting = quizResults
         ? `שלום! אני מומחה לסיוריים ומציע חוויות:
 🔥 הרפתקאות  |  💧 טבע  |  🏛️ דברי הימים  |  🍷 יין ואומנות הבישול  |  ⚡ ספורט  |  🎨 יצירה  |  🌿 בריאות  |  🤝 גיבוש צוות
@@ -149,6 +152,8 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
         created_at: new Date().toISOString()
       }]);
       
+      greetingSpokenRef.current = true;
+      
       // Show category selector only if no quiz results
       if (!quizResults) {
         setShowCategorySelector(true);
@@ -157,7 +162,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
       // Speak the greeting
       setTimeout(() => speakText(greeting), 500);
     }
-  }, []);
+  }, [quizResults]);
 
   const speakText = async (text: string) => {
     // Stop any ongoing speech
