@@ -788,8 +788,8 @@ ${transcript}`;
               </p>
               <p className="text-sm text-foreground/70 text-center px-3 py-1.5 bg-accent/10 rounded-md">
                 {language === 'he' 
-                  ? 'תכונה זו פועלת בעברית ובאנגלית • ללא צורך ב-API Key'
-                  : 'Works in Hebrew and English • No API Key required'
+                  ? 'תכונה זו פועלת בעברית ובאנגלית'
+                  : 'Works in Hebrew and English'
                 }
               </p>
             </div>
