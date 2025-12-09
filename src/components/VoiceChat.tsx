@@ -17,6 +17,7 @@ import { SpeakingAnimation } from '@/components/SpeakingAnimation';
 import { VoiceSelector } from '@/components/VoiceSelector';
 import { VolumeIndicator } from '@/components/VolumeIndicator';
 import { MicrophoneAnimation } from '@/components/MicrophoneAnimation';
+import { ProcessingAnimation } from '@/components/ProcessingAnimation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import companyLogo from '@/assets/company-logo.png';
 
@@ -676,16 +677,7 @@ ${transcript}`;
                 <Bot className="w-4 h-4" />
               </div>
               <div className="flex-1">
-                <div className="inline-block p-3 rounded-lg bg-muted">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-primary animate-pulse" />
-                    <div className="flex gap-1">
-                      <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                      <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                      <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
-                    </div>
-                  </div>
-                </div>
+                <ProcessingAnimation isActive={isProcessing} language={language} />
               </div>
             </div>
           )}
