@@ -8,11 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Gauge, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { speakWithElevenLabs, stopElevenLabsSpeech } from '@/utils/elevenLabsTTS';
+import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice } from '@/utils/elevenLabsTTS';
 import { analyzeSentiment, getOverallSentiment } from '@/utils/sentimentAnalysis';
 import { WaveformVisualizer } from '@/components/WaveformVisualizer';
 import { ChatHistory } from '@/components/ChatHistory';
 import { CategoryShowcase } from '@/components/CategoryShowcase';
+import { SpeakingAnimation } from '@/components/SpeakingAnimation';
+import { VoiceSelector } from '@/components/VoiceSelector';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import companyLogo from '@/assets/company-logo.png';
 
@@ -46,12 +48,11 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const [speechSupported, setSpeechSupported] = useState(true);
   const [textInput, setTextInput] = useState('');
   const [language, setLanguage] = useState<'he' | 'en'>('he');
-  const [voiceSpeed, setVoiceSpeed] = useState(0.7);
+  const [selectedVoice, setSelectedVoice] = useState<ElevenLabsVoice>('Rachel');
   const [showSettings, setShowSettings] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
-  const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const { toast } = useToast();
 
   // Save conversation to history periodically
@@ -209,7 +210,7 @@ Tell me - how many people? What interests you?`;
     // Use ElevenLabs for high-quality Hebrew TTS
     await speakWithElevenLabs(
       text,
-      'Rachel', // Best Hebrew voice
+      selectedVoice,
       () => setIsSpeaking(true),
       () => setIsSpeaking(false)
     );
@@ -512,9 +513,21 @@ ${transcript}`;
       <div className="flex items-center justify-between p-4 border-b border-border/50 bg-gradient-to-r from-primary/10 to-secondary/10">
         <div className="flex items-center gap-3">
           <img src={companyLogo} alt="לוגו טיולים עם דויד - סיורים מודרכים בצפון ישראל, הגלבוע ועמק המעיינות" className="w-10 h-10 rounded-lg object-cover" />
-          <Bot className="w-8 h-8 text-primary" />
+          <div className="relative">
+            <Bot className="w-8 h-8 text-primary" />
+            {isSpeaking && (
+              <div className="absolute -top-1 -right-1">
+                <SpeakingAnimation isActive={isSpeaking} size="sm" />
+              </div>
+            )}
+          </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-lg">{language === 'he' ? 'צ\'אט קולי - טיולים עם דויד' : 'Voice Chat - Tours with David'}</h3>
+            <h3 className="font-semibold text-lg flex items-center gap-2">
+              {language === 'he' ? 'צ\'אט קולי - טיולים עם דויד' : 'Voice Chat - Tours with David'}
+              {isSpeaking && (
+                <span className="text-xs text-primary animate-pulse">{language === 'he' ? 'מדבר...' : 'Speaking...'}</span>
+              )}
+            </h3>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>{language === 'he' ? 'חוויות בטבע עם הדרכה מקצועית 🌿' : 'Nature experiences with professional guidance 🌿'}</span>
               {messages.length > 2 && (
@@ -594,27 +607,20 @@ ${transcript}`;
             </Select>
           </div>
           
+          {/* Voice Selection */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Gauge className="w-4 h-4" />
-                <label className="text-sm font-medium">{language === 'he' ? 'מהירות קול' : 'Voice Speed'}:</label>
+                <Volume2 className="w-4 h-4" />
+                <label className="text-sm font-medium">{language === 'he' ? 'בחירת קול' : 'Voice Selection'}:</label>
               </div>
-              <span className="text-sm text-muted-foreground">{voiceSpeed.toFixed(2)}x</span>
+              {isSpeaking && <SpeakingAnimation isActive={isSpeaking} size="sm" />}
             </div>
-            <Slider
-              value={[voiceSpeed]}
-              onValueChange={(value) => setVoiceSpeed(value[0])}
-              min={0.3}
-              max={1.5}
-              step={0.05}
+            <VoiceSelector
+              selectedVoice={selectedVoice}
+              onVoiceChange={setSelectedVoice}
               className="w-full"
             />
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{language === 'he' ? 'איטי' : 'Slow'}</span>
-              <span>{language === 'he' ? 'רגיל' : 'Normal'}</span>
-              <span>{language === 'he' ? 'מהיר' : 'Fast'}</span>
-            </div>
           </div>
         </div>
       )}

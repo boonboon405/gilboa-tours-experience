@@ -3,9 +3,23 @@ import { sanitizeForTTS } from "./ttsSanitizer";
 import { ttsConfig } from "./ttsConfig";
 
 /**
- * Available ElevenLabs voices
+ * Available ElevenLabs voices with Hebrew support
  */
-export type ElevenLabsVoice = 'Rachel' | 'Aria' | 'Sarah' | 'Laura' | 'Charlotte' | 'Alice' | 'Matilda' | 'Lily';
+export const ELEVENLABS_VOICES = {
+  'Rachel': { id: 'EXAVITQu4vr4xnSDxMaL', name: 'רחל', description: 'קול נשי חם ונעים' },
+  'Sarah': { id: 'EXAVITQu4vr4xnSDxMaL', name: 'שרה', description: 'קול נשי ברור ומקצועי' },
+  'Aria': { id: '9BWtsMINqrJLrRacOk9x', name: 'אריה', description: 'קול נשי אנרגטי' },
+  'Laura': { id: 'FGY2WhTYpPnrIDTdsKH5', name: 'לאורה', description: 'קול נשי רך' },
+  'Charlotte': { id: 'XB0fDUnXU5powFXDhCwa', name: 'שרלוט', description: 'קול נשי אלגנטי' },
+  'Alice': { id: 'Xb7hH8MSUJpSbSDYk0k2', name: 'אליס', description: 'קול נשי צעיר' },
+  'Matilda': { id: 'XrExE9yKIg1WjnnlVkGX', name: 'מתילדה', description: 'קול נשי בוגר' },
+  'Lily': { id: 'pFZP5JQG7iQjIQuC4Bku', name: 'לילי', description: 'קול נשי עדין' },
+} as const;
+
+export type ElevenLabsVoice = keyof typeof ELEVENLABS_VOICES;
+
+// Store current audio element for stopping
+let currentAudio: HTMLAudioElement | null = null;
 
 /**
  * Speak text using ElevenLabs TTS via edge function
@@ -30,6 +44,9 @@ export async function speakWithElevenLabs(
   }
 
   try {
+    // Stop any currently playing audio
+    stopElevenLabsSpeech();
+    
     onStart?.();
 
     const { data, error } = await supabase.functions.invoke('text-to-speech', {
@@ -48,24 +65,32 @@ export async function speakWithElevenLabs(
     // Convert base64 to audio and play
     const audioBlob = base64ToBlob(data.audioContent, 'audio/mpeg');
     const audioUrl = URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioUrl);
+    currentAudio = new Audio(audioUrl);
 
     return new Promise((resolve) => {
-      audio.onended = () => {
+      if (!currentAudio) {
+        resolve(false);
+        return;
+      }
+      
+      currentAudio.onended = () => {
         URL.revokeObjectURL(audioUrl);
+        currentAudio = null;
         onEnd?.();
         resolve(true);
       };
 
-      audio.onerror = (e) => {
+      currentAudio.onerror = (e) => {
         console.error('[ElevenLabs TTS] Audio playback error:', e);
         URL.revokeObjectURL(audioUrl);
+        currentAudio = null;
         onEnd?.();
         resolve(false);
       };
 
-      audio.play().catch((e) => {
+      currentAudio.play().catch((e) => {
         console.error('[ElevenLabs TTS] Play error:', e);
+        currentAudio = null;
         onEnd?.();
         resolve(false);
       });
@@ -127,8 +152,22 @@ function base64ToBlob(base64: string, mimeType: string): Blob {
  * Stop any currently playing audio
  */
 export function stopElevenLabsSpeech(): void {
+  // Stop ElevenLabs audio if playing
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.src = '';
+    currentAudio = null;
+  }
+  
   // Stop Web Speech API if it's speaking
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel();
   }
+}
+
+/**
+ * Check if audio is currently playing
+ */
+export function isElevenLabsSpeaking(): boolean {
+  return currentAudio !== null && !currentAudio.paused;
 }
