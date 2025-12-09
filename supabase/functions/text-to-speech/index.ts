@@ -64,8 +64,6 @@ serve(async (req) => {
           style: 0.0,
           use_speaker_boost: true,
         },
-        // Add language code to help with Hebrew pronunciation
-        language_code: language === 'he' ? 'he' : 'en',
       }),
     });
 
