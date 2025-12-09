@@ -20,6 +20,7 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
     const stored = localStorage.getItem('teamDNAResults');
     return stored ? JSON.parse(stored) : null;
   });
+  const [isResetting, setIsResetting] = useState(false);
   const { toast } = useToast();
 
   // Determine current step
@@ -49,12 +50,18 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
   };
 
   const handleResetQuiz = () => {
-    forceResetClientData();
-    setQuizResults(null);
-    toast({
-      title: language === 'he' ? 'ה-Quiz אופס' : 'Quiz Reset',
-      description: language === 'he' ? 'כל הנתונים נמחקו, אפשר להתחיל מחדש' : 'All data cleared, you can start fresh',
-    });
+    setIsResetting(true);
+    
+    // Animate then reset
+    setTimeout(() => {
+      forceResetClientData();
+      setQuizResults(null);
+      setIsResetting(false);
+      toast({
+        title: language === 'he' ? '✨ ה-Quiz אופס' : '✨ Quiz Reset',
+        description: language === 'he' ? 'כל הנתונים נמחקו, אפשר להתחיל מחדש' : 'All data cleared, you can start fresh',
+      });
+    }, 600);
   };
 
   return (
@@ -87,8 +94,8 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
               </Button>
             </div>
           ) : (
-            <div className="space-y-3">
-              <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-center">
+            <div className={`space-y-3 transition-all duration-500 ${isResetting ? 'animate-spin-slow opacity-50 scale-95' : ''}`}>
+              <div className={`bg-primary/10 border border-primary/20 rounded-lg p-3 text-center transition-all duration-300 ${isResetting ? 'blur-sm' : ''}`}>
                 <p className="text-sm font-medium">
                   ✨ {language === 'he' ? 'סיימת את ה-Quiz!' : 'Quiz Completed!'}
                 </p>
@@ -104,6 +111,7 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
                   variant="outline" 
                   onClick={handleRetakeQuiz}
                   size="sm"
+                  disabled={isResetting}
                 >
                   {language === 'he' ? 'עשה שוב את ה-Quiz' : 'Retake Quiz'}
                 </Button>
@@ -111,10 +119,14 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
                   variant="ghost" 
                   onClick={handleResetQuiz}
                   size="sm"
+                  disabled={isResetting}
                   className="text-destructive hover:text-destructive hover:bg-destructive/10"
                 >
-                  <RotateCcw className="w-4 h-4 ml-1" />
-                  {language === 'he' ? 'אפס הכל' : 'Reset All'}
+                  <RotateCcw className={`w-4 h-4 ml-1 transition-transform duration-500 ${isResetting ? 'animate-spin' : ''}`} />
+                  {isResetting 
+                    ? (language === 'he' ? 'מאפס...' : 'Resetting...') 
+                    : (language === 'he' ? 'אפס הכל' : 'Reset All')
+                  }
                 </Button>
               </div>
             </div>
