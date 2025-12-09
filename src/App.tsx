@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { Provider } from "react-redux";
 import { store } from "@/store";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AccessibilityProvider } from "@/hooks/use-accessibility";
 import { AccessibilityWidget } from "@/components/AccessibilityWidget";
@@ -44,9 +45,10 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <AuthProvider>
-          <AccessibilityProvider>
-            <TooltipProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <AccessibilityProvider>
+              <TooltipProvider>
               <Toaster />
               <Sonner />
               <BrowserRouter>
@@ -169,9 +171,10 @@ const App = () => {
               <LiveChatWidget />
               <AccessibilityWidget />
             </BrowserRouter>
-          </TooltipProvider>
-        </AccessibilityProvider>
-        </AuthProvider>
+            </TooltipProvider>
+          </AccessibilityProvider>
+          </AuthProvider>
+        </LanguageProvider>
       </Provider>
     </QueryClientProvider>
   );
