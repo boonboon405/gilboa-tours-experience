@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Phone, ArrowRight, Mic, MessageSquare, Info, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { checkAndResetForNewClient } from '@/utils/clientSession';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -25,7 +26,17 @@ const Chat = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Load quiz results from localStorage if available
+    // Check if this is a new client and reset data if needed
+    const isNewClient = checkAndResetForNewClient();
+    
+    if (isNewClient) {
+      // New client - don't load old quiz results
+      console.log('[Chat] New client detected, starting fresh');
+      setQuizResults(null);
+      return;
+    }
+    
+    // Load quiz results from localStorage if available (returning client)
     const stored = localStorage.getItem('quizResults');
     if (stored) {
       try {
