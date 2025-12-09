@@ -11,6 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import confetti from 'canvas-confetti';
 import { QuizResultsDetail } from '@/components/QuizResultsDetail';
+import { playSound, preloadSounds } from '@/utils/soundEffects';
 
 interface TeamDNAQuizProps {
   open: boolean;
@@ -32,7 +33,14 @@ export const TeamDNAQuiz = ({ open, onClose, onComplete }: TeamDNAQuizProps) => 
   // Count how many questions have been answered
   const answeredCount = answers.filter(answer => answer.length > 0).length;
 
+  // Preload sounds on mount
+  useEffect(() => {
+    preloadSounds();
+  }, []);
+
   const handleAnswerSelect = (answerIndex: number) => {
+    playSound('pop', 0.2);
+    
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = [answerIndex]; // Single selection
     setAnswers(newAnswers);
@@ -40,12 +48,14 @@ export const TeamDNAQuiz = ({ open, onClose, onComplete }: TeamDNAQuizProps) => 
     // Auto-advance to next question after a brief delay for visual feedback
     setTimeout(() => {
       if (currentQuestion < quizQuestions.length - 1) {
+        playSound('whoosh', 0.15);
         setCurrentQuestion(currentQuestion + 1);
       } else {
         // Calculate and show results on last question
         const calculatedResults = calculateQuizResults(newAnswers);
         setResults(calculatedResults);
         setShowResults(true);
+        playSound('complete', 0.4);
       }
     }, 400); // 400ms delay for visual feedback
   };
@@ -63,12 +73,15 @@ export const TeamDNAQuiz = ({ open, onClose, onComplete }: TeamDNAQuizProps) => 
 
   const handleBack = () => {
     if (currentQuestion > 0) {
+      playSound('whoosh', 0.15);
       setCurrentQuestion(currentQuestion - 1);
     }
   };
 
   const handleFinish = async () => {
     if (results) {
+      playSound('success', 0.3);
+      
       // Save to localStorage
       localStorage.setItem('teamDNAResults', JSON.stringify(results));
       
