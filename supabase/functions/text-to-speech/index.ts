@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { encodeBase64 } from "https://deno.land/std@0.220.0/encoding/base64.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,9 +24,9 @@ serve(async (req) => {
       throw new Error('ELEVENLABS_API_KEY is not configured');
     }
 
-    // Voice IDs for ElevenLabs - Rachel is a good Hebrew voice
+    // Voice IDs for ElevenLabs
     const voiceIds: Record<string, string> = {
-      'Rachel': 'EXAVITQu4vr4xnSDxMaL', // Sarah - works well for Hebrew
+      'Rachel': 'EXAVITQu4vr4xnSDxMaL',
       'Aria': '9BWtsMINqrJLrRacOk9x',
       'Sarah': 'EXAVITQu4vr4xnSDxMaL',
       'Laura': 'FGY2WhTYpPnrIDTdsKH5',
@@ -50,7 +51,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         text: text,
-        model_id: 'eleven_multilingual_v2', // Best for Hebrew
+        model_id: 'eleven_multilingual_v2',
         voice_settings: {
           stability: 0.5,
           similarity_boost: 0.75,
@@ -66,13 +67,11 @@ serve(async (req) => {
       throw new Error(`ElevenLabs API error: ${response.status} - ${errorText}`);
     }
 
-    // Convert audio to base64
+    // Convert audio to base64 using Deno's built-in encoder (avoids stack overflow)
     const arrayBuffer = await response.arrayBuffer();
-    const base64Audio = btoa(
-      String.fromCharCode(...new Uint8Array(arrayBuffer))
-    );
+    const base64Audio = encodeBase64(arrayBuffer);
 
-    console.log('Successfully generated speech audio');
+    console.log(`Successfully generated speech audio (${arrayBuffer.byteLength} bytes)`);
 
     return new Response(
       JSON.stringify({ audioContent: base64Audio }),
