@@ -16,6 +16,7 @@ import { CategoryShowcase } from '@/components/CategoryShowcase';
 import { SpeakingAnimation } from '@/components/SpeakingAnimation';
 import { VoiceSelector } from '@/components/VoiceSelector';
 import { VolumeIndicator } from '@/components/VolumeIndicator';
+import { MicrophoneAnimation } from '@/components/MicrophoneAnimation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import companyLogo from '@/assets/company-logo.png';
 
@@ -744,13 +745,14 @@ ${transcript}`;
         <div className="p-6 bg-muted/20">
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
+              <MicrophoneAnimation isActive={isListening} />
               <Button
                 onClick={isListening ? stopListening : startListening}
                 disabled={isProcessing || isSpeaking}
                 size="lg"
-                className={`w-20 h-20 rounded-full ${
+                className={`w-20 h-20 rounded-full relative z-10 ${
                   isListening 
-                    ? 'bg-red-500 hover:bg-red-600 animate-pulse-slow' 
+                    ? 'bg-red-500 hover:bg-red-600' 
                     : 'bg-primary hover:bg-primary/90'
                 }`}
               >
