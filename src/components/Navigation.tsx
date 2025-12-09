@@ -7,6 +7,7 @@ import { QuizResults } from '@/utils/quizScoring';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,10 +17,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MegaMenu } from '@/components/MegaMenu';
+import { LanguageSelector } from '@/components/LanguageSelector';
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, isAdmin, signOut } = useAuth();
+  const { language, t } = useLanguage();
   const navigate = useNavigate();
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizCount, setQuizCount] = useState<number>(0);
@@ -133,13 +136,20 @@ export const Navigation = () => {
     navigate('/');
   };
 
-  const navItems = [
+  const navItems = language === 'he' ? [
     { label: 'בית', href: '#home' },
     { label: 'יום כייף וגיבוש לחברות', href: '#choose-your-day' },
     { label: 'טיולי VIP לאורחי חברות מחו״ל', href: '#vip-tours' },
     { label: 'גיבוש ODT', href: '#odt-section' },
     { label: 'צור קשר', href: '#contact' },
     { label: 'הצהרת נגישות', href: '/accessibility', isLink: true },
+  ] : [
+    { label: 'Home', href: '#home' },
+    { label: 'Fun Day for Companies', href: '#choose-your-day' },
+    { label: 'VIP Tours for Guests', href: '#vip-tours' },
+    { label: 'ODT Team Building', href: '#odt-section' },
+    { label: 'Contact', href: '#contact' },
+    { label: 'Accessibility', href: '/accessibility', isLink: true },
   ];
 
   return (
@@ -165,7 +175,7 @@ export const Navigation = () => {
           {/* Logo */}
           <div className="flex items-center">
             <span className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">
-              דויד טורס
+              {language === 'he' ? 'דויד טורס' : 'DavidTours'}
             </span>
           </div>
 
@@ -194,11 +204,13 @@ export const Navigation = () => {
             <Link 
               to="/accessibility"
               className="flex items-center gap-1 px-3 py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-              title="הצהרת נגישות"
+              title={language === 'he' ? 'הצהרת נגישות' : 'Accessibility Statement'}
             >
               <Accessibility className="h-4 w-4" />
-              <span className="sr-only lg:not-sr-only">נגישות</span>
+              <span className="sr-only lg:not-sr-only">{language === 'he' ? 'נגישות' : 'Accessibility'}</span>
             </Link>
+            
+            <LanguageSelector />
             
             <Link to="/booking">
               <Button 
@@ -206,7 +218,7 @@ export const Navigation = () => {
                 className="gap-2 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl"
               >
                 <Calendar className="h-4 w-4" />
-                הזמן סיור
+                {language === 'he' ? 'הזמן סיור' : 'Book Tour'}
               </Button>
             </Link>
             
@@ -214,12 +226,12 @@ export const Navigation = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
+                  <Button variant="outline" size="icon" title={language === 'he' ? 'תפריט חשבון' : 'Account menu'}>
                     <Shield className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>חשבון שלי</DropdownMenuLabel>
+                  <DropdownMenuLabel>{language === 'he' ? 'חשבון שלי' : 'My Account'}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {isAdmin && (
                     <>
@@ -256,8 +268,8 @@ export const Navigation = () => {
                     </>
                   )}
                   <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="ml-2 h-4 w-4" />
-                    התנתק
+                    <LogOut className={`${language === 'he' ? 'ml-2' : 'mr-2'} h-4 w-4`} />
+                    {language === 'he' ? 'התנתק' : 'Sign Out'}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -265,7 +277,7 @@ export const Navigation = () => {
               <Link to="/auth">
                 <Button variant="outline" className="gap-2">
                   <Shield className="h-4 w-4" />
-                  כניסת מנהלים
+                  {language === 'he' ? 'כניסת מנהלים' : 'Admin Login'}
                 </Button>
               </Link>
             )}
@@ -277,7 +289,7 @@ export const Navigation = () => {
               variant="ghost"
               size="icon"
               onClick={() => setIsOpen(!isOpen)}
-              aria-label={isOpen ? 'סגור תפריט' : 'פתח תפריט'}
+              aria-label={isOpen ? (language === 'he' ? 'סגור תפריט' : 'Close menu') : (language === 'he' ? 'פתח תפריט' : 'Open menu')}
               aria-expanded={isOpen}
               aria-controls="mobile-menu"
             >
@@ -347,12 +359,15 @@ export const Navigation = () => {
                 );
               })}
             </div>
-            <Link to="/booking">
-              <Button variant="default" className="w-full mt-2 gap-2">
-                <Calendar className="h-4 w-4" />
-                הזמן סיור
-              </Button>
-            </Link>
+            <div className="flex items-center justify-between mt-4 gap-2">
+              <Link to="/booking" className="flex-1">
+                <Button variant="default" className="w-full gap-2">
+                  <Calendar className="h-4 w-4" />
+                  {language === 'he' ? 'הזמן סיור' : 'Book Tour'}
+                </Button>
+              </Link>
+              <LanguageSelector />
+            </div>
             
             {/* Mobile Auth */}
             {user ? (
@@ -368,7 +383,7 @@ export const Navigation = () => {
                       }}
                     >
                       <Shield className="h-4 w-4" />
-                      לוח בקרה
+                      {language === 'he' ? 'לוח בקרה' : 'Dashboard'}
                     </Button>
                     <Button 
                       variant="outline" 
@@ -379,7 +394,7 @@ export const Navigation = () => {
                       }}
                     >
                       <Shield className="h-4 w-4" />
-                      מאגר ידע
+                      {language === 'he' ? 'מאגר ידע' : 'Knowledge Base'}
                     </Button>
                   </div>
                 )}
@@ -392,14 +407,14 @@ export const Navigation = () => {
                   }}
                 >
                   <LogOut className="h-4 w-4" />
-                  התנתק
+                  {language === 'he' ? 'התנתק' : 'Sign Out'}
                 </Button>
               </>
             ) : (
               <Link to="/auth" onClick={() => setIsOpen(false)}>
                 <Button variant="outline" className="w-full mt-2 gap-2">
                   <Shield className="h-4 w-4" />
-                  כניסת מנהלים
+                  {language === 'he' ? 'כניסת מנהלים' : 'Admin Login'}
                 </Button>
               </Link>
             )}
