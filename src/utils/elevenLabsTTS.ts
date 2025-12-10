@@ -147,15 +147,31 @@ function speakWithWebSpeech(
 }
 
 /**
- * Convert base64 string to Blob
+ * Convert base64 string to Blob - handles large audio files by processing in chunks
  */
 function base64ToBlob(base64: string, mimeType: string): Blob {
-  const binaryString = atob(base64);
-  const bytes = new Uint8Array(binaryString.length);
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
+  try {
+    // Process in chunks to avoid call stack issues with large files
+    const chunkSize = 1024;
+    const byteCharacters = atob(base64);
+    const byteArrays: BlobPart[] = [];
+    
+    for (let offset = 0; offset < byteCharacters.length; offset += chunkSize) {
+      const slice = byteCharacters.slice(offset, offset + chunkSize);
+      const byteNumbers = new Array(slice.length);
+      
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      
+      byteArrays.push(new Uint8Array(byteNumbers));
+    }
+    
+    return new Blob(byteArrays, { type: mimeType });
+  } catch (error) {
+    console.error('[ElevenLabs TTS] Base64 decode error:', error);
+    throw error;
   }
-  return new Blob([bytes], { type: mimeType });
 }
 
 /**
