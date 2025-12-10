@@ -6,14 +6,23 @@ import { ttsConfig } from "./ttsConfig";
  * Available ElevenLabs voices with Hebrew support
  */
 export const ELEVENLABS_VOICES = {
-  'Rachel': { id: 'EXAVITQu4vr4xnSDxMaL', name: 'רחל', description: 'קול נשי חם ונעים' },
-  'Sarah': { id: 'EXAVITQu4vr4xnSDxMaL', name: 'שרה', description: 'קול נשי ברור ומקצועי' },
-  'Aria': { id: '9BWtsMINqrJLrRacOk9x', name: 'אריה', description: 'קול נשי אנרגטי' },
-  'Laura': { id: 'FGY2WhTYpPnrIDTdsKH5', name: 'לאורה', description: 'קול נשי רך' },
-  'Charlotte': { id: 'XB0fDUnXU5powFXDhCwa', name: 'שרלוט', description: 'קול נשי אלגנטי' },
-  'Alice': { id: 'Xb7hH8MSUJpSbSDYk0k2', name: 'אליס', description: 'קול נשי צעיר' },
-  'Matilda': { id: 'XrExE9yKIg1WjnnlVkGX', name: 'מתילדה', description: 'קול נשי בוגר' },
-  'Lily': { id: 'pFZP5JQG7iQjIQuC4Bku', name: 'לילי', description: 'קול נשי עדין' },
+  // Female voices
+  'Rachel': { id: 'EXAVITQu4vr4xnSDxMaL', name: 'רחל', description: 'קול נשי חם ונעים', gender: 'female' },
+  'Sarah': { id: 'EXAVITQu4vr4xnSDxMaL', name: 'שרה', description: 'קול נשי ברור ומקצועי', gender: 'female' },
+  'Aria': { id: '9BWtsMINqrJLrRacOk9x', name: 'אריה', description: 'קול נשי אנרגטי', gender: 'female' },
+  'Laura': { id: 'FGY2WhTYpPnrIDTdsKH5', name: 'לאורה', description: 'קול נשי רך', gender: 'female' },
+  'Charlotte': { id: 'XB0fDUnXU5powFXDhCwa', name: 'שרלוט', description: 'קול נשי אלגנטי', gender: 'female' },
+  'Alice': { id: 'Xb7hH8MSUJpSbSDYk0k2', name: 'אליס', description: 'קול נשי צעיר', gender: 'female' },
+  'Matilda': { id: 'XrExE9yKIg1WjnnlVkGX', name: 'מתילדה', description: 'קול נשי בוגר', gender: 'female' },
+  'Lily': { id: 'pFZP5JQG7iQjIQuC4Bku', name: 'לילי', description: 'קול נשי עדין', gender: 'female' },
+  // Male voices
+  'Roger': { id: 'CwhRBWXzGAHq8TQ4Fs17', name: 'רוג׳ר', description: 'קול גברי עמוק', gender: 'male' },
+  'Charlie': { id: 'IKne3meq5aSn9XLyUdCD', name: 'צ׳רלי', description: 'קול גברי צעיר', gender: 'male' },
+  'George': { id: 'JBFqnCBsd6RMkjVDRZzb', name: 'ג׳ורג׳', description: 'קול גברי בריטי', gender: 'male' },
+  'Callum': { id: 'N2lVS1w4EtoT3dr4eOWO', name: 'קאלום', description: 'קול גברי רגוע', gender: 'male' },
+  'Liam': { id: 'TX3LPaxmHKxFdv7VOQHJ', name: 'ליאם', description: 'קול גברי אנרגטי', gender: 'male' },
+  'Daniel': { id: 'onwK4e9ZLuTAKqWW03F9', name: 'דניאל', description: 'קול גברי מקצועי', gender: 'male' },
+  'Brian': { id: 'nPczCjzI2devNBz1zQrb', name: 'בראיין', description: 'קול גברי חם', gender: 'male' },
 } as const;
 
 export type ElevenLabsVoice = keyof typeof ELEVENLABS_VOICES;

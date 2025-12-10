@@ -24,9 +24,9 @@ serve(async (req) => {
       throw new Error('ELEVENLABS_API_KEY is not configured');
     }
 
-    // Voice IDs for ElevenLabs - these are multilingual voices
-    // Using voices known to work well across languages
+    // Voice IDs for ElevenLabs - multilingual voices
     const voiceIds: Record<string, string> = {
+      // Female voices
       'Rachel': 'EXAVITQu4vr4xnSDxMaL',
       'Aria': '9BWtsMINqrJLrRacOk9x',
       'Sarah': 'EXAVITQu4vr4xnSDxMaL',
@@ -35,6 +35,14 @@ serve(async (req) => {
       'Alice': 'Xb7hH8MSUJpSbSDYk0k2',
       'Matilda': 'XrExE9yKIg1WjnnlVkGX',
       'Lily': 'pFZP5JQG7iQjIQuC4Bku',
+      // Male voices
+      'Roger': 'CwhRBWXzGAHq8TQ4Fs17',
+      'Charlie': 'IKne3meq5aSn9XLyUdCD',
+      'George': 'JBFqnCBsd6RMkjVDRZzb',
+      'Callum': 'N2lVS1w4EtoT3dr4eOWO',
+      'Liam': 'TX3LPaxmHKxFdv7VOQHJ',
+      'Daniel': 'onwK4e9ZLuTAKqWW03F9',
+      'Brian': 'nPczCjzI2devNBz1zQrb',
     };
 
     const voiceId = voiceIds[voice] || voiceIds['Rachel'];
