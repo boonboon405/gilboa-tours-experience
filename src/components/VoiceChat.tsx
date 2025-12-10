@@ -569,7 +569,7 @@ ${transcript}`;
           </div>
         </div>
         <div className="flex gap-2 items-center">
-          {/* Language Selector - Prominent */}
+          {/* Language Selector - Prominent with Settings */}
           <div className="flex items-center gap-1 bg-background/60 rounded-lg px-2 py-1 border border-border/50">
             <Globe className="w-4 h-4 text-muted-foreground" />
             <Button
@@ -592,6 +592,28 @@ ${transcript}`;
               <span className="text-base">🇺🇸</span>
               <span className="text-xs hidden sm:inline">EN</span>
             </Button>
+            <div className="w-px h-5 bg-border/50 mx-1" />
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowSettings(!showSettings)}
+                    className="h-7 w-7 p-0"
+                    title={language === 'he' ? 'הגדרות קול' : 'Voice Settings'}
+                  >
+                    <Gauge className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-xs text-center">
+                  <p className="font-medium">{language === 'he' ? 'הגדרות קול' : 'Voice Settings'}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {language === 'he' ? 'בחירת קול לתגובות הבוט' : 'Choose voice for bot responses'}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           
           <TooltipProvider delayDuration={200}>
@@ -633,24 +655,6 @@ ${transcript}`;
               </TooltipContent>
             </Tooltip>
 
-            {/* Settings */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowSettings(!showSettings)}
-                >
-                  <Gauge className="w-5 h-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-xs text-center">
-                <p className="font-medium">{language === 'he' ? 'הגדרות' : 'Settings'}</p>
-                <p className="text-xs text-muted-foreground">
-                  {language === 'he' ? 'בחירת שפה וקול לתגובות הבוט' : 'Choose language and voice for bot responses'}
-                </p>
-              </TooltipContent>
-            </Tooltip>
 
             {/* Export Chat */}
             <Tooltip>
