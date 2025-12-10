@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Phone, PhoneOff, Mic, MicOff, Volume2, Loader2, User, Bot } from 'lucide-react';
+import { Phone, PhoneOff, Mic, MicOff, Volume2, Loader2, User, Bot, Globe } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { RealtimeChat, VOICE_OPTIONS, VoiceOption } from '@/utils/realtimeChat';
 import { cn } from '@/lib/utils';
@@ -12,7 +12,7 @@ interface RealtimeVoiceChatProps {
   onClose?: () => void;
 }
 
-const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose }) => {
+const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initialLanguage, onClose }) => {
   const { toast } = useToast();
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -20,6 +20,7 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
   const [isListening, setIsListening] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState<VoiceOption>('alloy');
+  const [selectedLanguage, setSelectedLanguage] = useState<'he' | 'en'>(initialLanguage);
   
   // Transcripts
   const [userTranscripts, setUserTranscripts] = useState<string[]>([]);
@@ -28,6 +29,9 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
   
   const chatRef = useRef<RealtimeChat | null>(null);
   const transcriptRef = useRef<HTMLDivElement>(null);
+
+  // Helper for localized text
+  const t = (he: string, en: string) => selectedLanguage === 'he' ? he : en;
 
   // Auto-scroll transcripts
   useEffect(() => {
@@ -50,11 +54,9 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
 
   const handleTranscript = useCallback((text: string, isUserFinal: boolean) => {
     if (isUserFinal) {
-      // Final user transcript
       setUserTranscripts(prev => [...prev, text]);
       setLiveUserSpeech('');
     } else {
-      // Agent transcript delta
       setAgentTranscript(prev => prev + text);
     }
   }, []);
@@ -66,11 +68,11 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
   const handleError = useCallback((error: Error) => {
     console.error('Realtime error:', error);
     toast({
-      title: language === 'he' ? 'שגיאה בשיחה' : 'Call Error',
+      title: selectedLanguage === 'he' ? 'שגיאה בשיחה' : 'Call Error',
       description: error.message,
       variant: 'destructive'
     });
-  }, [language, toast]);
+  }, [selectedLanguage, toast]);
 
   const startCall = async () => {
     setIsConnecting(true);
@@ -88,17 +90,17 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
         onError: handleError
       });
       
-      await chatRef.current.init(language, selectedVoice);
+      await chatRef.current.init(selectedLanguage, selectedVoice);
       setIsConnected(true);
       
       toast({
-        title: language === 'he' ? 'מחובר' : 'Connected',
-        description: language === 'he' ? 'השיחה הקולית פעילה' : 'Voice call is active',
+        title: t('מחובר', 'Connected'),
+        description: t('השיחה הקולית פעילה', 'Voice call is active'),
       });
     } catch (error) {
       console.error('Error starting call:', error);
       toast({
-        title: language === 'he' ? 'שגיאה' : 'Error',
+        title: t('שגיאה', 'Error'),
         description: error instanceof Error ? error.message : 'Failed to start call',
         variant: 'destructive'
       });
@@ -115,7 +117,7 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
     setIsListening(false);
     
     toast({
-      title: language === 'he' ? 'השיחה הסתיימה' : 'Call Ended',
+      title: t('השיחה הסתיימה', 'Call Ended'),
     });
     
     onClose?.();
@@ -123,7 +125,6 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
 
   const toggleMute = () => {
     setIsMuted(!isMuted);
-    // TODO: Actually mute the audio track
   };
 
   useEffect(() => {
@@ -138,38 +139,67 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
         {/* Header */}
         <div className="text-center mb-4">
           <h3 className="text-lg font-semibold mb-2">
-            {language === 'he' ? 'שיחה קולית בזמן אמת' : 'Real-time Voice Call'}
+            {t('שיחה קולית בזמן אמת', 'Real-time Voice Call')}
           </h3>
         </div>
 
-        {/* Voice Selector - Only show before connection */}
+        {/* Settings - Only show before connection */}
         {!isConnected && !isConnecting && (
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">
-              {language === 'he' ? 'בחר קול לסוכן:' : 'Select Agent Voice:'}
-            </label>
-            <Select value={selectedVoice} onValueChange={(v) => setSelectedVoice(v as VoiceOption)}>
-              <SelectTrigger className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {VOICE_OPTIONS.map((voice) => (
-                  <SelectItem key={voice.id} value={voice.id}>
-                    {language === 'he' ? voice.nameHe : voice.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="space-y-4 mb-4">
+            {/* Language Selector */}
+            <div>
+              <label className="flex items-center gap-2 text-sm font-medium mb-2">
+                <Globe className="w-4 h-4" />
+                {t('שפת השיחה:', 'Call Language:')}
+              </label>
+              <div className="flex gap-2">
+                <Button
+                  variant={selectedLanguage === 'he' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setSelectedLanguage('he')}
+                  className="flex-1"
+                >
+                  🇮🇱 עברית
+                </Button>
+                <Button
+                  variant={selectedLanguage === 'en' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setSelectedLanguage('en')}
+                  className="flex-1"
+                >
+                  🇺🇸 English
+                </Button>
+              </div>
+            </div>
+
+            {/* Voice Selector */}
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                {t('קול הסוכן:', 'Agent Voice:')}
+              </label>
+              <Select value={selectedVoice} onValueChange={(v) => setSelectedVoice(v as VoiceOption)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {VOICE_OPTIONS.map((voice) => (
+                    <SelectItem key={voice.id} value={voice.id}>
+                      {selectedLanguage === 'he' ? voice.nameHe : voice.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         )}
 
         {/* Status Display */}
         <div className="text-center mb-4">
           <p className="text-sm text-muted-foreground">
-            {isConnecting && (language === 'he' ? 'מתחבר...' : 'Connecting...')}
-            {isConnected && !isSpeaking && !isListening && (language === 'he' ? 'מחובר - דבר עכשיו' : 'Connected - Speak now')}
-            {isListening && (language === 'he' ? '🎤 מקשיב לך...' : '🎤 Listening to you...')}
-            {isSpeaking && (language === 'he' ? '🔊 הסוכן מדבר...' : '🔊 Agent speaking...')}
+            {isConnecting && t('מתחבר...', 'Connecting...')}
+            {isConnected && !isSpeaking && !isListening && t('מחובר - דבר עכשיו', 'Connected - Speak now')}
+            {isListening && t('🎤 מקשיב לך...', '🎤 Listening to you...')}
+            {isSpeaking && t('🔊 הסוכן מדבר...', '🔊 Agent speaking...')}
           </p>
         </div>
 
@@ -181,7 +211,6 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
             isSpeaking && "animate-pulse bg-green-500/30",
             isListening && "bg-blue-500/30"
           )}>
-            {/* Microphone Animation Rings */}
             {isListening && (
               <>
                 <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-ping opacity-75" />
@@ -189,12 +218,10 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
               </>
             )}
             
-            {/* Speaking Animation */}
             {isSpeaking && (
               <div className="absolute inset-0 rounded-full border-2 border-green-500 animate-pulse" />
             )}
             
-            {/* Center Icon */}
             <div className={cn(
               "z-10 p-3 rounded-full",
               isConnected ? "bg-primary text-primary-foreground" : "bg-muted-foreground/20 text-muted-foreground"
@@ -214,13 +241,13 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
           </div>
         </div>
 
-        {/* Live User Speech - What agent hears NOW */}
+        {/* Live User Speech */}
         {isListening && liveUserSpeech && (
           <div className="mb-3 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg animate-pulse">
             <div className="flex items-center gap-2 mb-1">
               <Mic className="w-4 h-4 text-blue-500" />
               <span className="text-xs font-medium text-blue-500">
-                {language === 'he' ? 'מה שהסוכן שומע עכשיו:' : 'What agent hears now:'}
+                {t('מה שהסוכן שומע עכשיו:', 'What agent hears now:')}
               </span>
             </div>
             <p className="text-sm text-foreground">{liveUserSpeech}</p>
@@ -260,12 +287,12 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
               {isConnecting ? (
                 <>
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  {language === 'he' ? 'מתחבר...' : 'Connecting...'}
+                  {t('מתחבר...', 'Connecting...')}
                 </>
               ) : (
                 <>
                   <Phone className="w-5 h-5 mr-2" />
-                  {language === 'he' ? 'התחל שיחה' : 'Start Call'}
+                  {t('התחל שיחה', 'Start Call')}
                 </>
               )}
             </Button>
@@ -277,11 +304,7 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
                 size="lg"
                 className={cn(isMuted && "bg-destructive/20 border-destructive")}
               >
-                {isMuted ? (
-                  <MicOff className="w-5 h-5" />
-                ) : (
-                  <Mic className="w-5 h-5" />
-                )}
+                {isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
               </Button>
               
               <Button
@@ -290,7 +313,7 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
                 size="lg"
               >
                 <PhoneOff className="w-5 h-5 mr-2" />
-                {language === 'he' ? 'סיים שיחה' : 'End Call'}
+                {t('סיים שיחה', 'End Call')}
               </Button>
             </>
           )}
@@ -298,9 +321,10 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
 
         {/* Help Text */}
         <p className="text-xs text-center text-muted-foreground mt-4">
-          {language === 'he' 
-            ? 'שיחה דו-כיוונית בזמן אמת - דבר בחופשיות והסוכן ישמע אותך' 
-            : 'Real-time two-way conversation - speak freely and the agent will hear you'}
+          {t(
+            'שיחה דו-כיוונית בזמן אמת - דבר בחופשיות והסוכן ישמע אותך',
+            'Real-time two-way conversation - speak freely and the agent will hear you'
+          )}
         </p>
       </CardContent>
     </Card>
