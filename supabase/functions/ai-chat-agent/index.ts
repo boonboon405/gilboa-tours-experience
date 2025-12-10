@@ -142,7 +142,7 @@ serve(async (req) => {
 
   try {
     const startTime = Date.now();
-    const { message, conversationId, sessionId, quizResults, conversationData, currentStep, requestFinalRecommendation } = await req.json();
+    const { message, conversationId, sessionId, quizResults, conversationData, currentStep, requestFinalRecommendation, language = 'he' } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
@@ -280,7 +280,11 @@ serve(async (req) => {
         body: JSON.stringify({
           model: "google/gemini-2.5-flash",
           messages: [
-            { role: "system", content: systemPrompt + quizContext + knowledgeContext + dataContext },
+            { 
+              role: "system", 
+              content: systemPrompt + quizContext + knowledgeContext + dataContext + 
+                `\n\n**CRITICAL LANGUAGE INSTRUCTION**: You MUST respond in ${language === 'he' ? 'Hebrew (עברית)' : 'English'}. The user's preferred language is ${language === 'he' ? 'Hebrew' : 'English'}. Even if the user writes in a different language, ALWAYS respond in ${language === 'he' ? 'Hebrew' : 'English'}.`
+            },
             ...conversationHistory,
             { role: "user", content: message }
           ],
