@@ -172,13 +172,17 @@ export class RealtimeChat {
       });
 
       this.dc.addEventListener("message", (e) => {
-        const event = JSON.parse(e.data);
-        console.log("Realtime event:", event.type);
-        this.handleEvent(event);
-        
-        // Send session.update after session.created to configure audio transcription
-        if (event.type === 'session.created') {
-          this.sendSessionUpdate();
+        try {
+          const event = JSON.parse(e.data);
+          console.log("Realtime event:", event.type);
+          this.handleEvent(event);
+          
+          // Send session.update after session.created to configure audio transcription
+          if (event.type === 'session.created') {
+            this.sendSessionUpdate();
+          }
+        } catch (parseError) {
+          console.error("Error parsing realtime event:", parseError);
         }
       });
 
