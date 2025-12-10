@@ -605,11 +605,13 @@ ${transcript}`;
               <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
-                  size="icon"
+                  size="sm"
                   onClick={() => setShowSettings(!showSettings)}
                   title={language === 'he' ? 'הגדרות קול' : 'Voice Settings'}
+                  className="gap-2"
                 >
-                  <Settings className="w-5 h-5" />
+                  <Settings className="w-4 h-4" />
+                  <span className="text-sm">{language === 'he' ? 'הגדרות' : 'Settings'}</span>
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="max-w-xs text-center">
