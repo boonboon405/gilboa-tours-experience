@@ -73,25 +73,15 @@ export const ImageGallery = ({ images, className, layout = 'grid' }: ImageGaller
   // Grid layout (default)
   return (
     <>
-      <div className={cn("grid grid-cols-2 md:grid-cols-4 gap-3", className)}>
+      <div className={cn("grid grid-cols-2 md:grid-cols-3 gap-4", className)}>
         {images.map((image, index) => {
-          const isFirst = index === 0;
-          const isLarge = index < 2;
-          
           return (
             <div
               key={index}
-              className={cn(
-                "group relative rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl",
-                isFirst && "col-span-2 row-span-2",
-                isLarge && !isFirst && "col-span-1 row-span-2"
-              )}
+              className="group relative rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl aspect-[4/3]"
               onClick={() => openLightbox(index)}
             >
-              <div className={cn(
-                "relative w-full",
-                isFirst ? "h-80" : isLarge ? "h-80" : "h-36"
-              )}>
+              <div className="relative w-full h-full">
                 <img
                   src={image.src}
                   alt={image.alt}
@@ -113,14 +103,6 @@ export const ImageGallery = ({ images, className, layout = 'grid' }: ImageGaller
                     </div>
                   )}
                 </div>
-
-                {/* Badge for first image */}
-                {isFirst && (
-                  <div className="absolute top-3 right-3 bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1 animate-in slide-in-from-top-2 duration-500">
-                    <ImageIcon className="h-3 w-3" />
-                    תמונה מרכזית
-                  </div>
-                )}
               </div>
             </div>
           );
