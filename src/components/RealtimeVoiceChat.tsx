@@ -1,9 +1,10 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX, Loader2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Phone, PhoneOff, Mic, MicOff, Volume2, Loader2, User, Bot } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import { RealtimeChat } from '@/utils/realtimeChat';
+import { RealtimeChat, VOICE_OPTIONS, VoiceOption } from '@/utils/realtimeChat';
 import { cn } from '@/lib/utils';
 
 interface RealtimeVoiceChatProps {
@@ -18,10 +19,22 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [transcript, setTranscript] = useState('');
+  const [selectedVoice, setSelectedVoice] = useState<VoiceOption>('alloy');
+  
+  // Transcripts
+  const [userTranscripts, setUserTranscripts] = useState<string[]>([]);
   const [agentTranscript, setAgentTranscript] = useState('');
+  const [liveUserSpeech, setLiveUserSpeech] = useState('');
   
   const chatRef = useRef<RealtimeChat | null>(null);
+  const transcriptRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll transcripts
+  useEffect(() => {
+    if (transcriptRef.current) {
+      transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight;
+    }
+  }, [userTranscripts, agentTranscript, liveUserSpeech]);
 
   const handleMessage = useCallback((event: any) => {
     console.log('Realtime event:', event.type);
@@ -35,12 +48,19 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
     setIsListening(listening);
   }, []);
 
-  const handleTranscript = useCallback((text: string, isFinal: boolean) => {
-    if (isFinal) {
-      setTranscript(prev => prev + ' ' + text);
+  const handleTranscript = useCallback((text: string, isUserFinal: boolean) => {
+    if (isUserFinal) {
+      // Final user transcript
+      setUserTranscripts(prev => [...prev, text]);
+      setLiveUserSpeech('');
     } else {
+      // Agent transcript delta
       setAgentTranscript(prev => prev + text);
     }
+  }, []);
+
+  const handlePartialTranscript = useCallback((text: string) => {
+    setLiveUserSpeech(text);
   }, []);
 
   const handleError = useCallback((error: Error) => {
@@ -54,8 +74,9 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
 
   const startCall = async () => {
     setIsConnecting(true);
-    setTranscript('');
+    setUserTranscripts([]);
     setAgentTranscript('');
+    setLiveUserSpeech('');
     
     try {
       chatRef.current = new RealtimeChat({
@@ -63,10 +84,11 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
         onSpeakingChange: handleSpeakingChange,
         onListeningChange: handleListeningChange,
         onTranscript: handleTranscript,
+        onPartialTranscript: handlePartialTranscript,
         onError: handleError
       });
       
-      await chatRef.current.init(language);
+      await chatRef.current.init(language, selectedVoice);
       setIsConnected(true);
       
       toast({
@@ -113,23 +135,48 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
   return (
     <Card className="w-full max-w-md mx-auto bg-background/95 backdrop-blur border-primary/20">
       <CardContent className="p-6">
-        {/* Status Display */}
-        <div className="text-center mb-6">
+        {/* Header */}
+        <div className="text-center mb-4">
           <h3 className="text-lg font-semibold mb-2">
             {language === 'he' ? 'שיחה קולית בזמן אמת' : 'Real-time Voice Call'}
           </h3>
+        </div>
+
+        {/* Voice Selector - Only show before connection */}
+        {!isConnected && !isConnecting && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2">
+              {language === 'he' ? 'בחר קול לסוכן:' : 'Select Agent Voice:'}
+            </label>
+            <Select value={selectedVoice} onValueChange={(v) => setSelectedVoice(v as VoiceOption)}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {VOICE_OPTIONS.map((voice) => (
+                  <SelectItem key={voice.id} value={voice.id}>
+                    {language === 'he' ? voice.nameHe : voice.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {/* Status Display */}
+        <div className="text-center mb-4">
           <p className="text-sm text-muted-foreground">
             {isConnecting && (language === 'he' ? 'מתחבר...' : 'Connecting...')}
             {isConnected && !isSpeaking && !isListening && (language === 'he' ? 'מחובר - דבר עכשיו' : 'Connected - Speak now')}
-            {isListening && (language === 'he' ? 'מקשיב לך...' : 'Listening to you...')}
-            {isSpeaking && (language === 'he' ? 'הסוכן מדבר...' : 'Agent speaking...')}
+            {isListening && (language === 'he' ? '🎤 מקשיב לך...' : '🎤 Listening to you...')}
+            {isSpeaking && (language === 'he' ? '🔊 הסוכן מדבר...' : '🔊 Agent speaking...')}
           </p>
         </div>
 
         {/* Visual Indicator */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-4">
           <div className={cn(
-            "relative w-32 h-32 rounded-full flex items-center justify-center transition-all duration-300",
+            "relative w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300",
             isConnected ? "bg-primary/20" : "bg-muted",
             isSpeaking && "animate-pulse bg-green-500/30",
             isListening && "bg-blue-500/30"
@@ -139,50 +186,64 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language, onClose
               <>
                 <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-ping opacity-75" />
                 <div className="absolute inset-2 rounded-full border-2 border-blue-400 animate-ping opacity-50 animation-delay-150" />
-                <div className="absolute inset-4 rounded-full border-2 border-blue-300 animate-ping opacity-25 animation-delay-300" />
               </>
             )}
             
             {/* Speaking Animation */}
             {isSpeaking && (
-              <>
-                <div className="absolute inset-0 rounded-full border-2 border-green-500 animate-pulse" />
-                <div className="absolute inset-4 rounded-full border-2 border-green-400 animate-pulse animation-delay-150" />
-              </>
+              <div className="absolute inset-0 rounded-full border-2 border-green-500 animate-pulse" />
             )}
             
             {/* Center Icon */}
             <div className={cn(
-              "z-10 p-4 rounded-full",
+              "z-10 p-3 rounded-full",
               isConnected ? "bg-primary text-primary-foreground" : "bg-muted-foreground/20 text-muted-foreground"
             )}>
               {isConnecting ? (
-                <Loader2 className="w-12 h-12 animate-spin" />
+                <Loader2 className="w-8 h-8 animate-spin" />
               ) : isListening ? (
-                <Mic className="w-12 h-12 animate-bounce" />
+                <Mic className="w-8 h-8 animate-bounce" />
               ) : isSpeaking ? (
-                <Volume2 className="w-12 h-12" />
+                <Volume2 className="w-8 h-8" />
               ) : isConnected ? (
-                <Phone className="w-12 h-12" />
+                <Phone className="w-8 h-8" />
               ) : (
-                <PhoneOff className="w-12 h-12" />
+                <PhoneOff className="w-8 h-8" />
               )}
             </div>
           </div>
         </div>
 
-        {/* Transcripts */}
-        {(transcript || agentTranscript) && (
-          <div className="mb-4 p-3 bg-muted/50 rounded-lg max-h-32 overflow-y-auto">
-            {transcript && (
-              <p className="text-sm text-muted-foreground mb-1">
-                <span className="font-medium">{language === 'he' ? 'אתה:' : 'You:'}</span> {transcript.trim()}
-              </p>
-            )}
+        {/* Live User Speech - What agent hears NOW */}
+        {isListening && liveUserSpeech && (
+          <div className="mb-3 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg animate-pulse">
+            <div className="flex items-center gap-2 mb-1">
+              <Mic className="w-4 h-4 text-blue-500" />
+              <span className="text-xs font-medium text-blue-500">
+                {language === 'he' ? 'מה שהסוכן שומע עכשיו:' : 'What agent hears now:'}
+              </span>
+            </div>
+            <p className="text-sm text-foreground">{liveUserSpeech}</p>
+          </div>
+        )}
+
+        {/* Conversation Transcripts */}
+        {(userTranscripts.length > 0 || agentTranscript) && (
+          <div 
+            ref={transcriptRef}
+            className="mb-4 p-3 bg-muted/50 rounded-lg max-h-40 overflow-y-auto space-y-2"
+          >
+            {userTranscripts.map((text, index) => (
+              <div key={index} className="flex items-start gap-2">
+                <User className="w-4 h-4 mt-0.5 text-blue-500 flex-shrink-0" />
+                <p className="text-sm text-muted-foreground">{text}</p>
+              </div>
+            ))}
             {agentTranscript && (
-              <p className="text-sm">
-                <span className="font-medium">{language === 'he' ? 'סוכן:' : 'Agent:'}</span> {agentTranscript}
-              </p>
+              <div className="flex items-start gap-2">
+                <Bot className="w-4 h-4 mt-0.5 text-green-500 flex-shrink-0" />
+                <p className="text-sm">{agentTranscript}</p>
+              </div>
             )}
           </div>
         )}
