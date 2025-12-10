@@ -11,23 +11,44 @@ interface LandscapeImageSelectorProps {
   onImagesSelected: (images: string[]) => void;
 }
 
-const STORAGE_KEY = 'landscape-images';
-
 export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }: LandscapeImageSelectorProps) => {
-  const [images, setImages] = useState<string[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [generatingIndex, setGeneratingIndex] = useState<number | null>(null);
   const { toast } = useToast();
 
-  // Persist images to localStorage whenever they change
+  // Load images from database on mount
   useEffect(() => {
-    if (images.length > 0) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(images));
-    }
-  }, [images]);
+    const loadSavedImages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('generated_images')
+          .select('image_key, image_url')
+          .eq('image_type', 'landscape')
+          .order('image_key');
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          const loadedImages: string[] = [];
+          data.forEach(item => {
+            const index = parseInt(item.image_key);
+            if (!isNaN(index)) {
+              loadedImages[index] = item.image_url;
+            }
+          });
+          setImages(loadedImages);
+        }
+      } catch (error) {
+        console.error('Error loading saved images:', error);
+      } finally {
+        setInitialLoading(false);
+      }
+    };
+
+    loadSavedImages();
+  }, []);
 
   const generateImage = async (variation: number, retries = 3): Promise<boolean> => {
     setGeneratingIndex(variation);
@@ -128,11 +149,8 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }:
   };
 
   const handleUseImages = () => {
-    // Always use all 12 slots, even if some are empty - fill with valid images
     const validImages = images.filter(img => img);
     if (validImages.length > 0) {
-      // Save to localStorage immediately to anchor them
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(images));
       onImagesSelected(validImages);
       onOpenChange(false);
       toast({
@@ -142,9 +160,18 @@ export const LandscapeImageSelector = ({ open, onOpenChange, onImagesSelected }:
     }
   };
 
-  const clearAllImages = () => {
+  const clearAllImages = async () => {
+    // Delete from database
+    const { error } = await supabase
+      .from('generated_images')
+      .delete()
+      .eq('image_type', 'landscape');
+    
+    if (error) {
+      console.error('Error deleting images:', error);
+    }
+    
     setImages([]);
-    localStorage.removeItem(STORAGE_KEY);
     toast({
       title: "כל התמונות נמחקו",
       description: "כעת תוכל ליצור תמונות חדשות"

@@ -113,6 +113,22 @@ serve(async (req) => {
       .from('landscape-images')
       .getPublicUrl(fileName);
 
+    // Save to database for persistence
+    const { error: dbError } = await supabase
+      .from('generated_images')
+      .upsert({
+        image_type: 'landscape',
+        image_key: String(variation),
+        image_url: publicUrl,
+        prompt: selectedPrompt
+      }, {
+        onConflict: 'image_type,image_key'
+      });
+
+    if (dbError) {
+      console.error("Database save error:", dbError);
+    }
+
     return new Response(
       JSON.stringify({ publicUrl }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
