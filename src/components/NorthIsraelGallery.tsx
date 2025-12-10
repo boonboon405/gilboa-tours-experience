@@ -100,6 +100,12 @@ const NorthIsraelGallery = () => {
   }, [locationImages]);
 
   const generateImage = async (locationKey: string) => {
+    // Don't generate for locations with static images
+    const location = locations.find(l => l.key === locationKey);
+    if (location?.staticImage) {
+      return;
+    }
+    
     setGeneratingLocations(prev => new Set(prev).add(locationKey));
     
     try {
@@ -130,10 +136,11 @@ const NorthIsraelGallery = () => {
 
   const generateAllImages = async () => {
     setIsGeneratingAll(true);
-    const ungenerated = locations.filter(loc => !locationImages[loc.key]);
+    // Skip locations that have static images or already generated images
+    const ungenerated = locations.filter(loc => !loc.staticImage && !locationImages[loc.key]);
     
     for (const location of ungenerated) {
-      if (!locationImages[location.key]) {
+      if (!locationImages[location.key] && !location.staticImage) {
         await generateImage(location.key);
         // Small delay between requests to avoid rate limiting
         await new Promise(resolve => setTimeout(resolve, 2000));
