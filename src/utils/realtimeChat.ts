@@ -96,6 +96,7 @@ export class RealtimeChat {
   private audioEl: HTMLAudioElement;
   private recorder: AudioRecorder | null = null;
   private callbacks: RealtimeChatCallbacks;
+  private currentLanguage: string = 'he';
 
   constructor(callbacks: RealtimeChatCallbacks) {
     this.callbacks = callbacks;
@@ -104,6 +105,8 @@ export class RealtimeChat {
   }
 
   async init(language: string = 'he') {
+    this.currentLanguage = language;
+    
     try {
       console.log('Initializing realtime chat...');
       
@@ -154,8 +157,13 @@ export class RealtimeChat {
 
       this.dc.addEventListener("message", (e) => {
         const event = JSON.parse(e.data);
-        console.log("Received event:", event.type);
+        console.log("Realtime event:", event.type);
         this.handleEvent(event);
+        
+        // Send session.update after session.created to configure audio transcription
+        if (event.type === 'session.created') {
+          this.sendSessionUpdate();
+        }
       });
 
       // Create and set local description
@@ -197,10 +205,55 @@ export class RealtimeChat {
     }
   }
 
+  private sendSessionUpdate() {
+    if (!this.dc || this.dc.readyState !== 'open') {
+      console.error('Cannot send session update - data channel not ready');
+      return;
+    }
+
+    const systemInstructions = this.currentLanguage === 'he' 
+      ? `אתה סוכן סיורים מקצועי המתמחה בצפון ישראל - גליל, כנרת, הרי הגלבוע ועמק המעיינות.
+         דבר בעברית רשמית וברורה. היה ידידותי, מקצועי ומסביר פנים.
+         עזור למבקרים לתכנן סיורים, המלץ על אטרקציות ופעילויות.
+         אל תשתמש בסלנג או במילים לא פורמליות.`
+      : `You are a professional tour agent specializing in Northern Israel - Galilee, Sea of Galilee, Gilboa Mountains, and Springs Valley.
+         Be friendly, professional, and helpful.
+         Help visitors plan tours and recommend attractions and activities.`;
+
+    const sessionUpdate = {
+      type: 'session.update',
+      session: {
+        modalities: ['text', 'audio'],
+        instructions: systemInstructions,
+        voice: 'alloy',
+        input_audio_format: 'pcm16',
+        output_audio_format: 'pcm16',
+        input_audio_transcription: {
+          model: 'whisper-1'
+        },
+        turn_detection: {
+          type: 'server_vad',
+          threshold: 0.5,
+          prefix_padding_ms: 300,
+          silence_duration_ms: 1000
+        },
+        temperature: 0.8,
+        max_response_output_tokens: 'inf'
+      }
+    };
+
+    console.log('Sending session.update for audio transcription...');
+    this.dc.send(JSON.stringify(sessionUpdate));
+  }
+
   private handleEvent(event: any) {
     this.callbacks.onMessage(event);
 
     switch (event.type) {
+      case 'session.updated':
+        console.log('Session updated successfully');
+        break;
+      
       case 'response.audio.delta':
         this.callbacks.onSpeakingChange(true);
         break;
@@ -220,8 +273,13 @@ export class RealtimeChat {
       
       case 'conversation.item.input_audio_transcription.completed':
         if (event.transcript) {
+          console.log('User said:', event.transcript);
           this.callbacks.onTranscript(event.transcript, true);
         }
+        break;
+      
+      case 'conversation.item.input_audio_transcription.failed':
+        console.error('Transcription failed:', event.error);
         break;
       
       case 'response.audio_transcript.delta':
