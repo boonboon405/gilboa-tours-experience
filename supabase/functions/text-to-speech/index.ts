@@ -53,15 +53,15 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         text: text,
-        model_id: 'eleven_multilingual_v2', // Multilingual v2 is the best for Hebrew and other non-English languages
-        language_code: language === 'he' ? 'he' : 'en', // Explicitly set language code
+        model_id: 'eleven_multilingual_v2', // Multilingual v2 auto-detects language from text
         voice_settings: {
           stability: 0.5,
           similarity_boost: 0.75,
           style: 0.0,
           use_speaker_boost: true,
-          speed: 0.9, // Slow down speech by 10%
         },
+        // Speed is set at request level, not in voice_settings
+        speed: 0.9, // Slow down speech by 10%
       }),
     });
 
