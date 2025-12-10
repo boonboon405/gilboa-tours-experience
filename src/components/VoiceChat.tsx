@@ -5,7 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe, Phone, PhoneOff } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe, Phone, PhoneOff, Copy, Check } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice } from '@/utils/elevenLabsTTS';
@@ -21,6 +21,8 @@ import { ProcessingAnimation } from '@/components/ProcessingAnimation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import RealtimeVoiceChat from '@/components/RealtimeVoiceChat';
+import EnhancedVoiceSelector from '@/components/EnhancedVoiceSelector';
+import TypingIndicator from '@/components/TypingIndicator';
 import companyLogo from '@/assets/company-logo.png';
 
 interface Message {
@@ -63,6 +65,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const [showSettings, setShowSettings] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
   const [showRealtimeCall, setShowRealtimeCall] = useState(false);
+  const [playingMessageId, setPlayingMessageId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const { toast } = useToast();
@@ -752,7 +755,7 @@ ${transcript}`;
             </Select>
           </div>
           
-          {/* Voice Selection */}
+          {/* Voice Selection - Enhanced */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -761,7 +764,7 @@ ${transcript}`;
               </div>
               {isSpeaking && <SpeakingAnimation isActive={isSpeaking} size="sm" />}
             </div>
-            <VoiceSelector
+            <EnhancedVoiceSelector
               selectedVoice={selectedVoice}
               onVoiceChange={(voice) => {
                 setSelectedVoice(voice);
@@ -777,43 +780,103 @@ ${transcript}`;
       {/* Messages */}
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
-            >
-              <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                msg.sender === 'user' 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-secondary text-secondary-foreground'
-              }`}>
-                {msg.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
-              </div>
-              <div className={`flex-1 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
-                <div className={`inline-block p-3 rounded-lg max-w-[85%] ${
-                  msg.sender === 'user'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted'
+          {messages.map((msg) => {
+            const isPlaying = playingMessageId === msg.id && isSpeaking;
+            
+            return (
+              <div
+                key={msg.id}
+                className={`flex gap-3 group animate-in slide-in-from-bottom-2 duration-300 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
+              >
+                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-sm ${
+                  msg.sender === 'user' 
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'bg-gradient-to-br from-primary/20 to-primary/10'
                 }`}>
-                  <div className="flex items-start gap-2">
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed flex-1">{msg.message}</p>
+                  {msg.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4 text-primary" />}
+                </div>
+                <div className={`flex-1 max-w-[80%] ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
+                  <div className={`inline-block p-3 rounded-2xl relative ${
+                    msg.sender === 'user'
+                      ? 'bg-primary text-primary-foreground rounded-tr-sm'
+                      : 'bg-card border border-border rounded-tl-sm'
+                  }`}>
+                    {/* Sentiment indicator for user messages */}
                     {msg.sentiment && msg.sender === 'user' && (
-                      <span className={`text-base ${msg.sentiment.color}`} title={msg.sentiment.type}>
+                      <span className={`absolute -top-2 -right-2 text-base ${msg.sentiment.color}`}>
                         {msg.sentiment.icon}
                       </span>
                     )}
+                    
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.message}</p>
+                    
+                    {/* Action buttons for AI messages */}
+                    {msg.sender === 'ai' && (
+                      <div className="flex items-center gap-1 mt-2 pt-2 border-t border-border/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            if (isPlaying) {
+                              stopElevenLabsSpeech();
+                              setPlayingMessageId(null);
+                              setIsSpeaking(false);
+                            } else {
+                              setPlayingMessageId(msg.id);
+                              speakText(msg.message);
+                            }
+                          }}
+                          className="h-7 px-2 text-xs"
+                        >
+                          {isPlaying ? (
+                            <>
+                              <VolumeX className="w-3 h-3 mr-1" />
+                              {language === 'he' ? 'עצור' : 'Stop'}
+                            </>
+                          ) : (
+                            <>
+                              <Volume2 className="w-3 h-3 mr-1" />
+                              {language === 'he' ? 'השמע' : 'Play'}
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(msg.message);
+                            toast({
+                              title: language === 'he' ? 'הועתק' : 'Copied',
+                              description: language === 'he' ? 'הטקסט הועתק ללוח' : 'Text copied to clipboard',
+                            });
+                          }}
+                          className="h-7 px-2 text-xs"
+                        >
+                          <Copy className="w-3 h-3 mr-1" />
+                          {language === 'he' ? 'העתק' : 'Copy'}
+                        </Button>
+                      </div>
+                    )}
                   </div>
+                  
+                  {/* Timestamp */}
+                  <span className={`text-[10px] text-muted-foreground px-2 block ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
+                    {new Date(msg.created_at).toLocaleTimeString(language === 'he' ? 'he-IL' : 'en-US', {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </span>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           {isProcessing && (
             <div className="flex gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center">
-                <Bot className="w-4 h-4" />
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+                <Bot className="w-4 h-4 text-primary" />
               </div>
               <div className="flex-1">
-                <ProcessingAnimation isActive={isProcessing} language={language} />
+                <TypingIndicator showAvatar={false} />
               </div>
             </div>
           )}
