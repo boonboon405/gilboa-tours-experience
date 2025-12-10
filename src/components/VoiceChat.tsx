@@ -753,6 +753,7 @@ ${transcript}`;
                 setSelectedVoice(voice);
                 localStorage.setItem('preferred-voice', voice);
               }}
+              language={language}
               className="w-full"
             />
           </div>
