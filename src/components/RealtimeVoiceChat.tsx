@@ -342,10 +342,17 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
         {/* Help Text */}
         <p className="text-xs text-center text-muted-foreground mt-4">
           {t(
-            'שיחה דו-כיוונית בזמן אמת - דבר בחופשיות והסוכן ישמע אותך',
-            'Real-time two-way conversation - speak freely and the agent will hear you'
+            'שיחה קולית בזמן אמת - דבר בחופשיות והסוכן ישמע ויענה',
+            'Real-time voice call - speak freely and the agent will listen and respond'
           )}
         </p>
+        
+        {/* Hebrew Limitation Notice */}
+        {selectedLanguage === 'he' && !isConnected && (
+          <p className="text-xs text-center text-amber-500 mt-2">
+            ⚠️ הערה: הסוכן יבין עברית אך ישיב באנגלית (מגבלת המערכת)
+          </p>
+        )}
       </CardContent>
     </Card>
   );
