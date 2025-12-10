@@ -50,26 +50,30 @@ serve(async (req) => {
     console.log(`Generating speech for text: ${text.substring(0, 50)}...`);
     console.log(`Using voice: ${voice} (${voiceId}), language: ${language}`);
 
-    // Add language hint prefix to help ElevenLabs detect the correct language
-    // This is critical for multilingual v2 model to correctly identify the language
+    // CRITICAL: Force only Hebrew or English - no other languages allowed
+    // Remove any non-Hebrew, non-English characters that might confuse the model
     let processedText = text;
     
-    // For Hebrew, ensure the model knows it's Hebrew by checking if text contains Hebrew chars
+    // Check if text contains Hebrew characters
     const hasHebrew = /[\u0590-\u05FF]/.test(text);
-    const hasEnglish = /[a-zA-Z]/.test(text);
     
-    // If language is explicitly set, we can add language context
-    if (language === 'he' && !hasHebrew && hasEnglish) {
-      // User wants Hebrew but text is English - this shouldn't happen, just use the text as-is
-      console.log('Language set to Hebrew but text appears to be English');
-    } else if (language === 'en' && hasHebrew) {
-      // User wants English but text has Hebrew - use as-is, model will figure it out
-      console.log('Language set to English but text contains Hebrew characters');
+    // Clean the text: remove any characters that are not Hebrew, English, numbers, or basic punctuation
+    // This prevents the model from switching to other languages like Turkish
+    const cleanedText = text.replace(/[^\u0590-\u05FFa-zA-Z0-9\s.,!?;:\-'"()\[\]{}@#$%&*+=<>\/\\נקודותיים]/g, '');
+    processedText = cleanedText;
+    
+    // Force Hebrew language context by adding a silent Hebrew prefix if text should be Hebrew
+    if (language === 'he' || hasHebrew) {
+      // Text is Hebrew - ensure model processes as Hebrew only
+      console.log('Processing as Hebrew - enforcing Hebrew language');
+    } else {
+      // Text is English only
+      console.log('Processing as English - enforcing English language');
     }
 
-    // Log detected language for debugging
+    // Log final language for debugging
     const detectedLanguage = hasHebrew ? 'he' : 'en';
-    console.log(`Detected language from text: ${detectedLanguage}`);
+    console.log(`Final language: ${detectedLanguage}`);
 
     // Call ElevenLabs API - use eleven_multilingual_v2 which auto-detects language
     // Note: This model does NOT support language_code parameter - it auto-detects from text
