@@ -110,27 +110,27 @@ export const VoiceSelector = ({ selectedVoice, onVoiceChange, language = 'he', c
           </SelectContent>
         </Select>
         
-        {/* Dedicated preview button for selected voice */}
+        {/* Dedicated preview button for selected voice - BLUE */}
         <Button
-          variant="outline"
+          variant="default"
           size="icon"
-          className="h-10 w-10 shrink-0"
+          className="h-10 w-10 shrink-0 bg-blue-600 hover:bg-blue-700 text-white"
           onClick={handlePreviewSelected}
           title={language === 'he' ? 'השמע דוגמה' : 'Play sample'}
         >
           {previewingVoice === selectedVoice && isPlaying ? (
-            <Square className="h-4 w-4 text-destructive" />
+            <Square className="h-4 w-4" />
           ) : (
-            <Play className="h-4 w-4 text-primary" />
+            <Play className="h-4 w-4" />
           )}
         </Button>
       </div>
       
-      {/* Preview hint text */}
+      {/* Preview hint text - referencing blue button */}
       <p className="text-xs text-muted-foreground mt-1.5">
         {language === 'he' 
-          ? 'לחץ על הכפתור כדי לשמוע דוגמה של הקול הנבחר'
-          : 'Click the button to hear a sample of the selected voice'}
+          ? 'לחץ על הכפתור הכחול כדי לשמוע דוגמה של הקול הנבחר'
+          : 'Click the blue button to hear a sample of the selected voice'}
       </p>
     </div>
   );

@@ -451,9 +451,10 @@ ${transcript}`;
     });
   };
 
-  const handleQuickReply = async (reply: string) => {
+  // When clicking a quick reply, put it in the input field instead of sending immediately
+  const handleQuickReply = (reply: string) => {
     if (!isProcessing && !isSpeaking) {
-      await handleVoiceInput(reply);
+      setTextInput(reply);
     }
   };
 
