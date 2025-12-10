@@ -67,13 +67,12 @@ serve(async (req) => {
       console.log('Language set to English but text contains Hebrew characters');
     }
 
-    // Determine the actual language based on text content (override user setting if needed)
+    // Log detected language for debugging
     const detectedLanguage = hasHebrew ? 'he' : 'en';
-    const languageCode = detectedLanguage === 'he' ? 'he' : 'en';
-    
-    console.log(`Detected language: ${detectedLanguage}, using language_code: ${languageCode}`);
+    console.log(`Detected language from text: ${detectedLanguage}`);
 
-    // Call ElevenLabs API - use eleven_multilingual_v2 with explicit language_code
+    // Call ElevenLabs API - use eleven_multilingual_v2 which auto-detects language
+    // Note: This model does NOT support language_code parameter - it auto-detects from text
     const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
       method: 'POST',
       headers: {
@@ -83,11 +82,10 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         text: processedText,
-        model_id: 'eleven_multilingual_v2', // Multilingual v2 - best for Hebrew and English
-        language_code: languageCode, // Explicitly set language to prevent wrong language detection
+        model_id: 'eleven_multilingual_v2', // Multilingual v2 - auto-detects Hebrew from text content
         voice_settings: {
-          stability: 0.6, // Slightly higher stability for clearer pronunciation
-          similarity_boost: 0.8, // Higher similarity for more natural voice
+          stability: 0.5, // Lower stability for more natural Hebrew pronunciation
+          similarity_boost: 0.75,
           style: 0.0,
           use_speaker_boost: true,
         },
