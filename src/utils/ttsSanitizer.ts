@@ -62,8 +62,12 @@ const replaceColloquialWords = (text: string): string => {
   let result = text;
   
   // Apply all word replacements from config
+  // Use word boundaries to avoid partial word replacements
   Object.entries(ttsConfig.wordReplacements).forEach(([original, replacement]) => {
-    const regex = new RegExp(original, 'g');
+    // Use word boundary regex to match whole words only
+    // For Hebrew, we need to handle it differently since \b doesn't work well
+    // Use lookahead/lookbehind with spaces, punctuation, or start/end of string
+    const regex = new RegExp(`(?<![א-ת])${original}(?![א-ת])`, 'g');
     result = result.replace(regex, replacement);
   });
   
