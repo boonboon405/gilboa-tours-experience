@@ -18,6 +18,7 @@ interface Location {
 }
 
 const locations: Location[] = [
+  // Original 25 locations
   { key: 'sea-of-galilee', nameHe: 'כנרת', nameEn: 'Sea of Galilee', descriptionHe: 'אגם המים המתוקים הגדול בישראל', descriptionEn: 'Israel\'s largest freshwater lake' },
   { key: 'mount-hermon', nameHe: 'הר חרמון', nameEn: 'Mount Hermon', descriptionHe: 'הפסגה המושלגת הגבוהה בישראל', descriptionEn: 'Israel\'s highest snow-capped peak' },
   { key: 'golan-heights', nameHe: 'רמת הגולן', nameEn: 'Golan Heights', descriptionHe: 'נופי בזלת וולקנים מרהיבים', descriptionEn: 'Stunning volcanic basalt landscapes' },
@@ -42,7 +43,33 @@ const locations: Location[] = [
   { key: 'arbel-valley', nameHe: 'עמק ארבל', nameEn: 'Arbel Valley', descriptionHe: 'עמק חקלאי פורה', descriptionEn: 'Fertile agricultural valley' },
   { key: 'gamla', nameHe: 'גמלא', nameEn: 'Gamla', descriptionHe: 'מצדה של הגולן', descriptionEn: 'Masada of the Golan' },
   { key: 'korazim', nameHe: 'כורזים', nameEn: 'Korazim', descriptionHe: 'חורבות בזלת שחורות', descriptionEn: 'Black basalt ruins' },
-  { key: 'agamon-hula', nameHe: 'אגמון החולה', nameEn: 'Agamon Hula', descriptionHe: 'עגורים בשקיעה', descriptionEn: 'Cranes at sunset' }
+  { key: 'agamon-hula', nameHe: 'אגמון החולה', nameEn: 'Agamon Hula', descriptionHe: 'עגורים בשקיעה', descriptionEn: 'Cranes at sunset' },
+  // New 25 locations
+  { key: 'bahai-gardens', nameHe: 'גני הבהאי', nameEn: 'Bahai Gardens', descriptionHe: 'גנים מדורגים מרהיבים בחיפה', descriptionEn: 'Stunning terraced gardens in Haifa' },
+  { key: 'caesarea-aqueduct', nameHe: 'אמת המים קיסריה', nameEn: 'Caesarea Aqueduct', descriptionHe: 'שרידי אמת מים רומית על החוף', descriptionEn: 'Roman aqueduct ruins on beach' },
+  { key: 'zippori', nameHe: 'ציפורי', nameEn: 'Zippori', descriptionHe: 'פסיפסים מרהיבים בעיר העתיקה', descriptionEn: 'Stunning mosaics in ancient city' },
+  { key: 'megiddo', nameHe: 'מגידו', nameEn: 'Megiddo', descriptionHe: 'תל עתיק - הארמגדון', descriptionEn: 'Ancient tel - Armageddon' },
+  { key: 'yardenit', nameHe: 'ירדנית', nameEn: 'Yardenit', descriptionHe: 'אתר הטבילה בנהר הירדן', descriptionEn: 'Jordan River baptism site' },
+  { key: 'katzrin', nameHe: 'קצרין', nameEn: 'Katzrin', descriptionHe: 'בירת הגולן ופארק התלמוד', descriptionEn: 'Golan capital and Talmud park' },
+  { key: 'jezreel-valley', nameHe: 'עמק יזרעאל', nameEn: 'Jezreel Valley', descriptionHe: 'העמק החקלאי הפורה', descriptionEn: 'Fertile agricultural valley' },
+  { key: 'nahal-snir', nameHe: 'נחל שניר', nameEn: 'Nahal Snir', descriptionHe: 'שמורת טבע עם מפלים ובריכות', descriptionEn: 'Nature reserve with pools' },
+  { key: 'achziv', nameHe: 'אכזיב', nameEn: 'Achziv', descriptionHe: 'חוף ים קסום עם מפרצונים', descriptionEn: 'Magical beach with coves' },
+  { key: 'hamat-gader', nameHe: 'חמת גדר', nameEn: 'Hamat Gader', descriptionHe: 'מעיינות חמים ותנינים', descriptionEn: 'Hot springs and crocodiles' },
+  { key: 'bet-alfa', nameHe: 'בית אלפא', nameEn: 'Bet Alfa', descriptionHe: 'בית כנסת עתיק עם פסיפס גלגל המזלות', descriptionEn: 'Ancient zodiac mosaic synagogue' },
+  { key: 'gan-hashlosha', nameHe: 'גן השלושה', nameEn: 'Sachne', descriptionHe: 'פארק מים טבעי בעמק', descriptionEn: 'Natural water park in valley' },
+  { key: 'belvoir-fortress', nameHe: 'מבצר כוכב הירדן', nameEn: 'Belvoir Fortress', descriptionHe: 'מבצר צלבני עם נוף מרהיב', descriptionEn: 'Crusader fort with stunning views' },
+  { key: 'mount-meron', nameHe: 'הר מירון', nameEn: 'Mount Meron', descriptionHe: 'הפסגה הגבוהה ביותר בגליל', descriptionEn: 'Highest peak in Galilee' },
+  { key: 'peki-in', nameHe: 'פקיעין', nameEn: 'Peki\'in', descriptionHe: 'כפר דרוזי עתיק בגליל', descriptionEn: 'Ancient Druze village in Galilee' },
+  { key: 'nahariya-beach', nameHe: 'חוף נהריה', nameEn: 'Nahariya Beach', descriptionHe: 'חוף ים תכלת במפרץ עכו', descriptionEn: 'Blue beach in Acre Bay' },
+  { key: 'stella-maris', nameHe: 'סטלה מריס', nameEn: 'Stella Maris', descriptionHe: 'מנזר הכרמלים על הים', descriptionEn: 'Carmelite monastery by sea' },
+  { key: 'druze-villages', nameHe: 'כפרים דרוזיים', nameEn: 'Druze Villages', descriptionHe: 'תרבות ייחודית בהרי הגולן', descriptionEn: 'Unique culture in Golan hills' },
+  { key: 'majrase', nameHe: 'מג\'רסה', nameEn: 'Majrase', descriptionHe: 'פארק מים בצפון הכנרת', descriptionEn: 'Water park in north Kinneret' },
+  { key: 'yehiam-fortress', nameHe: 'מבצר יחיעם', nameEn: 'Yehiam Fortress', descriptionHe: 'מבצר צלבני בגליל המערבי', descriptionEn: 'Crusader fort in Western Galilee' },
+  { key: 'keshet-cave', nameHe: 'קשת מערה', nameEn: 'Keshet Cave', descriptionHe: 'קשת סלע טבעית מרהיבה', descriptionEn: 'Stunning natural rock arch' },
+  { key: 'montfort-castle', nameHe: 'מבצר מונפור', nameEn: 'Montfort Castle', descriptionHe: 'שרידי מבצר צלבני ביער', descriptionEn: 'Crusader castle ruins in forest' },
+  { key: 'nahal-kziv', nameHe: 'נחל כזיב', nameEn: 'Nahal Kziv', descriptionHe: 'שביל מים מרהיב בגליל', descriptionEn: 'Beautiful water trail in Galilee' },
+  { key: 'rosh-pina', nameHe: 'ראש פינה', nameEn: 'Rosh Pina', descriptionHe: 'מושבה היסטורית עם נוף', descriptionEn: 'Historic colony with views' },
+  { key: 'miron-forest', nameHe: 'יער מירון', nameEn: 'Miron Forest', descriptionHe: 'יער אורנים ירוק בגליל העליון', descriptionEn: 'Green pine forest in Upper Galilee' }
 ];
 
 const NorthIsraelGallery = () => {
@@ -126,7 +153,7 @@ const NorthIsraelGallery = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 font-heading">
-            {language === 'he' ? '25 אתרים מפורסמים בצפון ישראל' : '25 Famous Sites in Northern Israel'}
+            {language === 'he' ? '50 אתרים מפורסמים בצפון ישראל' : '50 Famous Sites in Northern Israel'}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
             {language === 'he' 
@@ -138,7 +165,7 @@ const NorthIsraelGallery = () => {
           <div className="flex flex-wrap justify-center gap-4 mb-4">
             <Button 
               onClick={generateAllImages} 
-              disabled={isGeneratingAll || generatedCount === 25}
+              disabled={isGeneratingAll || generatedCount === 50}
               className="bg-primary hover:bg-primary/90"
             >
               {isGeneratingAll ? (
@@ -149,7 +176,7 @@ const NorthIsraelGallery = () => {
               ) : (
                 <>
                   <ImageIcon className="w-4 h-4 mr-2" />
-                  {language === 'he' ? `צור את כל התמונות (${25 - generatedCount} נותרו)` : `Generate All (${25 - generatedCount} left)`}
+                  {language === 'he' ? `צור את כל התמונות (${50 - generatedCount} נותרו)` : `Generate All (${50 - generatedCount} left)`}
                 </>
               )}
             </Button>
@@ -168,8 +195,8 @@ const NorthIsraelGallery = () => {
           
           <p className="text-sm text-muted-foreground">
             {language === 'he' 
-              ? `${generatedCount} מתוך 25 תמונות נוצרו`
-              : `${generatedCount} of 25 images generated`}
+              ? `${generatedCount} מתוך 50 תמונות נוצרו`
+              : `${generatedCount} of 50 images generated`}
           </p>
         </div>
 
