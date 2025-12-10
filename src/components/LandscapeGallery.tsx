@@ -1,4 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { Mountain, Sparkles, Search } from 'lucide-react';
 import { ImageGallery } from './ImageGallery';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,7 +22,28 @@ interface GallerySection {
   images: { src: string; alt: string; title: string; description: string }[];
 }
 
-const gallerySections: GallerySection[] = [
+interface DynamicImage {
+  id: string;
+  category: string;
+  title: string;
+  description: string | null;
+  alt_text: string;
+  image_url: string;
+}
+
+const categoryMapping: Record<string, string> = {
+  'galilee': 'gilboa',
+  'gilboa': 'springs',
+  'activities': 'activities'
+};
+
+const dbToCategoryMapping: Record<string, string> = {
+  'gilboa': 'galilee',
+  'springs': 'gilboa',
+  'activities': 'activities'
+};
+
+const staticGallerySections: GallerySection[] = [
   {
     id: 'galilee',
     title: 'הגליל והכנרת',
@@ -64,16 +87,54 @@ export const LandscapeGallery = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [scrollY, setScrollY] = useState(0);
 
+  // Fetch dynamic images from database
+  const { data: dynamicImages } = useQuery({
+    queryKey: ['gallery-images'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('gallery_images')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order');
+      
+      if (error) throw error;
+      return data as DynamicImage[];
+    }
+  });
+
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
-      // Update CSS variable for parallax
       document.documentElement.style.setProperty('--scroll-y', `${window.scrollY * 0.3}px`);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Merge static and dynamic images
+  const gallerySections = useMemo(() => {
+    return staticGallerySections.map(section => {
+      // Map section ids to database categories
+      const dbCategory = section.id === 'galilee' ? 'gilboa' 
+        : section.id === 'gilboa' ? 'springs' 
+        : 'activities';
+      
+      const dynamicForSection = (dynamicImages || [])
+        .filter(img => img.category === dbCategory)
+        .map(img => ({
+          src: img.image_url,
+          alt: img.alt_text,
+          title: img.title,
+          description: img.description || ''
+        }));
+      
+      return {
+        ...section,
+        images: [...section.images, ...dynamicForSection]
+      };
+    });
+  }, [dynamicImages]);
 
   const currentSection = gallerySections.find(s => s.id === activeSection) || gallerySections[0];
 

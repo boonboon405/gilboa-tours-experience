@@ -30,6 +30,7 @@ import MasterDashboard from "./pages/MasterDashboard";
 import AdminAIResponses from "./pages/AdminAIResponses";
 import AISettings from "./pages/AISettings";
 import AdminCategories from "./pages/AdminCategories";
+import AdminGallery from "./pages/AdminGallery";
 import AccessibilityStatement from "./pages/AccessibilityStatement";
 import NotFound from "./pages/NotFound";
 import { LiveChatWidget } from "./components/LiveChatWidget";
@@ -151,6 +152,14 @@ const App = () => {
                   element={
                     <ProtectedRoute requireAdmin>
                       <AdminCategories />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin/gallery" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <AdminGallery />
                     </ProtectedRoute>
                   } 
                 />
