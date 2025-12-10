@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -436,7 +436,7 @@ ${transcript}`;
 
   const overallSentiment = getOverallSentiment(messages);
 
-  const allQuickReplies = language === 'he' ? [
+  const allQuickReplies = useMemo(() => language === 'he' ? [
     { text: 'ספרו לי עוד על הפעילות', icon: Info },
     { text: 'אילו אפשרויות יש?', icon: ListChecks },
     { text: 'מה עולה הפעילות?', icon: DollarSign },
@@ -480,7 +480,7 @@ ${transcript}`;
     { text: 'Do you provide equipment?', icon: Box },
     { text: 'What should I wear?', icon: Shirt },
     { text: 'Do I need special shoes?', icon: Footprints }
-  ];
+  ], [language]);
 
   // Rotate quick replies randomly every 10 seconds with fade animation
   const [visibleReplies, setVisibleReplies] = useState<Array<{ text: string; icon: any }>>([]);
@@ -503,7 +503,7 @@ ${transcript}`;
     const interval = setInterval(shuffleReplies, 10000);
     
     return () => clearInterval(interval);
-  }, [language]);
+  }, [allQuickReplies]);
 
   const quickReplies = visibleReplies;
 
