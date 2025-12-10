@@ -5,7 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe, Phone, PhoneOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice } from '@/utils/elevenLabsTTS';
@@ -20,6 +20,7 @@ import { MicrophoneAnimation } from '@/components/MicrophoneAnimation';
 import { ProcessingAnimation } from '@/components/ProcessingAnimation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import RealtimeVoiceChat from '@/components/RealtimeVoiceChat';
 import companyLogo from '@/assets/company-logo.png';
 
 interface Message {
@@ -61,6 +62,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   });
   const [showSettings, setShowSettings] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
+  const [showRealtimeCall, setShowRealtimeCall] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const { toast } = useToast();
@@ -870,6 +872,29 @@ ${transcript}`;
         {/* Voice Control */}
         <div className="p-6 bg-muted/20">
           <div className="flex flex-col items-center gap-4">
+            {/* Realtime Call Button - Prominent */}
+            <div className="w-full max-w-md mb-2">
+              <Button
+                onClick={() => setShowRealtimeCall(true)}
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-6 text-lg font-semibold shadow-lg transition-all duration-200 hover:scale-[1.02]"
+                size="lg"
+              >
+                <Phone className="w-6 h-6 mr-3" />
+                {language === 'he' ? '🎤 התחל שיחה קולית בזמן אמת' : '🎤 Start Real-time Voice Call'}
+              </Button>
+              <p className="text-xs text-center text-muted-foreground mt-2">
+                {language === 'he' 
+                  ? 'שיחה דו-כיוונית - דבר והסוכן ישמע אותך מיד'
+                  : 'Two-way conversation - speak and the agent hears you instantly'}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="h-px bg-border flex-1 w-16" />
+              <span>{language === 'he' ? 'או השתמש בהקלטה' : 'or use recording'}</span>
+              <div className="h-px bg-border flex-1 w-16" />
+            </div>
+
             <div className="relative">
               <MicrophoneAnimation isActive={isListening} />
               <Button
@@ -905,7 +930,7 @@ ${transcript}`;
                     ? '🔊 מדבר...'
                     : isProcessing
                     ? '⚙️ מעבד...'
-                    : 'לחצו על המיקרופון להתחלת שיחה'
+                    : 'לחצו על המיקרופון להקלטה'
                 ) : (
                   isListening 
                     ? '🎤 Listening...' 
@@ -913,7 +938,7 @@ ${transcript}`;
                     ? '🔊 Speaking...'
                     : isProcessing
                     ? '⚙️ Processing...'
-                    : 'Click the microphone to start conversation'
+                    : 'Click the microphone to record'
                 )}
               </p>
               <p className="text-sm text-foreground/70 text-center px-3 py-1.5 bg-accent/10 rounded-md">
@@ -926,6 +951,16 @@ ${transcript}`;
           </div>
         </div>
       </div>
+
+      {/* Realtime Voice Chat Dialog */}
+      <Dialog open={showRealtimeCall} onOpenChange={setShowRealtimeCall}>
+        <DialogContent className="max-w-lg">
+          <RealtimeVoiceChat 
+            language={language}
+            onClose={() => setShowRealtimeCall(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Categories Dialog */}
       <Dialog open={showCategories} onOpenChange={setShowCategories}>
