@@ -13,6 +13,7 @@ import { EmergencyContactButton } from '@/components/EmergencyContactButton';
 import { PublicFAQ } from '@/components/PublicFAQ';
 import { TestimonialSubmissionForm } from '@/components/TestimonialSubmissionForm';
 import { LandscapeGallery } from '@/components/LandscapeGallery';
+import NorthIsraelGallery from '@/components/NorthIsraelGallery';
 import { AccessibilityInfoSection } from '@/components/AccessibilityInfoSection';
 
 const Index = () => {
@@ -40,6 +41,10 @@ const Index = () => {
       
       <div id="landscape-gallery" className="scroll-mt-20">
         <LandscapeGallery />
+      </div>
+      
+      <div id="north-israel-gallery" className="scroll-mt-20">
+        <NorthIsraelGallery />
       </div>
       
       <Testimonials />
