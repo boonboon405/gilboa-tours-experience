@@ -147,6 +147,16 @@ export class RealtimeChat {
       // Create peer connection
       this.pc = new RTCPeerConnection();
 
+      // Monitor connection state
+      this.pc.onconnectionstatechange = () => {
+        console.log('Connection state:', this.pc?.connectionState);
+        if (this.pc?.connectionState === 'failed' || this.pc?.connectionState === 'disconnected') {
+          console.error('WebRTC connection failed or disconnected');
+          this.callbacks.onError(new Error('Connection lost. Please try again.'));
+          this.disconnect();
+        }
+      };
+
       // Set up remote audio
       this.pc.ontrack = e => {
         console.log('Received audio track');

@@ -81,6 +81,19 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
     setLiveUserSpeech('');
     
     try {
+      // Request microphone permission first
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (permissionError) {
+        toast({
+          title: t('שגיאה בגישה למיקרופון', 'Microphone Access Error'),
+          description: t('יש לאשר גישה למיקרופון', 'Please allow microphone access'),
+          variant: 'destructive'
+        });
+        setIsConnecting(false);
+        return;
+      }
+      
       chatRef.current = new RealtimeChat({
         onMessage: handleMessage,
         onSpeakingChange: handleSpeakingChange,
@@ -99,11 +112,18 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
       });
     } catch (error) {
       console.error('Error starting call:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to start call';
       toast({
-        title: t('שגיאה', 'Error'),
-        description: error instanceof Error ? error.message : 'Failed to start call',
+        title: t('שגיאה בהתחלת השיחה', 'Error Starting Call'),
+        description: errorMessage,
         variant: 'destructive'
       });
+      
+      // Clean up on error
+      if (chatRef.current) {
+        chatRef.current.disconnect();
+        chatRef.current = null;
+      }
     } finally {
       setIsConnecting(false);
     }
