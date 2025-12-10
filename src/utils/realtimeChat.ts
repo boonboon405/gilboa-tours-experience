@@ -87,8 +87,22 @@ export interface RealtimeChatCallbacks {
   onSpeakingChange: (speaking: boolean) => void;
   onListeningChange: (listening: boolean) => void;
   onTranscript: (text: string, isFinal: boolean) => void;
+  onPartialTranscript?: (text: string) => void; // Real-time partial user speech
   onError: (error: Error) => void;
 }
+
+export type VoiceOption = 'alloy' | 'ash' | 'ballad' | 'coral' | 'echo' | 'sage' | 'shimmer' | 'verse';
+
+export const VOICE_OPTIONS: { id: VoiceOption; name: string; nameHe: string }[] = [
+  { id: 'alloy', name: 'Alloy', nameHe: 'אלוי' },
+  { id: 'ash', name: 'Ash', nameHe: 'אש' },
+  { id: 'ballad', name: 'Ballad', nameHe: 'בלאד' },
+  { id: 'coral', name: 'Coral', nameHe: 'קורל' },
+  { id: 'echo', name: 'Echo', nameHe: 'אקו' },
+  { id: 'sage', name: 'Sage', nameHe: 'סייג' },
+  { id: 'shimmer', name: 'Shimmer', nameHe: 'שימר' },
+  { id: 'verse', name: 'Verse', nameHe: 'ורס' },
+];
 
 export class RealtimeChat {
   private pc: RTCPeerConnection | null = null;
@@ -97,6 +111,7 @@ export class RealtimeChat {
   private recorder: AudioRecorder | null = null;
   private callbacks: RealtimeChatCallbacks;
   private currentLanguage: string = 'he';
+  private currentVoice: VoiceOption = 'alloy';
 
   constructor(callbacks: RealtimeChatCallbacks) {
     this.callbacks = callbacks;
@@ -104,15 +119,16 @@ export class RealtimeChat {
     this.audioEl.autoplay = true;
   }
 
-  async init(language: string = 'he') {
+  async init(language: string = 'he', voice: VoiceOption = 'alloy') {
     this.currentLanguage = language;
+    this.currentVoice = voice;
     
     try {
       console.log('Initializing realtime chat...');
       
       // Get ephemeral token from our Supabase Edge Function
       const { data: tokenData, error: tokenError } = await supabase.functions.invoke("realtime-session", {
-        body: { language, voice: 'alloy' }
+        body: { language, voice }
       });
 
       if (tokenError) {
@@ -225,7 +241,7 @@ export class RealtimeChat {
       session: {
         modalities: ['text', 'audio'],
         instructions: systemInstructions,
-        voice: 'alloy',
+        voice: this.currentVoice,
         input_audio_format: 'pcm16',
         output_audio_format: 'pcm16',
         input_audio_transcription: {
@@ -265,10 +281,17 @@ export class RealtimeChat {
       case 'input_audio_buffer.speech_started':
         console.log('User started speaking');
         this.callbacks.onListeningChange(true);
+        this.callbacks.onPartialTranscript?.(''); // Clear partial transcript
         break;
       
       case 'input_audio_buffer.speech_stopped':
         console.log('User stopped speaking');
+        break;
+      
+      case 'response.audio_transcript.delta':
+        if (event.delta) {
+          this.callbacks.onTranscript(event.delta, false);
+        }
         break;
       
       case 'conversation.item.input_audio_transcription.completed':
