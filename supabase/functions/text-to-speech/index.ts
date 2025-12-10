@@ -42,8 +42,8 @@ serve(async (req) => {
     console.log(`Generating speech for text: ${text.substring(0, 50)}...`);
     console.log(`Using voice: ${voice} (${voiceId}), language: ${language}`);
 
-    // Call ElevenLabs API - use eleven_flash_v2_5 for better multilingual support
-    // This model has improved language detection from the text content
+    // Call ElevenLabs API - use eleven_multilingual_v2 for Hebrew support
+    // This is the most reliable model for non-English languages
     const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
       method: 'POST',
       headers: {
@@ -53,10 +53,11 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         text: text,
-        model_id: 'eleven_flash_v2_5', // Flash v2.5 has excellent multilingual support with language auto-detection
+        model_id: 'eleven_multilingual_v2', // Multilingual v2 is the best for Hebrew and other non-English languages
+        language_code: language === 'he' ? 'he' : 'en', // Explicitly set language code
         voice_settings: {
-          stability: 0.6,
-          similarity_boost: 0.8,
+          stability: 0.5,
+          similarity_boost: 0.75,
           style: 0.0,
           use_speaker_boost: true,
         },
