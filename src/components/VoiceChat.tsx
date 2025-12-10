@@ -19,6 +19,7 @@ import { VolumeIndicator } from '@/components/VolumeIndicator';
 import { MicrophoneAnimation } from '@/components/MicrophoneAnimation';
 import { ProcessingAnimation } from '@/components/ProcessingAnimation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import companyLogo from '@/assets/company-logo.png';
 
 interface Message {
@@ -575,56 +576,128 @@ ${transcript}`;
             </Button>
           </div>
           
-          <ChatHistory 
-            onLoadConversation={handleLoadConversation}
-            currentConversationId={conversationId}
-            language={language}
-          />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setShowCategories(true)}
-            title={language === 'he' ? 'הצג קטגוריות' : 'View Categories'}
-          >
-            <Eye className="w-5 h-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setShowSettings(!showSettings)}
-            title={language === 'he' ? 'הגדרות' : 'Settings'}
-          >
-            <Gauge className="w-5 h-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleExportChat}
-            title={language === 'he' ? 'ייצא שיחה' : 'Export Chat'}
-            disabled={messages.length === 0}
-          >
-            <Download className="w-5 h-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleClearChat}
-            title={language === 'he' ? 'נקה שיחה' : 'Clear Chat'}
-          >
-            <Trash2 className="w-5 h-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              stopElevenLabsSpeech();
-              setIsSpeaking(false);
-            }}
-            title={language === 'he' ? 'השתק' : 'Mute'}
-            className={isSpeaking ? 'text-destructive hover:text-destructive' : ''}
-          >
-            {isSpeaking ? <VolumeX className="w-5 h-5 animate-pulse" /> : <Volume2 className="w-5 h-5" />}
-          </Button>
+          <TooltipProvider delayDuration={200}>
+            {/* History */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <ChatHistory 
+                    onLoadConversation={handleLoadConversation}
+                    currentConversationId={conversationId}
+                    language={language}
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-xs text-center">
+                <p className="font-medium">{language === 'he' ? 'היסטוריית שיחות' : 'Chat History'}</p>
+                <p className="text-xs text-muted-foreground">
+                  {language === 'he' ? 'צפייה וטעינה של שיחות קודמות שנשמרו' : 'View and load previously saved conversations'}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+
+            {/* View Categories */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowCategories(true)}
+                >
+                  <Eye className="w-5 h-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-xs text-center">
+                <p className="font-medium">{language === 'he' ? 'הצג קטגוריות' : 'View Categories'}</p>
+                <p className="text-xs text-muted-foreground">
+                  {language === 'he' ? 'צפייה ב-8 קטגוריות הפעילויות השונות' : 'Browse all 8 activity categories available'}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Settings */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowSettings(!showSettings)}
+                >
+                  <Gauge className="w-5 h-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-xs text-center">
+                <p className="font-medium">{language === 'he' ? 'הגדרות' : 'Settings'}</p>
+                <p className="text-xs text-muted-foreground">
+                  {language === 'he' ? 'בחירת שפה וקול לתגובות הבוט' : 'Choose language and voice for bot responses'}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Export Chat */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleExportChat}
+                  disabled={messages.length === 0}
+                >
+                  <Download className="w-5 h-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-xs text-center">
+                <p className="font-medium">{language === 'he' ? 'ייצא שיחה' : 'Export Chat'}</p>
+                <p className="text-xs text-muted-foreground">
+                  {language === 'he' ? 'הורדת השיחה הנוכחית כקובץ טקסט' : 'Download current conversation as a text file'}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Clear Chat */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleClearChat}
+                >
+                  <Trash2 className="w-5 h-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-xs text-center">
+                <p className="font-medium">{language === 'he' ? 'נקה שיחה' : 'Clear Chat'}</p>
+                <p className="text-xs text-muted-foreground">
+                  {language === 'he' ? 'מחיקת כל ההודעות והתחלת שיחה חדשה' : 'Delete all messages and start a new conversation'}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Mute/Unmute */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    stopElevenLabsSpeech();
+                    setIsSpeaking(false);
+                  }}
+                  className={isSpeaking ? 'text-destructive hover:text-destructive' : ''}
+                >
+                  {isSpeaking ? <VolumeX className="w-5 h-5 animate-pulse" /> : <Volume2 className="w-5 h-5" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-xs text-center">
+                <p className="font-medium">{language === 'he' ? (isSpeaking ? 'השתק' : 'השמעה קולית') : (isSpeaking ? 'Mute' : 'Voice Output')}</p>
+                <p className="text-xs text-muted-foreground">
+                  {language === 'he' 
+                    ? (isSpeaking ? 'לחץ להשתקת הקול' : 'הפעלת/השתקת תגובות קוליות')
+                    : (isSpeaking ? 'Click to stop speaking' : 'Toggle voice responses on/off')}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
 
