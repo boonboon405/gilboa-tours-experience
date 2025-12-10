@@ -51,7 +51,10 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const [sessionId, setSessionId] = useState(() => `session-${Date.now()}-${Math.random()}`);
   const [speechSupported, setSpeechSupported] = useState(true);
   const [textInput, setTextInput] = useState('');
-  const [language, setLanguage] = useState<'he' | 'en'>('he');
+  const [language, setLanguage] = useState<'he' | 'en'>(() => {
+    const saved = localStorage.getItem('preferred-language');
+    return (saved === 'en' ? 'en' : 'he') as 'he' | 'en';
+  });
   const [selectedVoice, setSelectedVoice] = useState<ElevenLabsVoice>(() => {
     const saved = localStorage.getItem('preferred-voice');
     return (saved as ElevenLabsVoice) || 'Rachel';
@@ -229,6 +232,7 @@ Tell me, how many people? What interests you?`;
       greetingSpokenRef.current = false;
       setMessages([]);
       setLanguage(newLang);
+      localStorage.setItem('preferred-language', newLang);
     }
   };
 
@@ -592,29 +596,29 @@ ${transcript}`;
               <span className="text-base">🇺🇸</span>
               <span className="text-xs hidden sm:inline">EN</span>
             </Button>
-            <div className="w-px h-5 bg-border/50 mx-1" />
-            <TooltipProvider delayDuration={200}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowSettings(!showSettings)}
-                    className="h-7 w-7 p-0"
-                    title={language === 'he' ? 'הגדרות קול' : 'Voice Settings'}
-                  >
-                    <Gauge className="w-4 h-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="max-w-xs text-center">
-                  <p className="font-medium">{language === 'he' ? 'הגדרות קול' : 'Voice Settings'}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {language === 'he' ? 'בחירת קול לתגובות הבוט' : 'Choose voice for bot responses'}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
           </div>
+          
+          {/* Settings Button - separate from language selector */}
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowSettings(!showSettings)}
+                  title={language === 'he' ? 'הגדרות קול' : 'Voice Settings'}
+                >
+                  <Gauge className="w-5 h-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-xs text-center">
+                <p className="font-medium">{language === 'he' ? 'הגדרות קול' : 'Voice Settings'}</p>
+                <p className="text-xs text-muted-foreground">
+                  {language === 'he' ? 'בחירת קול לתגובות הבוט' : 'Choose voice for bot responses'}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           
           <TooltipProvider delayDuration={200}>
             {/* History */}
