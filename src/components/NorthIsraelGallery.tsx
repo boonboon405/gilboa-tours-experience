@@ -6,6 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Loader2, ImageIcon, MapPin, RefreshCw, ZoomIn, X } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import belvoirFortressImg from '@/assets/belvoir-fortress.jpg';
+import nahalAyunImg from '@/assets/nahal-ayun-waterfall.jpg';
 
 interface Location {
   key: string;
@@ -15,6 +17,7 @@ interface Location {
   descriptionEn: string;
   imageUrl?: string;
   isGenerating?: boolean;
+  staticImage?: string;
 }
 
 const locations: Location[] = [
@@ -69,7 +72,9 @@ const locations: Location[] = [
   { key: 'montfort-castle', nameHe: 'מבצר מונפור', nameEn: 'Montfort Castle', descriptionHe: 'שרידי מבצר צלבני ביער', descriptionEn: 'Crusader castle ruins in forest' },
   { key: 'nahal-kziv', nameHe: 'נחל כזיב', nameEn: 'Nahal Kziv', descriptionHe: 'שביל מים מרהיב בגליל', descriptionEn: 'Beautiful water trail in Galilee' },
   { key: 'rosh-pina', nameHe: 'ראש פינה', nameEn: 'Rosh Pina', descriptionHe: 'מושבה היסטורית עם נוף', descriptionEn: 'Historic colony with views' },
-  { key: 'miron-forest', nameHe: 'יער מירון', nameEn: 'Miron Forest', descriptionHe: 'יער אורנים ירוק בגליל העליון', descriptionEn: 'Green pine forest in Upper Galilee' }
+  { key: 'miron-forest', nameHe: 'יער מירון', nameEn: 'Miron Forest', descriptionHe: 'יער אורנים ירוק בגליל העליון', descriptionEn: 'Green pine forest in Upper Galilee' },
+  { key: 'belvoir-scenic', nameHe: 'מבצר בלוואר', nameEn: 'Belvoir Fortress', descriptionHe: 'מבצר צלבני עם תצפית מרהיבה', descriptionEn: 'Crusader fortress with stunning views', staticImage: belvoirFortressImg },
+  { key: 'ayun-waterfalls', nameHe: 'מפלי עיון', nameEn: 'Ayun Waterfalls', descriptionHe: 'מפלים בקניון ירוק מרהיב', descriptionEn: 'Waterfalls in lush green canyon', staticImage: nahalAyunImg }
 ];
 
 const NorthIsraelGallery = () => {
@@ -203,8 +208,9 @@ const NorthIsraelGallery = () => {
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {locations.map((location) => {
-            const imageUrl = locationImages[location.key];
+            const imageUrl = location.staticImage || locationImages[location.key];
             const isGenerating = generatingLocations.has(location.key);
+            const hasStaticImage = !!location.staticImage;
             
             return (
               <Card 
