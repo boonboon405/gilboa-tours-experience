@@ -150,54 +150,62 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
       if (language === 'he') {
         if (quizResults) {
           const topCategories = quizResults.top_categories?.slice(0, 3) || [];
-          const categoryNames = topCategories.join(', ');
-          greeting = `שלום! ראיתי שעשיתם את הQuiz - מעולה! 
-זיהיתי שאתם מתאימים במיוחד ל-3 הקטגוריות הבאות: ${categoryNames}. 
+          const categoryNamesHe: Record<string, string> = {
+            adventure: 'הרפתקאות',
+            nature: 'טבע',
+            history: 'היסטוריה',
+            culinary: 'קולינריה',
+            sports: 'ספורט',
+            creative: 'יצירה',
+            wellness: 'בריאות ורוגע',
+            teambuilding: 'גיבוש צוות'
+          };
+          const categoryNames = topCategories.map(c => categoryNamesHe[c] || c).join(', ');
+          greeting = `שלום וברוכים הבאים! אני הסוכנת הדיגיטלית של אאוטדור ישראל.
 
-יש לנו 8 קטגוריות עם כ-100 אפשרויות פעילות שונות בגלבוע ובית שאן:
-🔥 הרפתקאות ואקסטרים
-💧 טבע, מים ורוגע  
-🏛️ היסטוריה ותרבות
-🍷 קולינריה ויין
-⚡ ספורט וצוותיות
-🎨 יצירה ורוחניות
-🌿 בריאות ופינוק
-🤝 בניית צוות
+על פי השאלון שמילאתם, הקטגוריות המתאימות לכם ביותר הן: ${categoryNames}.
 
-לחצו על כפתור "הצג קטגוריות" כדי לראות את כולן. 
-עכשיו ספרו לי - כמה אנשים? מה התקציב?`;
+יש לנו למעלה ממאה פעילויות שונות באזור הגלבוע, עמק המעיינות, בית שאן, הכנרת והגליל.
+
+ספרו לי, כמה אתם? מה מעניין אתכם במיוחד?`;
         } else {
-          greeting = `שלום! אני מומחה לסיוריים ומציע חוויות:
-🔥 הרפתקאות  |  💧 טבע  |  🏛️ דברי הימים  |  🍷 יין ואומנות הבישול  |  ⚡ ספורט  |  🎨 יצירה  |  🌿 בריאות  |  🤝 גיבוש צוות
+          greeting = `שלום וברוכים הבאים! אני הסוכנת הדיגיטלית של אאוטדור ישראל.
 
-ענו על השאלות , ברצוני להמליץ על פעילויות שיתאימו לכם
-ספרו לי - כמה אנשים אתם? ספרו מה מעניין אתכם? 100 פעילויות שמחכות לכם!`;
+אנחנו מתמחים בימי כיף, סיורים וחוויות בצפון ישראל, מהגלבוע ועד הכנרת, מהגולן ועד עמק יזרעאל.
+
+יש לנו למעלה ממאה פעילויות בשמונה קטגוריות שונות: הרפתקאות, טבע, היסטוריה, קולינריה, ספורט, יצירה, בריאות ורוגע וגיבוש צוות.
+
+ספרו לי, כמה אתם? מה מעניין אתכם?`;
         }
       } else {
         if (quizResults) {
           const topCategories = quizResults.top_categories?.slice(0, 3) || [];
-          const categoryNames = topCategories.join(', ');
-          greeting = `Hello! I saw your Quiz results - excellent!
-I identified you're especially suited for these 3 categories: ${categoryNames}.
+          const categoryNamesEn: Record<string, string> = {
+            adventure: 'Adventure',
+            nature: 'Nature',
+            history: 'History',
+            culinary: 'Culinary',
+            sports: 'Sports',
+            creative: 'Creative',
+            wellness: 'Wellness',
+            teambuilding: 'Team Building'
+          };
+          const categoryNames = topCategories.map(c => categoryNamesEn[c] || c).join(', ');
+          greeting = `Hello and welcome! I'm the digital agent of Outdoor Israel, experts in experiences in Northern Israel.
 
-We have 8 categories with ~100 different activity options in Gilboa and Beit Shean:
-🔥 Adventure & Extreme
-💧 Nature & Water
-🏛️ History & Culture
-🍷 Culinary & Wine
-⚡ Sports & Teamwork
-🎨 Creative & Spiritual
-🌿 Wellness & Pampering
-🤝 Team Building
+Based on your quiz results, your top matching categories are: ${categoryNames}.
 
-Click "View Categories" to see them all.
-Now tell me - how many people? What's your budget?`;
+We offer over one hundred different activities in the Gilboa region, Springs Valley, Beit Shean, Sea of Galilee, and the Galilee.
+
+Tell me, how many people are in your group? What interests you most?`;
         } else {
-          greeting = `Hello! I'm an expert on Gilboa and Beit Shean with access to 8 categories of experiences:
-🔥 Adventure | 💧 Nature | 🏛️ History | 🍷 Culinary | ⚡ Sports | 🎨 Creative | 🌿 Wellness | 🤝 Team Building
+          greeting = `Hello and welcome! I'm the digital agent of Outdoor Israel.
 
-~100 options waiting for you! It's worth taking our short Quiz (7 questions) so I can recommend exactly what suits you.
-Tell me - how many people? What interests you?`;
+We specialize in day trips, tours, and experiences in Northern Israel, from the Gilboa mountains to the Sea of Galilee, from the Golan Heights to the Jezreel Valley.
+
+We offer over one hundred activities across eight categories: Adventure, Nature, History, Culinary, Sports, Creative, Wellness, and Team Building.
+
+Tell me, how many people? What interests you?`;
         }
       }
 
@@ -213,6 +221,16 @@ Tell me - how many people? What interests you?`;
       setTimeout(() => speakText(greeting), 500);
     }
   }, [language, quizResults]);
+
+  // Reset chat when language changes
+  const handleLanguageChange = (newLang: 'he' | 'en') => {
+    if (newLang !== language) {
+      stopElevenLabsSpeech();
+      greetingSpokenRef.current = false;
+      setMessages([]);
+      setLanguage(newLang);
+    }
+  };
 
   const speakText = async (text: string) => {
     // Stop any ongoing speech
@@ -557,7 +575,7 @@ ${transcript}`;
             <Button
               variant={language === 'he' ? 'default' : 'ghost'}
               size="sm"
-              onClick={() => setLanguage('he')}
+              onClick={() => handleLanguageChange('he')}
               className="h-7 px-2 gap-1"
               title="עברית"
             >
@@ -567,7 +585,7 @@ ${transcript}`;
             <Button
               variant={language === 'en' ? 'default' : 'ghost'}
               size="sm"
-              onClick={() => setLanguage('en')}
+              onClick={() => handleLanguageChange('en')}
               className="h-7 px-2 gap-1"
               title="English"
             >
@@ -709,7 +727,7 @@ ${transcript}`;
               <Languages className="w-4 h-4" />
               <label className="text-sm font-medium">{language === 'he' ? 'שפה' : 'Language'}:</label>
             </div>
-            <Select value={language} onValueChange={(value: 'he' | 'en') => setLanguage(value)}>
+            <Select value={language} onValueChange={(value: 'he' | 'en') => handleLanguageChange(value)}>
               <SelectTrigger className="w-32">
                 <SelectValue />
               </SelectTrigger>

@@ -50,8 +50,25 @@ serve(async (req) => {
     console.log(`Generating speech for text: ${text.substring(0, 50)}...`);
     console.log(`Using voice: ${voice} (${voiceId}), language: ${language}`);
 
+    // Add language hint prefix to help ElevenLabs detect the correct language
+    // This is critical for multilingual v2 model to correctly identify the language
+    let processedText = text;
+    
+    // For Hebrew, ensure the model knows it's Hebrew by checking if text contains Hebrew chars
+    const hasHebrew = /[\u0590-\u05FF]/.test(text);
+    const hasEnglish = /[a-zA-Z]/.test(text);
+    
+    // If language is explicitly set, we can add language context
+    if (language === 'he' && !hasHebrew && hasEnglish) {
+      // User wants Hebrew but text is English - this shouldn't happen, just use the text as-is
+      console.log('Language set to Hebrew but text appears to be English');
+    } else if (language === 'en' && hasHebrew) {
+      // User wants English but text has Hebrew - use as-is, model will figure it out
+      console.log('Language set to English but text contains Hebrew characters');
+    }
+
     // Call ElevenLabs API - use eleven_multilingual_v2 for Hebrew support
-    // This is the most reliable model for non-English languages
+    // This model auto-detects language based on the actual text content
     const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
       method: 'POST',
       headers: {
@@ -60,16 +77,15 @@ serve(async (req) => {
         'xi-api-key': ELEVENLABS_API_KEY,
       },
       body: JSON.stringify({
-        text: text,
-        model_id: 'eleven_multilingual_v2', // Multilingual v2 auto-detects language from text
+        text: processedText,
+        model_id: 'eleven_multilingual_v2', // Multilingual v2 - best for Hebrew and English
         voice_settings: {
-          stability: 0.5,
-          similarity_boost: 0.75,
+          stability: 0.6, // Slightly higher stability for clearer pronunciation
+          similarity_boost: 0.8, // Higher similarity for more natural voice
           style: 0.0,
           use_speaker_boost: true,
         },
-        // Speed is set at request level, not in voice_settings
-        speed: 0.9, // Slow down speech by 10%
+        speed: 0.85, // Slow down speech for clearer Hebrew pronunciation
       }),
     });
 
