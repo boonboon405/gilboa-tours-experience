@@ -11,6 +11,7 @@ import heroGilboa from '@/assets/hero-gilboa.jpg';
 import clubCars from '@/assets/club-cars.jpg';
 import culinary from '@/assets/culinary-experience.jpg';
 import beitShean from '@/assets/beit-shean.jpg';
+import beitSheanPanorama from '@/assets/beit-shean-panorama.jpg';
 import pelicans from '@/assets/pelicans.jpg';
 import springsActivity from '@/assets/springs-activity.jpg';
 import odtTeam from '@/assets/odt-team.jpg';
@@ -52,6 +53,7 @@ const staticGallerySections: GallerySection[] = [
       { src: galileeNature, alt: 'נוף ירוק ופורח של הרי הגליל עם עצי אלון ואורנים צופים לעבר עמקים פוריים', title: 'נופי הגליל', description: 'נוף פנורמי של הרי הגליל' },
       { src: pelicans, alt: 'להקת שקנאים ופלמינגו בנדידה מעל אגמון החולה בשבר הסורי אפריקאי', title: 'נדידת ציפורים', description: 'חיות בר באגמון החולה' },
       { src: beitShean, alt: 'שרידי העיר הרומית סקיתופוליס בבית שאן - עמודים ופסיפסים עתיקים על רקע הרי הגלבוע', title: 'עמק בית שאן', description: 'נוף היסטורי מרהיב' },
+      { src: beitSheanPanorama, alt: 'פנורמה מרהיבה של התיאטרון הרומי העתיק בבית שאן עם הרי הגלבוע ברקע בשקיעה', title: 'התיאטרון הרומי', description: 'מבט פנורמי על העתיקות' },
       { src: springsNature, alt: 'מעיינות הכנרת והגליל - מים צלולים בלב הטבע הירוק', title: 'מעיינות הגליל', description: 'מעיינות טבעיים באזור' },
       { src: culinary, alt: 'טעמי הגליל - יין ומטעמים מקומיים מהאזור', title: 'טעמי הגליל', description: 'חוויות קולינריות באזור' },
     ]
