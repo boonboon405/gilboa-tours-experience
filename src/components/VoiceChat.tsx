@@ -5,7 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Gauge, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice } from '@/utils/elevenLabsTTS';
@@ -609,7 +609,7 @@ ${transcript}`;
                   onClick={() => setShowSettings(!showSettings)}
                   title={language === 'he' ? 'הגדרות קול' : 'Voice Settings'}
                 >
-                  <Gauge className="w-5 h-5" />
+                  <Settings className="w-5 h-5" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="max-w-xs text-center">
