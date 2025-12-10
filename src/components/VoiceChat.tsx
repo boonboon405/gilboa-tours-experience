@@ -493,7 +493,7 @@ ${transcript}`;
       // After fade out completes, shuffle and fade in
       setTimeout(() => {
         const shuffled = [...allQuickReplies].sort(() => Math.random() - 0.5);
-        setVisibleReplies(shuffled.slice(0, 10));
+        setVisibleReplies(shuffled.slice(0, 20));
         setIsAnimating(false);
       }, 300); // Match the CSS transition duration
     };
@@ -741,8 +741,8 @@ ${transcript}`;
             </Button>
           </form>
           
-          {/* Quick Reply Buttons */}
-          <div className={`flex flex-wrap gap-2 px-3 pb-3 ${language === 'he' ? 'flex-row-reverse' : ''} transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+          {/* Quick Reply Buttons - 4 rows x 5 columns */}
+          <div className={`grid grid-cols-5 gap-2 px-3 pb-3 transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`} dir={language === 'he' ? 'rtl' : 'ltr'}>
             {quickReplies.map((reply, index) => {
               const Icon = reply.icon;
               return (
@@ -752,11 +752,11 @@ ${transcript}`;
                   size="sm"
                   onClick={() => handleQuickReply(reply.text)}
                   disabled={isProcessing || isSpeaking}
-                  className="whitespace-nowrap text-xs hover:bg-primary/10 hover:border-primary transition-all duration-200 shadow-sm flex items-center gap-1.5 animate-fade-in"
-                  style={{ animationDelay: `${index * 50}ms` }}
+                  className="whitespace-nowrap text-xs hover:bg-primary/10 hover:border-primary transition-all duration-200 shadow-sm flex items-center justify-center gap-1.5 animate-fade-in"
+                  style={{ animationDelay: `${index * 30}ms` }}
                 >
-                  <Icon className="w-3.5 h-3.5" />
-                  {reply.text}
+                  <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span className="truncate">{reply.text}</span>
                 </Button>
               );
             })}
