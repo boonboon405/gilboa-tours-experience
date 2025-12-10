@@ -286,6 +286,7 @@ ${transcript}`;
           conversationId,
           sessionId,
           quizResults,
+          language, // Pass language preference to AI agent
           categories: {
             all: ['adventure', 'nature', 'history', 'culinary', 'sports', 'creative', 'wellness', 'teambuilding'],
             top: quizResults?.top_categories || []
