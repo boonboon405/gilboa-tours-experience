@@ -5,7 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Gauge, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Gauge, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice } from '@/utils/elevenLabsTTS';
@@ -217,12 +217,13 @@ Tell me - how many people? What interests you?`;
     // Stop any ongoing speech
     stopElevenLabsSpeech();
     
-    // Use ElevenLabs for high-quality Hebrew TTS
+    // Use ElevenLabs for high-quality TTS with selected language
     await speakWithElevenLabs(
       text,
       selectedVoice,
       () => setIsSpeaking(true),
-      () => setIsSpeaking(false)
+      () => setIsSpeaking(false),
+      language // Pass the selected language to TTS
     );
   };
 
@@ -548,7 +549,32 @@ ${transcript}`;
             </div>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          {/* Language Selector - Prominent */}
+          <div className="flex items-center gap-1 bg-background/60 rounded-lg px-2 py-1 border border-border/50">
+            <Globe className="w-4 h-4 text-muted-foreground" />
+            <Button
+              variant={language === 'he' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setLanguage('he')}
+              className="h-7 px-2 gap-1"
+              title="עברית"
+            >
+              <span className="text-base">🇮🇱</span>
+              <span className="text-xs hidden sm:inline">עברית</span>
+            </Button>
+            <Button
+              variant={language === 'en' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setLanguage('en')}
+              className="h-7 px-2 gap-1"
+              title="English"
+            >
+              <span className="text-base">🇺🇸</span>
+              <span className="text-xs hidden sm:inline">EN</span>
+            </Button>
+          </div>
+          
           <ChatHistory 
             onLoadConversation={handleLoadConversation}
             currentConversationId={conversationId}
