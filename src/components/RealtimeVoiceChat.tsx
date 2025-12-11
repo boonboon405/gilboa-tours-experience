@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Phone, PhoneOff, Mic, MicOff, Volume2, Loader2, User, Bot, Globe } from 'lucide-react';
+import { Phone, PhoneOff, Mic, MicOff, Volume2, Loader2, User, Bot, Globe, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { RealtimeChat, VOICE_OPTIONS, VoiceOption } from '@/utils/realtimeChat';
 import { cn } from '@/lib/utils';
@@ -19,6 +19,7 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [rateLimitWarning, setRateLimitWarning] = useState(false);
   
   // Load saved preferences
   const [selectedVoice, setSelectedVoice] = useState<VoiceOption>(() => {
@@ -59,6 +60,14 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
 
   const handleMessage = useCallback((event: any) => {
     console.log('Realtime event:', event.type);
+    
+    // Check for rate limit issues in transcription failures
+    if (event.type === 'conversation.item.input_audio_transcription.failed') {
+      if (event.error?.message?.includes('429') || event.error?.message?.includes('Too Many Requests')) {
+        setRateLimitWarning(true);
+        console.warn('Transcription rate limited - call continues without text display');
+      }
+    }
   }, []);
 
   const handleSpeakingChange = useCallback((speaking: boolean) => {
@@ -84,11 +93,14 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
 
   const handleError = useCallback((error: Error) => {
     console.error('Realtime error:', error);
-    toast({
-      title: selectedLanguage === 'he' ? 'שגיאה בשיחה' : 'Call Error',
-      description: error.message,
-      variant: 'destructive'
-    });
+    // Don't show toast for rate limit warnings - these are handled gracefully
+    if (!error.message.includes('429') && !error.message.includes('Too Many Requests')) {
+      toast({
+        title: selectedLanguage === 'he' ? 'שגיאה בשיחה' : 'Call Error',
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
   }, [selectedLanguage, toast]);
 
   const startCall = async () => {
@@ -96,6 +108,7 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
     setUserTranscripts([]);
     setAgentTranscript('');
     setLiveUserSpeech('');
+    setRateLimitWarning(false);
     
     try {
       // Request microphone permission first
@@ -125,7 +138,7 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
       
       toast({
         title: t('מחובר', 'Connected'),
-        description: t('השיחה הקולית פעילה', 'Voice call is active'),
+        description: t('השיחה הקולית פעילה - דברו עכשיו!', 'Voice call is active - speak now!'),
       });
     } catch (error) {
       console.error('Error starting call:', error);
@@ -152,6 +165,7 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
     setIsConnected(false);
     setIsSpeaking(false);
     setIsListening(false);
+    setRateLimitWarning(false);
     
     toast({
       title: t('השיחה הסתיימה', 'Call Ended'),
@@ -226,6 +240,21 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+          </div>
+        )}
+
+        {/* Rate Limit Warning */}
+        {rateLimitWarning && isConnected && (
+          <div className="mb-3 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-amber-500" />
+              <span className="text-xs font-medium text-amber-500">
+                {t(
+                  'השיחה פעילה אך הטקסט לא יוצג (עומס רגעי). המשיכו לדבר!',
+                  'Call active but text display unavailable (temporary). Keep talking!'
+                )}
+              </span>
             </div>
           </div>
         )}
