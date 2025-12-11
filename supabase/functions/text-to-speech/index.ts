@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { text, voice = 'Rachel', language = 'he' } = await req.json();
+    const { text, voice = 'Rachel', language = 'he', speed = 0.85 } = await req.json();
 
     if (!text) {
       throw new Error('Text is required');
@@ -48,7 +48,7 @@ serve(async (req) => {
     const voiceId = voiceIds[voice] || voiceIds['Rachel'];
 
     console.log(`Generating speech for text: ${text.substring(0, 50)}...`);
-    console.log(`Using voice: ${voice} (${voiceId}), language: ${language}`);
+    console.log(`Using voice: ${voice} (${voiceId}), language: ${language}, speed: ${speed}`);
 
     // CRITICAL: Force only Hebrew or English - no other languages allowed
     // Remove any non-Hebrew, non-English characters that might confuse the model
@@ -93,7 +93,7 @@ serve(async (req) => {
           style: 0.0,
           use_speaker_boost: true,
         },
-        speed: 0.85, // Slow down speech for clearer Hebrew pronunciation
+        speed: Math.max(0.5, Math.min(2.0, speed)), // Clamp speed between 0.5 and 2.0
       }),
     });
 

@@ -29,6 +29,7 @@ export type ElevenLabsVoice = keyof typeof ELEVENLABS_VOICES;
 
 // Store current audio element for stopping
 let currentAudio: HTMLAudioElement | null = null;
+let currentPlaybackRate: number = 1;
 
 /**
  * Speak text using ElevenLabs TTS via edge function
@@ -39,7 +40,8 @@ export async function speakWithElevenLabs(
   voice: ElevenLabsVoice = 'Rachel',
   onStart?: () => void,
   onEnd?: () => void,
-  language: 'he' | 'en' = 'he'
+  language: 'he' | 'en' = 'he',
+  speed: number = 0.85
 ): Promise<boolean> {
   // Sanitize the text first
   const sanitizedText = sanitizeForTTS(text);
@@ -50,7 +52,7 @@ export async function speakWithElevenLabs(
   }
 
   if (ttsConfig.enableLogging) {
-    console.log('[ElevenLabs TTS] Speaking:', sanitizedText.substring(0, 50) + '...');
+    console.log('[ElevenLabs TTS] Speaking:', sanitizedText.substring(0, 50) + '...', 'speed:', speed);
   }
 
   try {
@@ -60,7 +62,7 @@ export async function speakWithElevenLabs(
     onStart?.();
 
     const { data, error } = await supabase.functions.invoke('text-to-speech', {
-      body: { text: sanitizedText, voice, language }
+      body: { text: sanitizedText, voice, language, speed }
     });
 
     if (error) {
@@ -76,6 +78,7 @@ export async function speakWithElevenLabs(
     const audioBlob = base64ToBlob(data.audioContent, 'audio/mpeg');
     const audioUrl = URL.createObjectURL(audioBlob);
     currentAudio = new Audio(audioUrl);
+    currentPlaybackRate = 1; // Reset since speed is handled server-side
 
     return new Promise((resolve) => {
       if (!currentAudio) {
