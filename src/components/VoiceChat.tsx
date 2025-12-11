@@ -82,6 +82,10 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     const saved = localStorage.getItem('preferred-voice');
     return (saved as ElevenLabsVoice) || 'Rachel';
   });
+  const [speechSpeed, setSpeechSpeed] = useState<number>(() => {
+    const saved = localStorage.getItem('preferred-speech-speed');
+    return saved ? parseFloat(saved) : 0.85;
+  });
   const [showSettings, setShowSettings] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
   const [showRealtimeCall, setShowRealtimeCall] = useState(false);
@@ -292,13 +296,14 @@ Tell me, how many people? What interests you?`;
     // Stop any ongoing speech
     stopElevenLabsSpeech();
     
-    // Use ElevenLabs for high-quality TTS with selected language
+    // Use ElevenLabs for high-quality TTS with selected language and speed
     await speakWithElevenLabs(
       text,
       selectedVoice,
       () => setIsSpeaking(true),
       () => setIsSpeaking(false),
-      language // Pass the selected language to TTS
+      language,
+      speechSpeed
     );
   };
 
@@ -860,6 +865,38 @@ ${transcript}`;
               language={language}
               className="w-full"
             />
+          </div>
+          
+          {/* Speech Speed Control */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Activity className="w-4 h-4" />
+                <label className="text-sm font-medium">{language === 'he' ? 'מהירות דיבור' : 'Speech Speed'}:</label>
+              </div>
+              <span className="text-sm font-medium text-primary">{speechSpeed}x</span>
+            </div>
+            <div className="flex items-center gap-2">
+              {[0.75, 0.85, 1, 1.25, 1.5].map((rate) => (
+                <Button
+                  key={rate}
+                  variant={speechSpeed === rate ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => {
+                    setSpeechSpeed(rate);
+                    localStorage.setItem('preferred-speech-speed', rate.toString());
+                  }}
+                  className="flex-1 h-8 text-xs"
+                >
+                  {rate}x
+                </Button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {language === 'he' 
+                ? 'מומלץ 0.85x לעברית ברורה יותר' 
+                : 'Recommended 0.85x for clearer Hebrew'}
+            </p>
           </div>
         </div>
       )}
