@@ -393,11 +393,19 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
           )}
         </p>
         
-        {/* Hebrew Limitation Notice */}
-        {selectedLanguage === 'he' && !isConnected && (
-          <p className="text-xs text-center text-amber-500 mt-2">
-            ⚠️ הערה: הסוכן יבין עברית אך ישיב באנגלית (מגבלת המערכת)
-          </p>
+        {/* Hebrew Limitation Notice - Show always when Hebrew selected */}
+        {selectedLanguage === 'he' && (
+          <div className="mt-3 p-3 bg-amber-500/20 border border-amber-500/50 rounded-lg">
+            <div className="flex items-center justify-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-amber-500" />
+              <p className="text-sm font-medium text-amber-600 dark:text-amber-400 text-center">
+                ⚠️ מגבלת OpenAI: הסוכן מבין עברית אך עונה באנגלית בלבד
+              </p>
+            </div>
+            <p className="text-xs text-amber-500/80 text-center mt-1">
+              לשיחה בעברית מלאה, השתמשו בצ'אט הקולי הרגיל (לא בזמן אמת)
+            </p>
+          </div>
         )}
       </CardContent>
     </Card>
