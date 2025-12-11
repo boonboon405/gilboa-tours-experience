@@ -5,7 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe, Phone, PhoneOff, Copy, Check } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe, Phone, PhoneOff, Copy, Check, RotateCcw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice } from '@/utils/elevenLabsTTS';
@@ -612,7 +612,7 @@ ${transcript}`;
             <Bot className="w-8 h-8 text-primary" />
             {isSpeaking && (
               <div className="absolute -top-1 -right-1">
-                <SpeakingAnimation isActive={isSpeaking} size="sm" />
+                <SpeakingAnimation isActive={isSpeaking} size="sm" variant="gradient" />
               </div>
             )}
           </div>
@@ -762,6 +762,39 @@ ${transcript}`;
               </TooltipContent>
             </Tooltip>
 
+            {/* Replay Last Message */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    const lastAiMessage = [...messages].reverse().find(m => m.sender === 'ai');
+                    if (lastAiMessage) {
+                      speakText(lastAiMessage.message);
+                      toast({
+                        title: language === 'he' ? 'משמיע מחדש' : 'Replaying',
+                        description: language === 'he' ? 'משמיע את ההודעה האחרונה' : 'Playing last message',
+                      });
+                    }
+                  }}
+                  disabled={!messages.some(m => m.sender === 'ai') || isSpeaking}
+                  className="relative"
+                >
+                  <RotateCcw className="w-5 h-5" />
+                  {isSpeaking && (
+                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full animate-pulse" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-xs text-center">
+                <p className="font-medium">{language === 'he' ? 'השמע מחדש' : 'Replay Last'}</p>
+                <p className="text-xs text-muted-foreground">
+                  {language === 'he' ? 'השמעה מחדש של תגובת הבוט האחרונה' : 'Replay the last bot response'}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+
             {/* Mute/Unmute */}
             <Tooltip>
               <TooltipTrigger asChild>
@@ -816,7 +849,7 @@ ${transcript}`;
                 <Volume2 className="w-4 h-4" />
                 <label className="text-sm font-medium">{language === 'he' ? 'בחירת קול' : 'Voice Selection'}:</label>
               </div>
-              {isSpeaking && <SpeakingAnimation isActive={isSpeaking} size="sm" />}
+              {isSpeaking && <SpeakingAnimation isActive={isSpeaking} size="md" variant="wave" />}
             </div>
             <EnhancedVoiceSelector
               selectedVoice={selectedVoice}
