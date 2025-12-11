@@ -19,8 +19,16 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [selectedVoice, setSelectedVoice] = useState<VoiceOption>('alloy');
-  const [selectedLanguage, setSelectedLanguage] = useState<'he' | 'en'>(initialLanguage);
+  
+  // Load saved preferences
+  const [selectedVoice, setSelectedVoice] = useState<VoiceOption>(() => {
+    const saved = localStorage.getItem('preferred-realtime-voice');
+    return (saved as VoiceOption) || 'alloy';
+  });
+  const [selectedLanguage, setSelectedLanguage] = useState<'he' | 'en'>(() => {
+    const saved = localStorage.getItem('preferred-language');
+    return (saved === 'en' ? 'en' : saved === 'he' ? 'he' : initialLanguage);
+  });
   
   // Transcripts
   const [userTranscripts, setUserTranscripts] = useState<string[]>([]);
@@ -29,6 +37,15 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
   
   const chatRef = useRef<RealtimeChat | null>(null);
   const transcriptRef = useRef<HTMLDivElement>(null);
+  
+  // Save preferences when they change
+  useEffect(() => {
+    localStorage.setItem('preferred-realtime-voice', selectedVoice);
+  }, [selectedVoice]);
+  
+  useEffect(() => {
+    localStorage.setItem('preferred-language', selectedLanguage);
+  }, [selectedLanguage]);
 
   // Helper for localized text
   const t = (he: string, en: string) => selectedLanguage === 'he' ? he : en;

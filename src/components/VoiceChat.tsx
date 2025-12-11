@@ -46,12 +46,32 @@ interface VoiceChatProps {
 }
 
 export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  // Load saved chat history and preferences
+  const [messages, setMessages] = useState<Message[]>(() => {
+    try {
+      const saved = localStorage.getItem('voicechat-messages');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load chat history:', e);
+    }
+    return [];
+  });
+  
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [conversationId, setConversationId] = useState<string | null>(null);
-  const [sessionId, setSessionId] = useState(() => `session-${Date.now()}-${Math.random()}`);
+  const [conversationId, setConversationId] = useState<string | null>(() => {
+    return localStorage.getItem('voicechat-conversationId') || null;
+  });
+  const [sessionId, setSessionId] = useState(() => {
+    const saved = localStorage.getItem('voicechat-sessionId');
+    return saved || `session-${Date.now()}-${Math.random()}`;
+  });
   const [speechSupported, setSpeechSupported] = useState(true);
   const [textInput, setTextInput] = useState('');
   const [language, setLanguage] = useState<'he' | 'en'>(() => {
@@ -70,7 +90,22 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const recognitionRef = useRef<any>(null);
   const { toast } = useToast();
 
-  // Save conversation to history periodically
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    if (messages.length > 0) {
+      try {
+        localStorage.setItem('voicechat-messages', JSON.stringify(messages));
+        if (conversationId) {
+          localStorage.setItem('voicechat-conversationId', conversationId);
+        }
+        localStorage.setItem('voicechat-sessionId', sessionId);
+      } catch (e) {
+        console.error('Failed to save chat history:', e);
+      }
+    }
+  }, [messages, conversationId, sessionId]);
+
+  // Save conversation to history periodically (ChatHistory component)
   useEffect(() => {
     if (messages.length > 1 && conversationId) {
       const saveToHistory = (window as any).saveChatHistory;
@@ -149,6 +184,18 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
 
   // Track if greeting has been spoken to prevent duplicate TTS
   const greetingSpokenRef = useRef(false);
+  const historyLoadedRef = useRef(false);
+
+  // Show notification when chat history is restored
+  useEffect(() => {
+    if (messages.length > 0 && !historyLoadedRef.current) {
+      historyLoadedRef.current = true;
+      toast({
+        title: language === 'he' ? 'שיחה קודמת נטענה' : 'Previous chat loaded',
+        description: language === 'he' ? 'היסטוריית השיחה שוחזרה' : 'Chat history restored'
+      });
+    }
+  }, []);
 
   useEffect(() => {
     // Send initial greeting with enhanced quiz integration and categories
@@ -371,6 +418,7 @@ ${transcript}`;
 
   const handleClearChat = () => {
     // Stop any ongoing speech
+    stopElevenLabsSpeech();
     if (window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
@@ -378,7 +426,13 @@ ${transcript}`;
       recognitionRef.current.stop();
     }
 
+    // Clear localStorage
+    localStorage.removeItem('voicechat-messages');
+    localStorage.removeItem('voicechat-conversationId');
+    localStorage.removeItem('voicechat-sessionId');
+
     // Reset conversation
+    greetingSpokenRef.current = false;
     setMessages([]);
     setConversationId(null);
     setSessionId(`session-${Date.now()}-${Math.random()}`);
