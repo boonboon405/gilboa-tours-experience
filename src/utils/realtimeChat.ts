@@ -327,7 +327,9 @@ Be friendly, professional, and helpful. Help visitors plan tours and recommend a
         break;
       
       case 'conversation.item.input_audio_transcription.failed':
-        console.error('Transcription failed:', event.error);
+        // Don't treat transcription failures as critical errors - the conversation still works
+        // This often happens due to rate limiting (429) but audio still flows
+        console.warn('Transcription failed (non-critical):', event.error);
         break;
       
       case 'response.audio_transcript.delta':
@@ -336,9 +338,20 @@ Be friendly, professional, and helpful. Help visitors plan tours and recommend a
         }
         break;
       
+      case 'response.done':
+        console.log('Response completed');
+        this.callbacks.onSpeakingChange(false);
+        break;
+      
       case 'error':
-        console.error('Realtime API error:', event.error);
-        this.callbacks.onError(new Error(event.error?.message || 'Unknown error'));
+        // Only treat as critical error if not a transcription rate limit issue
+        const errorMessage = event.error?.message || 'Unknown error';
+        if (errorMessage.includes('429') || errorMessage.includes('Too Many Requests')) {
+          console.warn('Rate limited - conversation continues:', errorMessage);
+        } else {
+          console.error('Realtime API error:', event.error);
+          this.callbacks.onError(new Error(errorMessage));
+        }
         break;
     }
   }
