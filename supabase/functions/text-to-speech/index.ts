@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { text, voice = 'Rachel', language = 'he', speed = 0.85 } = await req.json();
+    const { text, voice = 'Rachel', speed = 0.85 } = await req.json();
 
     if (!text) {
       throw new Error('Text is required');
