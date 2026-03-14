@@ -198,24 +198,7 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
                 <Globe className="w-4 h-4" />
                 {t('שפת השיחה:', 'Call Language:')}
               </label>
-              <div className="flex gap-2">
-                <Button
-                  variant={selectedLanguage === 'he' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setSelectedLanguage('he')}
-                  className="flex-1"
-                >
-                  🇮🇱 עברית
-                </Button>
-                <Button
-                  variant={selectedLanguage === 'en' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setSelectedLanguage('en')}
-                  className="flex-1"
-                >
-                  🇺🇸 English
-                </Button>
-              </div>
+              <span className="text-sm">🇮🇱 עברית בלבד</span>
             </div>
 
             {/* Voice Selector */}
