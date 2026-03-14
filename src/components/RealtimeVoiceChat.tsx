@@ -41,9 +41,7 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
     localStorage.setItem('preferred-realtime-voice', selectedVoice);
   }, [selectedVoice]);
   
-  useEffect(() => {
-    localStorage.setItem('preferred-language', selectedLanguage);
-  }, [selectedLanguage]);
+  // Language is always Hebrew
 
   // Helper for localized text
   const t = (he: string, en: string) => selectedLanguage === 'he' ? he : en;
