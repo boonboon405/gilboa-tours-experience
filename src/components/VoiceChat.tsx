@@ -771,7 +771,6 @@ ${transcript}`;
       {/* Settings Panel */}
       {showSettings && (
         <div className="p-4 border-b border-border/50 bg-muted/30 space-y-4">
-          </div>
           
           {/* Voice Selection - Enhanced */}
           <div className="space-y-2">
