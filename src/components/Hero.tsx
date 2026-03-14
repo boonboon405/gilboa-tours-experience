@@ -3,52 +3,25 @@ import { Phone, MessageCircle, Sparkles, Calendar, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import heroImage from '@/assets/hero-gilboa.jpg';
+import springsNature from '@/assets/springs-nature.jpg';
+import galileeNature from '@/assets/galilee-nature.jpg';
+import belvoirFortress from '@/assets/belvoir-fortress.jpg';
+import nahalAyun from '@/assets/nahal-ayun-waterfall.jpg';
+import beitShean from '@/assets/beit-shean-panorama.jpg';
 import { LandscapeImageSelector } from './LandscapeImageSelector';
 import { openWhatsApp, whatsappTemplates, trackPhoneCall } from '@/utils/contactTracking';
 import { getClickableProps } from '@/hooks/use-keyboard-nav';
-import { supabase } from '@/integrations/supabase/client';
+
+const curatedImages = [heroImage, springsNature, galileeNature, belvoirFortress, nahalAyun, beitShean];
 
 export const Hero = () => {
-  const [images, setImages] = useState<string[]>([heroImage]);
+  const [images, setImages] = useState<string[]>(curatedImages);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showImageSelector, setShowImageSelector] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const heroRef = useRef<HTMLElement>(null);
   const whatsappNumber = '972537314235';
   const phoneNumber = '0537314235';
-
-  // Load images from database on mount
-  useEffect(() => {
-    const loadSavedImages = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('generated_images')
-          .select('image_key, image_url')
-          .eq('image_type', 'landscape')
-          .order('image_key');
-
-        if (error) throw error;
-
-        if (data && data.length > 0) {
-          const loadedImages: string[] = [];
-          data.forEach(item => {
-            const index = parseInt(item.image_key);
-            if (!isNaN(index) && item.image_url) {
-              loadedImages[index] = item.image_url;
-            }
-          });
-          const validImages = loadedImages.filter(img => img);
-          if (validImages.length > 0) {
-            setImages(validImages);
-          }
-        }
-      } catch (error) {
-        console.error('Error loading saved images:', error);
-      }
-    };
-
-    loadSavedImages();
-  }, []);
 
   // Parallax scroll effect
   useEffect(() => {
