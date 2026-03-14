@@ -26,10 +26,7 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
     const saved = localStorage.getItem('preferred-realtime-voice');
     return (saved as VoiceOption) || 'alloy';
   });
-  const [selectedLanguage, setSelectedLanguage] = useState<'he' | 'en'>(() => {
-    const saved = localStorage.getItem('preferred-language');
-    return (saved === 'en' ? 'en' : saved === 'he' ? 'he' : initialLanguage);
-  });
+  const [selectedLanguage] = useState<'he'>('he');
   
   // Transcripts
   const [userTranscripts, setUserTranscripts] = useState<string[]>([]);
