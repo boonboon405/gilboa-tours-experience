@@ -74,10 +74,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   });
   const [speechSupported, setSpeechSupported] = useState(true);
   const [textInput, setTextInput] = useState('');
-  const [language, setLanguage] = useState<'he' | 'en'>(() => {
-    const saved = localStorage.getItem('preferred-language');
-    return (saved === 'en' ? 'en' : 'he') as 'he' | 'en';
-  });
+  const [language] = useState<'he'>('he');
   const [selectedVoice, setSelectedVoice] = useState<ElevenLabsVoice>(() => {
     const saved = localStorage.getItem('preferred-voice');
     return (saved as ElevenLabsVoice) || 'Rachel';
@@ -236,36 +233,6 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
 
 ספרו לי, כמה אתם? מה מעניין אתכם?`;
         }
-      } else {
-        if (quizResults) {
-          const topCategories = quizResults.top_categories?.slice(0, 3) || [];
-          const categoryNamesEn: Record<string, string> = {
-            adventure: 'Adventure',
-            nature: 'Nature',
-            history: 'History',
-            culinary: 'Culinary',
-            sports: 'Sports',
-            creative: 'Creative',
-            wellness: 'Wellness',
-            teambuilding: 'Team Building'
-          };
-          const categoryNames = topCategories.map(c => categoryNamesEn[c] || c).join(', ');
-          greeting = `Hello and welcome! I'm the digital agent of Outdoor Israel, experts in experiences in Northern Israel.
-
-Based on your quiz results, your top matching categories are: ${categoryNames}.
-
-We offer over one hundred different activities in the Gilboa region, Springs Valley, Beit Shean, Sea of Galilee, and the Galilee.
-
-Tell me, how many people are in your group? What interests you most?`;
-        } else {
-          greeting = `Hello and welcome! I'm the digital agent of Outdoor Israel.
-
-We specialize in day trips, tours, and experiences in Northern Israel, from the Gilboa mountains to the Sea of Galilee, from the Golan Heights to the Jezreel Valley.
-
-We offer over one hundred activities across eight categories: Adventure, Nature, History, Culinary, Sports, Creative, Wellness, and Team Building.
-
-Tell me, how many people? What interests you?`;
-        }
       }
 
       const initialMsg: Message = {
@@ -281,16 +248,7 @@ Tell me, how many people? What interests you?`;
     }
   }, [language, quizResults]);
 
-  // Reset chat when language changes
-  const handleLanguageChange = (newLang: 'he' | 'en') => {
-    if (newLang !== language) {
-      stopElevenLabsSpeech();
-      greetingSpokenRef.current = false;
-      setMessages([]);
-      setLanguage(newLang);
-      localStorage.setItem('preferred-language', newLang);
-    }
-  };
+  // Language is fixed to Hebrew - no change handler needed
 
   const speakText = async (text: string) => {
     // Stop any ongoing speech
@@ -448,22 +406,12 @@ ${transcript}`;
 
     // Send enhanced greeting
     let greeting = '';
-    if (language === 'he') {
-      if (quizResults) {
-        const topCategory = quizResults.top_categories?.[0] || '';
-        const percentage = quizResults.percentages?.[topCategory] || 0;
-        greeting = `שלום! ראיתי שעשיתם את הQuiz שלנו ומצאתי משהו מעניין! אתם מתאימים במיוחד ל${topCategory} עם ${Math.round(percentage)}% התאמה. יש לנו כ-100 אפשרויות שונות, ואני כאן למצוא את המושלם. ספרו לי - כמה אנשים? תקציב?`;
-      } else {
-        greeting = 'שלום! אני סוכן דיגיטלי מומחה. יש לי גישה לכ-100 חוויות שונות בגלבוע ובית שאן. ספרו לי - כמה אנשים? מה מעניין אתכם?';
-      }
+    if (quizResults) {
+      const topCategory = quizResults.top_categories?.[0] || '';
+      const percentage = quizResults.percentages?.[topCategory] || 0;
+      greeting = `שלום! ראיתי שעשיתם את הQuiz שלנו ומצאתי משהו מעניין! אתם מתאימים במיוחד ל${topCategory} עם ${Math.round(percentage)}% התאמה. יש לנו כ-100 אפשרויות שונות, ואני כאן למצוא את המושלם. ספרו לי - כמה אנשים? תקציב?`;
     } else {
-      if (quizResults) {
-        const topCategory = quizResults.top_categories?.[0] || '';
-        const percentage = quizResults.percentages?.[topCategory] || 0;
-        greeting = `Hello! I saw your Quiz results - interesting! You're suited for ${topCategory} with ${Math.round(percentage)}% match. I have ~100 options. Tell me - how many people? Budget?`;
-      } else {
-        greeting = 'Hello! I am a digital expert. I have access to ~100 experiences in Gilboa and Beit Shean. Tell me - how many people? What interests you?';
-      }
+      greeting = 'שלום! אני סוכן דיגיטלי מומחה. יש לי גישה לכ-100 חוויות שונות בגלבוע ובית שאן. ספרו לי - כמה אנשים? מה מעניין אתכם?';
     }
 
     const initialMsg: Message = {
@@ -639,29 +587,11 @@ ${transcript}`;
           </div>
         </div>
         <div className="flex gap-2 items-center">
-          {/* Language Selector - Prominent with Settings */}
+          {/* Hebrew Only Badge */}
           <div className="flex items-center gap-1 bg-background/60 rounded-lg px-2 py-1 border border-border/50">
             <Globe className="w-4 h-4 text-muted-foreground" />
-            <Button
-              variant={language === 'he' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => handleLanguageChange('he')}
-              className="h-7 px-2 gap-1"
-              title="עברית"
-            >
-              <span className="text-base">🇮🇱</span>
-              <span className="text-xs hidden sm:inline">עברית</span>
-            </Button>
-            <Button
-              variant={language === 'en' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => handleLanguageChange('en')}
-              className="h-7 px-2 gap-1"
-              title="English"
-            >
-              <span className="text-base">🇺🇸</span>
-              <span className="text-xs hidden sm:inline">EN</span>
-            </Button>
+            <span className="text-base">🇮🇱</span>
+            <span className="text-xs">עברית</span>
           </div>
           
           {/* Settings Button - separate from language selector */}
@@ -831,21 +761,6 @@ ${transcript}`;
       {/* Settings Panel */}
       {showSettings && (
         <div className="p-4 border-b border-border/50 bg-muted/30 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Languages className="w-4 h-4" />
-              <label className="text-sm font-medium">{language === 'he' ? 'שפה' : 'Language'}:</label>
-            </div>
-            <Select value={language} onValueChange={(value: 'he' | 'en') => handleLanguageChange(value)}>
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="he">עברית</SelectItem>
-                <SelectItem value="en">English</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
           
           {/* Voice Selection - Enhanced */}
           <div className="space-y-2">

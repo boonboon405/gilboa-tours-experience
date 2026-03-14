@@ -26,10 +26,7 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
     const saved = localStorage.getItem('preferred-realtime-voice');
     return (saved as VoiceOption) || 'alloy';
   });
-  const [selectedLanguage, setSelectedLanguage] = useState<'he' | 'en'>(() => {
-    const saved = localStorage.getItem('preferred-language');
-    return (saved === 'en' ? 'en' : saved === 'he' ? 'he' : initialLanguage);
-  });
+  const [selectedLanguage] = useState<'he'>('he');
   
   // Transcripts
   const [userTranscripts, setUserTranscripts] = useState<string[]>([]);
@@ -44,9 +41,7 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
     localStorage.setItem('preferred-realtime-voice', selectedVoice);
   }, [selectedVoice]);
   
-  useEffect(() => {
-    localStorage.setItem('preferred-language', selectedLanguage);
-  }, [selectedLanguage]);
+  // Language is always Hebrew
 
   // Helper for localized text
   const t = (he: string, en: string) => selectedLanguage === 'he' ? he : en;
@@ -203,24 +198,7 @@ const RealtimeVoiceChat: React.FC<RealtimeVoiceChatProps> = ({ language: initial
                 <Globe className="w-4 h-4" />
                 {t('שפת השיחה:', 'Call Language:')}
               </label>
-              <div className="flex gap-2">
-                <Button
-                  variant={selectedLanguage === 'he' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setSelectedLanguage('he')}
-                  className="flex-1"
-                >
-                  🇮🇱 עברית
-                </Button>
-                <Button
-                  variant={selectedLanguage === 'en' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setSelectedLanguage('en')}
-                  className="flex-1"
-                >
-                  🇺🇸 English
-                </Button>
-              </div>
+              <span className="text-sm">🇮🇱 עברית בלבד</span>
             </div>
 
             {/* Voice Selector */}
