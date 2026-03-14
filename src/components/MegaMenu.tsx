@@ -76,7 +76,7 @@ const menuItems: MenuItem[] = [
 export const MegaMenu = ({ activeSection, onNavClick }: MegaMenuProps) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [imageLoaded, setImageLoaded] = useState<Record<string, boolean>>({});
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleMouseEnter = useCallback((href: string) => {
     if (timeoutRef.current) {
