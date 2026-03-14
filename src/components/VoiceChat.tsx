@@ -406,22 +406,12 @@ ${transcript}`;
 
     // Send enhanced greeting
     let greeting = '';
-    if (language === 'he') {
-      if (quizResults) {
-        const topCategory = quizResults.top_categories?.[0] || '';
-        const percentage = quizResults.percentages?.[topCategory] || 0;
-        greeting = `שלום! ראיתי שעשיתם את הQuiz שלנו ומצאתי משהו מעניין! אתם מתאימים במיוחד ל${topCategory} עם ${Math.round(percentage)}% התאמה. יש לנו כ-100 אפשרויות שונות, ואני כאן למצוא את המושלם. ספרו לי - כמה אנשים? תקציב?`;
-      } else {
-        greeting = 'שלום! אני סוכן דיגיטלי מומחה. יש לי גישה לכ-100 חוויות שונות בגלבוע ובית שאן. ספרו לי - כמה אנשים? מה מעניין אתכם?';
-      }
+    if (quizResults) {
+      const topCategory = quizResults.top_categories?.[0] || '';
+      const percentage = quizResults.percentages?.[topCategory] || 0;
+      greeting = `שלום! ראיתי שעשיתם את הQuiz שלנו ומצאתי משהו מעניין! אתם מתאימים במיוחד ל${topCategory} עם ${Math.round(percentage)}% התאמה. יש לנו כ-100 אפשרויות שונות, ואני כאן למצוא את המושלם. ספרו לי - כמה אנשים? תקציב?`;
     } else {
-      if (quizResults) {
-        const topCategory = quizResults.top_categories?.[0] || '';
-        const percentage = quizResults.percentages?.[topCategory] || 0;
-        greeting = `Hello! I saw your Quiz results - interesting! You're suited for ${topCategory} with ${Math.round(percentage)}% match. I have ~100 options. Tell me - how many people? Budget?`;
-      } else {
-        greeting = 'Hello! I am a digital expert. I have access to ~100 experiences in Gilboa and Beit Shean. Tell me - how many people? What interests you?';
-      }
+      greeting = 'שלום! אני סוכן דיגיטלי מומחה. יש לי גישה לכ-100 חוויות שונות בגלבוע ובית שאן. ספרו לי - כמה אנשים? מה מעניין אתכם?';
     }
 
     const initialMsg: Message = {
