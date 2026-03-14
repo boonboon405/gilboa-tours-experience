@@ -56,8 +56,7 @@ serve(async (req) => {
     // Always treat as Hebrew
     console.log('Processing as Hebrew ONLY - no other languages allowed');
 
-    // Call ElevenLabs API - use eleven_multilingual_v2 which auto-detects language
-    // Note: This model does NOT support language_code parameter - it auto-detects from text
+    // Call ElevenLabs API with language_code forced to Hebrew
     const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
       method: 'POST',
       headers: {
@@ -67,7 +66,8 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         text: processedText,
-        model_id: 'eleven_multilingual_v2', // Multilingual v2 - auto-detects Hebrew from text content
+        model_id: 'eleven_multilingual_v2',
+        language_code: 'he', // Force Hebrew language output
         voice_settings: {
           stability: 0.5, // Lower stability for more natural Hebrew pronunciation
           similarity_boost: 0.75,
