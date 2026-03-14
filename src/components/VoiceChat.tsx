@@ -233,7 +233,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
 
 ספרו לי, כמה אתם? מה מעניין אתכם?`;
         }
-      // Hebrew only - no English greetings
+      }
 
       const initialMsg: Message = {
         id: '0',
