@@ -597,29 +597,11 @@ ${transcript}`;
           </div>
         </div>
         <div className="flex gap-2 items-center">
-          {/* Language Selector - Prominent with Settings */}
+          {/* Hebrew Only Badge */}
           <div className="flex items-center gap-1 bg-background/60 rounded-lg px-2 py-1 border border-border/50">
             <Globe className="w-4 h-4 text-muted-foreground" />
-            <Button
-              variant={language === 'he' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => handleLanguageChange('he')}
-              className="h-7 px-2 gap-1"
-              title="עברית"
-            >
-              <span className="text-base">🇮🇱</span>
-              <span className="text-xs hidden sm:inline">עברית</span>
-            </Button>
-            <Button
-              variant={language === 'en' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => handleLanguageChange('en')}
-              className="h-7 px-2 gap-1"
-              title="English"
-            >
-              <span className="text-base">🇺🇸</span>
-              <span className="text-xs hidden sm:inline">EN</span>
-            </Button>
+            <span className="text-base">🇮🇱</span>
+            <span className="text-xs">עברית</span>
           </div>
           
           {/* Settings Button - separate from language selector */}
