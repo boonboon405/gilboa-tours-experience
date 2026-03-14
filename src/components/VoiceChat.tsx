@@ -771,20 +771,6 @@ ${transcript}`;
       {/* Settings Panel */}
       {showSettings && (
         <div className="p-4 border-b border-border/50 bg-muted/30 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Languages className="w-4 h-4" />
-              <label className="text-sm font-medium">{language === 'he' ? 'שפה' : 'Language'}:</label>
-            </div>
-            <Select value={language} onValueChange={(value: 'he' | 'en') => handleLanguageChange(value)}>
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="he">עברית</SelectItem>
-                <SelectItem value="en">English</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
           
           {/* Voice Selection - Enhanced */}
