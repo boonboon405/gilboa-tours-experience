@@ -284,7 +284,7 @@ serve(async (req) => {
             { 
               role: "system", 
               content: systemPrompt + quizContext + knowledgeContext + dataContext + 
-                `\n\n**CRITICAL LANGUAGE INSTRUCTION**: You MUST respond in ${language === 'he' ? 'Hebrew (עברית)' : 'English'}. The user's preferred language is ${language === 'he' ? 'Hebrew' : 'English'}. Even if the user writes in a different language, ALWAYS respond in ${language === 'he' ? 'Hebrew' : 'English'}.`
+                `\n\n**הוראה קריטית**: אתה חייב לענות אך ורק בעברית. גם אם המשתמש כותב באנגלית או בשפה אחרת - תמיד תענה בעברית בלבד. אל תשתמש בשום שפה אחרת חוץ מעברית.`
             },
             ...conversationHistory,
             { role: "user", content: message }
