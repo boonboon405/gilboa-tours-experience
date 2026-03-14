@@ -248,16 +248,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     }
   }, [language, quizResults]);
 
-  // Reset chat when language changes
-  const handleLanguageChange = (newLang: 'he' | 'en') => {
-    if (newLang !== language) {
-      stopElevenLabsSpeech();
-      greetingSpokenRef.current = false;
-      setMessages([]);
-      setLanguage(newLang);
-      localStorage.setItem('preferred-language', newLang);
-    }
-  };
+  // Language is fixed to Hebrew - no change handler needed
 
   const speakText = async (text: string) => {
     // Stop any ongoing speech
