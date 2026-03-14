@@ -142,7 +142,8 @@ serve(async (req) => {
 
   try {
     const startTime = Date.now();
-    const { message, conversationId, sessionId, quizResults, conversationData, currentStep, requestFinalRecommendation, language = 'he' } = await req.json();
+    const { message, conversationId, sessionId, quizResults, conversationData, currentStep, requestFinalRecommendation } = await req.json();
+    const language = 'he'; // Force Hebrew only
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
