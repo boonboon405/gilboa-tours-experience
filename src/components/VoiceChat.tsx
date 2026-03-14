@@ -233,37 +233,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
 
 ספרו לי, כמה אתם? מה מעניין אתכם?`;
         }
-      } else {
-        if (quizResults) {
-          const topCategories = quizResults.top_categories?.slice(0, 3) || [];
-          const categoryNamesEn: Record<string, string> = {
-            adventure: 'Adventure',
-            nature: 'Nature',
-            history: 'History',
-            culinary: 'Culinary',
-            sports: 'Sports',
-            creative: 'Creative',
-            wellness: 'Wellness',
-            teambuilding: 'Team Building'
-          };
-          const categoryNames = topCategories.map(c => categoryNamesEn[c] || c).join(', ');
-          greeting = `Hello and welcome! I'm the digital agent of Outdoor Israel, experts in experiences in Northern Israel.
-
-Based on your quiz results, your top matching categories are: ${categoryNames}.
-
-We offer over one hundred different activities in the Gilboa region, Springs Valley, Beit Shean, Sea of Galilee, and the Galilee.
-
-Tell me, how many people are in your group? What interests you most?`;
-        } else {
-          greeting = `Hello and welcome! I'm the digital agent of Outdoor Israel.
-
-We specialize in day trips, tours, and experiences in Northern Israel, from the Gilboa mountains to the Sea of Galilee, from the Golan Heights to the Jezreel Valley.
-
-We offer over one hundred activities across eight categories: Adventure, Nature, History, Culinary, Sports, Creative, Wellness, and Team Building.
-
-Tell me, how many people? What interests you?`;
-        }
-      }
+      // Hebrew only - no English greetings
 
       const initialMsg: Message = {
         id: '0',
