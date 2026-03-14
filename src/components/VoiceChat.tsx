@@ -74,10 +74,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   });
   const [speechSupported, setSpeechSupported] = useState(true);
   const [textInput, setTextInput] = useState('');
-  const [language, setLanguage] = useState<'he' | 'en'>(() => {
-    const saved = localStorage.getItem('preferred-language');
-    return (saved === 'en' ? 'en' : 'he') as 'he' | 'en';
-  });
+  const [language] = useState<'he'>('he');
   const [selectedVoice, setSelectedVoice] = useState<ElevenLabsVoice>(() => {
     const saved = localStorage.getItem('preferred-voice');
     return (saved as ElevenLabsVoice) || 'Rachel';
