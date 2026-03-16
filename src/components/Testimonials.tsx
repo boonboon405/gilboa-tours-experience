@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useAppSelector } from '@/store/hooks';
-import { getLanguage } from '@/store/slices/languageSlice';
 import { Card, CardContent } from '@/components/ui/card';
 import { Star, Quote } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Testimonial {
   id: string;
@@ -15,7 +14,7 @@ interface Testimonial {
 }
 
 const Testimonials = () => {
-  const language = useAppSelector(getLanguage);
+  const { t, language } = useLanguage();
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,11 +34,9 @@ const Testimonials = () => {
 
       if (error) throw error;
       
-      // If we have database testimonials, use them
       if (data && data.length > 0) {
         setTestimonials(data);
       } else {
-        // Fallback to default testimonials if none in database
         setTestimonials(getDefaultTestimonials());
       }
     } catch (error) {
@@ -98,12 +95,10 @@ const Testimonials = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            {language === 'he' ? 'מה הלקוחות שלנו אומרים' : 'What Our Clients Say'}
+            {t('testimonials.title')}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {language === 'he' 
-              ? 'אלפי חברות סומכות עלינו ליצירת חוויות בלתי נשכחות' 
-              : 'Thousands of companies trust us to create unforgettable experiences'}
+            {t('testimonials.subtitle')}
           </p>
         </div>
 
@@ -138,7 +133,7 @@ const Testimonials = () => {
                     </p>
                   )}
                   {testimonial.is_featured && (
-                    <span className="text-xs text-primary font-semibold">⭐ המלצה מודגשת</span>
+                    <span className="text-xs text-primary font-semibold">{t('testimonials.featured')}</span>
                   )}
                 </div>
               </CardContent>

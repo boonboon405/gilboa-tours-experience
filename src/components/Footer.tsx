@@ -1,7 +1,9 @@
 import { Mail, Phone } from 'lucide-react';
 import { trackPhoneCall } from '@/utils/contactTracking';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const Footer = () => {
+  const { t } = useLanguage();
   const email = 'davidisraeltours@gmail.com';
   const phoneNumber = '0537314235';
 
@@ -9,20 +11,18 @@ export const Footer = () => {
     <footer className="bg-card border-t border-border py-12">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
-          {/* Brand */}
           <div>
             <h3 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-4">
-              דויד טורס
+              {t('footer.brandName')}
             </h3>
             <p className="text-muted-foreground">
-              יום חווייתי, מהנה ומשמעותי שמשלב היסטוריה, טבע, גיבוש, והרבה זיכרונות טובים לחברה שלכם.
+              {t('footer.description')}
             </p>
           </div>
 
-          {/* Contact */}
           <div>
             <h4 className="text-lg font-semibold text-foreground mb-4">
-              צור קשר
+              {t('footer.contact')}
             </h4>
             <div className="space-y-3">
               <a
@@ -43,35 +43,34 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Links */}
           <div>
             <h4 className="text-lg font-semibold text-foreground mb-4">
-              קישורים מהירים
+              {t('footer.quickLinks')}
             </h4>
             <ul className="space-y-2">
               <li>
                 <a href="#choose-your-day" className="text-muted-foreground hover:text-primary transition-colors">
-                  ביחרו את יום הכייף שלכם
+                  {t('footer.chooseDay')}
                 </a>
               </li>
               <li>
                 <a href="#vip-tours" className="text-muted-foreground hover:text-primary transition-colors">
-                  טיולי VIP
+                  {t('footer.vipTours')}
                 </a>
               </li>
               <li>
                 <a href="#odt" className="text-muted-foreground hover:text-primary transition-colors">
-                  פעילויות גיבוש ODT
+                  {t('footer.odtActivities')}
                 </a>
               </li>
               <li>
                 <a href="#contact" className="text-muted-foreground hover:text-primary transition-colors">
-                  צור קשר
+                  {t('footer.contactUs')}
                 </a>
               </li>
               <li>
                 <a href="/accessibility" className="text-muted-foreground hover:text-primary transition-colors">
-                  הצהרת נגישות
+                  {t('footer.accessibilityStatement')}
                 </a>
               </li>
             </ul>
@@ -79,7 +78,7 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-border pt-8 text-center text-muted-foreground">
-          <p>© 2025 דויד טורס. כל הזכויות שמורות.</p>
+          <p>{t('footer.rights')}</p>
         </div>
       </div>
     </footer>
