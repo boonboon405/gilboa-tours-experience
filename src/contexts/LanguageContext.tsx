@@ -28,7 +28,13 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.openMenu': 'Open menu',
     'nav.closeMenu': 'Close menu',
     'nav.accountMenu': 'Account menu',
-    'nav.brandName': 'DavidTours',
+    'nav.brandName': 'Simcha',
+    'nav.quiz': 'Team Quiz',
+    'nav.keywords': 'Keywords',
+    'nav.adminChat': 'Admin Chat',
+    'nav.leadManagement': 'Lead Management',
+    'nav.editAIResponses': 'Edit AI Responses',
+    'nav.aiSettings': 'AI Settings (Text)',
 
     // Hero
     'hero.title': 'A Unique, Empowering & Unforgettable Group Experience',
@@ -57,8 +63,8 @@ const translations: Record<Language, Record<string, string>> = {
     'contact.emailLabel': 'Email',
 
     // Footer
-    'footer.brandName': 'DavidTours',
-    'footer.description': 'A fun, meaningful day combining history, nature, team-building, and great memories for your company.',
+    'footer.brandName': 'Simcha',
+    'footer.description': 'Unforgettable group experiences in Northern Israel — combining history, nature, team-building, and great memories.',
     'footer.contact': 'Contact Us',
     'footer.quickLinks': 'Quick Links',
     'footer.chooseDay': 'Choose Your Fun Day',
@@ -66,10 +72,10 @@ const translations: Record<Language, Record<string, string>> = {
     'footer.odtActivities': 'ODT Team Building Activities',
     'footer.contactUs': 'Contact Us',
     'footer.accessibilityStatement': 'Accessibility Statement',
-    'footer.rights': '© 2025 DavidTours. All rights reserved.',
+    'footer.rights': `© ${new Date().getFullYear()} Simcha. All rights reserved.`,
 
     // Why Choose Us
-    'why.title': 'Why Choose DavidTours?',
+    'why.title': 'Why Choose Simcha?',
     'why.certified': 'Professional & Certified',
     'why.certifiedDesc': 'Licensed tour guide with years of experience',
     'why.custom': 'Tailored Experiences',
@@ -159,7 +165,7 @@ const translations: Record<Language, Record<string, string>> = {
     'booking.twoDays': '2 Days',
     'booking.threeDays': '3 Days',
     'booking.custom': 'Custom',
-    'booking.language': 'Preferred Language *',
+    'booking.language': 'Tour Guide Language *',
     'booking.selectLanguage': 'Select language',
     'booking.specialRequests': 'Special Requests (optional)',
     'booking.specialPlaceholder': 'What would you like to experience, see, or expect on the tour?',
@@ -212,7 +218,13 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.openMenu': 'פתח תפריט',
     'nav.closeMenu': 'סגור תפריט',
     'nav.accountMenu': 'תפריט חשבון',
-    'nav.brandName': 'דויד טורס',
+    'nav.brandName': 'שמחה',
+    'nav.quiz': 'חידון צוות',
+    'nav.keywords': 'מילות מפתח',
+    'nav.adminChat': 'צ\'אט מנהל',
+    'nav.leadManagement': 'ניהול לידים',
+    'nav.editAIResponses': 'עריכת תגובות AI',
+    'nav.aiSettings': 'הגדרות AI (טקסטים)',
 
     // Hero
     'hero.title': 'חוויה קבוצתית מיוחדת, בונה ובלתי נשכחת',
@@ -241,8 +253,8 @@ const translations: Record<Language, Record<string, string>> = {
     'contact.emailLabel': 'אימייל',
 
     // Footer
-    'footer.brandName': 'דויד טורס',
-    'footer.description': 'יום חווייתי, מהנה ומשמעותי שמשלב היסטוריה, טבע, גיבוש, והרבה זיכרונות טובים לחברה שלכם.',
+    'footer.brandName': 'שמחה',
+    'footer.description': 'חוויות קבוצתיות בלתי נשכחות בצפון ישראל — משלב היסטוריה, טבע, גיבוש, והרבה זיכרונות טובים.',
     'footer.contact': 'צור קשר',
     'footer.quickLinks': 'קישורים מהירים',
     'footer.chooseDay': 'ביחרו את יום הכייף שלכם',
@@ -250,10 +262,10 @@ const translations: Record<Language, Record<string, string>> = {
     'footer.odtActivities': 'פעילויות גיבוש ODT',
     'footer.contactUs': 'צור קשר',
     'footer.accessibilityStatement': 'הצהרת נגישות',
-    'footer.rights': '© 2025 דויד טורס. כל הזכויות שמורות.',
+    'footer.rights': `© ${new Date().getFullYear()} שמחה. כל הזכויות שמורות.`,
 
     // Why Choose Us
-    'why.title': 'למה לבחור בדויד טורס?',
+    'why.title': 'למה לבחור בשמחה?',
     'why.certified': 'מקצועי ומוסמך',
     'why.certifiedDesc': 'מדריך טיולים מורשה עם שנות ניסיון',
     'why.custom': 'חוויות מותאמות אישית',
@@ -343,7 +355,7 @@ const translations: Record<Language, Record<string, string>> = {
     'booking.twoDays': 'יומיים',
     'booking.threeDays': '3 ימים',
     'booking.custom': 'מותאם אישית',
-    'booking.language': 'שפה מועדפת *',
+    'booking.language': 'שפת המדריך *',
     'booking.selectLanguage': 'בחר שפה',
     'booking.specialRequests': 'בקשות מיוחדות (אופציונלי)',
     'booking.specialPlaceholder': 'מה ברצונכם לחוות, לראות, לצפות בסיור?',

@@ -149,7 +149,7 @@ export const Navigation = () => {
                   </Badge>
                 )}
               </div>
-              Quiz
+              {t('nav.quiz')}
             </button>
             
             <MegaMenu activeSection={activeSection} onNavClick={handleNavClick} />
@@ -195,23 +195,23 @@ export const Navigation = () => {
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/admin/keywords')}>
                         <Shield className="ml-2 h-4 w-4" />
-                        {language === 'he' ? 'מילות מפתח' : 'Keywords'}
+                        {t('nav.keywords')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/admin/chat')}>
                         <Shield className="ml-2 h-4 w-4" />
-                        {language === 'he' ? 'צ\'אט מנהל' : 'Admin Chat'}
+                        {t('nav.adminChat')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/leads')}>
                         <Shield className="ml-2 h-4 w-4" />
-                        {language === 'he' ? 'ניהול לידים' : 'Lead Management'}
+                        {t('nav.leadManagement')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/admin/ai-responses')}>
                         <Shield className="ml-2 h-4 w-4" />
-                        {language === 'he' ? 'עריכת תגובות AI' : 'Edit AI Responses'}
+                        {t('nav.editAIResponses')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/ai-settings')}>
                         <Shield className="ml-2 h-4 w-4" />
-                        {language === 'he' ? 'הגדרות AI (טקסטים)' : 'AI Settings (Text)'}
+                        {t('nav.aiSettings')}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                     </>
@@ -232,7 +232,7 @@ export const Navigation = () => {
             )}
           </div>
 
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <Button
               variant="ghost"
               size="icon"
@@ -247,7 +247,7 @@ export const Navigation = () => {
         </div>
 
         {isOpen && (
-          <div id="mobile-menu" className="md:hidden pb-4 animate-in fade-in slide-in-from-top-2 duration-300" role="menu">
+          <div id="mobile-menu" className="lg:hidden pb-4 animate-in fade-in slide-in-from-top-2 duration-300" role="menu">
             <button
               onClick={() => { setShowQuiz(true); setIsOpen(false); }}
               className="w-full mt-2 px-4 py-2 rounded-lg bg-gradient-hero text-white font-medium flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-glow relative"
@@ -260,7 +260,7 @@ export const Navigation = () => {
                   </Badge>
                 )}
               </div>
-              Quiz
+               {t('nav.quiz')}
             </button>
             <div className="mt-2 space-y-1" role="menuitem">
               {navItems.map((item) => {
