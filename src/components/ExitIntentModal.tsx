@@ -123,7 +123,7 @@ export const ExitIntentModal = () => {
         
         <div className="space-y-3 mt-4">
           <Button
-            variant="whatsapp"
+            variant="secondary"
             size="lg"
             className="w-full text-lg shadow-strong animate-bounce-slow"
             onClick={() => {

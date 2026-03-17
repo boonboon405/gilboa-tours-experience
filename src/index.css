@@ -2,73 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 7%;
+    --background: 30 25% 96%;
+    --foreground: 20 10% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 7%;
+    --card: 30 20% 98%;
+    --card-foreground: 20 10% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 7%;
+    --popover: 30 20% 98%;
+    --popover-foreground: 20 10% 15%;
 
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 15 55% 52%;
+    --primary-foreground: 30 25% 96%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 9%;
+    --secondary: 80 25% 42%;
+    --secondary-foreground: 30 25% 96%;
 
-    --accent: 75 60% 50%;
-    --accent-foreground: 0 0% 9%;
+    --accent: 42 65% 55%;
+    --accent-foreground: 20 10% 15%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 30 15% 90%;
+    --muted-foreground: 20 10% 40%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 9%;
+    --border: 30 15% 85%;
+    --input: 30 15% 85%;
+    --ring: 15 55% 52%;
 
-    --radius: 0.75rem;
-
-    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1);
-  }
-
-  .dark {
-    --background: 0 0% 4%;
-    --foreground: 0 0% 98%;
-
-    --card: 0 0% 7%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 0 0% 7%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 98%;
-
-    --accent: 75 60% 50%;
-    --accent-foreground: 0 0% 9%;
-
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 64%;
-
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 0 0% 83%;
+    --radius: 0.5rem;
   }
 }
 
@@ -78,72 +44,12 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground;
     font-family: 'Heebo', sans-serif;
   }
-
-  @keyframes fade-in {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .animate-fade-in {
-    animation: fade-in 0.6s ease-out;
-  }
-
-  @keyframes scale-in {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  .animate-scale-in {
-    animation: scale-in 0.2s ease-out;
-  }
-}
-
-/* Accessibility */
-.high-contrast {
-  --background: 0 0% 0%;
-  --foreground: 0 0% 100%;
-  --primary: 60 100% 50%;
-  --primary-foreground: 0 0% 0%;
-  --muted: 0 0% 20%;
-  --muted-foreground: 0 0% 100%;
-  --border: 0 0% 100%;
-}
-
-.grayscale-mode { filter: grayscale(100%); }
-
-.highlight-links a, .highlight-links button {
-  outline: 3px solid hsl(var(--primary)) !important;
-  outline-offset: 2px;
-  text-decoration: underline !important;
-}
-
-.stop-animations, .stop-animations * {
-  animation: none !important;
-  transition: none !important;
-}
-
-.readable-font, .readable-font * {
-  font-family: Arial, Helvetica, sans-serif !important;
-  letter-spacing: 0.05em !important;
-  line-height: 1.8 !important;
-}
-
-.large-cursor, .large-cursor * {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='white' stroke-width='1' d='M5.5 3.21V20.8l4.86-4.86h6.21L5.5 3.21z'/%3E%3C/svg%3E") 0 0, auto !important;
 }
 
 *:focus-visible {
-  outline: 3px solid hsl(var(--ring)) !important;
-  outline-offset: 2px !important;
-}
-
-.sr-only-focusable:focus {
-  position: static !important;
-  width: auto !important;
-  height: auto !important;
-  overflow: visible !important;
-  clip: auto !important;
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
 }

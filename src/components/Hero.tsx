@@ -1,73 +1,55 @@
-import { Phone, MessageCircle } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import heroImage from '@/assets/hero-gilboa.jpg';
-import { openWhatsApp, whatsappTemplates } from '@/utils/contactTracking';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 export const Hero = () => {
-  const { language } = useLanguage();
-
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
       <div className="absolute inset-0">
         <img
           src={heroImage}
-          alt={language === 'he' ? 'נוף פנורמי של הרי הגלבוע' : 'Panoramic view of the Gilboa mountains'}
+          alt="נוף פנורמי של הרי הגלבוע"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-foreground/60" />
+        <div className="absolute inset-0 bg-foreground/50" />
       </div>
 
-      {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
-        <div className="max-w-3xl mx-auto">
-          <p className="text-sm uppercase tracking-[0.3em] text-white/70 mb-6 font-medium">
-            {language === 'he' ? 'חוויות קבוצתיות בצפון ישראל' : 'Group Experiences in Northern Israel'}
+        <div className="max-w-2xl mx-auto">
+          <p className="text-sm uppercase tracking-[0.3em] text-primary-foreground/70 mb-4 font-medium">
+            חוויות קבוצתיות בצפון ישראל
           </p>
-          
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            {language === 'he' 
-              ? <>יום מושלם.<br />זיכרונות לכל החיים.</>
-              : <>Perfect Day.<br />Lifetime Memories.</>
-            }
+
+          <h1 className="text-5xl md:text-7xl font-bold text-primary-foreground mb-6 leading-tight">
+            יום מושלם.<br />זיכרונות לכל החיים.
           </h1>
 
-          <p className="text-lg md:text-xl text-white/80 mb-10 max-w-xl mx-auto leading-relaxed">
-            {language === 'he'
-              ? 'סיורים מודרכים, ימי גיבוש, וחוויות VIP באזור הגלבוע, עמק המעיינות והגליל.'
-              : 'Guided tours, team-building days, and VIP experiences in the Gilboa, Springs Valley, and Galilee region.'}
+          <p className="text-lg text-primary-foreground/80 mb-10 max-w-xl mx-auto leading-relaxed">
+            סיורים מודרכים, ימי גיבוש, וחוויות VIP באזור הגלבוע, עמק המעיינות והגליל.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              variant="accent"
-              size="lg"
-              className="text-base px-10"
-              onClick={() => openWhatsApp('972537314235', whatsappTemplates.general, 'hero')}
+            <a
+              href="https://wa.me/972537314235?text=היי%20שמחה%2C%20אשמח%20לפרטים%20נוספים"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              <MessageCircle className="h-5 w-5" />
-              {language === 'he' ? 'דברו איתנו' : 'Talk to Us'}
-            </Button>
+              <Button size="lg" className="text-base px-8 bg-secondary hover:bg-secondary/90 text-secondary-foreground">
+                <MessageCircle className="h-5 w-5" />
+                דברו איתנו בוואטסאפ
+              </Button>
+            </a>
             <Link to="/booking">
               <Button
                 variant="outline"
                 size="lg"
-                className="text-base px-10 border-white/30 text-white hover:bg-white/10 hover:text-white"
+                className="text-base px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
               >
-                {language === 'he' ? 'הזמינו סיור' : 'Book a Tour'}
+                הזמינו סיור
               </Button>
             </Link>
           </div>
-
-          <a
-            href="tel:0537314235"
-            className="inline-flex items-center gap-2 text-white/60 hover:text-white mt-8 text-sm transition-colors"
-          >
-            <Phone className="h-4 w-4" />
-            0537314235
-          </a>
         </div>
       </div>
     </section>

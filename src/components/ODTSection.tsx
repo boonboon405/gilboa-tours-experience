@@ -56,7 +56,7 @@ export const ODTSection = () => {
             </div>
 
             <Button
-              variant="whatsapp"
+              variant="secondary"
               size="lg"
               onClick={() => openWhatsApp('972537314235', whatsappTemplates.general, 'odt-section')}
             >
