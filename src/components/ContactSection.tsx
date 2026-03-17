@@ -3,8 +3,10 @@ import { MessageCircle, Phone, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const ContactSection = () => {
+  const { t } = useLanguage();
   const [form, setForm] = useState({ name: '', phone: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
 
@@ -18,10 +20,8 @@ export const ContactSection = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-16">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">דברו איתנו</h2>
-            <p className="text-muted-foreground mb-8 leading-relaxed">
-              רוצים לשמוע עוד? השאירו פרטים ונחזור אליכם, או פנו אלינו ישירות.
-            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{t('contact.title')}</h2>
+            <p className="text-muted-foreground mb-8 leading-relaxed">{t('contact.desc')}</p>
             <div className="space-y-4">
               <a href="tel:0537314235" className="flex items-center gap-3 text-foreground hover:text-primary transition-colors">
                 <Phone className="h-5 w-5 text-primary" />
@@ -33,10 +33,10 @@ export const ContactSection = () => {
               </a>
             </div>
             <div className="mt-8">
-              <a href="https://wa.me/972537314235?text=היי%20שמחה%2C%20אשמח%20לפרטים%20נוספים" target="_blank" rel="noopener noreferrer">
+              <a href="https://wa.me/972537314235?text=Hi%20Simcha%2C%20I'd%20like%20more%20info" target="_blank" rel="noopener noreferrer">
                 <Button className="bg-secondary hover:bg-secondary/90 text-secondary-foreground">
                   <MessageCircle className="h-5 w-5" />
-                  שלחו הודעה בוואטסאפ
+                  {t('contact.whatsapp')}
                 </Button>
               </a>
             </div>
@@ -44,15 +44,15 @@ export const ContactSection = () => {
           <div>
             {submitted ? (
               <div className="bg-card border border-border rounded-lg p-8 text-center">
-                <p className="text-foreground font-semibold mb-2">תודה!</p>
-                <p className="text-muted-foreground text-sm">קיבלנו את הפנייה שלכם ונחזור בהקדם.</p>
+                <p className="text-foreground font-semibold mb-2">{t('contact.thanks.title')}</p>
+                <p className="text-muted-foreground text-sm">{t('contact.thanks.desc')}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
-                <Input placeholder="שם מלא" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
-                <Input placeholder="טלפון" type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} required />
-                <Textarea placeholder="ספרו לנו מה אתם מחפשים..." value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} rows={4} />
-                <Button type="submit" className="w-full">שלחו פנייה</Button>
+                <Input placeholder={t('contact.form.name')} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+                <Input placeholder={t('contact.form.phone')} type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} required />
+                <Textarea placeholder={t('contact.form.message')} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} rows={4} />
+                <Button type="submit" className="w-full">{t('contact.form.submit')}</Button>
               </form>
             )}
           </div>

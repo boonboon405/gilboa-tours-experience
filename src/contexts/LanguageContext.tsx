@@ -8,62 +8,154 @@ interface LanguageContextType {
   t: (key: string) => string;
 }
 
-const translations = {
+const translations: Record<Language, Record<string, string>> = {
   en: {
+    // Nav
     'nav.home': 'Home',
     'nav.services': 'Services',
-    'nav.testimonials': 'Testimonials',
     'nav.faq': 'FAQ',
     'nav.contact': 'Contact',
-    'hero.title': 'Perfect Day. Lifetime Memories.',
-    'hero.subtitle': 'Group Experiences in Northern Israel',
-    'hero.description': 'Guided tours, team-building days, and VIP experiences in the Gilboa, Springs Valley, and Galilee region.',
-    'hero.cta': 'Talk to Us',
+    'nav.book': 'Book Now',
+
+    // Hero
+    'hero.tag': 'Group Experiences in Northern Israel',
+    'hero.title.1': 'Perfect Day.',
+    'hero.title.2': 'Lifetime Memories.',
+    'hero.desc': 'Guided tours, team-building days, and VIP experiences in the Gilboa, Springs Valley, and Galilee region.',
+    'hero.whatsapp': 'Contact on WhatsApp',
     'hero.book': 'Book a Tour',
-    'contact.name': 'Full Name',
-    'contact.email': 'Email',
-    'contact.phone': 'Phone',
-    'contact.message': 'Tell us about your event...',
-    'contact.send': 'Send Message',
-    'contact.title': 'Get in Touch',
-    'why.title': 'Why Choose Simcha?',
-    'why.certified': 'Professional & Certified',
-    'why.certified.desc': 'Licensed tour guide with years of experience',
-    'why.custom': 'Tailored Experiences',
-    'why.custom.desc': 'Designed for corporate and professional groups',
-    'why.safe': 'Safe & Refreshing',
-    'why.safe.desc': 'Perfect for hot Israeli summers',
-    'why.logistics': 'Full Service',
-    'why.logistics.desc': 'All logistics handled from start to finish',
-    'footer.rights': '© 2025 Simcha. All rights reserved.',
+
+    // Services
+    'services.title': 'What We Offer',
+    'services.subtitle': 'Three ways to experience Northern Israel — each tailored to your needs.',
+    'services.daily.title': 'Daily Tours',
+    'services.daily.desc': 'Guided tours in Gilboa, Springs Valley, and Beit She\'an — nature, history, and fun combined.',
+    'services.vip.title': 'VIP Tours',
+    'services.vip.desc': 'Premium experiences for international guests — fully customized tours with top-tier service.',
+    'services.odt.title': 'ODT — Team Building',
+    'services.odt.desc': 'Challenging outdoor activities for organizations and teams — strengthening bonds through shared experiences.',
+    'services.cta': 'Learn More',
+
+    // Testimonials
+    'testimonials.title': 'What Our Clients Say',
+    'testimonials.subtitle': 'Real experiences from happy customers',
+    'testimonials.1.name': 'Michal L.',
+    'testimonials.1.company': 'HR Manager, Tech Company',
+    'testimonials.1.text': 'The team-building day with Simcha was incredible. The team came back with renewed energy and a real sense of belonging.',
+    'testimonials.2.name': 'David K.',
+    'testimonials.2.company': 'CEO, Import Company',
+    'testimonials.2.text': 'We organized a VIP tour for international guests and they couldn\'t stop raving about it. Professional and personal service.',
+    'testimonials.3.name': 'Ronit S.',
+    'testimonials.3.company': 'Activity Coordinator, Municipality',
+    'testimonials.3.text': 'The combination of nature, history, and culinary was perfect. Already planning the next tour.',
+
+    // FAQ
+    'faq.title': 'Frequently Asked Questions',
+    'faq.subtitle': 'Didn\'t find an answer? Contact us.',
+    'faq.1.q': 'How many people can participate in a tour?',
+    'faq.1.a': 'We accommodate groups of all sizes — from 10 to hundreds of participants. Every tour is fully customized.',
+    'faq.2.q': 'Do tours include transportation?',
+    'faq.2.a': 'Transportation is not included in the base price, but we\'re happy to help coordinate transport at additional cost.',
+    'faq.3.q': 'What does a team-building (ODT) day include?',
+    'faq.3.a': 'The team-building day includes challenging outdoor activities, professional facilitation, and meals of your choice.',
+    'faq.4.q': 'Which areas do the tours cover?',
+    'faq.4.a': 'Tours take place in the Gilboa, Springs Valley, Beit She\'an, Galilee, and Golan regions.',
+    'faq.5.q': 'How far in advance should I book?',
+    'faq.5.a': 'We recommend booking at least two weeks ahead, but we always try to find a solution even on short notice.',
+
+    // Contact
+    'contact.title': 'Talk to Us',
+    'contact.desc': 'Want to hear more? Leave your details and we\'ll get back to you, or reach out directly.',
+    'contact.phone.label': 'Phone',
+    'contact.email.label': 'Email',
+    'contact.whatsapp': 'Send a WhatsApp Message',
+    'contact.form.name': 'Full Name',
+    'contact.form.phone': 'Phone',
+    'contact.form.message': 'Tell us what you\'re looking for...',
+    'contact.form.submit': 'Send Inquiry',
+    'contact.thanks.title': 'Thank you!',
+    'contact.thanks.desc': 'We received your inquiry and will get back to you soon.',
+
+    // Footer
+    'footer.home': 'Home',
+    'footer.services': 'Services',
+    'footer.faq': 'FAQ',
+    'footer.contact': 'Contact',
+    'footer.rights': `© ${new Date().getFullYear()} Simcha. All rights reserved.`,
   },
   he: {
+    // Nav
     'nav.home': 'בית',
     'nav.services': 'השירותים',
-    'nav.testimonials': 'לקוחות',
     'nav.faq': 'שאלות נפוצות',
     'nav.contact': 'צור קשר',
-    'hero.title': 'יום מושלם. זיכרונות לכל החיים.',
-    'hero.subtitle': 'חוויות קבוצתיות בצפון ישראל',
-    'hero.description': 'סיורים מודרכים, ימי גיבוש, וחוויות VIP באזור הגלבוע, עמק המעיינות והגליל.',
-    'hero.cta': 'דברו איתנו',
+    'nav.book': 'הזמן עכשיו',
+
+    // Hero
+    'hero.tag': 'חוויות קבוצתיות בצפון ישראל',
+    'hero.title.1': 'יום מושלם.',
+    'hero.title.2': 'זיכרונות לכל החיים.',
+    'hero.desc': 'סיורים מודרכים, ימי גיבוש, וחוויות VIP באזור הגלבוע, עמק המעיינות והגליל.',
+    'hero.whatsapp': 'דברו איתנו בוואטסאפ',
     'hero.book': 'הזמינו סיור',
-    'contact.name': 'שם מלא',
-    'contact.email': 'דוא"ל',
-    'contact.phone': 'טלפון',
-    'contact.message': 'ספרו לנו על האירוע שלכם...',
-    'contact.send': 'שלח הודעה',
-    'contact.title': 'צור קשר',
-    'why.title': 'למה לבחור ב-Simcha?',
-    'why.certified': 'מקצועי ומוסמך',
-    'why.certified.desc': 'מדריך טיולים מורשה עם שנות ניסיון',
-    'why.custom': 'חוויות מותאמות אישית',
-    'why.custom.desc': 'מעוצב במיוחד לקבוצות עסקיות וחברות',
-    'why.safe': 'בטוח ומרענן',
-    'why.safe.desc': 'מושלם לקיץ הישראלי החם',
-    'why.logistics': 'שירות מלא',
-    'why.logistics.desc': 'כל הלוגיסטיקה מטופלת מתחילה ועד סוף',
-    'footer.rights': '© 2025 Simcha. כל הזכויות שמורות.',
+
+    // Services
+    'services.title': 'מה אנחנו מציעים',
+    'services.subtitle': 'שלוש דרכים לחוות את צפון ישראל — כל אחת מותאמת בדיוק לצרכים שלכם.',
+    'services.daily.title': 'סיורים יומיים',
+    'services.daily.desc': 'סיורים מודרכים בגלבוע, עמק המעיינות ובית שאן — חוויה שמשלבת טבע, היסטוריה וכיף.',
+    'services.vip.title': 'סיורי VIP',
+    'services.vip.desc': 'חוויות פרמיום לאורחים מחו"ל — סיורים מותאמים אישית עם שירות ברמה הגבוהה ביותר.',
+    'services.odt.title': 'ODT — ימי גיבוש',
+    'services.odt.desc': 'פעילויות אתגריות בטבע לארגונים וצוותים — חיזוק קשרים דרך חוויה משותפת.',
+    'services.cta': 'לפרטים',
+
+    // Testimonials
+    'testimonials.title': 'מה אומרים עלינו',
+    'testimonials.subtitle': 'חוויות אמיתיות מלקוחות מרוצים',
+    'testimonials.1.name': 'מיכל ל.',
+    'testimonials.1.company': 'מנהלת HR, חברת הייטק',
+    'testimonials.1.text': 'יום הגיבוש עם שמחה היה מדהים. הצוות חזר עם אנרגיות חדשות ותחושת שייכות אמיתית.',
+    'testimonials.2.name': 'דוד כ.',
+    'testimonials.2.company': 'מנכ"ל, חברת יבוא',
+    'testimonials.2.text': 'ארגנו סיור VIP לאורחים מחו"ל והם לא הפסיקו להתפעל. שירות מקצועי ואישי.',
+    'testimonials.3.name': 'רונית ש.',
+    'testimonials.3.company': 'רכזת פעילות, עירייה',
+    'testimonials.3.text': 'השילוב של טבע, היסטוריה וקולינריה היה מושלם. כבר מתכננים את הסיור הבא.',
+
+    // FAQ
+    'faq.title': 'שאלות נפוצות',
+    'faq.subtitle': 'לא מצאתם תשובה? צרו איתנו קשר.',
+    'faq.1.q': 'כמה אנשים יכולים להשתתף בסיור?',
+    'faq.1.a': 'אנחנו מתאימים סיורים לקבוצות בכל גודל — מ-10 ועד מאות משתתפים. כל סיור מותאם אישית.',
+    'faq.2.q': 'האם הסיורים כוללים הסעות?',
+    'faq.2.a': 'ההסעות אינן כלולות במחיר הבסיסי, אך נשמח לסייע בתיאום הסעות בעלויות נוספות.',
+    'faq.3.q': 'מה כולל יום גיבוש (ODT)?',
+    'faq.3.a': 'יום הגיבוש כולל פעילויות אתגריות בטבע, הנחיית מנחה מקצועי, וארוחות לפי בחירתכם.',
+    'faq.4.q': 'באיזה אזורים מתקיימים הסיורים?',
+    'faq.4.a': 'הסיורים מתקיימים באזור הגלבוע, עמק המעיינות, בית שאן, הגליל והגולן.',
+    'faq.5.q': 'כמה זמן מראש צריך להזמין?',
+    'faq.5.a': 'מומלץ להזמין לפחות שבועיים מראש, אך אנחנו תמיד משתדלים למצוא פתרון גם בהתראה קצרה.',
+
+    // Contact
+    'contact.title': 'דברו איתנו',
+    'contact.desc': 'רוצים לשמוע עוד? השאירו פרטים ונחזור אליכם, או פנו אלינו ישירות.',
+    'contact.phone.label': 'טלפון',
+    'contact.email.label': 'אימייל',
+    'contact.whatsapp': 'שלחו הודעה בוואטסאפ',
+    'contact.form.name': 'שם מלא',
+    'contact.form.phone': 'טלפון',
+    'contact.form.message': 'ספרו לנו מה אתם מחפשים...',
+    'contact.form.submit': 'שלחו פנייה',
+    'contact.thanks.title': 'תודה!',
+    'contact.thanks.desc': 'קיבלנו את הפנייה שלכם ונחזור בהקדם.',
+
+    // Footer
+    'footer.home': 'בית',
+    'footer.services': 'שירותים',
+    'footer.faq': 'שאלות נפוצות',
+    'footer.contact': 'צור קשר',
+    'footer.rights': `© ${new Date().getFullYear()} Simcha. כל הזכויות שמורות.`,
   },
 };
 
@@ -82,7 +174,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [language]);
 
   const t = (key: string): string => {
-    return translations[language][key as keyof typeof translations['en']] || key;
+    return translations[language][key] || key;
   };
 
   return (
