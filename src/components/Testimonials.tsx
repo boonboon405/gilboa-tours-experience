@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { staggerContainer, staggerItem } from '@/components/ScrollReveal';
 
 interface Testimonial {
   id: string;
@@ -17,60 +19,24 @@ const Testimonials = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchTestimonials();
-  }, []);
+  useEffect(() => { fetchTestimonials(); }, []);
 
   const fetchTestimonials = async () => {
     try {
       const { data, error } = await supabase
-        .from('testimonials')
-        .select('*')
-        .eq('status', 'approved')
+        .from('testimonials').select('*').eq('status', 'approved')
         .order('is_featured', { ascending: false })
-        .order('created_at', { ascending: false })
-        .limit(3);
-
+        .order('created_at', { ascending: false }).limit(3);
       if (error) throw error;
       setTestimonials(data && data.length > 0 ? data : getDefaults());
-    } catch {
-      setTestimonials(getDefaults());
-    } finally {
-      setLoading(false);
-    }
+    } catch { setTestimonials(getDefaults()); }
+    finally { setLoading(false); }
   };
 
   const getDefaults = (): Testimonial[] => [
-    {
-      id: '1',
-      customer_name: language === 'he' ? 'רונית כהן' : 'Ronit Cohen',
-      customer_company: language === 'he' ? 'מנהלת משאבי אנוש' : 'HR Manager',
-      testimonial_text: language === 'he'
-        ? 'יום מדהים! הצוות שלנו חזר מאוחד ומלא אנרגיה. השילוב של פעילויות גיבוש והיסטוריה היה מושלם.'
-        : 'Amazing day! Our team came back united and energized. The combination of team-building and history was perfect.',
-      rating: 5,
-      is_featured: true,
-    },
-    {
-      id: '2',
-      customer_name: language === 'he' ? 'יוסי לוי' : 'Yossi Levi',
-      customer_company: language === 'he' ? 'מנכ"ל' : 'CEO',
-      testimonial_text: language === 'he'
-        ? 'חוויה בלתי נשכחת! הפעילויות היו מגוונות והמדריכים היו מעולים.'
-        : 'Unforgettable experience! The activities were diverse and the guides were excellent.',
-      rating: 5,
-      is_featured: false,
-    },
-    {
-      id: '3',
-      customer_name: language === 'he' ? 'מיכל אברהם' : 'Michal Avraham',
-      customer_company: language === 'he' ? 'סמנכ"לית שיווק' : 'VP Marketing',
-      testimonial_text: language === 'he'
-        ? 'ארגון מושלם מתחילה ועד סוף. תשומת הלב לפרטים והגמישות - הכל היה ברמה הכי גבוהה.'
-        : 'Perfect organization from start to finish. Attention to detail and flexibility - everything was top-notch.',
-      rating: 5,
-      is_featured: false,
-    },
+    { id: '1', customer_name: language === 'he' ? 'רונית כהן' : 'Ronit Cohen', customer_company: language === 'he' ? 'מנהלת משאבי אנוש' : 'HR Manager', testimonial_text: language === 'he' ? 'יום מדהים! הצוות שלנו חזר מאוחד ומלא אנרגיה. השילוב של פעילויות גיבוש והיסטוריה היה מושלם.' : 'Amazing day! Our team came back united and energized. The combination of team-building and history was perfect.', rating: 5, is_featured: true },
+    { id: '2', customer_name: language === 'he' ? 'יוסי לוי' : 'Yossi Levi', customer_company: language === 'he' ? 'מנכ"ל' : 'CEO', testimonial_text: language === 'he' ? 'חוויה בלתי נשכחת! הפעילויות היו מגוונות והמדריכים היו מעולים.' : 'Unforgettable experience! The activities were diverse and the guides were excellent.', rating: 5, is_featured: false },
+    { id: '3', customer_name: language === 'he' ? 'מיכל אברהם' : 'Michal Avraham', customer_company: language === 'he' ? 'סמנכ"לית שיווק' : 'VP Marketing', testimonial_text: language === 'he' ? 'ארגון מושלם מתחילה ועד סוף. תשומת הלב לפרטים והגמישות - הכל היה ברמה הכי גבוהה.' : 'Perfect organization from start to finish. Attention to detail and flexibility - everything was top-notch.', rating: 5, is_featured: false },
   ];
 
   if (loading) {
@@ -95,10 +61,17 @@ const Testimonials = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+        >
           {testimonials.map((testimonial) => (
-            <div
+            <motion.div
               key={testimonial.id}
+              variants={staggerItem}
               className="p-8 rounded-2xl bg-card border border-border"
             >
               <div className="flex gap-1 mb-4">
@@ -106,24 +79,18 @@ const Testimonials = () => {
                   <Star key={i} className="w-4 h-4 fill-accent text-accent" />
                 ))}
               </div>
-
               <p className="text-muted-foreground leading-relaxed mb-6">
                 "{testimonial.testimonial_text}"
               </p>
-
               <div className="border-t border-border pt-4">
-                <p className="font-semibold text-foreground text-sm">
-                  {testimonial.customer_name}
-                </p>
+                <p className="font-semibold text-foreground text-sm">{testimonial.customer_name}</p>
                 {testimonial.customer_company && (
-                  <p className="text-xs text-muted-foreground">
-                    {testimonial.customer_company}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{testimonial.customer_company}</p>
                 )}
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

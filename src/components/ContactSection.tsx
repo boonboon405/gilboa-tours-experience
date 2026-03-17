@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Mail, Phone, MessageCircle, Send } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
@@ -57,7 +58,13 @@ export const ContactSection = () => {
 
         <div className="grid lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
           {/* Info side */}
-          <div className="space-y-8">
+          <motion.div
+            className="space-y-8"
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                 <Phone className="h-5 w-5 text-primary" />
@@ -94,42 +101,26 @@ export const ContactSection = () => {
               <MessageCircle className="h-5 w-5" />
               {t('contact.whatsapp')}
             </Button>
-          </div>
+          </motion.div>
 
           {/* Form side */}
-          <form onSubmit={handleSubmit} className="space-y-4 p-8 rounded-2xl border border-border bg-card">
-            <Input
-              placeholder={t('contact.name')}
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
-            />
-            <Input
-              type="email"
-              placeholder={t('contact.email')}
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
-            />
-            <Input
-              type="tel"
-              placeholder={t('contact.phone')}
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              required
-            />
-            <Textarea
-              placeholder={t('contact.message')}
-              value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              required
-              rows={4}
-            />
+          <motion.form
+            onSubmit={handleSubmit}
+            className="space-y-4 p-8 rounded-2xl border border-border bg-card"
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Input placeholder={t('contact.name')} value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+            <Input type="email" placeholder={t('contact.email')} value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required />
+            <Input type="tel" placeholder={t('contact.phone')} value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} required />
+            <Textarea placeholder={t('contact.message')} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} required rows={4} />
             <Button type="submit" size="lg" className="w-full gap-2" disabled={isSubmitting}>
               <Send className="h-4 w-4" />
               {isSubmitting ? t('contact.sending') : t('contact.send')}
             </Button>
-          </form>
+          </motion.form>
         </div>
       </div>
     </section>
