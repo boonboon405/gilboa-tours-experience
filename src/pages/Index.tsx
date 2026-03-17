@@ -5,6 +5,7 @@ import { Testimonials } from '@/components/Testimonials';
 import { PublicFAQ } from '@/components/PublicFAQ';
 import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
+import { AIChatWidget } from '@/components/AIChatWidget';
 
 const Index = () => {
   return (
@@ -16,6 +17,7 @@ const Index = () => {
       <PublicFAQ />
       <ContactSection />
       <Footer />
+      <AIChatWidget />
     </div>
   );
 };
