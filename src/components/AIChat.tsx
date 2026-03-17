@@ -371,7 +371,7 @@ Tell me - how many people are you? What interests you? 100+ activities await!`)
       if (data.error) {
         console.error('❌ AI agent error:', data.error);
         toast({
-          title: "שגיאה",
+          title: isEn ? "Error" : "שגיאה",
           description: data.fallback || data.error,
           variant: "destructive"
         });
