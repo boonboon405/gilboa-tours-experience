@@ -290,6 +290,13 @@ const translations: Record<Language, Record<string, string>> = {
     'liveChat.sendErrorDesc': 'Could not send message. Please try again',
     'liveChat.startError': 'Error',
     'liveChat.startErrorDesc': 'Could not start the chat. Please try again',
+    'liveChat.nameRequiredDesc': 'Please enter your name to start a chat',
+    'liveChat.system': 'System',
+    'liveChat.welcomeMessage': 'Hello {name}! 👋\n\nWe\'re here to help.\n\n🤖 Smart auto-responder will answer your initial questions\n👤 A real agent will join if needed\n\nFeel free to ask your question!',
+    'liveChat.error': 'Error',
+    'liveChat.errorStartDesc': 'Could not start the chat. Please try again',
+    'liveChat.humanAgentTitle': '📞 A human agent will get back to you soon',
+    'liveChat.humanAgentDesc': 'Your question has been forwarded to our agent',
 
     // PublicFAQ
     'faq.title': 'Frequently Asked Questions',
