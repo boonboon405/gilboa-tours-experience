@@ -68,7 +68,7 @@ export const EmergencyContactButton = () => {
             <h3 className="font-semibold text-lg text-foreground">דרכי התקשרות:</h3>
             
             <Button
-              variant="whatsapp"
+              variant="secondary"
               size="lg"
               className="w-full text-lg shadow-strong justify-start"
               onClick={() => openWhatsApp(ownerWhatsApp, whatsappTemplates.inquiry, 'emergency-contact-button')}
