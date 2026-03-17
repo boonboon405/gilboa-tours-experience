@@ -1,8 +1,29 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { Award, Settings, Shield, Truck } from 'lucide-react';
+import { Award, Settings, Shield, Truck, LucideIcon } from 'lucide-react';
 import { useParallax } from '@/hooks/use-parallax';
 import { use3DTilt } from '@/hooks/use-3d-tilt';
 import { useLanguage } from '@/contexts/LanguageContext';
+
+const ReasonCard = ({ icon: Icon, title, desc }: { icon: LucideIcon; title: string; desc: string }) => {
+  const tilt = use3DTilt({ maxTilt: 8, scale: 1.02, speed: 400 });
+  return (
+    <Card
+      ref={tilt.ref}
+      className="group hover:shadow-strong transition-all duration-300 border-2 hover:border-primary/50 overflow-hidden"
+      style={tilt.style}
+      onMouseMove={tilt.onMouseMove}
+      onMouseLeave={tilt.onMouseLeave}
+    >
+      <CardContent className="p-6 text-center">
+        <div className="inline-block p-4 rounded-full bg-gradient-hero mb-4 group-hover:scale-110 transition-transform">
+          <Icon className="h-8 w-8 text-white" />
+        </div>
+        <h3 className="text-xl font-bold text-foreground mb-2">{title}</h3>
+        <p className="text-muted-foreground">{desc}</p>
+      </CardContent>
+    </Card>
+  );
+};
 
 export const WhyChooseUs = () => {
   const { language } = useLanguage();
@@ -34,28 +55,9 @@ export const WhyChooseUs = () => {
         </h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-          {reasons.map((reason, index) => {
-            const Icon = reason.icon;
-            const tilt = use3DTilt({ maxTilt: 8, scale: 1.02, speed: 400 });
-            return (
-              <Card
-                key={index}
-                ref={tilt.ref}
-                className="group hover:shadow-strong transition-all duration-300 border-2 hover:border-primary/50 overflow-hidden"
-                style={tilt.style}
-                onMouseMove={tilt.onMouseMove}
-                onMouseLeave={tilt.onMouseLeave}
-              >
-                <CardContent className="p-6 text-center">
-                  <div className="inline-block p-4 rounded-full bg-gradient-hero mb-4 group-hover:scale-110 transition-transform">
-                    <Icon className="h-8 w-8 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">{reason.title}</h3>
-                  <p className="text-muted-foreground">{reason.desc}</p>
-                </CardContent>
-              </Card>
-            );
-          })}
+          {reasons.map((reason, index) => (
+            <ReasonCard key={index} icon={reason.icon} title={reason.title} desc={reason.desc} />
+          ))}
         </div>
       </div>
     </section>
