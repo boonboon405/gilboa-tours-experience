@@ -53,7 +53,7 @@ export const PublicFAQ = () => {
         <div className="max-w-2xl mx-auto">
           <motion.div
             className="text-center mb-12"
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.5 }}
