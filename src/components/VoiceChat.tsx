@@ -947,7 +947,6 @@ ${transcript}`;
                 topCategories: quizResults.top_categories || [],
                 percentages: quizResults.percentages || {}
               } : undefined}
-              language={language}
             />
             <div className="text-center pt-4">
               <Button onClick={() => setShowCategories(false)}>
