@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { motion } from 'framer-motion';
 
 export const ContactSection = () => {
   const { t } = useLanguage();
@@ -18,7 +19,13 @@ export const ContactSection = () => {
   return (
     <section id="contact" className="py-24 bg-muted/50">
       <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-16">
+        <motion.div
+          className="max-w-4xl mx-auto grid md:grid-cols-2 gap-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.5 }}
+        >
           <div>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{t('contact.title')}</h2>
             <p className="text-muted-foreground mb-8 leading-relaxed">{t('contact.desc')}</p>
@@ -56,7 +63,7 @@ export const ContactSection = () => {
               </form>
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -35,6 +35,13 @@ const translations: Record<Language, Record<string, string>> = {
     'services.odt.title': 'ODT — Team Building',
     'services.odt.desc': 'Challenging outdoor activities for organizations and teams — strengthening bonds through shared experiences.',
     'services.cta': 'Learn More',
+    'services.daily.highlights': 'Nature hikes • Historical sites • Springs • Culinary experiences',
+    'services.daily.detail': 'A full day exploring the best of Northern Israel. We curate a personalized route combining outdoor adventures, historical landmarks, refreshing springs, and local culinary delights — all with a professional guide.',
+    'services.vip.highlights': 'Custom itinerary • Private guide • Luxury transport • Boutique experiences',
+    'services.vip.detail': 'Designed for international guests and executive groups. Every detail is tailored — from handpicked locations to premium dining. A white-glove experience showcasing the best of Israeli culture and landscape.',
+    'services.odt.highlights': 'Team challenges • Leadership workshops • 10–200 participants • Professional facilitation',
+    'services.odt.detail': 'Outdoor Development Training that builds trust, communication, and leadership through shared challenges in nature. Fully facilitated by certified professionals with meals included.',
+    'services.detail.cta': 'Contact Us',
 
     // Testimonials
     'testimonials.title': 'What Our Clients Say',
@@ -109,6 +116,13 @@ const translations: Record<Language, Record<string, string>> = {
     'services.odt.title': 'ODT — ימי גיבוש',
     'services.odt.desc': 'פעילויות אתגריות בטבע לארגונים וצוותים — חיזוק קשרים דרך חוויה משותפת.',
     'services.cta': 'לפרטים',
+    'services.daily.highlights': 'טיולי טבע • אתרים היסטוריים • מעיינות • חוויות קולינריות',
+    'services.daily.detail': 'יום שלם של חקירת הטוב ביותר שצפון ישראל מציע. אנחנו בונים מסלול מותאם אישית המשלב הרפתקאות בטבע, אתרים היסטוריים, מעיינות מרעננים וטעימות מקומיות — הכל עם מדריך מקצועי.',
+    'services.vip.highlights': 'מסלול מותאם • מדריך פרטי • הסעה פרמיום • חוויות בוטיק',
+    'services.vip.detail': 'מעוצב לאורחים מחו"ל ולקבוצות בכירות. כל פרט מותאם — מאתרים נבחרים בקפידה ועד ארוחות פרמיום. חוויה ברמה הגבוהה ביותר המציגה את המיטב של התרבות והנוף הישראלי.',
+    'services.odt.highlights': 'אתגרים צוותיים • סדנאות מנהיגות • 10–200 משתתפים • הנחיה מקצועית',
+    'services.odt.detail': 'אימון פיתוח ארגוני בחוץ שבונה אמון, תקשורת ומנהיגות דרך אתגרים משותפים בטבע. מונחה במלואו על ידי אנשי מקצוע מוסמכים, כולל ארוחות.',
+    'services.detail.cta': 'צרו קשר',
 
     // Testimonials
     'testimonials.title': 'מה אומרים עלינו',
