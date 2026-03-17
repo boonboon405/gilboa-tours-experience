@@ -230,8 +230,7 @@ Tell me, how many people? What interests you?`;
       stopElevenLabsSpeech();
       greetingSpokenRef.current = false;
       setMessages([]);
-      setLanguage(newLang);
-      localStorage.setItem('preferred-language', newLang);
+      setGlobalLanguage(newLang);
     }
   };
 
