@@ -310,30 +310,52 @@ serve(async (req) => {
       clearTimeout(timeoutId);
     }
 
-    // Generate quick reply suggestions based on context
+    // Generate quick reply suggestions based on context and language
+    const isEnglish = language === 'en';
     const quickReplies = [];
     if (!messages || messages.length <= 1) {
       // First interaction - offer main options
-      quickReplies.push(
-        "מה אתם מציעים?",
-        "כמה עולה?",
-        "איפה אתם ממוקמים?",
-        "רוצה לדבר עם בן אדם"
-      );
+      if (isEnglish) {
+        quickReplies.push(
+          "What do you offer?",
+          "How much does it cost?",
+          "Where are you located?",
+          "I'd like to speak with someone"
+        );
+      } else {
+        quickReplies.push(
+          "מה אתם מציעים?",
+          "כמה עולה?",
+          "איפה אתם ממוקמים?",
+          "רוצה לדבר עם בן אדם"
+        );
+      }
     } else {
       // Context-aware suggestions
       const lastMessages = messages?.slice(-3).map((m: any) => m.message).join(' ') || '';
-      if (lastMessages.includes('מחיר') || lastMessages.includes('עולה')) {
-        quickReplies.push("תנו לי הצעת מחיר", "מה כלול במחיר?");
+      if (lastMessages.includes('מחיר') || lastMessages.includes('עולה') || lastMessages.includes('cost') || lastMessages.includes('price')) {
+        quickReplies.push(
+          isEnglish ? "Give me a quote" : "תנו לי הצעת מחיר",
+          isEnglish ? "What's included?" : "מה כלול במחיר?"
+        );
       }
-      if (lastMessages.includes('זמן') || lastMessages.includes('משך')) {
-        quickReplies.push("כמה זמן נמשך?", "מתי אפשר להתחיל?");
+      if (lastMessages.includes('זמן') || lastMessages.includes('משך') || lastMessages.includes('time') || lastMessages.includes('long')) {
+        quickReplies.push(
+          isEnglish ? "How long does it take?" : "כמה זמן נמשך?",
+          isEnglish ? "When can we start?" : "מתי אפשר להתחיל?"
+        );
       }
-      if (lastMessages.includes('קבוצה') || lastMessages.includes('צוות')) {
-        quickReplies.push("כמה אנשים מינימום?", "מה מתאים לקבוצה שלנו?");
+      if (lastMessages.includes('קבוצה') || lastMessages.includes('צוות') || lastMessages.includes('group') || lastMessages.includes('team')) {
+        quickReplies.push(
+          isEnglish ? "What's the minimum group size?" : "כמה אנשים מינימום?",
+          isEnglish ? "What suits our group?" : "מה מתאים לקבוצה שלנו?"
+        );
       }
       if (quickReplies.length < 3) {
-        quickReplies.push("מעניין, ספרו עוד", "רוצה לדבר עם בן אדם");
+        quickReplies.push(
+          isEnglish ? "Interesting, tell me more" : "מעניין, ספרו עוד",
+          isEnglish ? "I'd like to speak with someone" : "רוצה לדבר עם בן אדם"
+        );
       }
     }
 
