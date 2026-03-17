@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { Star, Quote } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 
@@ -12,14 +14,44 @@ const fadeUp: Variants = {
   }),
 };
 
-export const Testimonials = () => {
-  const { t } = useLanguage();
+interface Testimonial {
+  id: string;
+  customer_name: string;
+  customer_company: string | null;
+  testimonial_text: string;
+  rating: number;
+}
 
-  const items = [1, 2, 3].map((i) => ({
-    name: t(`testimonials.${i}.name`),
-    company: t(`testimonials.${i}.company`),
-    text: t(`testimonials.${i}.text`),
-  }));
+export const Testimonials = () => {
+  const { language, t } = useLanguage();
+  const [items, setItems] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      const { data } = await supabase
+        .from('testimonials')
+        .select('id, customer_name, customer_company, testimonial_text, rating')
+        .eq('status', 'approved')
+        .eq('language', language)
+        .order('is_featured', { ascending: false })
+        .limit(3);
+      if (data && data.length > 0) setItems(data);
+      setLoading(false);
+    };
+    fetchTestimonials();
+  }, [language]);
+
+  // Fallback to static if no DB data
+  const fallback = [
+    { id: '1', customer_name: t('testimonials.1.name'), customer_company: t('testimonials.1.company'), testimonial_text: t('testimonials.1.text'), rating: 5 },
+    { id: '2', customer_name: t('testimonials.2.name'), customer_company: t('testimonials.2.company'), testimonial_text: t('testimonials.2.text'), rating: 5 },
+    { id: '3', customer_name: t('testimonials.3.name'), customer_company: t('testimonials.3.company'), testimonial_text: t('testimonials.3.text'), rating: 5 },
+  ];
+
+  const displayItems = items.length > 0 ? items : (loading ? [] : fallback);
+
+  if (loading) return null;
 
   return (
     <section className="py-24 bg-muted/50">
@@ -36,9 +68,9 @@ export const Testimonials = () => {
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {items.map((item, i) => (
+          {displayItems.map((item, i) => (
             <motion.div
-              key={item.name}
+              key={item.id}
               custom={i}
               initial="hidden"
               whileInView="visible"
@@ -47,24 +79,19 @@ export const Testimonials = () => {
               className="relative bg-card border border-border rounded-lg p-8"
             >
               <Quote className="absolute top-6 end-6 h-8 w-8 text-primary/10" />
-
               <div className="flex gap-1 mb-5">
-                {Array.from({ length: 5 }).map((_, j) => (
+                {Array.from({ length: item.rating }).map((_, j) => (
                   <Star key={j} className="h-4 w-4 fill-accent text-accent" />
                 ))}
               </div>
-
-              <p className="text-foreground text-sm leading-relaxed mb-8 italic">
-                "{item.text}"
-              </p>
-
+              <p className="text-foreground text-sm leading-relaxed mb-8 italic">"{item.testimonial_text}"</p>
               <div className="flex items-center gap-3 border-t border-border pt-5">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-                  {item.name.charAt(0)}
+                  {item.customer_name.charAt(0)}
                 </div>
                 <div>
-                  <p className="font-semibold text-foreground text-sm">{item.name}</p>
-                  <p className="text-muted-foreground text-xs">{item.company}</p>
+                  <p className="font-semibold text-foreground text-sm">{item.customer_name}</p>
+                  {item.customer_company && <p className="text-muted-foreground text-xs">{item.customer_company}</p>}
                 </div>
               </div>
             </motion.div>
