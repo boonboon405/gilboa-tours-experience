@@ -195,23 +195,23 @@ export const Navigation = () => {
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/admin/keywords')}>
                         <Shield className="ml-2 h-4 w-4" />
-                        {language === 'he' ? 'מילות מפתח' : 'Keywords'}
+                        {t('nav.keywords')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/admin/chat')}>
                         <Shield className="ml-2 h-4 w-4" />
-                        {language === 'he' ? 'צ\'אט מנהל' : 'Admin Chat'}
+                        {t('nav.adminChat')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/leads')}>
                         <Shield className="ml-2 h-4 w-4" />
-                        {language === 'he' ? 'ניהול לידים' : 'Lead Management'}
+                        {t('nav.leadManagement')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/admin/ai-responses')}>
                         <Shield className="ml-2 h-4 w-4" />
-                        {language === 'he' ? 'עריכת תגובות AI' : 'Edit AI Responses'}
+                        {t('nav.editAIResponses')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/ai-settings')}>
                         <Shield className="ml-2 h-4 w-4" />
-                        {language === 'he' ? 'הגדרות AI (טקסטים)' : 'AI Settings (Text)'}
+                        {t('nav.aiSettings')}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                     </>
