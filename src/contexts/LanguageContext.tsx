@@ -94,6 +94,19 @@ const translations: Record<Language, Record<string, string>> = {
     'chat.title': 'Chat with Simcha',
     'chat.welcome': 'Hi! 👋 How can we help you?',
     'chat.placeholder': 'Type a message...',
+
+    // Voice
+    'voice.replay': 'Replay',
+    'voice.listening': 'Listening...',
+    'voice.realtime.toggle': 'Real-time voice',
+    'voice.realtime.warning': 'Real-time voice supports English audio only',
+    'voice.realtime.start': 'Start Call',
+    'voice.realtime.connecting': 'Connecting...',
+    'voice.realtime.end': 'End Call',
+    'voice.realtime.error': 'Failed to connect. Please try again.',
+    'voice.back.to.chat': 'Back to Chat',
+    'voice.you.said': 'You said:',
+    'voice.agent.says': 'Agent:',
   },
   he: {
     // Nav
