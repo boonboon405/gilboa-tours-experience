@@ -260,7 +260,7 @@ export const Navigation = () => {
                   </Badge>
                 )}
               </div>
-              Quiz
+               {t('nav.quiz')}
             </button>
             <div className="mt-2 space-y-1" role="menuitem">
               {navItems.map((item) => {
