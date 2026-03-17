@@ -319,10 +319,11 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     if (!userMessage.trim() || isLoading) return;
 
     console.log('📝 User message received:', userMessage);
+    setHasUserInteracted(true);
     
     setShowCategorySelector(false);
     setTypingPreview(''); // Clear typing preview
-    
+
     // Add user message to UI immediately
     const tempUserMsg: Message = {
       id: `temp-${Date.now()}`,
