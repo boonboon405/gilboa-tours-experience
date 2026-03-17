@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -51,10 +52,8 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const [sessionId, setSessionId] = useState(() => `session-${Date.now()}-${Math.random()}`);
   const [speechSupported, setSpeechSupported] = useState(true);
   const [textInput, setTextInput] = useState('');
-  const [language, setLanguage] = useState<'he' | 'en'>(() => {
-    const saved = localStorage.getItem('preferred-language');
-    return (saved === 'en' ? 'en' : 'he') as 'he' | 'en';
-  });
+  const { language, setLanguage: setGlobalLanguage } = useLanguage();
+
   const [selectedVoice, setSelectedVoice] = useState<ElevenLabsVoice>(() => {
     const saved = localStorage.getItem('preferred-voice');
     return (saved as ElevenLabsVoice) || 'Rachel';
@@ -85,8 +84,8 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     if (!SpeechRecognition || !window.speechSynthesis) {
       setSpeechSupported(false);
       toast({
-        title: "דפדפן לא נתמך",
-        description: "אנא השתמשו ב-Chrome, Edge או Safari לתמיכה מלאה בקול",
+        title: language === 'en' ? "Browser not supported" : "דפדפן לא נתמך",
+        description: language === 'en' ? "Please use Chrome, Edge or Safari for full voice support" : "אנא השתמשו ב-Chrome, Edge או Safari לתמיכה מלאה בקול",
         variant: "destructive"
       });
       return;
@@ -114,13 +113,13 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
       
       if (event.error === 'no-speech') {
         toast({
-          title: "לא נשמע קול",
-          description: "אנא נסו שוב ודברו בבירור",
+          title: language === 'en' ? "No voice detected" : "לא נשמע קול",
+          description: language === 'en' ? "Please try again and speak clearly" : "אנא נסו שוב ודברו בבירור",
         });
       } else if (event.error === 'not-allowed') {
         toast({
-          title: "נדרשת הרשאה",
-          description: "אנא אפשרו גישה למיקרופון בדפדפן",
+          title: language === 'en' ? "Permission required" : "נדרשת הרשאה",
+          description: language === 'en' ? "Please allow microphone access in your browser" : "אנא אפשרו גישה למיקרופון בדפדפן",
           variant: "destructive"
         });
       }
@@ -231,8 +230,7 @@ Tell me, how many people? What interests you?`;
       stopElevenLabsSpeech();
       greetingSpokenRef.current = false;
       setMessages([]);
-      setLanguage(newLang);
-      localStorage.setItem('preferred-language', newLang);
+      setGlobalLanguage(newLang);
     }
   };
 

@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Phone, ArrowRight, Mic, MessageSquare, Info, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { checkAndResetForNewClient } from '@/utils/clientSession';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -24,19 +25,16 @@ const Chat = () => {
   const [showHumanHandoff, setShowHumanHandoff] = useState(false);
   const [quizResults, setQuizResults] = useState<any>(null);
   const navigate = useNavigate();
+  const { language } = useLanguage();
+  const isEn = language === 'en';
 
   useEffect(() => {
-    // Check if this is a new client and reset data if needed
     const isNewClient = checkAndResetForNewClient();
-    
     if (isNewClient) {
-      // New client - don't load old quiz results
       console.log('[Chat] New client detected, starting fresh');
       setQuizResults(null);
       return;
     }
-    
-    // Load quiz results from localStorage if available (returning client)
     const stored = localStorage.getItem('quizResults');
     if (stored) {
       try {
@@ -56,99 +54,89 @@ const Chat = () => {
       <Navigation />
       
       <main className="flex-1 container mx-auto px-4 py-8">
-        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-            שיחה עם הסוכן החכם שלנו
+            {isEn ? 'Chat with Our Smart Agent' : 'שיחה עם הסוכן החכם שלנו'}
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            ספרו, מה אתם מחפשים ואני אמליץ לכם על החוויה המושלמת בצפון, סובב כנרת, גלבוע, גליל ועמק המעינות
+            {isEn
+              ? 'Tell us what you\'re looking for and we\'ll recommend the perfect experience in Northern Israel — Gilboa, Galilee, and the Springs Valley'
+              : 'ספרו, מה אתם מחפשים ואני אמליץ לכם על החוויה המושלמת בצפון, סובב כנרת, גלבוע, גליל ועמק המעינות'}
           </p>
           {quizResults && (
             <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm">
-              ✨ מזהה את העדפותיכם מה-Quiz שעשיתם
+              {isEn ? '✨ Using your quiz preferences' : '✨ מזהה את העדפותיכם מה-Quiz שעשיתם'}
             </div>
           )}
         </div>
 
-        {/* Quiz & Categories Section */}
         <div className="mb-8 max-w-6xl mx-auto">
-          <QuizCategoryIntegration language="he" />
+          <QuizCategoryIntegration language={language} />
         </div>
 
-        {/* Chat Interface with Tabs */}
         <Tabs defaultValue="voice" className="w-full max-w-4xl mx-auto">
           <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="voice" className="gap-2">
               <Mic className="w-4 h-4" />
-              צ'אט קולי
+              {isEn ? 'Voice Chat' : 'צ\'אט קולי'}
             </TabsTrigger>
             <TabsTrigger value="text" className="gap-2">
               <MessageSquare className="w-4 h-4" />
-              צ'אט טקסט
+              {isEn ? 'Text Chat' : 'צ\'אט טקסט'}
             </TabsTrigger>
             <TabsTrigger value="compare" className="gap-2">
               <Info className="w-4 h-4" />
-              השוואה
+              {isEn ? 'Compare' : 'השוואה'}
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="voice">
             <VoiceChat quizResults={quizResults} />
           </TabsContent>
-
           <TabsContent value="text">
             <AIChat 
               quizResults={quizResults} 
               onRequestHumanAgent={() => setShowHumanHandoff(true)}
             />
           </TabsContent>
-
           <TabsContent value="compare">
             <VoiceChatComparison />
           </TabsContent>
         </Tabs>
 
-        {/* Quick Actions */}
         <div className="mt-8 flex flex-wrap justify-center gap-4">
           {!quizResults && (
-            <Button
-              variant="outline"
-              onClick={() => navigate('/')}
-              className="gap-2"
-            >
+            <Button variant="outline" onClick={() => navigate('/')} className="gap-2">
               <ArrowRight className="w-4 h-4" />
-              חזרה לדף הבית
+              {isEn ? 'Back to Home' : 'חזרה לדף הבית'}
             </Button>
           )}
-          <Button
-            variant="outline"
-            onClick={handleCallOwner}
-            className="gap-2"
-          >
+          <Button variant="outline" onClick={handleCallOwner} className="gap-2">
             <Phone className="w-4 h-4" />
-            התקשרו ישירות לדויד
+            {isEn ? 'Call David Directly' : 'התקשרו ישירות לדויד'}
           </Button>
         </div>
       </main>
 
       <Footer />
 
-      {/* Human Handoff Dialog */}
       <AlertDialog open={showHumanHandoff} onOpenChange={setShowHumanHandoff}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>נשמח לדבר איתכם אישית! 📞</AlertDialogTitle>
+            <AlertDialogTitle>
+              {isEn ? 'We\'d love to talk to you personally! 📞' : 'נשמח לדבר איתכם אישית! 📞'}
+            </AlertDialogTitle>
             <AlertDialogDescription className="space-y-4">
               <p>
-                הסוכן החכם שלנו הבין שתרצו לדבר עם בן אדם. 
-                דויד, בעל החברה, ישמח לעזור לכם אישית!
+                {isEn
+                  ? 'Our smart agent understood you\'d like to speak with a person. David, the company owner, would be happy to help!'
+                  : 'הסוכן החכם שלנו הבין שתרצו לדבר עם בן אדם. דויד, בעל החברה, ישמח לעזור לכם אישית!'}
               </p>
               <div className="p-4 bg-primary/10 rounded-lg text-right">
-                <p className="font-semibold text-foreground">דויד רחימי</p>
+                <p className="font-semibold text-foreground">{isEn ? 'David Rahimi' : 'דויד רחימי'}</p>
                 <p className="text-foreground">0537314235</p>
                 <p className="text-sm text-muted-foreground mt-2">
-                  זמין לשיחה בשעות העבודה
+                  {isEn ? 'Available during business hours' : 'זמין לשיחה בשעות העבודה'}
                 </p>
               </div>
             </AlertDialogDescription>
@@ -156,14 +144,10 @@ const Chat = () => {
           <AlertDialogFooter className="flex-col sm:flex-row gap-2">
             <AlertDialogAction onClick={handleCallOwner} className="w-full sm:w-auto">
               <Phone className="w-4 h-4 ml-2" />
-              התקשר עכשיו
+              {isEn ? 'Call Now' : 'התקשר עכשיו'}
             </AlertDialogAction>
-            <Button
-              variant="outline"
-              onClick={() => setShowHumanHandoff(false)}
-              className="w-full sm:w-auto"
-            >
-              המשך בצ'אט
+            <Button variant="outline" onClick={() => setShowHumanHandoff(false)} className="w-full sm:w-auto">
+              {isEn ? 'Continue in Chat' : 'המשך בצ\'אט'}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

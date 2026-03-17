@@ -69,11 +69,12 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
+  const isEn = language === 'en';
   const steps = [
-    { id: 'categories', label: 'תחומי עניין', completed: !!conversationData.categories?.length, current: currentStep === 0 },
-    { id: 'people', label: 'מספר אנשים', completed: !!conversationData.numberOfPeople, current: currentStep === 1 },
-    { id: 'details', label: 'פרטים נוספים', completed: !!(conversationData.dates && conversationData.budget), current: currentStep === 2 },
-    { id: 'summary', label: 'סיכום', completed: showSummary, current: currentStep === 3 }
+    { id: 'categories', label: isEn ? 'Interests' : 'תחומי עניין', completed: !!conversationData.categories?.length, current: currentStep === 0 },
+    { id: 'people', label: isEn ? 'Group Size' : 'מספר אנשים', completed: !!conversationData.numberOfPeople, current: currentStep === 1 },
+    { id: 'details', label: isEn ? 'More Details' : 'פרטים נוספים', completed: !!(conversationData.dates && conversationData.budget), current: currentStep === 2 },
+    { id: 'summary', label: isEn ? 'Summary' : 'סיכום', completed: showSummary, current: currentStep === 3 }
   ];
 
   useEffect(() => {
@@ -285,7 +286,7 @@ Tell me - how many people are you? What interests you? 100+ activities await!`)
 
       if (data.error) {
         toast({
-          title: "שגיאה",
+          title: isEn ? "Error" : "שגיאה",
           description: data.fallback || data.error,
           variant: "destructive"
         });
@@ -320,8 +321,8 @@ Tell me - how many people are you? What interests you? 100+ activities await!`)
     } catch (error) {
       console.error('Chat error:', error);
       toast({
-        title: "שגיאה בשליחה",
-        description: "אנא נסו שוב או צרו קשר בטלפון 0537314235",
+        title: isEn ? "Send error" : "שגיאה בשליחה",
+        description: isEn ? "Please try again or call 0537314235" : "אנא נסו שוב או צרו קשר בטלפון 0537314235",
         variant: "destructive"
       });
     } finally {
@@ -370,7 +371,7 @@ Tell me - how many people are you? What interests you? 100+ activities await!`)
       if (data.error) {
         console.error('❌ AI agent error:', data.error);
         toast({
-          title: "שגיאה",
+          title: isEn ? "Error" : "שגיאה",
           description: data.fallback || data.error,
           variant: "destructive"
         });
@@ -432,8 +433,8 @@ Tell me - how many people are you? What interests you? 100+ activities await!`)
     } catch (error) {
       console.error('Chat error:', error);
       toast({
-        title: "שגיאה בשליחה",
-        description: "אנא נסו שוב או צרו קשר בטלפון 0537314235",
+        title: isEn ? "Send error" : "שגיאה בשליחה",
+        description: isEn ? "Please try again or call 0537314235" : "אנא נסו שוב או צרו קשר בטלפון 0537314235",
         variant: "destructive"
       });
     } finally {
@@ -449,21 +450,21 @@ Tell me - how many people are you? What interests you? 100+ activities await!`)
     setEditingField(field);
     setShowSummary(false);
     
-    const fieldPrompts: Record<keyof ConversationData, string> = {
-      categories: 'איזה קטגוריות מעניינות אותך?',
-      numberOfPeople: 'כמה אנשים משתתפים?',
-      situation: 'מה הסיטואציה? (יום צוות, יום גיבוש, וכו\')',
-      dates: 'מה התאריכים המועדפים?',
-      budget: 'מה התקציב המשוער לאדם?',
-      specificInterests: 'יש תחומי עניין ספציפיים?',
-      transport: 'יש צורך בהסעות?'
+    const fieldPrompts: Record<keyof ConversationData, { he: string; en: string }> = {
+      categories: { he: 'איזה קטגוריות מעניינות אותך?', en: 'Which categories interest you?' },
+      numberOfPeople: { he: 'כמה אנשים משתתפים?', en: 'How many people are participating?' },
+      situation: { he: 'מה הסיטואציה? (יום צוות, יום גיבוש, וכו\')', en: 'What\'s the occasion? (team day, team building, etc.)' },
+      dates: { he: 'מה התאריכים המועדפים?', en: 'What are your preferred dates?' },
+      budget: { he: 'מה התקציב המשוער לאדם?', en: 'What\'s the estimated budget per person?' },
+      specificInterests: { he: 'יש תחומי עניין ספציפיים?', en: 'Any specific interests?' },
+      transport: { he: 'יש צורך בהסעות?', en: 'Do you need transportation?' }
     };
     
-    const prompt = fieldPrompts[field];
+    const prompt = fieldPrompts[field][language] || fieldPrompts[field].he;
     const aiMessage: Message = {
       id: `edit-${Date.now()}`,
       sender: 'ai',
-      message: `בטח! בואו נעדכן את זה. ${prompt}`,
+      message: isEn ? `Sure! Let's update that. ${prompt}` : `בטח! בואו נעדכן את זה. ${prompt}`,
       created_at: new Date().toISOString()
     };
     
@@ -493,8 +494,8 @@ Tell me - how many people are you? What interests you? 100+ activities await!`)
     } catch (error) {
       console.error('Error generating recommendation:', error);
       toast({
-        title: "שגיאה",
-        description: "לא הצלחנו ליצור המלצה. אנא נסו שוב.",
+        title: isEn ? "Error" : "שגיאה",
+        description: isEn ? "Could not generate recommendation. Please try again." : "לא הצלחנו ליצור המלצה. אנא נסו שוב.",
         variant: "destructive"
       });
     } finally {
@@ -545,12 +546,12 @@ Tell me - how many people are you? What interests you? 100+ activities await!`)
         </div>
         <div className="flex-1">
           <h3 className="font-semibold text-lg flex items-center gap-2">
-            סוכן חכם - טיולים עם דויד
+            {isEn ? 'Smart Agent - Tours with David' : 'סוכן חכם - טיולים עם דויד'}
             {isSpeaking && (
-              <span className="text-xs text-primary animate-pulse">מדבר...</span>
+              <span className="text-xs text-primary animate-pulse">{isEn ? 'Speaking...' : 'מדבר...'}</span>
             )}
           </h3>
-          <p className="text-sm text-muted-foreground">חוויות בטבע עם הדרכה מקצועית 🌿</p>
+          <p className="text-sm text-muted-foreground">{isEn ? 'Nature experiences with professional guidance 🌿' : 'חוויות בטבע עם הדרכה מקצועית 🌿'}</p>
         </div>
         <div className="flex items-center gap-2">
           <ChatExport 
@@ -821,12 +822,12 @@ Tell me - how many people are you? What interests you? 100+ activities await!`)
         onSend={handleSend}
         onTyping={handleTyping}
         isLoading={isLoading}
-        placeholder="הקלידו או דברו את התשובה שלכם..."
+        placeholder={isEn ? "Type or speak your answer..." : "הקלידו או דברו את התשובה שלכם..."}
         disabled={isLoading}
       />
 
       <p className="text-xs text-muted-foreground p-2 text-center">
-        רוצים לדבר עם בן אדם? רק תגידו • {isSpeaking && '🔊 מדבר...'}
+        {isEn ? 'Want to talk to a person? Just say so' : 'רוצים לדבר עם בן אדם? רק תגידו'} • {isSpeaking && (isEn ? '🔊 Speaking...' : '🔊 מדבר...')}
       </p>
     </Card>
   );
