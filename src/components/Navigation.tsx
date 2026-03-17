@@ -78,10 +78,11 @@ export const Navigation = () => {
               </Button>
             </Link>
 
-            {user ? (
+            {/* Admin dropdown — only visible when logged in */}
+            {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon" title={t('nav.accountMenu')}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 opacity-60 hover:opacity-100" title={t('nav.accountMenu')}>
                     <Shield className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -111,12 +112,6 @@ export const Navigation = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              <Link to="/auth">
-                <Button variant="ghost" size="sm">
-                  {t('nav.adminLogin')}
-                </Button>
-              </Link>
             )}
           </div>
 
@@ -147,7 +142,7 @@ export const Navigation = () => {
                 {t('nav.bookTour')}
               </Button>
             </Link>
-            {user ? (
+            {user && (
               <div className="space-y-2 pt-2 border-t border-border">
                 {isAdmin && (
                   <Button variant="outline" className="w-full" onClick={() => { navigate('/admin'); setIsOpen(false); }}>
@@ -159,12 +154,6 @@ export const Navigation = () => {
                   {t('nav.signOut')}
                 </Button>
               </div>
-            ) : (
-              <Link to="/auth" onClick={() => setIsOpen(false)}>
-                <Button variant="ghost" className="w-full mt-1">
-                  {t('nav.adminLogin')}
-                </Button>
-              </Link>
             )}
           </div>
         )}
