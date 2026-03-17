@@ -149,7 +149,7 @@ export const Navigation = () => {
                   </Badge>
                 )}
               </div>
-              Quiz
+              {t('nav.quiz')}
             </button>
             
             <MegaMenu activeSection={activeSection} onNavClick={handleNavClick} />
