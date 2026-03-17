@@ -433,8 +433,8 @@ Tell me - how many people are you? What interests you? 100+ activities await!`)
     } catch (error) {
       console.error('Chat error:', error);
       toast({
-        title: "שגיאה בשליחה",
-        description: "אנא נסו שוב או צרו קשר בטלפון 0537314235",
+        title: isEn ? "Send error" : "שגיאה בשליחה",
+        description: isEn ? "Please try again or call 0537314235" : "אנא נסו שוב או צרו קשר בטלפון 0537314235",
         variant: "destructive"
       });
     } finally {
