@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { Provider } from "react-redux";
+import { store } from "@/store";
 import { lazy, Suspense } from "react";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
