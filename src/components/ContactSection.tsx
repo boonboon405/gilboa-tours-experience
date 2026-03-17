@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -8,177 +7,127 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
 import { openWhatsApp, whatsappTemplates, trackPhoneCall } from '@/utils/contactTracking';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const contactSchema = z.object({
-  name: z.string().trim().min(1, 'שם נדרש').max(100, 'שם ארוך מדי'),
-  email: z.string().trim().email('אימייל לא תקין').max(255, 'אימייל ארוך מדי'),
-  phone: z.string().trim().min(6, 'טלפון לא תקין').max(30, 'טלפון ארוך מדי'),
-  message: z.string().trim().min(1, 'הודעה נדרשת').max(1000, 'הודעה ארוכה מדי'),
+  name: z.string().trim().min(1).max(100),
+  email: z.string().trim().email().max(255),
+  phone: z.string().trim().min(6).max(30),
+  message: z.string().trim().min(1).max(1000),
 });
 
 export const ContactSection = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
-  });
+  const { language } = useLanguage();
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const whatsappNumber = '972537314235';
-  const email = 'DavidIsraelTours@gmail.com';
-  const phoneNumber = '0537314235';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
-    // Validate input
     const parsed = contactSchema.safeParse(formData);
     if (!parsed.success) {
-      toast.error(parsed.error.errors[0]?.message || 'בדיקת קלט נכשלה');
+      toast.error(language === 'he' ? 'אנא מלאו את כל השדות' : 'Please fill all fields');
       setIsSubmitting(false);
       return;
     }
-
     try {
-      const { data, error } = await supabase.functions.invoke('forward-webhook', {
-        body: parsed.data,
-      });
-
-      if (error) throw error;
-
-      toast.success('ההודעה נשלחה! נחזור אליך בקרוב.');
+      await supabase.functions.invoke('forward-webhook', { body: parsed.data });
+      toast.success(language === 'he' ? 'ההודעה נשלחה בהצלחה!' : 'Message sent successfully!');
       setFormData({ name: '', email: '', phone: '', message: '' });
-    } catch (error) {
-      console.error('Error sending message:', error);
-      toast.error('שגיאה בשליחת ההודעה. אנא נסה שוב.');
+    } catch {
+      toast.error(language === 'he' ? 'שגיאה בשליחה. נסו שוב.' : 'Error sending. Try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <section id="contact" className="py-20 bg-muted">
+    <section id="contact" className="py-24 bg-background">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            צור קשר
-          </h2>
-        </div>
+        <div className="max-w-5xl mx-auto grid lg:grid-cols-2 gap-16">
+          {/* Info */}
+          <div>
+            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+              {language === 'he' ? 'צור קשר' : 'Get in Touch'}
+            </h2>
+            <p className="text-muted-foreground mb-10 leading-relaxed">
+              {language === 'he'
+                ? 'נשמח לעזור לכם לתכנן את היום המושלם. פנו אלינו בכל דרך שנוחה לכם.'
+                : 'We\'d love to help you plan the perfect day. Reach out in any way that\'s convenient.'}
+            </p>
 
-        <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-          {/* Contact Info */}
-          <div className="space-y-6">
-            <Card className="border-2 hover:shadow-soft transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-4 space-x-reverse">
-                  <div className="p-3 rounded-lg bg-gradient-hero">
-                    <Phone className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">טלפון</p>
-                    <a
-                      href={`tel:${phoneNumber}`}
-                      onClick={() => trackPhoneCall(phoneNumber, 'contact-section')}
-                      className="text-lg font-semibold text-foreground hover:text-primary transition-colors"
-                    >
-                      {phoneNumber}
-                    </a>
-                  </div>
+            <div className="space-y-6">
+              <a href="tel:0537314235" onClick={() => trackPhoneCall('0537314235', 'contact')} className="flex items-center gap-4 group">
+                <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                  <Phone className="h-5 w-5" />
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:shadow-soft transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-4 space-x-reverse">
-                  <div className="p-3 rounded-lg bg-gradient-water">
-                    <Mail className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">אימייל</p>
-                    <a
-                      href={`mailto:${email}`}
-                      className="text-lg font-semibold text-foreground hover:text-primary transition-colors"
-                    >
-                      {email}
-                    </a>
-                  </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">{language === 'he' ? 'טלפון' : 'Phone'}</p>
+                  <p className="font-semibold">0537314235</p>
                 </div>
-              </CardContent>
-            </Card>
-
-            <Button
-              variant="whatsapp"
-              size="lg"
-              className="w-full text-lg"
-              onClick={() => openWhatsApp('972537314235', whatsappTemplates.inquiry, 'contact-section')}
-            >
-              <MessageCircle className="ml-2 h-5 w-5" />
-              וואטסאפ
-            </Button>
+              </a>
+              <a href="mailto:DavidIsraelTours@gmail.com" className="flex items-center gap-4 group">
+                <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                  <Mail className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">{language === 'he' ? 'אימייל' : 'Email'}</p>
+                  <p className="font-semibold">DavidIsraelTours@gmail.com</p>
+                </div>
+              </a>
+              <button
+                onClick={() => openWhatsApp('972537314235', whatsappTemplates.inquiry, 'contact')}
+                className="flex items-center gap-4 group w-full text-start"
+              >
+                <div className="w-12 h-12 rounded-xl bg-[#25D366]/10 flex items-center justify-center group-hover:bg-[#25D366] group-hover:text-white transition-colors">
+                  <MessageCircle className="h-5 w-5 text-[#25D366] group-hover:text-white" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">WhatsApp</p>
+                  <p className="font-semibold">{language === 'he' ? 'שלחו הודעה' : 'Send a message'}</p>
+                </div>
+              </button>
+            </div>
           </div>
 
-          {/* Contact Form */}
-          <Card className="border-2">
-            <CardHeader>
-              <CardTitle className="text-2xl">צור קשר</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Input
-                    placeholder="שם מלא"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                    className="border-2"
-                  />
-                </div>
-                <div>
-                  <Input
-                    type="email"
-                    placeholder='דוא"ל'
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
-                    className="border-2"
-                  />
-                </div>
-                <div>
-                  <Input
-                    type="tel"
-                    placeholder="טלפון"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    required
-                    className="border-2"
-                  />
-                </div>
-                <div>
-                  <Textarea
-                    placeholder="הודעה"
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    required
-                    rows={5}
-                    className="border-2"
-                  />
-                </div>
-                <Button 
-                  type="submit" 
-                  variant="hero" 
-                  size="lg" 
-                  className="w-full text-lg"
-                  disabled={isSubmitting}
-                >
-                  <Send className="ml-2 h-5 w-5" />
-                  {isSubmitting ? 'שולח...' : 'שלח הודעה'}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+          {/* Form */}
+          <div className="p-8 rounded-2xl border border-border bg-card">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <Input
+                placeholder={language === 'he' ? 'שם מלא' : 'Full Name'}
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+              />
+              <Input
+                type="email"
+                placeholder={language === 'he' ? 'דוא"ל' : 'Email'}
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+              />
+              <Input
+                type="tel"
+                placeholder={language === 'he' ? 'טלפון' : 'Phone'}
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                required
+              />
+              <Textarea
+                placeholder={language === 'he' ? 'ספרו לנו על האירוע שלכם...' : 'Tell us about your event...'}
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                required
+                rows={4}
+              />
+              <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                <Send className="h-4 w-4" />
+                {isSubmitting
+                  ? (language === 'he' ? 'שולח...' : 'Sending...')
+                  : (language === 'he' ? 'שלח הודעה' : 'Send Message')}
+              </Button>
+            </form>
+          </div>
         </div>
       </div>
     </section>
