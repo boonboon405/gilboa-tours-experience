@@ -94,6 +94,19 @@ const translations: Record<Language, Record<string, string>> = {
     'chat.title': 'Chat with Simcha',
     'chat.welcome': 'Hi! 👋 How can we help you?',
     'chat.placeholder': 'Type a message...',
+
+    // Voice
+    'voice.replay': 'Replay',
+    'voice.listening': 'Listening...',
+    'voice.realtime.toggle': 'Real-time voice',
+    'voice.realtime.warning': 'Real-time voice supports English audio only',
+    'voice.realtime.start': 'Start Call',
+    'voice.realtime.connecting': 'Connecting...',
+    'voice.realtime.end': 'End Call',
+    'voice.realtime.error': 'Failed to connect. Please try again.',
+    'voice.back.to.chat': 'Back to Chat',
+    'voice.you.said': 'You said:',
+    'voice.agent.says': 'Agent:',
   },
   he: {
     // Nav
@@ -180,6 +193,19 @@ const translations: Record<Language, Record<string, string>> = {
     'chat.title': 'צ׳אט עם שמחה',
     'chat.welcome': 'שלום! 👋 איך אפשר לעזור לכם?',
     'chat.placeholder': 'כתבו הודעה...',
+
+    // Voice
+    'voice.replay': 'השמע שוב',
+    'voice.listening': 'מקשיב...',
+    'voice.realtime.toggle': 'שיחה בזמן אמת',
+    'voice.realtime.warning': 'שיחה בזמן אמת תומכת באודיו באנגלית בלבד',
+    'voice.realtime.start': 'התחל שיחה',
+    'voice.realtime.connecting': 'מתחבר...',
+    'voice.realtime.end': 'סיום שיחה',
+    'voice.realtime.error': 'לא הצלחנו להתחבר. נסו שוב.',
+    'voice.back.to.chat': 'חזרה לצ׳אט',
+    'voice.you.said': 'אמרת:',
+    'voice.agent.says': 'סוכן:',
   },
 };
 
