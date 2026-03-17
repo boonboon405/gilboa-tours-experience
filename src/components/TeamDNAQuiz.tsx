@@ -120,7 +120,7 @@ export const TeamDNAQuiz = ({ open, onClose, onComplete }: TeamDNAQuizProps) => 
         return Math.random() * (max - min) + min;
       };
 
-      const interval: ReturnType<typeof setInterval> = setInterval(() => {
+      const interval: NodeJS.Timeout = setInterval(() => {
         const timeLeft = animationEnd - Date.now();
 
         if (timeLeft <= 0) {

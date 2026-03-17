@@ -16,7 +16,7 @@ export const WaveformVisualizer = ({ isActive, barCount = 5 }: WaveformVisualize
       return;
     }
 
-    const intervals: ReturnType<typeof setInterval>[] = [];
+    const intervals: NodeJS.Timeout[] = [];
 
     barsRef.current.forEach((bar, index) => {
       if (!bar) return;

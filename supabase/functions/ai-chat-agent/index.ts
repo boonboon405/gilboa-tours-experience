@@ -142,8 +142,7 @@ serve(async (req) => {
 
   try {
     const startTime = Date.now();
-    const { message, conversationId, sessionId, quizResults, conversationData, currentStep, requestFinalRecommendation } = await req.json();
-    const language = 'he'; // Force Hebrew only
+    const { message, conversationId, sessionId, quizResults, conversationData, currentStep, requestFinalRecommendation, language = 'he' } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
@@ -284,7 +283,7 @@ serve(async (req) => {
             { 
               role: "system", 
               content: systemPrompt + quizContext + knowledgeContext + dataContext + 
-                `\n\n**הוראה קריטית**: אתה חייב לענות אך ורק בעברית. גם אם המשתמש כותב באנגלית או בשפה אחרת - תמיד תענה בעברית בלבד. אל תשתמש בשום שפה אחרת חוץ מעברית.`
+                `\n\n**CRITICAL LANGUAGE INSTRUCTION**: You MUST respond in ${language === 'he' ? 'Hebrew (עברית)' : 'English'}. The user's preferred language is ${language === 'he' ? 'Hebrew' : 'English'}. Even if the user writes in a different language, ALWAYS respond in ${language === 'he' ? 'Hebrew' : 'English'}.`
             },
             ...conversationHistory,
             { role: "user", content: message }

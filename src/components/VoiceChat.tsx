@@ -5,7 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe, Phone, PhoneOff, Copy, Check, RotateCcw } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice } from '@/utils/elevenLabsTTS';
@@ -20,9 +20,6 @@ import { MicrophoneAnimation } from '@/components/MicrophoneAnimation';
 import { ProcessingAnimation } from '@/components/ProcessingAnimation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import RealtimeVoiceChat from '@/components/RealtimeVoiceChat';
-import EnhancedVoiceSelector from '@/components/EnhancedVoiceSelector';
-import TypingIndicator from '@/components/TypingIndicator';
 import companyLogo from '@/assets/company-logo.png';
 
 interface Message {
@@ -46,67 +43,29 @@ interface VoiceChatProps {
 }
 
 export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
-  // Load saved chat history and preferences
-  const [messages, setMessages] = useState<Message[]>(() => {
-    try {
-      const saved = localStorage.getItem('voicechat-messages');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      }
-    } catch (e) {
-      console.error('Failed to load chat history:', e);
-    }
-    return [];
-  });
-  
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [conversationId, setConversationId] = useState<string | null>(() => {
-    return localStorage.getItem('voicechat-conversationId') || null;
-  });
-  const [sessionId, setSessionId] = useState(() => {
-    const saved = localStorage.getItem('voicechat-sessionId');
-    return saved || `session-${Date.now()}-${Math.random()}`;
-  });
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState(() => `session-${Date.now()}-${Math.random()}`);
   const [speechSupported, setSpeechSupported] = useState(true);
   const [textInput, setTextInput] = useState('');
-  const [language] = useState<'he'>('he');
+  const [language, setLanguage] = useState<'he' | 'en'>(() => {
+    const saved = localStorage.getItem('preferred-language');
+    return (saved === 'en' ? 'en' : 'he') as 'he' | 'en';
+  });
   const [selectedVoice, setSelectedVoice] = useState<ElevenLabsVoice>(() => {
     const saved = localStorage.getItem('preferred-voice');
     return (saved as ElevenLabsVoice) || 'Rachel';
   });
-  const [speechSpeed, setSpeechSpeed] = useState<number>(() => {
-    const saved = localStorage.getItem('preferred-speech-speed');
-    return saved ? parseFloat(saved) : 0.85;
-  });
   const [showSettings, setShowSettings] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
-  const [showRealtimeCall, setShowRealtimeCall] = useState(false);
-  const [playingMessageId, setPlayingMessageId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const { toast } = useToast();
 
-  // Save messages to localStorage whenever they change
-  useEffect(() => {
-    if (messages.length > 0) {
-      try {
-        localStorage.setItem('voicechat-messages', JSON.stringify(messages));
-        if (conversationId) {
-          localStorage.setItem('voicechat-conversationId', conversationId);
-        }
-        localStorage.setItem('voicechat-sessionId', sessionId);
-      } catch (e) {
-        console.error('Failed to save chat history:', e);
-      }
-    }
-  }, [messages, conversationId, sessionId]);
-
-  // Save conversation to history periodically (ChatHistory component)
+  // Save conversation to history periodically
   useEffect(() => {
     if (messages.length > 1 && conversationId) {
       const saveToHistory = (window as any).saveChatHistory;
@@ -185,18 +144,6 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
 
   // Track if greeting has been spoken to prevent duplicate TTS
   const greetingSpokenRef = useRef(false);
-  const historyLoadedRef = useRef(false);
-
-  // Show notification when chat history is restored
-  useEffect(() => {
-    if (messages.length > 0 && !historyLoadedRef.current) {
-      historyLoadedRef.current = true;
-      toast({
-        title: language === 'he' ? 'שיחה קודמת נטענה' : 'Previous chat loaded',
-        description: language === 'he' ? 'היסטוריית השיחה שוחזרה' : 'Chat history restored'
-      });
-    }
-  }, []);
 
   useEffect(() => {
     // Send initial greeting with enhanced quiz integration and categories
@@ -233,6 +180,36 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
 
 ספרו לי, כמה אתם? מה מעניין אתכם?`;
         }
+      } else {
+        if (quizResults) {
+          const topCategories = quizResults.top_categories?.slice(0, 3) || [];
+          const categoryNamesEn: Record<string, string> = {
+            adventure: 'Adventure',
+            nature: 'Nature',
+            history: 'History',
+            culinary: 'Culinary',
+            sports: 'Sports',
+            creative: 'Creative',
+            wellness: 'Wellness',
+            teambuilding: 'Team Building'
+          };
+          const categoryNames = topCategories.map(c => categoryNamesEn[c] || c).join(', ');
+          greeting = `Hello and welcome! I'm the digital agent of Outdoor Israel, experts in experiences in Northern Israel.
+
+Based on your quiz results, your top matching categories are: ${categoryNames}.
+
+We offer over one hundred different activities in the Gilboa region, Springs Valley, Beit Shean, Sea of Galilee, and the Galilee.
+
+Tell me, how many people are in your group? What interests you most?`;
+        } else {
+          greeting = `Hello and welcome! I'm the digital agent of Outdoor Israel.
+
+We specialize in day trips, tours, and experiences in Northern Israel, from the Gilboa mountains to the Sea of Galilee, from the Golan Heights to the Jezreel Valley.
+
+We offer over one hundred activities across eight categories: Adventure, Nature, History, Culinary, Sports, Creative, Wellness, and Team Building.
+
+Tell me, how many people? What interests you?`;
+        }
       }
 
       const initialMsg: Message = {
@@ -248,20 +225,28 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     }
   }, [language, quizResults]);
 
-  // Language is fixed to Hebrew - no change handler needed
+  // Reset chat when language changes
+  const handleLanguageChange = (newLang: 'he' | 'en') => {
+    if (newLang !== language) {
+      stopElevenLabsSpeech();
+      greetingSpokenRef.current = false;
+      setMessages([]);
+      setLanguage(newLang);
+      localStorage.setItem('preferred-language', newLang);
+    }
+  };
 
   const speakText = async (text: string) => {
     // Stop any ongoing speech
     stopElevenLabsSpeech();
     
-    // Use ElevenLabs for high-quality TTS with selected language and speed
+    // Use ElevenLabs for high-quality TTS with selected language
     await speakWithElevenLabs(
       text,
       selectedVoice,
       () => setIsSpeaking(true),
       () => setIsSpeaking(false),
-      language,
-      speechSpeed
+      language // Pass the selected language to TTS
     );
   };
 
@@ -381,7 +366,6 @@ ${transcript}`;
 
   const handleClearChat = () => {
     // Stop any ongoing speech
-    stopElevenLabsSpeech();
     if (window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
@@ -389,13 +373,7 @@ ${transcript}`;
       recognitionRef.current.stop();
     }
 
-    // Clear localStorage
-    localStorage.removeItem('voicechat-messages');
-    localStorage.removeItem('voicechat-conversationId');
-    localStorage.removeItem('voicechat-sessionId');
-
     // Reset conversation
-    greetingSpokenRef.current = false;
     setMessages([]);
     setConversationId(null);
     setSessionId(`session-${Date.now()}-${Math.random()}`);
@@ -406,12 +384,22 @@ ${transcript}`;
 
     // Send enhanced greeting
     let greeting = '';
-    if (quizResults) {
-      const topCategory = quizResults.top_categories?.[0] || '';
-      const percentage = quizResults.percentages?.[topCategory] || 0;
-      greeting = `שלום! ראיתי שעשיתם את הQuiz שלנו ומצאתי משהו מעניין! אתם מתאימים במיוחד ל${topCategory} עם ${Math.round(percentage)}% התאמה. יש לנו כ-100 אפשרויות שונות, ואני כאן למצוא את המושלם. ספרו לי - כמה אנשים? תקציב?`;
+    if (language === 'he') {
+      if (quizResults) {
+        const topCategory = quizResults.top_categories?.[0] || '';
+        const percentage = quizResults.percentages?.[topCategory] || 0;
+        greeting = `שלום! ראיתי שעשיתם את הQuiz שלנו ומצאתי משהו מעניין! אתם מתאימים במיוחד ל${topCategory} עם ${Math.round(percentage)}% התאמה. יש לנו כ-100 אפשרויות שונות, ואני כאן למצוא את המושלם. ספרו לי - כמה אנשים? תקציב?`;
+      } else {
+        greeting = 'שלום! אני סוכן דיגיטלי מומחה. יש לי גישה לכ-100 חוויות שונות בגלבוע ובית שאן. ספרו לי - כמה אנשים? מה מעניין אתכם?';
+      }
     } else {
-      greeting = 'שלום! אני סוכן דיגיטלי מומחה. יש לי גישה לכ-100 חוויות שונות בגלבוע ובית שאן. ספרו לי - כמה אנשים? מה מעניין אתכם?';
+      if (quizResults) {
+        const topCategory = quizResults.top_categories?.[0] || '';
+        const percentage = quizResults.percentages?.[topCategory] || 0;
+        greeting = `Hello! I saw your Quiz results - interesting! You're suited for ${topCategory} with ${Math.round(percentage)}% match. I have ~100 options. Tell me - how many people? Budget?`;
+      } else {
+        greeting = 'Hello! I am a digital expert. I have access to ~100 experiences in Gilboa and Beit Shean. Tell me - how many people? What interests you?';
+      }
     }
 
     const initialMsg: Message = {
@@ -565,7 +553,7 @@ ${transcript}`;
             <Bot className="w-8 h-8 text-primary" />
             {isSpeaking && (
               <div className="absolute -top-1 -right-1">
-                <SpeakingAnimation isActive={isSpeaking} size="sm" variant="gradient" />
+                <SpeakingAnimation isActive={isSpeaking} size="sm" />
               </div>
             )}
           </div>
@@ -587,11 +575,29 @@ ${transcript}`;
           </div>
         </div>
         <div className="flex gap-2 items-center">
-          {/* Hebrew Only Badge */}
+          {/* Language Selector - Prominent with Settings */}
           <div className="flex items-center gap-1 bg-background/60 rounded-lg px-2 py-1 border border-border/50">
             <Globe className="w-4 h-4 text-muted-foreground" />
-            <span className="text-base">🇮🇱</span>
-            <span className="text-xs">עברית</span>
+            <Button
+              variant={language === 'he' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => handleLanguageChange('he')}
+              className="h-7 px-2 gap-1"
+              title="עברית"
+            >
+              <span className="text-base">🇮🇱</span>
+              <span className="text-xs hidden sm:inline">עברית</span>
+            </Button>
+            <Button
+              variant={language === 'en' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => handleLanguageChange('en')}
+              className="h-7 px-2 gap-1"
+              title="English"
+            >
+              <span className="text-base">🇺🇸</span>
+              <span className="text-xs hidden sm:inline">EN</span>
+            </Button>
           </div>
           
           {/* Settings Button - separate from language selector */}
@@ -697,39 +703,6 @@ ${transcript}`;
               </TooltipContent>
             </Tooltip>
 
-            {/* Replay Last Message */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => {
-                    const lastAiMessage = [...messages].reverse().find(m => m.sender === 'ai');
-                    if (lastAiMessage) {
-                      speakText(lastAiMessage.message);
-                      toast({
-                        title: language === 'he' ? 'משמיע מחדש' : 'Replaying',
-                        description: language === 'he' ? 'משמיע את ההודעה האחרונה' : 'Playing last message',
-                      });
-                    }
-                  }}
-                  disabled={!messages.some(m => m.sender === 'ai') || isSpeaking}
-                  className="relative"
-                >
-                  <RotateCcw className="w-5 h-5" />
-                  {isSpeaking && (
-                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full animate-pulse" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-xs text-center">
-                <p className="font-medium">{language === 'he' ? 'השמע מחדש' : 'Replay Last'}</p>
-                <p className="text-xs text-muted-foreground">
-                  {language === 'he' ? 'השמעה מחדש של תגובת הבוט האחרונה' : 'Replay the last bot response'}
-                </p>
-              </TooltipContent>
-            </Tooltip>
-
             {/* Mute/Unmute */}
             <Tooltip>
               <TooltipTrigger asChild>
@@ -761,17 +734,32 @@ ${transcript}`;
       {/* Settings Panel */}
       {showSettings && (
         <div className="p-4 border-b border-border/50 bg-muted/30 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Languages className="w-4 h-4" />
+              <label className="text-sm font-medium">{language === 'he' ? 'שפה' : 'Language'}:</label>
+            </div>
+            <Select value={language} onValueChange={(value: 'he' | 'en') => handleLanguageChange(value)}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="he">עברית</SelectItem>
+                <SelectItem value="en">English</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           
-          {/* Voice Selection - Enhanced */}
+          {/* Voice Selection */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Volume2 className="w-4 h-4" />
                 <label className="text-sm font-medium">{language === 'he' ? 'בחירת קול' : 'Voice Selection'}:</label>
               </div>
-              {isSpeaking && <SpeakingAnimation isActive={isSpeaking} size="md" variant="wave" />}
+              {isSpeaking && <SpeakingAnimation isActive={isSpeaking} size="sm" />}
             </div>
-            <EnhancedVoiceSelector
+            <VoiceSelector
               selectedVoice={selectedVoice}
               onVoiceChange={(voice) => {
                 setSelectedVoice(voice);
@@ -781,141 +769,49 @@ ${transcript}`;
               className="w-full"
             />
           </div>
-          
-          {/* Speech Speed Control */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Activity className="w-4 h-4" />
-                <label className="text-sm font-medium">{language === 'he' ? 'מהירות דיבור' : 'Speech Speed'}:</label>
-              </div>
-              <span className="text-sm font-medium text-primary">{speechSpeed}x</span>
-            </div>
-            <div className="flex items-center gap-2">
-              {[0.75, 0.85, 1, 1.25, 1.5].map((rate) => (
-                <Button
-                  key={rate}
-                  variant={speechSpeed === rate ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => {
-                    setSpeechSpeed(rate);
-                    localStorage.setItem('preferred-speech-speed', rate.toString());
-                  }}
-                  className="flex-1 h-8 text-xs"
-                >
-                  {rate}x
-                </Button>
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {language === 'he' 
-                ? 'מומלץ 0.85x לעברית ברורה יותר' 
-                : 'Recommended 0.85x for clearer Hebrew'}
-            </p>
-          </div>
         </div>
       )}
 
       {/* Messages */}
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
-          {messages.map((msg) => {
-            const isPlaying = playingMessageId === msg.id && isSpeaking;
-            
-            return (
-              <div
-                key={msg.id}
-                className={`flex gap-3 group animate-in slide-in-from-bottom-2 duration-300 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
-              >
-                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-sm ${
-                  msg.sender === 'user' 
-                    ? 'bg-primary text-primary-foreground' 
-                    : 'bg-gradient-to-br from-primary/20 to-primary/10'
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
+            >
+              <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                msg.sender === 'user' 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'bg-secondary text-secondary-foreground'
+              }`}>
+                {msg.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+              </div>
+              <div className={`flex-1 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
+                <div className={`inline-block p-3 rounded-lg max-w-[85%] ${
+                  msg.sender === 'user'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted'
                 }`}>
-                  {msg.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4 text-primary" />}
-                </div>
-                <div className={`flex-1 max-w-[80%] ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
-                  <div className={`inline-block p-3 rounded-2xl relative ${
-                    msg.sender === 'user'
-                      ? 'bg-primary text-primary-foreground rounded-tr-sm'
-                      : 'bg-card border border-border rounded-tl-sm'
-                  }`}>
-                    {/* Sentiment indicator for user messages */}
+                  <div className="flex items-start gap-2">
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed flex-1">{msg.message}</p>
                     {msg.sentiment && msg.sender === 'user' && (
-                      <span className={`absolute -top-2 -right-2 text-base ${msg.sentiment.color}`}>
+                      <span className={`text-base ${msg.sentiment.color}`} title={msg.sentiment.type}>
                         {msg.sentiment.icon}
                       </span>
                     )}
-                    
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.message}</p>
-                    
-                    {/* Action buttons for AI messages */}
-                    {msg.sender === 'ai' && (
-                      <div className="flex items-center gap-1 mt-2 pt-2 border-t border-border/30 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            if (isPlaying) {
-                              stopElevenLabsSpeech();
-                              setPlayingMessageId(null);
-                              setIsSpeaking(false);
-                            } else {
-                              setPlayingMessageId(msg.id);
-                              speakText(msg.message);
-                            }
-                          }}
-                          className="h-7 px-2 text-xs"
-                        >
-                          {isPlaying ? (
-                            <>
-                              <VolumeX className="w-3 h-3 mr-1" />
-                              {language === 'he' ? 'עצור' : 'Stop'}
-                            </>
-                          ) : (
-                            <>
-                              <Volume2 className="w-3 h-3 mr-1" />
-                              {language === 'he' ? 'השמע' : 'Play'}
-                            </>
-                          )}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={async () => {
-                            await navigator.clipboard.writeText(msg.message);
-                            toast({
-                              title: language === 'he' ? 'הועתק' : 'Copied',
-                              description: language === 'he' ? 'הטקסט הועתק ללוח' : 'Text copied to clipboard',
-                            });
-                          }}
-                          className="h-7 px-2 text-xs"
-                        >
-                          <Copy className="w-3 h-3 mr-1" />
-                          {language === 'he' ? 'העתק' : 'Copy'}
-                        </Button>
-                      </div>
-                    )}
                   </div>
-                  
-                  {/* Timestamp */}
-                  <span className={`text-[10px] text-muted-foreground px-2 block ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
-                    {new Date(msg.created_at).toLocaleTimeString(language === 'he' ? 'he-IL' : 'en-US', {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </span>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
           {isProcessing && (
             <div className="flex gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
-                <Bot className="w-4 h-4 text-primary" />
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center">
+                <Bot className="w-4 h-4" />
               </div>
               <div className="flex-1">
-                <TypingIndicator showAvatar={false} />
+                <ProcessingAnimation isActive={isProcessing} language={language} />
               </div>
             </div>
           )}
@@ -974,29 +870,6 @@ ${transcript}`;
         {/* Voice Control */}
         <div className="p-6 bg-muted/20">
           <div className="flex flex-col items-center gap-4">
-            {/* Realtime Call Button - Prominent */}
-            <div className="w-full max-w-md mb-2">
-              <Button
-                onClick={() => setShowRealtimeCall(true)}
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-6 text-lg font-semibold shadow-lg transition-all duration-200 hover:scale-[1.02]"
-                size="lg"
-              >
-                <Phone className="w-6 h-6 mr-3" />
-                {language === 'he' ? '🎤 התחל שיחה קולית בזמן אמת' : '🎤 Start Real-time Voice Call'}
-              </Button>
-              <p className="text-xs text-center text-muted-foreground mt-2">
-                {language === 'he' 
-                  ? 'שיחה דו-כיוונית - דבר והסוכן ישמע אותך מיד'
-                  : 'Two-way conversation - speak and the agent hears you instantly'}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="h-px bg-border flex-1 w-16" />
-              <span>{language === 'he' ? 'או השתמש בהקלטה' : 'or use recording'}</span>
-              <div className="h-px bg-border flex-1 w-16" />
-            </div>
-
             <div className="relative">
               <MicrophoneAnimation isActive={isListening} />
               <Button
@@ -1032,7 +905,7 @@ ${transcript}`;
                     ? '🔊 מדבר...'
                     : isProcessing
                     ? '⚙️ מעבד...'
-                    : 'לחצו על המיקרופון להקלטה'
+                    : 'לחצו על המיקרופון להתחלת שיחה'
                 ) : (
                   isListening 
                     ? '🎤 Listening...' 
@@ -1040,7 +913,7 @@ ${transcript}`;
                     ? '🔊 Speaking...'
                     : isProcessing
                     ? '⚙️ Processing...'
-                    : 'Click the microphone to record'
+                    : 'Click the microphone to start conversation'
                 )}
               </p>
               <p className="text-sm text-foreground/70 text-center px-3 py-1.5 bg-accent/10 rounded-md">
@@ -1053,16 +926,6 @@ ${transcript}`;
           </div>
         </div>
       </div>
-
-      {/* Realtime Voice Chat Dialog */}
-      <Dialog open={showRealtimeCall} onOpenChange={setShowRealtimeCall}>
-        <DialogContent className="max-w-lg">
-          <RealtimeVoiceChat 
-            language={language}
-            onClose={() => setShowRealtimeCall(false)}
-          />
-        </DialogContent>
-      </Dialog>
 
       {/* Categories Dialog */}
       <Dialog open={showCategories} onOpenChange={setShowCategories}>

@@ -1,7 +1,6 @@
 import { ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { Shield, AlertCircle } from 'lucide-react';
 
 interface ProtectedRouteProps {
@@ -11,13 +10,15 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
   const { user, isAdmin, isLoading } = useAuth();
-  const { t } = useLanguage();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!isLoading) {
-      if (!user) { navigate('/auth'); }
-      else if (requireAdmin && !isAdmin) { navigate('/'); }
+      if (!user) {
+        navigate('/auth');
+      } else if (requireAdmin && !isAdmin) {
+        navigate('/');
+      }
     }
   }, [user, isAdmin, isLoading, requireAdmin, navigate]);
 
@@ -26,7 +27,7 @@ export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRout
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <Shield className="w-16 h-16 animate-pulse text-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">{t('protected.loading')}</p>
+          <p className="text-muted-foreground">טוען...</p>
         </div>
       </div>
     );
@@ -37,7 +38,7 @@ export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRout
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <AlertCircle className="w-16 h-16 text-destructive mx-auto mb-4" />
-          <p className="text-muted-foreground">{t('protected.redirecting')}</p>
+          <p className="text-muted-foreground">מפנה להתחברות...</p>
         </div>
       </div>
     );
@@ -48,8 +49,8 @@ export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRout
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <AlertCircle className="w-16 h-16 text-destructive mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-2">{t('protected.noPermission')}</h2>
-          <p className="text-muted-foreground">{t('protected.noAdminAccess')}</p>
+          <h2 className="text-2xl font-bold mb-2">אין הרשאה</h2>
+          <p className="text-muted-foreground">אין לך הרשאות מנהל לצפות בדף זה</p>
         </div>
       </div>
     );

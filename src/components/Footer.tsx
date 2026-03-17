@@ -1,10 +1,7 @@
 import { Mail, Phone } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { trackPhoneCall } from '@/utils/contactTracking';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 export const Footer = () => {
-  const { t } = useLanguage();
   const email = 'davidisraeltours@gmail.com';
   const phoneNumber = '0537314235';
 
@@ -12,64 +9,77 @@ export const Footer = () => {
     <footer className="bg-card border-t border-border py-12">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
+          {/* Brand */}
           <div>
-            <h3 className="text-xl font-bold text-foreground mb-3">
-              {t('footer.brandName')}
+            <h3 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-4">
+              דויד טורס
             </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {t('footer.description')}
+            <p className="text-muted-foreground">
+              יום חווייתי, מהנה ומשמעותי שמשלב היסטוריה, טבע, גיבוש, והרבה זיכרונות טובים לחברה שלכם.
             </p>
           </div>
 
+          {/* Contact */}
           <div>
-            <h4 className="text-sm font-semibold text-foreground mb-3 uppercase tracking-wider">
-              {t('footer.contact')}
+            <h4 className="text-lg font-semibold text-foreground mb-4">
+              צור קשר
             </h4>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <a
                 href={`tel:${phoneNumber}`}
                 onClick={() => trackPhoneCall(phoneNumber, 'footer')}
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                className="flex items-center space-x-2 space-x-reverse text-muted-foreground hover:text-primary transition-colors"
               >
                 <Phone className="h-4 w-4" />
-                {phoneNumber}
+                <span>{phoneNumber}</span>
               </a>
               <a
                 href={`mailto:${email}`}
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                className="flex items-center space-x-2 space-x-reverse text-muted-foreground hover:text-primary transition-colors"
               >
                 <Mail className="h-4 w-4" />
-                {email}
+                <span>{email}</span>
               </a>
             </div>
           </div>
 
+          {/* Links */}
           <div>
-            <h4 className="text-sm font-semibold text-foreground mb-3 uppercase tracking-wider">
-              {t('footer.quickLinks')}
+            <h4 className="text-lg font-semibold text-foreground mb-4">
+              קישורים מהירים
             </h4>
             <ul className="space-y-2">
               <li>
-                <a href="#contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  {t('footer.contactUs')}
+                <a href="#choose-your-day" className="text-muted-foreground hover:text-primary transition-colors">
+                  ביחרו את יום הכייף שלכם
                 </a>
               </li>
               <li>
-                <Link to="/booking" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  {t('nav.bookTour')}
-                </Link>
+                <a href="#vip-tours" className="text-muted-foreground hover:text-primary transition-colors">
+                  טיולי VIP
+                </a>
               </li>
               <li>
-                <Link to="/accessibility" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  {t('footer.accessibilityStatement')}
-                </Link>
+                <a href="#odt" className="text-muted-foreground hover:text-primary transition-colors">
+                  פעילויות גיבוש ODT
+                </a>
+              </li>
+              <li>
+                <a href="#contact" className="text-muted-foreground hover:text-primary transition-colors">
+                  צור קשר
+                </a>
+              </li>
+              <li>
+                <a href="/accessibility" className="text-muted-foreground hover:text-primary transition-colors">
+                  הצהרת נגישות
+                </a>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-border pt-6 text-center text-xs text-muted-foreground">
-          <p>{t('footer.rights')}</p>
+        <div className="border-t border-border pt-8 text-center text-muted-foreground">
+          <p>© 2025 דויד טורס. כל הזכויות שמורות.</p>
         </div>
       </div>
     </footer>
