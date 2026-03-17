@@ -5,6 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Bot, User, Sparkles, RotateCcw, ChevronLeft, ChevronRight, Volume2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { CategorySelector } from '@/components/CategorySelector';
 import { CategoryBadge } from '@/components/CategoryBadge';
 import { LanguageQualityBadge } from '@/components/LanguageQualityBadge';
@@ -43,6 +44,7 @@ interface AIChatProps {
 }
 
 export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
+  const { language } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
@@ -63,6 +65,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [isPausedOnHover, setIsPausedOnHover] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -133,17 +136,31 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   useEffect(() => {
     // Send initial greeting with recommendations
     if (messages.length === 0 && !greetingSpokenRef.current) {
-      const greeting = quizResults
-        ? `שלום! אני מומחה לסיוריים ומציע חוויות:
+      const isEnglish = language === 'en';
+      
+      const greeting = isEnglish
+        ? (quizResults
+          ? `Hello! I'm your tour experience expert offering:
+🔥 Adventure  |  💧 Nature  |  🏛️ History  |  🍷 Culinary  |  ⚡ Sports  |  🎨 Creative  |  🌿 Wellness  |  🤝 Team Building
+
+I see you've completed the Quiz - great! I'd love to recommend activities that match your preferences.
+Tell me - how many people are you? What interests you?`
+          : `Hello! I'm your tour experience expert offering:
+🔥 Adventure  |  💧 Nature  |  🏛️ History  |  🍷 Culinary  |  ⚡ Sports  |  🎨 Creative  |  🌿 Wellness  |  🤝 Team Building
+
+Answer a few questions and I'll recommend the perfect activities for you.
+Tell me - how many people are you? What interests you? 100+ activities await!`)
+        : (quizResults
+          ? `שלום! אני מומחה לסיוריים ומציע חוויות:
 🔥 הרפתקאות  |  💧 טבע  |  🏛️ דברי הימים  |  🍷 יין ואומנות הבישול  |  ⚡ ספורט  |  🎨 יצירה  |  🌿 בריאות  |  🤝 גיבוש צוות
 
 ראיתי שעשית את הQuiz - מעולה! ברצוני להמליץ על פעילויות שיתאימו לכם.
 ספרו לי - כמה אנשים אתם? ספרו מה מעניין אתכם?`
-        : `שלום! אני מומחה לסיוריים ומציע חוויות:
+          : `שלום! אני מומחה לסיוריים ומציע חוויות:
 🔥 הרפתקאות  |  💧 טבע  |  🏛️ דברי הימים  |  🍷 יין ואומנות הבישול  |  ⚡ ספורט  |  🎨 יצירה  |  🌿 בריאות  |  🤝 גיבוש צוות
 
 ענו על השאלות , ברצוני להמליץ על פעילויות שיתאימו לכם
-ספרו לי - כמה אנשים אתם? ספרו מה מעניין אתכם? 100 פעילויות שמחכות לכם!`;
+ספרו לי - כמה אנשים אתם? ספרו מה מעניין אתכם? 100 פעילויות שמחכות לכם!`);
 
       setMessages([{
         id: '0',
@@ -159,21 +176,22 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
         setShowCategorySelector(true);
       }
       
-      // Speak the greeting
-      setTimeout(() => speakText(greeting), 500);
+      // Don't auto-play greeting - browser blocks autoplay without user interaction
+      // TTS will play after the user's first interaction
     }
-  }, [quizResults]);
+  }, [quizResults, language]);
 
   const speakText = async (text: string) => {
     // Stop any ongoing speech
     stopElevenLabsSpeech();
     
-    // Use ElevenLabs for high-quality Hebrew TTS
+    // Use ElevenLabs for high-quality TTS
     await speakWithElevenLabs(
       text,
       selectedVoice,
       () => setIsSpeaking(true),
-      () => setIsSpeaking(false)
+      () => setIsSpeaking(false),
+      language === 'en' ? 'en' : 'he'
     );
   };
 
@@ -258,7 +276,8 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
           message: userMessage,
           conversationId,
           sessionId,
-          quizResults
+          quizResults,
+          language: language === 'en' ? 'en' : 'he'
         }
       });
 
@@ -314,10 +333,11 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     if (!userMessage.trim() || isLoading) return;
 
     console.log('📝 User message received:', userMessage);
+    setHasUserInteracted(true);
     
     setShowCategorySelector(false);
     setTypingPreview(''); // Clear typing preview
-    
+
     // Add user message to UI immediately
     const tempUserMsg: Message = {
       id: `temp-${Date.now()}`,
@@ -337,7 +357,8 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
           sessionId,
           quizResults,
           conversationData,
-          currentStep
+          currentStep,
+          language: language === 'en' ? 'en' : 'he'
         }
       });
 
