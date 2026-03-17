@@ -170,6 +170,11 @@ const translations: Record<Language, Record<string, string>> = {
     'footer.faq': 'שאלות נפוצות',
     'footer.contact': 'צור קשר',
     'footer.rights': `© ${new Date().getFullYear()} Simcha. כל הזכויות שמורות.`,
+
+    // Chat widget
+    'chat.title': 'צ׳אט עם שמחה',
+    'chat.welcome': 'שלום! 👋 איך אפשר לעזור לכם?',
+    'chat.placeholder': 'כתבו הודעה...',
   },
 };
 
