@@ -69,11 +69,12 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
+  const isEn = language === 'en';
   const steps = [
-    { id: 'categories', label: 'תחומי עניין', completed: !!conversationData.categories?.length, current: currentStep === 0 },
-    { id: 'people', label: 'מספר אנשים', completed: !!conversationData.numberOfPeople, current: currentStep === 1 },
-    { id: 'details', label: 'פרטים נוספים', completed: !!(conversationData.dates && conversationData.budget), current: currentStep === 2 },
-    { id: 'summary', label: 'סיכום', completed: showSummary, current: currentStep === 3 }
+    { id: 'categories', label: isEn ? 'Interests' : 'תחומי עניין', completed: !!conversationData.categories?.length, current: currentStep === 0 },
+    { id: 'people', label: isEn ? 'Group Size' : 'מספר אנשים', completed: !!conversationData.numberOfPeople, current: currentStep === 1 },
+    { id: 'details', label: isEn ? 'More Details' : 'פרטים נוספים', completed: !!(conversationData.dates && conversationData.budget), current: currentStep === 2 },
+    { id: 'summary', label: isEn ? 'Summary' : 'סיכום', completed: showSummary, current: currentStep === 3 }
   ];
 
   useEffect(() => {
