@@ -546,12 +546,12 @@ Tell me - how many people are you? What interests you? 100+ activities await!`)
         </div>
         <div className="flex-1">
           <h3 className="font-semibold text-lg flex items-center gap-2">
-            סוכן חכם - טיולים עם דויד
+            {isEn ? 'Smart Agent - Tours with David' : 'סוכן חכם - טיולים עם דויד'}
             {isSpeaking && (
-              <span className="text-xs text-primary animate-pulse">מדבר...</span>
+              <span className="text-xs text-primary animate-pulse">{isEn ? 'Speaking...' : 'מדבר...'}</span>
             )}
           </h3>
-          <p className="text-sm text-muted-foreground">חוויות בטבע עם הדרכה מקצועית 🌿</p>
+          <p className="text-sm text-muted-foreground">{isEn ? 'Nature experiences with professional guidance 🌿' : 'חוויות בטבע עם הדרכה מקצועית 🌿'}</p>
         </div>
         <div className="flex items-center gap-2">
           <ChatExport 
