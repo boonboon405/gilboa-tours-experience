@@ -44,6 +44,7 @@ interface AIChatProps {
 }
 
 export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
+  const { language } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
@@ -64,6 +65,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [isPausedOnHover, setIsPausedOnHover] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
