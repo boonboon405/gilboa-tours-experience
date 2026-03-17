@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Star, Quote } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -30,29 +29,23 @@ const Testimonials = () => {
         .eq('status', 'approved')
         .order('is_featured', { ascending: false })
         .order('created_at', { ascending: false })
-        .limit(6);
+        .limit(3);
 
       if (error) throw error;
-      
-      if (data && data.length > 0) {
-        setTestimonials(data);
-      } else {
-        setTestimonials(getDefaultTestimonials());
-      }
-    } catch (error) {
-      console.error('Error fetching testimonials:', error);
-      setTestimonials(getDefaultTestimonials());
+      setTestimonials(data && data.length > 0 ? data : getDefaults());
+    } catch {
+      setTestimonials(getDefaults());
     } finally {
       setLoading(false);
     }
   };
 
-  const getDefaultTestimonials = () => [
+  const getDefaults = (): Testimonial[] => [
     {
       id: '1',
       customer_name: language === 'he' ? 'רונית כהן' : 'Ronit Cohen',
-      customer_company: language === 'he' ? 'מנהלת משאבי אנוש, חברת הייטק' : 'HR Manager, Tech Company',
-      testimonial_text: language === 'he' 
+      customer_company: language === 'he' ? 'מנהלת משאבי אנוש' : 'HR Manager',
+      testimonial_text: language === 'he'
         ? 'יום מדהים! הצוות שלנו חזר מאוחד ומלא אנרגיה. השילוב של פעילויות גיבוש והיסטוריה היה מושלם.'
         : 'Amazing day! Our team came back united and energized. The combination of team-building and history was perfect.',
       rating: 5,
@@ -61,7 +54,7 @@ const Testimonials = () => {
     {
       id: '2',
       customer_name: language === 'he' ? 'יוסי לוי' : 'Yossi Levi',
-      customer_company: language === 'he' ? 'מנכ"ל, חברת ייצור' : 'CEO, Manufacturing Company',
+      customer_company: language === 'he' ? 'מנכ"ל' : 'CEO',
       testimonial_text: language === 'he'
         ? 'חוויה בלתי נשכחת! הפעילויות היו מגוונות והמדריכים היו מעולים.'
         : 'Unforgettable experience! The activities were diverse and the guides were excellent.',
@@ -73,7 +66,7 @@ const Testimonials = () => {
       customer_name: language === 'he' ? 'מיכל אברהם' : 'Michal Avraham',
       customer_company: language === 'he' ? 'סמנכ"לית שיווק' : 'VP Marketing',
       testimonial_text: language === 'he'
-        ? 'ארגון מושלם מתחילה ועד סוף. תשומת הלב לפרטים, הגמישות בהתאמת התוכנית - הכל היה ברמה הכי גבוהה.'
+        ? 'ארגון מושלם מתחילה ועד סוף. תשומת הלב לפרטים והגמישות - הכל היה ברמה הכי גבוהה.'
         : 'Perfect organization from start to finish. Attention to detail and flexibility - everything was top-notch.',
       rating: 5,
       is_featured: false,
@@ -82,19 +75,19 @@ const Testimonials = () => {
 
   if (loading) {
     return (
-      <section className="py-20 px-4 bg-gradient-to-b from-background to-muted/20">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+      <section className="py-24 bg-muted/30">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" />
         </div>
       </section>
     );
   }
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-background to-muted/20">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+    <section className="py-24 bg-muted/30">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
             {t('testimonials.title')}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -102,42 +95,33 @@ const Testimonials = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <Card 
-              key={index} 
-              className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 animate-fade-in relative overflow-hidden"
-              style={{ animationDelay: `${index * 0.1}s` }}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {testimonials.map((testimonial) => (
+            <div
+              key={testimonial.id}
+              className="p-8 rounded-2xl bg-card border border-border"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
-              <CardContent className="p-6 relative">
-                <Quote className="w-10 h-10 text-primary/20 mb-4" />
-                
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
+              <div className="flex gap-1 mb-4">
+                {[...Array(testimonial.rating)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-accent text-accent" />
+                ))}
+              </div>
 
-                <p className="text-muted-foreground mb-6 leading-relaxed">
-                  "{testimonial.testimonial_text}"
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                "{testimonial.testimonial_text}"
+              </p>
+
+              <div className="border-t border-border pt-4">
+                <p className="font-semibold text-foreground text-sm">
+                  {testimonial.customer_name}
                 </p>
-
-                <div className="border-t pt-4">
-                  <p className="font-semibold text-foreground">
-                    {testimonial.customer_name}
+                {testimonial.customer_company && (
+                  <p className="text-xs text-muted-foreground">
+                    {testimonial.customer_company}
                   </p>
-                  {testimonial.customer_company && (
-                    <p className="text-sm text-muted-foreground">
-                      {testimonial.customer_company}
-                    </p>
-                  )}
-                  {testimonial.is_featured && (
-                    <span className="text-xs text-primary font-semibold">{t('testimonials.featured')}</span>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                )}
+              </div>
+            </div>
           ))}
         </div>
       </div>

@@ -290,6 +290,13 @@ const translations: Record<Language, Record<string, string>> = {
     'liveChat.sendErrorDesc': 'Could not send message. Please try again',
     'liveChat.startError': 'Error',
     'liveChat.startErrorDesc': 'Could not start the chat. Please try again',
+    'liveChat.nameRequiredDesc': 'Please enter your name to start a chat',
+    'liveChat.system': 'System',
+    'liveChat.welcomeMessage': 'Hello {name}! 👋\n\nWe\'re here to help.\n\n🤖 Smart auto-responder will answer your initial questions\n👤 A real agent will join if needed\n\nFeel free to ask your question!',
+    'liveChat.error': 'Error',
+    'liveChat.errorStartDesc': 'Could not start the chat. Please try again',
+    'liveChat.humanAgentTitle': '📞 A human agent will get back to you soon',
+    'liveChat.humanAgentDesc': 'Your question has been forwarded to our agent',
 
     // PublicFAQ
     'faq.title': 'Frequently Asked Questions',
@@ -681,6 +688,13 @@ const translations: Record<Language, Record<string, string>> = {
     'liveChat.sendErrorDesc': 'לא הצלחנו לשלוח את ההודעה. אנא נסו שוב',
     'liveChat.startError': 'שגיאה',
     'liveChat.startErrorDesc': 'לא הצלחנו להתחיל את השיחה. אנא נסו שוב',
+    'liveChat.nameRequiredDesc': 'אנא הזינו את שמכם להתחלת שיחה',
+    'liveChat.system': 'מערכת',
+    'liveChat.welcomeMessage': 'שלום {name}! 👋\n\nאנחנו כאן לעזור לכם.\n\n🤖 עונה אוטומטית חכמה תענה על שאלותיכם\n👤 נציג אמיתי יצטרף במידת הצורך\n\nאתם מוזמנים לכתוב את השאלה שלכם!',
+    'liveChat.error': 'שגיאה',
+    'liveChat.errorStartDesc': 'לא הצלחנו להתחיל את השיחה. אנא נסו שוב',
+    'liveChat.humanAgentTitle': '📞 נציג אנושי יחזור אליכם בקרוב',
+    'liveChat.humanAgentDesc': 'השאלה שלכם הועברה לנציג שלנו',
 
     // PublicFAQ
     'faq.title': 'שאלות נפוצות',
