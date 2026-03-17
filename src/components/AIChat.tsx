@@ -494,8 +494,8 @@ Tell me - how many people are you? What interests you? 100+ activities await!`)
     } catch (error) {
       console.error('Error generating recommendation:', error);
       toast({
-        title: "שגיאה",
-        description: "לא הצלחנו ליצור המלצה. אנא נסו שוב.",
+        title: isEn ? "Error" : "שגיאה",
+        description: isEn ? "Could not generate recommendation. Please try again." : "לא הצלחנו ליצור המלצה. אנא נסו שוב.",
         variant: "destructive"
       });
     } finally {
