@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/accordion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 interface FAQItem {
   id: string;
@@ -20,6 +20,7 @@ export const PublicFAQ = () => {
   const { language, t } = useLanguage();
   const [faqs, setFaqs] = useState<FAQItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     const fetchFaqs = async () => {
@@ -36,7 +37,6 @@ export const PublicFAQ = () => {
     fetchFaqs();
   }, [language]);
 
-  // Fallback static FAQs
   const fallback = [1, 2, 3, 4, 5].map((i) => ({
     id: String(i),
     question: t(`faq.${i}.q`),
@@ -53,9 +53,9 @@ export const PublicFAQ = () => {
         <div className="max-w-2xl mx-auto">
           <motion.div
             className="text-center mb-12"
-            initial={{ opacity: 0, y: 20 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.5 }}
           >
             <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-6">
@@ -66,9 +66,9 @@ export const PublicFAQ = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.5, delay: 0.15 }}
           >
             <Accordion type="single" collapsible className="space-y-3">
