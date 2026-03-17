@@ -4,16 +4,45 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import { z } from 'zod';
+
+const leadSchema = z.object({
+  name: z.string().trim().min(1).max(100),
+  phone: z.string().trim().min(6).max(30),
+  message: z.string().trim().max(1000),
+});
 
 export const ContactSection = () => {
   const { t } = useLanguage();
   const [form, setForm] = useState({ name: '', phone: '', message: '' });
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    const parsed = leadSchema.safeParse(form);
+    if (!parsed.success) return;
+
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.from('leads').insert({
+        name: parsed.data.name,
+        phone: parsed.data.phone,
+        notes: parsed.data.message || null,
+        source_platform: 'website' as const,
+        engagement_type: 'form_submission' as const,
+      });
+
+      if (error) throw error;
+      setSubmitted(true);
+    } catch {
+      toast.error(t('contact.error') || 'Error submitting form');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -40,7 +69,7 @@ export const ContactSection = () => {
               </a>
             </div>
             <div className="mt-8">
-              <a href="https://wa.me/972537314235?text=Hi%20Simcha%2C%20I'd%20like%20more%20info" target="_blank" rel="noopener noreferrer">
+              <a href="https://wa.me/972537314235" target="_blank" rel="noopener noreferrer">
                 <Button className="bg-secondary hover:bg-secondary/90 text-secondary-foreground">
                   <MessageCircle className="h-5 w-5" />
                   {t('contact.whatsapp')}
@@ -59,7 +88,9 @@ export const ContactSection = () => {
                 <Input placeholder={t('contact.form.name')} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
                 <Input placeholder={t('contact.form.phone')} type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} required />
                 <Textarea placeholder={t('contact.form.message')} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} rows={4} />
-                <Button type="submit" className="w-full">{t('contact.form.submit')}</Button>
+                <Button type="submit" className="w-full" disabled={submitting}>
+                  {submitting ? '...' : t('contact.form.submit')}
+                </Button>
               </form>
             )}
           </div>
