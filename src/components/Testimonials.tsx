@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Star, Quote } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 
 const fadeUp: Variants = {
@@ -26,6 +26,7 @@ export const Testimonials = () => {
   const { language, t } = useLanguage();
   const [items, setItems] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     const fetchTestimonials = async () => {
@@ -42,7 +43,6 @@ export const Testimonials = () => {
     fetchTestimonials();
   }, [language]);
 
-  // Fallback to static if no DB data
   const fallback = [
     { id: '1', customer_name: t('testimonials.1.name'), customer_company: t('testimonials.1.company'), testimonial_text: t('testimonials.1.text'), rating: 5 },
     { id: '2', customer_name: t('testimonials.2.name'), customer_company: t('testimonials.2.company'), testimonial_text: t('testimonials.2.text'), rating: 5 },
@@ -58,9 +58,9 @@ export const Testimonials = () => {
       <div className="container mx-auto px-4">
         <motion.div
           className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{t('testimonials.title')}</h2>
@@ -72,9 +72,9 @@ export const Testimonials = () => {
             <motion.div
               key={item.id}
               custom={i}
-              initial="hidden"
+              initial="visible"
               whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
+              viewport={{ once: true, amount: 0.1 }}
               variants={fadeUp}
               className="relative bg-card border border-border rounded-lg p-8"
             >

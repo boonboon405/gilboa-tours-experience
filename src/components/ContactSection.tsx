@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { z } from 'zod';
 
 const leadSchema = z.object({
@@ -20,6 +20,7 @@ export const ContactSection = () => {
   const [form, setForm] = useState({ name: '', phone: '', message: '' });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,9 +51,9 @@ export const ContactSection = () => {
       <div className="container mx-auto px-4">
         <motion.div
           className="max-w-4xl mx-auto grid md:grid-cols-2 gap-16"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.5 }}
         >
           <div>

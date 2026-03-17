@@ -4,8 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { motion } from 'framer-motion';
-
+import { motion, useReducedMotion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 
 const fadeUp: Variants = {
@@ -20,6 +19,7 @@ const fadeUp: Variants = {
 export const ServiceCards = () => {
   const { t } = useLanguage();
   const [openService, setOpenService] = useState<string | null>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   const services = [
     { key: 'daily', icon: Users },
@@ -35,9 +35,9 @@ export const ServiceCards = () => {
         <div className="container mx-auto px-4">
           <motion.div
             className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{t('services.title')}</h2>
@@ -49,9 +49,9 @@ export const ServiceCards = () => {
               <motion.div
                 key={s.key}
                 custom={i}
-                initial="hidden"
+                initial="visible"
                 whileInView="visible"
-                viewport={{ once: true, margin: '-40px' }}
+                viewport={{ once: true, amount: 0.1 }}
                 variants={fadeUp}
               >
                 <Card
