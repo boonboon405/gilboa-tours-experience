@@ -113,13 +113,13 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
       
       if (event.error === 'no-speech') {
         toast({
-          title: "לא נשמע קול",
-          description: "אנא נסו שוב ודברו בבירור",
+          title: language === 'en' ? "No voice detected" : "לא נשמע קול",
+          description: language === 'en' ? "Please try again and speak clearly" : "אנא נסו שוב ודברו בבירור",
         });
       } else if (event.error === 'not-allowed') {
         toast({
-          title: "נדרשת הרשאה",
-          description: "אנא אפשרו גישה למיקרופון בדפדפן",
+          title: language === 'en' ? "Permission required" : "נדרשת הרשאה",
+          description: language === 'en' ? "Please allow microphone access in your browser" : "אנא אפשרו גישה למיקרופון בדפדפן",
           variant: "destructive"
         });
       }
