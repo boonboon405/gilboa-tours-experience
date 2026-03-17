@@ -35,6 +35,13 @@ const translations: Record<Language, Record<string, string>> = {
     'services.odt.title': 'ODT — Team Building',
     'services.odt.desc': 'Challenging outdoor activities for organizations and teams — strengthening bonds through shared experiences.',
     'services.cta': 'Learn More',
+    'services.daily.highlights': 'Nature hikes • Historical sites • Springs • Culinary experiences',
+    'services.daily.detail': 'A full day exploring the best of Northern Israel. We curate a personalized route combining outdoor adventures, historical landmarks, refreshing springs, and local culinary delights — all with a professional guide.',
+    'services.vip.highlights': 'Custom itinerary • Private guide • Luxury transport • Boutique experiences',
+    'services.vip.detail': 'Designed for international guests and executive groups. Every detail is tailored — from handpicked locations to premium dining. A white-glove experience showcasing the best of Israeli culture and landscape.',
+    'services.odt.highlights': 'Team challenges • Leadership workshops • 10–200 participants • Professional facilitation',
+    'services.odt.detail': 'Outdoor Development Training that builds trust, communication, and leadership through shared challenges in nature. Fully facilitated by certified professionals with meals included.',
+    'services.detail.cta': 'Contact Us',
 
     // Testimonials
     'testimonials.title': 'What Our Clients Say',
