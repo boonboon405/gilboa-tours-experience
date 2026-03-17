@@ -34,7 +34,7 @@ export const PublicFAQ = () => {
       }
     };
     fetchFAQs();
-  }, []);
+  }, [language]);
 
   if (loading || faqs.length === 0) return null;
 
