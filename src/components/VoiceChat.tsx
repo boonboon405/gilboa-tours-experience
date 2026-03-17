@@ -84,8 +84,8 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     if (!SpeechRecognition || !window.speechSynthesis) {
       setSpeechSupported(false);
       toast({
-        title: "דפדפן לא נתמך",
-        description: "אנא השתמשו ב-Chrome, Edge או Safari לתמיכה מלאה בקול",
+        title: language === 'en' ? "Browser not supported" : "דפדפן לא נתמך",
+        description: language === 'en' ? "Please use Chrome, Edge or Safari for full voice support" : "אנא השתמשו ב-Chrome, Edge או Safari לתמיכה מלאה בקול",
         variant: "destructive"
       });
       return;
