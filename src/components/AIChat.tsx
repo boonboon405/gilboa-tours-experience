@@ -136,17 +136,31 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   useEffect(() => {
     // Send initial greeting with recommendations
     if (messages.length === 0 && !greetingSpokenRef.current) {
-      const greeting = quizResults
-        ? `שלום! אני מומחה לסיוריים ומציע חוויות:
+      const isEnglish = language === 'en';
+      
+      const greeting = isEnglish
+        ? (quizResults
+          ? `Hello! I'm your tour experience expert offering:
+🔥 Adventure  |  💧 Nature  |  🏛️ History  |  🍷 Culinary  |  ⚡ Sports  |  🎨 Creative  |  🌿 Wellness  |  🤝 Team Building
+
+I see you've completed the Quiz - great! I'd love to recommend activities that match your preferences.
+Tell me - how many people are you? What interests you?`
+          : `Hello! I'm your tour experience expert offering:
+🔥 Adventure  |  💧 Nature  |  🏛️ History  |  🍷 Culinary  |  ⚡ Sports  |  🎨 Creative  |  🌿 Wellness  |  🤝 Team Building
+
+Answer a few questions and I'll recommend the perfect activities for you.
+Tell me - how many people are you? What interests you? 100+ activities await!`)
+        : (quizResults
+          ? `שלום! אני מומחה לסיוריים ומציע חוויות:
 🔥 הרפתקאות  |  💧 טבע  |  🏛️ דברי הימים  |  🍷 יין ואומנות הבישול  |  ⚡ ספורט  |  🎨 יצירה  |  🌿 בריאות  |  🤝 גיבוש צוות
 
 ראיתי שעשית את הQuiz - מעולה! ברצוני להמליץ על פעילויות שיתאימו לכם.
 ספרו לי - כמה אנשים אתם? ספרו מה מעניין אתכם?`
-        : `שלום! אני מומחה לסיוריים ומציע חוויות:
+          : `שלום! אני מומחה לסיוריים ומציע חוויות:
 🔥 הרפתקאות  |  💧 טבע  |  🏛️ דברי הימים  |  🍷 יין ואומנות הבישול  |  ⚡ ספורט  |  🎨 יצירה  |  🌿 בריאות  |  🤝 גיבוש צוות
 
 ענו על השאלות , ברצוני להמליץ על פעילויות שיתאימו לכם
-ספרו לי - כמה אנשים אתם? ספרו מה מעניין אתכם? 100 פעילויות שמחכות לכם!`;
+ספרו לי - כמה אנשים אתם? ספרו מה מעניין אתכם? 100 פעילויות שמחכות לכם!`);
 
       setMessages([{
         id: '0',
