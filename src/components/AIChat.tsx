@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Bot, User, RotateCcw } from 'lucide-react';
+import { Bot, User, RotateCcw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -9,6 +9,7 @@ import { CategorySelector } from '@/components/CategorySelector';
 import { AnswerSummary, ConversationData } from '@/components/AnswerSummary';
 import { RecommendedTours } from '@/components/RecommendedTours';
 import { ChatExport } from '@/components/ChatExport';
+import { ProgressIndicator } from '@/components/ProgressIndicator';
 import { VoiceTextInput } from '@/components/VoiceTextInput';
 import { categoryMetadata } from '@/utils/activityCategories';
 import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice } from '@/utils/elevenLabsTTS';
@@ -55,8 +56,16 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
 
   const isEn = language === 'en';
 
+  // Progress steps
+  const steps = [
+    { id: 'interests', label: isEn ? 'Interests' : 'תחומי עניין', completed: currentStep > 0, current: currentStep === 0 },
+    { id: 'group', label: isEn ? 'Group Size' : 'גודל קבוצה', completed: currentStep > 1, current: currentStep === 1 },
+    { id: 'details', label: isEn ? 'Details' : 'פרטים', completed: currentStep > 2, current: currentStep === 2 },
+    { id: 'summary', label: isEn ? 'Summary' : 'סיכום', completed: currentStep > 3, current: currentStep === 3 },
+  ];
+
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [messages]);
 
   const greetingSpokenRef = useRef(false);
@@ -242,24 +251,30 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
 
   return (
     <div className="flex flex-col flex-1 min-h-0 bg-card rounded-xl border border-border/50 shadow-sm overflow-hidden">
-      {/* Minimal header — only show reset + export when there's a conversation */}
-      {messages.length > 1 && (
-        <div className="flex items-center justify-between px-4 py-2 border-b border-border/40 bg-muted/30">
+      {/* Header with progress + actions */}
+      <div className="px-4 py-3 border-b border-border/40 bg-muted/30 space-y-3">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             <span className="text-xs text-muted-foreground font-medium">
-              {isEn ? 'Active conversation' : 'שיחה פעילה'}
+              {isEn ? 'Text Chat' : 'צ\'אט טקסט'}
               {isSpeaking && (isEn ? ' • Speaking...' : ' • מדבר...')}
             </span>
           </div>
           <div className="flex items-center gap-1">
             <ChatExport messages={messages} conversationData={conversationData} conversationId={conversationId} />
-            <Button variant="ghost" size="sm" onClick={handleResetConversation} className="text-xs h-7 px-2 text-muted-foreground">
-              <RotateCcw className="w-3 h-3" />
-            </Button>
+            {messages.length > 1 && (
+              <Button variant="ghost" size="sm" onClick={handleResetConversation} className="text-xs h-7 px-2 text-muted-foreground">
+                <RotateCcw className="w-3 h-3" />
+              </Button>
+            )}
           </div>
         </div>
-      )}
+        {/* Progress indicator — shows after first step */}
+        {currentStep > 0 && (
+          <ProgressIndicator steps={steps} className="pb-1" />
+        )}
+      </div>
 
       {/* Messages */}
       <ScrollArea className="flex-1 min-h-0">
@@ -319,15 +334,17 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
       </ScrollArea>
 
       {/* Input area */}
-      <div className="border-t border-border/40 bg-background p-3 space-y-3">
+      <div className="border-t border-border/40 bg-background space-y-2">
         {/* Category selector */}
         {showCategorySelector && (
-          <CategorySelector onSelect={handleCategorySelect} disabled={isLoading} />
+          <div className="px-3 pt-3">
+            <CategorySelector onSelect={handleCategorySelect} disabled={isLoading} />
+          </div>
         )}
 
-        {/* Quick replies — clean horizontal scroll */}
+        {/* Quick replies */}
         {quickReplies.length > 0 && !showCategorySelector && (
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+          <div className="flex gap-2 overflow-x-auto px-3 pt-2 pb-0 scrollbar-none">
             {quickReplies.slice(0, 5).map((reply, i) => (
               <Button
                 key={i}
@@ -343,7 +360,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
           </div>
         )}
 
-        {/* Text input */}
+        {/* Text + voice input */}
         <VoiceTextInput
           onSend={handleSend}
           onTyping={() => {}}
