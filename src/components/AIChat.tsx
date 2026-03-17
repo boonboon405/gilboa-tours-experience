@@ -450,21 +450,21 @@ Tell me - how many people are you? What interests you? 100+ activities await!`)
     setEditingField(field);
     setShowSummary(false);
     
-    const fieldPrompts: Record<keyof ConversationData, string> = {
-      categories: 'איזה קטגוריות מעניינות אותך?',
-      numberOfPeople: 'כמה אנשים משתתפים?',
-      situation: 'מה הסיטואציה? (יום צוות, יום גיבוש, וכו\')',
-      dates: 'מה התאריכים המועדפים?',
-      budget: 'מה התקציב המשוער לאדם?',
-      specificInterests: 'יש תחומי עניין ספציפיים?',
-      transport: 'יש צורך בהסעות?'
+    const fieldPrompts: Record<keyof ConversationData, { he: string; en: string }> = {
+      categories: { he: 'איזה קטגוריות מעניינות אותך?', en: 'Which categories interest you?' },
+      numberOfPeople: { he: 'כמה אנשים משתתפים?', en: 'How many people are participating?' },
+      situation: { he: 'מה הסיטואציה? (יום צוות, יום גיבוש, וכו\')', en: 'What\'s the occasion? (team day, team building, etc.)' },
+      dates: { he: 'מה התאריכים המועדפים?', en: 'What are your preferred dates?' },
+      budget: { he: 'מה התקציב המשוער לאדם?', en: 'What\'s the estimated budget per person?' },
+      specificInterests: { he: 'יש תחומי עניין ספציפיים?', en: 'Any specific interests?' },
+      transport: { he: 'יש צורך בהסעות?', en: 'Do you need transportation?' }
     };
     
-    const prompt = fieldPrompts[field];
+    const prompt = fieldPrompts[field][language] || fieldPrompts[field].he;
     const aiMessage: Message = {
       id: `edit-${Date.now()}`,
       sender: 'ai',
-      message: `בטח! בואו נעדכן את זה. ${prompt}`,
+      message: isEn ? `Sure! Let's update that. ${prompt}` : `בטח! בואו נעדכן את זה. ${prompt}`,
       created_at: new Date().toISOString()
     };
     
