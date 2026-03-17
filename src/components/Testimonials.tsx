@@ -19,12 +19,13 @@ const Testimonials = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => { fetchTestimonials(); }, []);
+  useEffect(() => { fetchTestimonials(); }, [language]);
 
   const fetchTestimonials = async () => {
     try {
       const { data, error } = await supabase
         .from('testimonials').select('*').eq('status', 'approved')
+        .eq('language', language)
         .order('is_featured', { ascending: false })
         .order('created_at', { ascending: false }).limit(3);
       if (error) throw error;
