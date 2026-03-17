@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export const Footer = () => {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
 
   return (
     <footer className="py-12 bg-foreground text-primary-foreground/70">
@@ -14,6 +14,9 @@ export const Footer = () => {
             <a href="#services" className="hover:text-primary-foreground transition-colors">{t('footer.services')}</a>
             <a href="#faq" className="hover:text-primary-foreground transition-colors">{t('footer.faq')}</a>
             <a href="#contact" className="hover:text-primary-foreground transition-colors">{t('footer.contact')}</a>
+            <Link to="/accessibility" className="hover:text-primary-foreground transition-colors">
+              {language === 'he' ? 'נגישות' : 'Accessibility'}
+            </Link>
           </div>
           <p className="text-xs text-primary-foreground/50">{t('footer.rights')}</p>
         </div>
