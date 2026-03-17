@@ -171,12 +171,13 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     // Stop any ongoing speech
     stopElevenLabsSpeech();
     
-    // Use ElevenLabs for high-quality Hebrew TTS
+    // Use ElevenLabs for high-quality TTS
     await speakWithElevenLabs(
       text,
       selectedVoice,
       () => setIsSpeaking(true),
-      () => setIsSpeaking(false)
+      () => setIsSpeaking(false),
+      language === 'en' ? 'en' : 'he'
     );
   };
 
