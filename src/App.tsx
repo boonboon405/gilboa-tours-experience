@@ -33,7 +33,6 @@ import AdminCategories from "./pages/AdminCategories";
 import AdminGallery from "./pages/AdminGallery";
 import AccessibilityStatement from "./pages/AccessibilityStatement";
 import NotFound from "./pages/NotFound";
-import { LiveChatWidget } from "./components/LiveChatWidget";
 
 const queryClient = new QueryClient();
 
@@ -59,125 +58,25 @@ const App = () => {
                 <Route path="/booking" element={<Booking />} />
                 <Route path="/chat" element={<Chat />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route 
-                  path="/admin" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/keywords"
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <AdminKeywords />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/chat" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <AdminChat />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/knowledge" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <AdminKnowledgeBase />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/chat-analytics" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <ChatAnalytics />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/booking-analytics" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <BookingAnalytics />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/testimonials" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <AdminTestimonials />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/email-templates" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <AdminEmailTemplates />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/email-automation" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <AdminEmailAutomation />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/dashboard" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <MasterDashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/ai-responses" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <AdminAIResponses />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/categories" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <AdminCategories />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/gallery" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <AdminGallery />
-                    </ProtectedRoute>
-                  } 
-                />
+                <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
+                <Route path="/admin/keywords" element={<ProtectedRoute requireAdmin><AdminKeywords /></ProtectedRoute>} />
+                <Route path="/admin/chat" element={<ProtectedRoute requireAdmin><AdminChat /></ProtectedRoute>} />
+                <Route path="/admin/knowledge" element={<ProtectedRoute requireAdmin><AdminKnowledgeBase /></ProtectedRoute>} />
+                <Route path="/chat-analytics" element={<ProtectedRoute requireAdmin><ChatAnalytics /></ProtectedRoute>} />
+                <Route path="/booking-analytics" element={<ProtectedRoute requireAdmin><BookingAnalytics /></ProtectedRoute>} />
+                <Route path="/admin/testimonials" element={<ProtectedRoute requireAdmin><AdminTestimonials /></ProtectedRoute>} />
+                <Route path="/admin/email-templates" element={<ProtectedRoute requireAdmin><AdminEmailTemplates /></ProtectedRoute>} />
+                <Route path="/admin/email-automation" element={<ProtectedRoute requireAdmin><AdminEmailAutomation /></ProtectedRoute>} />
+                <Route path="/dashboard" element={<ProtectedRoute requireAdmin><MasterDashboard /></ProtectedRoute>} />
+                <Route path="/admin/ai-responses" element={<ProtectedRoute requireAdmin><AdminAIResponses /></ProtectedRoute>} />
+                <Route path="/admin/categories" element={<ProtectedRoute requireAdmin><AdminCategories /></ProtectedRoute>} />
+                <Route path="/admin/gallery" element={<ProtectedRoute requireAdmin><AdminGallery /></ProtectedRoute>} />
                 <Route path="/keywords" element={<KeywordsList />} />
-                <Route 
-                  path="/leads" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <LeadManagement />
-                    </ProtectedRoute>
-                  } 
-                />
+                <Route path="/leads" element={<ProtectedRoute requireAdmin><LeadManagement /></ProtectedRoute>} />
                 <Route path="/ai-settings" element={<AISettings />} />
                 <Route path="/settings/ai" element={<AISettings />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
-              <LiveChatWidget />
               <AccessibilityWidget />
             </BrowserRouter>
             </TooltipProvider>

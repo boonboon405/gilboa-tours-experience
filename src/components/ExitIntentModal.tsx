@@ -136,7 +136,7 @@ export const ExitIntentModal = () => {
           </Button>
 
           <Button
-            variant="hero"
+            variant="default"
             size="lg"
             className="w-full text-lg"
             onClick={() => {

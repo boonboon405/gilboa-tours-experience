@@ -5,30 +5,20 @@ import { ChooseYourDay } from '@/components/ChooseYourDay';
 import { VIPTours } from '@/components/VIPTours';
 import { ODTSection } from '@/components/ODTSection';
 import { Testimonials } from '@/components/Testimonials';
+import { PublicFAQ } from '@/components/PublicFAQ';
 import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
 import SEOKeywords from '@/components/SEOKeywords';
-import { ExitIntentModal } from '@/components/ExitIntentModal';
-import { EmergencyContactButton } from '@/components/EmergencyContactButton';
-import { PublicFAQ } from '@/components/PublicFAQ';
-import { TestimonialSubmissionForm } from '@/components/TestimonialSubmissionForm';
-import { LandscapeGallery } from '@/components/LandscapeGallery';
-import NorthIsraelGallery from '@/components/NorthIsraelGallery';
-import { AccessibilityInfoSection } from '@/components/AccessibilityInfoSection';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOKeywords />
-      <ExitIntentModal />
-      <EmergencyContactButton />
       <Navigation />
       <div id="home">
         <Hero />
       </div>
       <ServiceCards />
-      
-      {/* Hidden sections - accessed via TourServices CTAs */}
       <div id="choose-your-day" className="scroll-mt-20">
         <ChooseYourDay />
       </div>
@@ -38,28 +28,9 @@ const Index = () => {
       <div id="odt-section" className="scroll-mt-20">
         <ODTSection />
       </div>
-      
-      <div id="landscape-gallery" className="scroll-mt-20">
-        <LandscapeGallery />
-      </div>
-      
-      <div id="north-israel-gallery" className="scroll-mt-20">
-        <NorthIsraelGallery />
-      </div>
-      
       <Testimonials />
       <PublicFAQ />
-      <div id="testimonial-form" className="scroll-mt-20 py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <TestimonialSubmissionForm />
-        </div>
-      </div>
-      <div id="contact" className="scroll-mt-20">
-        <ContactSection />
-      </div>
-      <div id="accessibility-info" className="scroll-mt-20">
-        <AccessibilityInfoSection />
-      </div>
+      <ContactSection />
       <Footer />
     </div>
   );

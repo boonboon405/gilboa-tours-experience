@@ -81,7 +81,7 @@ export const EmergencyContactButton = () => {
             </Button>
 
             <Button
-              variant="hero"
+              variant="default"
               size="lg"
               className="w-full text-lg justify-start"
               onClick={() => {
