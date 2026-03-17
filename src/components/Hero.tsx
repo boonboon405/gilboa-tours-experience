@@ -33,13 +33,13 @@ export const Hero = () => {
               </Button>
             </a>
             <Link to="/booking">
-              <Button variant="outline" size="lg" className="text-base px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
+              <Button variant="outline" size="lg" className="text-base px-8 border-primary-foreground/30 hover:bg-primary-foreground/10 text-primary">
                 {t('hero.book')}
               </Button>
             </Link>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 };
