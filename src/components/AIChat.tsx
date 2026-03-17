@@ -162,10 +162,10 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
         setShowCategorySelector(true);
       }
       
-      // Speak the greeting
-      setTimeout(() => speakText(greeting), 500);
+      // Don't auto-play greeting - browser blocks autoplay without user interaction
+      // TTS will play after the user's first interaction
     }
-  }, [quizResults]);
+  }, [quizResults, language]);
 
   const speakText = async (text: string) => {
     // Stop any ongoing speech
