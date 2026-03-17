@@ -247,7 +247,7 @@ export const Navigation = () => {
         </div>
 
         {isOpen && (
-          <div id="mobile-menu" className="md:hidden pb-4 animate-in fade-in slide-in-from-top-2 duration-300" role="menu">
+          <div id="mobile-menu" className="lg:hidden pb-4 animate-in fade-in slide-in-from-top-2 duration-300" role="menu">
             <button
               onClick={() => { setShowQuiz(true); setIsOpen(false); }}
               className="w-full mt-2 px-4 py-2 rounded-lg bg-gradient-hero text-white font-medium flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-glow relative"
