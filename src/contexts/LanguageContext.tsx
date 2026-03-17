@@ -688,6 +688,13 @@ const translations: Record<Language, Record<string, string>> = {
     'liveChat.sendErrorDesc': 'לא הצלחנו לשלוח את ההודעה. אנא נסו שוב',
     'liveChat.startError': 'שגיאה',
     'liveChat.startErrorDesc': 'לא הצלחנו להתחיל את השיחה. אנא נסו שוב',
+    'liveChat.nameRequiredDesc': 'אנא הזינו את שמכם להתחלת שיחה',
+    'liveChat.system': 'מערכת',
+    'liveChat.welcomeMessage': 'שלום {name}! 👋\n\nאנחנו כאן לעזור לכם.\n\n🤖 עונה אוטומטית חכמה תענה על שאלותיכם\n👤 נציג אמיתי יצטרף במידת הצורך\n\nאתם מוזמנים לכתוב את השאלה שלכם!',
+    'liveChat.error': 'שגיאה',
+    'liveChat.errorStartDesc': 'לא הצלחנו להתחיל את השיחה. אנא נסו שוב',
+    'liveChat.humanAgentTitle': '📞 נציג אנושי יחזור אליכם בקרוב',
+    'liveChat.humanAgentDesc': 'השאלה שלכם הועברה לנציג שלנו',
 
     // PublicFAQ
     'faq.title': 'שאלות נפוצות',
