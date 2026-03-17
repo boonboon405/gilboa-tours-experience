@@ -262,7 +262,8 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
           message: userMessage,
           conversationId,
           sessionId,
-          quizResults
+          quizResults,
+          language: language === 'en' ? 'en' : 'he'
         }
       });
 
