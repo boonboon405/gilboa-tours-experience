@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { Provider } from "react-redux";
+import { store } from "@/store";
 import { lazy, Suspense } from "react";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -35,38 +37,40 @@ const Loading = () => (
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <LanguageProvider>
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Suspense fallback={<Loading />}>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/booking" element={<Booking />} />
-                  <Route path="/accessibility" element={<AccessibilityStatement />} />
-                  <Route path="/chat" element={<Chat />} />
-                  <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
-                  <Route path="/admin/master" element={<ProtectedRoute requireAdmin><MasterDashboard /></ProtectedRoute>} />
-                  <Route path="/admin/leads" element={<ProtectedRoute requireAdmin><LeadManagement /></ProtectedRoute>} />
-                  <Route path="/admin/gallery" element={<ProtectedRoute requireAdmin><AdminGallery /></ProtectedRoute>} />
-                  <Route path="/admin/categories" element={<ProtectedRoute requireAdmin><AdminCategories /></ProtectedRoute>} />
-                  <Route path="/admin/testimonials" element={<ProtectedRoute requireAdmin><AdminTestimonials /></ProtectedRoute>} />
-                  <Route path="/admin/knowledge-base" element={<ProtectedRoute requireAdmin><AdminKnowledgeBase /></ProtectedRoute>} />
-                  <Route path="/admin/email-templates" element={<ProtectedRoute requireAdmin><AdminEmailTemplates /></ProtectedRoute>} />
-                  <Route path="/admin/analytics" element={<ProtectedRoute requireAdmin><BookingAnalytics /></ProtectedRoute>} />
-                  <Route path="/admin/chat-analytics" element={<ProtectedRoute requireAdmin><ChatAnalytics /></ProtectedRoute>} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
-      </LanguageProvider>
-    </QueryClientProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <LanguageProvider>
+          <AuthProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Suspense fallback={<Loading />}>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/booking" element={<Booking />} />
+                    <Route path="/accessibility" element={<AccessibilityStatement />} />
+                    <Route path="/chat" element={<Chat />} />
+                    <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
+                    <Route path="/admin/master" element={<ProtectedRoute requireAdmin><MasterDashboard /></ProtectedRoute>} />
+                    <Route path="/admin/leads" element={<ProtectedRoute requireAdmin><LeadManagement /></ProtectedRoute>} />
+                    <Route path="/admin/gallery" element={<ProtectedRoute requireAdmin><AdminGallery /></ProtectedRoute>} />
+                    <Route path="/admin/categories" element={<ProtectedRoute requireAdmin><AdminCategories /></ProtectedRoute>} />
+                    <Route path="/admin/testimonials" element={<ProtectedRoute requireAdmin><AdminTestimonials /></ProtectedRoute>} />
+                    <Route path="/admin/knowledge-base" element={<ProtectedRoute requireAdmin><AdminKnowledgeBase /></ProtectedRoute>} />
+                    <Route path="/admin/email-templates" element={<ProtectedRoute requireAdmin><AdminEmailTemplates /></ProtectedRoute>} />
+                    <Route path="/admin/analytics" element={<ProtectedRoute requireAdmin><BookingAnalytics /></ProtectedRoute>} />
+                    <Route path="/admin/chat-analytics" element={<ProtectedRoute requireAdmin><ChatAnalytics /></ProtectedRoute>} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </BrowserRouter>
+            </TooltipProvider>
+          </AuthProvider>
+        </LanguageProvider>
+      </QueryClientProvider>
+    </Provider>
   );
 };
 
