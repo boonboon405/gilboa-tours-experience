@@ -13,7 +13,7 @@ interface FAQItem {
 export const PublicFAQ = () => {
   const [faqs, setFaqs] = useState<FAQItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     const fetchFAQs = async () => {
@@ -22,6 +22,7 @@ export const PublicFAQ = () => {
           .from('knowledge_base')
           .select('id, question, answer, category')
           .eq('is_active', true)
+          .eq('language', language)
           .order('priority', { ascending: false })
           .limit(8);
         if (error) throw error;
