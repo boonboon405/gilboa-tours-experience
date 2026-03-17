@@ -34,7 +34,7 @@ export const Navigation = () => {
   return (
     <nav
       className={`fixed top-0 w-full z-50 transition-colors duration-300 ${
-        isScrolled ? 'bg-card/95 backdrop-blur-sm border-b border-border' : 'bg-transparent'
+        isScrolled ? 'bg-card/95 backdrop-blur-sm border-b border-border shadow-sm' : 'bg-transparent'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -47,11 +47,17 @@ export const Navigation = () => {
                 key={item.href}
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
               >
                 {item.label}
               </a>
             ))}
+            <Link
+              to="/chat"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
+            >
+              {language === 'he' ? 'צ׳אט AI' : 'AI Chat'}
+            </Link>
           </div>
 
           <div className="hidden md:flex items-center gap-3">
@@ -92,6 +98,13 @@ export const Navigation = () => {
                   {item.label}
                 </a>
               ))}
+              <Link
+                to="/chat"
+                className="block py-3 px-4 text-foreground hover:bg-muted rounded-md transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                {language === 'he' ? 'צ׳אט AI' : 'AI Chat'}
+              </Link>
             </div>
             <div className="mt-4">
               <Link to="/booking">
