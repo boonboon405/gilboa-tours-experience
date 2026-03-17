@@ -642,6 +642,7 @@ export type Database = {
           id: string
           is_active: boolean
           keywords: string[] | null
+          language: string
           priority: number | null
           question: string
           updated_at: string
@@ -654,6 +655,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           keywords?: string[] | null
+          language?: string
           priority?: number | null
           question: string
           updated_at?: string
@@ -666,6 +668,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           keywords?: string[] | null
+          language?: string
           priority?: number | null
           question?: string
           updated_at?: string
@@ -940,6 +943,7 @@ export type Database = {
           id: string
           image_url: string | null
           is_featured: boolean
+          language: string
           rating: number
           status: string
           testimonial_text: string
@@ -957,6 +961,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean
+          language?: string
           rating: number
           status?: string
           testimonial_text: string
@@ -974,6 +979,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean
+          language?: string
           rating?: number
           status?: string
           testimonial_text?: string
