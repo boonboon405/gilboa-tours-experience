@@ -89,6 +89,11 @@ const translations: Record<Language, Record<string, string>> = {
     'footer.faq': 'FAQ',
     'footer.contact': 'Contact',
     'footer.rights': `© ${new Date().getFullYear()} Simcha. All rights reserved.`,
+
+    // Chat widget
+    'chat.title': 'Chat with Simcha',
+    'chat.welcome': 'Hi! 👋 How can we help you?',
+    'chat.placeholder': 'Type a message...',
   },
   he: {
     // Nav
