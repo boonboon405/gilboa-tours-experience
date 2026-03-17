@@ -31,7 +31,7 @@ export const ExitIntentModal = () => {
     };
 
     // Hesitation detection - idle for 45 seconds on key pages
-    let idleTimer: NodeJS.Timeout;
+    let idleTimer: ReturnType<typeof setTimeout>;
     const resetIdleTimer = () => {
       clearTimeout(idleTimer);
       if (!hasShown) {
