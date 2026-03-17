@@ -49,7 +49,7 @@ export const ServiceCards = () => {
               <motion.div
                 key={s.key}
                 custom={i}
-                initial={prefersReducedMotion ? "visible" : "hidden"}
+                initial="visible"
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.1 }}
                 variants={fadeUp}

@@ -72,7 +72,7 @@ export const Testimonials = () => {
             <motion.div
               key={item.id}
               custom={i}
-              initial={prefersReducedMotion ? "visible" : "hidden"}
+              initial="visible"
               whileInView="visible"
               viewport={{ once: true, amount: 0.1 }}
               variants={fadeUp}

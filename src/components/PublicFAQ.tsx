@@ -66,7 +66,7 @@ export const PublicFAQ = () => {
           </motion.div>
 
           <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.5, delay: 0.15 }}
