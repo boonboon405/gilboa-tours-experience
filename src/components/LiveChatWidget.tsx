@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { MessageCircle, X, Send, Minimize2, User, Headphones, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Message {
   id: string;
