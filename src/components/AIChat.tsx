@@ -822,12 +822,12 @@ Tell me - how many people are you? What interests you? 100+ activities await!`)
         onSend={handleSend}
         onTyping={handleTyping}
         isLoading={isLoading}
-        placeholder="הקלידו או דברו את התשובה שלכם..."
+        placeholder={isEn ? "Type or speak your answer..." : "הקלידו או דברו את התשובה שלכם..."}
         disabled={isLoading}
       />
 
       <p className="text-xs text-muted-foreground p-2 text-center">
-        רוצים לדבר עם בן אדם? רק תגידו • {isSpeaking && '🔊 מדבר...'}
+        {isEn ? 'Want to talk to a person? Just say so' : 'רוצים לדבר עם בן אדם? רק תגידו'} • {isSpeaking && (isEn ? '🔊 Speaking...' : '🔊 מדבר...')}
       </p>
     </Card>
   );
