@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Flame, Droplets, Landmark, Wine, Zap, Palette, Leaf, Handshake } from 'lucide-react';
 import { categoryMetadata, DNACategory } from '@/utils/activityCategories';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CategorySelectorProps {
   onSelect: (categories: string[]) => void;
@@ -22,6 +23,8 @@ const categoryIcons: Record<DNACategory, any> = {
 
 export const CategorySelector = ({ onSelect, disabled }: CategorySelectorProps) => {
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const { language } = useLanguage();
+  const isEn = language === 'en';
 
   const toggleCategory = (category: string) => {
     const newSelected = new Set(selected);
@@ -41,7 +44,9 @@ export const CategorySelector = ({ onSelect, disabled }: CategorySelectorProps) 
 
   return (
     <div className="space-y-4 p-4 bg-muted/30 rounded-lg border border-border/50">
-      <p className="text-sm text-center font-medium">בחרו את הקטגוריות שמעניינות אתכם:</p>
+      <p className="text-sm text-center font-medium">
+        {isEn ? 'Choose the categories that interest you:' : 'בחרו את הקטגוריות שמעניינות אתכם:'}
+      </p>
       
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {(Object.keys(categoryMetadata) as DNACategory[]).map((category) => {
@@ -67,7 +72,7 @@ export const CategorySelector = ({ onSelect, disabled }: CategorySelectorProps) 
               <Icon className={`w-6 h-6 transition-all duration-300 ${isSelected ? 'text-primary scale-110' : 'text-muted-foreground'}`} />
               <div className="text-center">
                 <p className={`text-xs font-medium ${isSelected ? 'text-primary' : 'text-foreground'}`}>
-                  {meta.name}
+                  {isEn ? (meta.nameEn || meta.name) : meta.name}
                 </p>
               </div>
               {isSelected && (
@@ -86,7 +91,7 @@ export const CategorySelector = ({ onSelect, disabled }: CategorySelectorProps) 
           disabled={disabled || selected.size === 0}
           className="w-full max-w-xs"
         >
-          שלח בחירה ({selected.size})
+          {isEn ? `Send Selection (${selected.size})` : `שלח בחירה (${selected.size})`}
         </Button>
       </div>
     </div>
