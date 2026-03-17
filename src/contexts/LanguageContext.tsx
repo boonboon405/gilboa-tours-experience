@@ -193,6 +193,19 @@ const translations: Record<Language, Record<string, string>> = {
     'chat.title': 'צ׳אט עם שמחה',
     'chat.welcome': 'שלום! 👋 איך אפשר לעזור לכם?',
     'chat.placeholder': 'כתבו הודעה...',
+
+    // Voice
+    'voice.replay': 'השמע שוב',
+    'voice.listening': 'מקשיב...',
+    'voice.realtime.toggle': 'שיחה בזמן אמת',
+    'voice.realtime.warning': 'שיחה בזמן אמת תומכת באודיו באנגלית בלבד',
+    'voice.realtime.start': 'התחל שיחה',
+    'voice.realtime.connecting': 'מתחבר...',
+    'voice.realtime.end': 'סיום שיחה',
+    'voice.realtime.error': 'לא הצלחנו להתחבר. נסו שוב.',
+    'voice.back.to.chat': 'חזרה לצ׳אט',
+    'voice.you.said': 'אמרת:',
+    'voice.agent.says': 'סוכן:',
   },
 };
 
