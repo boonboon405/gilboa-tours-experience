@@ -54,7 +54,7 @@ const getStaticSections = (lang: string): GallerySection[] => [
     images: [
       { src: heroGilboa, alt: lang === 'he' ? 'תצפית מפסגת הגלבוע' : 'View from Gilboa summit', title: lang === 'he' ? 'הרי הגלבוע' : 'Gilboa Mountains', description: lang === 'he' ? 'שקיעה מדהימה מפסגות הגלבוע' : 'Stunning sunset from Gilboa peaks' },
       { src: springsNature, alt: lang === 'he' ? 'מעיינות בגן השלושה' : 'Springs at Gan HaShlosha', title: lang === 'he' ? 'עמק המעיינות' : 'Springs Valley', description: lang === 'he' ? 'מעיינות צלולים בלב הטבע' : 'Crystal-clear springs in nature' },
-      { src: springsActivity, alt: lang === 'he' ? 'פעילויות במעיינות' : 'Activities at the springs', title: lang === 'he' ? 'פעילויות במעיינות' : 'Spring Activities', description: lang === 'he' ? 'חוויות ייחודיות במים' : 'Unique water experiences' },
+      { src: springsClubcarsCombined, alt: lang === 'he' ? 'חוויות VIP ופעילויות בעמק המעיינות' : 'VIP experiences and activities in Springs Valley', title: lang === 'he' ? 'חוויות VIP במעיינות' : 'Springs VIP Experiences', description: lang === 'he' ? 'חוויות ייחודיות בטבע ובשטח' : 'Unique outdoor and VIP experiences' },
       { src: beitShean, alt: lang === 'he' ? 'נוף עמק בית שאן' : 'Beit She\'an valley view', title: lang === 'he' ? 'תצפית העמק' : 'Valley Viewpoint', description: lang === 'he' ? 'מבט לעמק מהפסגה' : 'View from the summit' },
       { src: clubCars, alt: lang === 'he' ? 'טיול רכבי שטח בגלבוע' : 'Off-road tour in the Gilboa', title: lang === 'he' ? 'טיולי שטח' : 'Off-Road Tours', description: lang === 'he' ? 'הרפתקאות בגלבוע' : 'Adventures in the Gilboa' },
     ]
@@ -67,7 +67,7 @@ const getStaticSections = (lang: string): GallerySection[] => [
       { src: clubCars, alt: lang === 'he' ? 'רכבי שטח חשמליים' : 'Electric off-road vehicles', title: lang === 'he' ? 'רכבי שטח חשמליים' : 'Electric Off-Road Vehicles', description: lang === 'he' ? 'טיולים מאתגרים בשטח' : 'Challenging off-road tours' },
       { src: culinary, alt: lang === 'he' ? 'חוויות קולינריות' : 'Culinary experiences', title: lang === 'he' ? 'חוויות קולינריות' : 'Culinary Experiences', description: lang === 'he' ? 'טעמים אותנטיים של האזור' : 'Authentic regional flavors' },
       { src: odtTeam, alt: lang === 'he' ? 'גיבוש ODT' : 'ODT team building', title: lang === 'he' ? 'גיבוש ODT' : 'ODT Team Building', description: lang === 'he' ? 'פעילויות גיבוש צוותיות' : 'Team building activities' },
-      { src: springsActivity, alt: lang === 'he' ? 'פעילויות מים' : 'Water activities', title: lang === 'he' ? 'פעילויות מים' : 'Water Activities', description: lang === 'he' ? 'הרפתקאות במים' : 'Water adventures' },
+      { src: springsClubcarsCombined, alt: lang === 'he' ? 'פעילויות VIP בעמק המעיינות' : 'VIP activities in Springs Valley', title: lang === 'he' ? 'פעילויות VIP' : 'VIP Activities', description: lang === 'he' ? 'חוויות שטח ומעיינות ייחודיות' : 'Unique off-road and springs experiences' },
       { src: galileeNature, alt: lang === 'he' ? 'טיולי טבע' : 'Nature hikes', title: lang === 'he' ? 'טיולי טבע' : 'Nature Hikes', description: lang === 'he' ? 'סיורים מודרכים בטבע' : 'Guided nature tours' },
     ]
   }
