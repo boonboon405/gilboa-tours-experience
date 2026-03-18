@@ -5,14 +5,14 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import heroGilboa from '@/assets/hero-gilboa.jpg';
 import springsNature from '@/assets/springs-nature.jpg';
 import springsClubcarsCombined from '@/assets/springs-clubcars-combined.jpg';
 import galileeNature from '@/assets/galilee-nature.jpg';
 import odtTeam from '@/assets/odt-team.jpg';
+import beitSheanPanorama from '@/assets/beit-shean-panorama.jpg';
 
 const heroSlides = [
-  { src: heroGilboa, alt: 'Gilboa mountains panoramic landscape' },
+  { src: beitSheanPanorama, alt: 'Beit Shean Valley panoramic landscape' },
   { src: springsNature, alt: 'Springs Valley natural landscape' },
   { src: springsClubcarsCombined, alt: 'Springs Valley guided activity and VIP club car experience' },
   { src: galileeNature, alt: 'Galilee nature and greenery' },

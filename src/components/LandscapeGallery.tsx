@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
 import galileeNature from '@/assets/galilee-nature.jpg';
 import springsNature from '@/assets/springs-nature.jpg';
-import heroGilboa from '@/assets/hero-gilboa.jpg';
 import clubCars from '@/assets/club-cars.jpg';
 import culinary from '@/assets/culinary-experience.jpg';
 import beitShean from '@/assets/beit-shean.jpg';
@@ -52,7 +51,7 @@ const getStaticSections = (lang: string): GallerySection[] => [
     title: lang === 'he' ? 'הרי הגלבוע' : 'Gilboa Mountains',
     description: lang === 'he' ? 'הפנינה הטבעית של צפון הארץ' : 'The natural gem of Northern Israel',
     images: [
-      { src: heroGilboa, alt: lang === 'he' ? 'תצפית מפסגת הגלבוע' : 'View from Gilboa summit', title: lang === 'he' ? 'הרי הגלבוע' : 'Gilboa Mountains', description: lang === 'he' ? 'שקיעה מדהימה מפסגות הגלבוע' : 'Stunning sunset from Gilboa peaks' },
+      { src: beitSheanPanorama, alt: lang === 'he' ? 'פנורמה של עמק בית שאן והאזור' : 'Panorama of the Beit Shean Valley region', title: lang === 'he' ? 'תצפית פנורמית' : 'Panoramic Viewpoint', description: lang === 'he' ? 'נוף אזורי רחב של העמק וההרים' : 'Wide regional view of the valley and surrounding hills' },
       { src: springsNature, alt: lang === 'he' ? 'מעיינות בגן השלושה' : 'Springs at Gan HaShlosha', title: lang === 'he' ? 'עמק המעיינות' : 'Springs Valley', description: lang === 'he' ? 'מעיינות צלולים בלב הטבע' : 'Crystal-clear springs in nature' },
       { src: springsClubcarsCombined, alt: lang === 'he' ? 'חוויות VIP ופעילויות בעמק המעיינות' : 'VIP experiences and activities in Springs Valley', title: lang === 'he' ? 'חוויות VIP במעיינות' : 'Springs VIP Experiences', description: lang === 'he' ? 'חוויות ייחודיות בטבע ובשטח' : 'Unique outdoor and VIP experiences' },
       { src: beitShean, alt: lang === 'he' ? 'נוף עמק בית שאן' : 'Beit She\'an valley view', title: lang === 'he' ? 'תצפית העמק' : 'Valley Viewpoint', description: lang === 'he' ? 'מבט לעמק מהפסגה' : 'View from the summit' },
