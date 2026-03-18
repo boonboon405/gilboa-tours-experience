@@ -18,7 +18,6 @@ const heroSlides = [
   { src: galileeNature, alt: 'Galilee nature and greenery' },
   { src: odtTeam, alt: 'Team building day experience' },
   { src: belvoirFortress, alt: 'Belvoir Fortress historical site' },
-  { src: springsActivity, alt: 'Springs Valley outdoor activity' },
 ];
 
 export const Hero = () => {
