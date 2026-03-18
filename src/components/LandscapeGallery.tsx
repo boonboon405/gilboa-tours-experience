@@ -14,7 +14,7 @@ import culinary from '@/assets/culinary-experience.jpg';
 import beitShean from '@/assets/beit-shean.jpg';
 import beitSheanPanorama from '@/assets/beit-shean-panorama.jpg';
 import pelicans from '@/assets/pelicans.jpg';
-import springsActivity from '@/assets/springs-activity.jpg';
+import springsClubcarsCombined from '@/assets/springs-clubcars-combined.jpg';
 import odtTeam from '@/assets/odt-team.jpg';
 
 interface GallerySection {
