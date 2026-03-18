@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
 import galileeNature from '@/assets/galilee-nature.jpg';
 import springsNature from '@/assets/springs-nature.jpg';
-import heroGilboa from '@/assets/hero-gilboa.jpg';
 import clubCars from '@/assets/club-cars.jpg';
 import culinary from '@/assets/culinary-experience.jpg';
 import beitShean from '@/assets/beit-shean.jpg';
