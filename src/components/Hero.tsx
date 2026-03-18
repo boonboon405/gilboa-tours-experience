@@ -7,17 +7,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import heroGilboa from '@/assets/hero-gilboa.jpg';
 import springsNature from '@/assets/springs-nature.jpg';
+import springsClubcarsCombined from '@/assets/springs-clubcars-combined.jpg';
 import galileeNature from '@/assets/galilee-nature.jpg';
 import odtTeam from '@/assets/odt-team.jpg';
-import belvoirFortress from '@/assets/belvoir-fortress.jpg';
-import springsActivity from '@/assets/springs-activity.jpg';
 
 const heroSlides = [
   { src: heroGilboa, alt: 'Gilboa mountains panoramic landscape' },
   { src: springsNature, alt: 'Springs Valley natural landscape' },
+  { src: springsClubcarsCombined, alt: 'Springs Valley guided activity and VIP club car experience' },
   { src: galileeNature, alt: 'Galilee nature and greenery' },
   { src: odtTeam, alt: 'Team building day experience' },
-  { src: belvoirFortress, alt: 'Belvoir Fortress historical site' },
 ];
 
 export const Hero = () => {
