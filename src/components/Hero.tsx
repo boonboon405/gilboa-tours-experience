@@ -1,18 +1,59 @@
+import { useState, useEffect, useCallback } from 'react';
 import { MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import heroImage from '@/assets/hero-gilboa.jpg';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { motion, AnimatePresence } from 'framer-motion';
+
+import heroGilboa from '@/assets/hero-gilboa.jpg';
+import springsNature from '@/assets/springs-nature.jpg';
+import galileeNature from '@/assets/galilee-nature.jpg';
+import odtTeam from '@/assets/odt-team.jpg';
+import belvoirFortress from '@/assets/belvoir-fortress.jpg';
+import springsActivity from '@/assets/springs-activity.jpg';
+
+const heroSlides = [
+  { src: heroGilboa, alt: 'Gilboa mountains panoramic landscape' },
+  { src: springsNature, alt: 'Springs Valley natural landscape' },
+  { src: galileeNature, alt: 'Galilee nature and greenery' },
+  { src: odtTeam, alt: 'Team building day experience' },
+  { src: belvoirFortress, alt: 'Belvoir Fortress historical site' },
+  { src: springsActivity, alt: 'Springs Valley outdoor activity' },
+];
 
 export const Hero = () => {
   const { t } = useLanguage();
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const nextSlide = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % heroSlides.length);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 5000);
+    return () => clearInterval(timer);
+  }, [nextSlide]);
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0">
-        <img src={heroImage} alt="Northern Israel landscape" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-foreground/50" />
-      </div>
+      {/* Rotating background images */}
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          key={currentIndex}
+          className="absolute inset-0"
+          initial={{ opacity: 0, scale: 1.08 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.2, ease: 'easeInOut' }}
+        >
+          <img
+            src={heroSlides[currentIndex].src}
+            alt={heroSlides[currentIndex].alt}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-foreground/50" />
+        </motion.div>
+      </AnimatePresence>
 
       <div className="relative z-10 container mx-auto px-4 text-center">
         <div className="max-w-2xl mx-auto">
@@ -38,8 +79,22 @@ export const Hero = () => {
               </Button>
             </Link>
           </div>
+
+          {/* Slide indicators */}
+          <div className="flex justify-center gap-2 mt-8">
+            {heroSlides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentIndex(i)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  i === currentIndex ? 'bg-primary-foreground w-6' : 'bg-primary-foreground/40'
+                }`}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
-    </section>);
-
+    </section>
+  );
 };
