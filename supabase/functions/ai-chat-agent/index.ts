@@ -161,13 +161,42 @@ serve(async (req) => {
       .eq('prompt_key', 'ai_chat_agent')
       .single();
 
-    const systemPrompt = promptData?.prompt_text || DEFAULT_SYSTEM_PROMPT;
+    // Use English system prompt for English mode
+    const DEFAULT_ENGLISH_PROMPT = `You are a tour expert for Simcha Tours in Northern Israel. You help users plan their perfect tour experience in the Gilboa, Springs Valley, and Galilee region.
 
-    // Fetch knowledge base entries
+Opening message (only at start of new conversation):
+"Hello! I'm a tour expert offering experiences:
+🔥 Adventure | 💧 Nature | 🏛️ History | 🍷 Culinary | ⚡ Sports | 🎨 Creative | 🌿 Wellness | 🤝 Team Building
+
+Answer the questions and I'll recommend activities that suit you!
+Tell me - how many people are you? What interests you? 100 activities are waiting for you!"
+
+Communication rules:
+1. Ask only 1-2 questions per response
+2. Wait for the user to answer before continuing
+3. Show top 4 recommendations first
+4. Be patient - let the customer lead the conversation
+
+Closing statement when mentioning David and phone:
+"Let's continue planning your amazing day! And when you're ready to finalize all the details, remember that David at 0537314235 is your go-to person!"
+
+Recommended conversation flow:
+1. Show top 4 recommendations
+2. Ask about group size and occasion (wait for answer)
+3. Ask about dates and budget (wait for answer)
+4. Ask what specifically interests them (wait for answer)
+5. Suggest a customized package`;
+
+    const systemPrompt = language === 'en' 
+      ? (promptData?.prompt_text || DEFAULT_ENGLISH_PROMPT)
+      : (promptData?.prompt_text || DEFAULT_SYSTEM_PROMPT);
+
+    // Fetch knowledge base entries filtered by language
     const { data: knowledgeBase } = await supabase
       .from('knowledge_base')
       .select('*')
       .eq('is_active', true)
+      .eq('language', language)
       .order('priority', { ascending: false });
 
     // Get or create conversation
@@ -282,8 +311,10 @@ serve(async (req) => {
           messages: [
             { 
               role: "system", 
-              content: systemPrompt + quizContext + knowledgeContext + dataContext + 
-                `\n\n**CRITICAL LANGUAGE INSTRUCTION**: You MUST respond in ${language === 'he' ? 'Hebrew (עברית)' : 'English'}. The user's preferred language is ${language === 'he' ? 'Hebrew' : 'English'}. Even if the user writes in a different language, ALWAYS respond in ${language === 'he' ? 'Hebrew' : 'English'}.`
+              content: (language === 'en' ? DEFAULT_ENGLISH_PROMPT : systemPrompt) + quizContext + knowledgeContext + dataContext + 
+                (language === 'he' 
+                  ? `\n\n**הוראה קריטית**: עליך לענות אך ורק בעברית תקנית. כל תשובה חייבת להיות בעברית ברורה, נכונה ותקנית. אסור להשתמש במילים באנגלית (חוץ משמות מותגים). אסור סלנג ערבי.`
+                  : `\n\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in English. Every response must be in clear, proper English. Do not mix Hebrew words into your response.`)
             },
             ...conversationHistory,
             { role: "user", content: message }
