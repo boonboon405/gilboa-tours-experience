@@ -52,14 +52,14 @@ export const Navigation = () => {
                 key={item.href}
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
-                className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
+                className="text-sm text-accent hover:text-secondary transition-colors font-semibold drop-shadow-sm"
               >
                 {item.label}
               </a>
             ))}
             <Link
               to="/chat"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
+              className="text-sm text-accent hover:text-secondary transition-colors font-semibold drop-shadow-sm"
             >
               {language === 'he' ? 'צ׳אט AI' : 'AI Chat'}
             </Link>
