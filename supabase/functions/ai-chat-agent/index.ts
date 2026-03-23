@@ -163,11 +163,12 @@ serve(async (req) => {
 
     const systemPrompt = promptData?.prompt_text || DEFAULT_SYSTEM_PROMPT;
 
-    // Fetch knowledge base entries
+    // Fetch knowledge base entries filtered by language
     const { data: knowledgeBase } = await supabase
       .from('knowledge_base')
       .select('*')
       .eq('is_active', true)
+      .eq('language', language)
       .order('priority', { ascending: false });
 
     // Get or create conversation
