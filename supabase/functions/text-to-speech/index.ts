@@ -7,7 +7,6 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -24,9 +23,8 @@ serve(async (req) => {
       throw new Error('ELEVENLABS_API_KEY is not configured');
     }
 
-    // Voice IDs for ElevenLabs - multilingual voices
+    // Voice IDs for ElevenLabs
     const voiceIds: Record<string, string> = {
-      // Female voices
       'Rachel': 'EXAVITQu4vr4xnSDxMaL',
       'Aria': '9BWtsMINqrJLrRacOk9x',
       'Sarah': 'EXAVITQu4vr4xnSDxMaL',
@@ -35,7 +33,6 @@ serve(async (req) => {
       'Alice': 'Xb7hH8MSUJpSbSDYk0k2',
       'Matilda': 'XrExE9yKIg1WjnnlVkGX',
       'Lily': 'pFZP5JQG7iQjIQuC4Bku',
-      // Male voices
       'Roger': 'CwhRBWXzGAHq8TQ4Fs17',
       'Charlie': 'IKne3meq5aSn9XLyUdCD',
       'George': 'JBFqnCBsd6RMkjVDRZzb',
@@ -47,36 +44,22 @@ serve(async (req) => {
 
     const voiceId = voiceIds[voice] || voiceIds['Rachel'];
 
-    console.log(`Generating speech for text: ${text.substring(0, 50)}...`);
-    console.log(`Using voice: ${voice} (${voiceId}), language: ${language}`);
-
-    // CRITICAL: Force only Hebrew or English - no other languages allowed
-    // Remove any non-Hebrew, non-English characters that might confuse the model
-    let processedText = text;
-    
-    // Check if text contains Hebrew characters
+    // Detect if text contains Hebrew characters
     const hasHebrew = /[\u0590-\u05FF]/.test(text);
-    
-    // Clean the text: remove any characters that are not Hebrew, English, numbers, or basic punctuation
-    // This prevents the model from switching to other languages like Turkish
-    const cleanedText = text.replace(/[^\u0590-\u05FFa-zA-Z0-9\s.,!?;:\-'"()\[\]{}@#$%&*+=<>\/\\נקודותיים]/g, '');
-    processedText = cleanedText;
-    
-    // Force Hebrew language context by adding a silent Hebrew prefix if text should be Hebrew
-    if (language === 'he' || hasHebrew) {
-      // Text is Hebrew - ensure model processes as Hebrew only
-      console.log('Processing as Hebrew - enforcing Hebrew language');
-    } else {
-      // Text is English only
-      console.log('Processing as English - enforcing English language');
+    const detectedLanguage = hasHebrew ? 'he' : 'en';
+
+    console.log(`[TTS] Voice: ${voice}, detected lang: ${detectedLanguage}, text length: ${text.length}`);
+
+    // For Hebrew: prefix with a Hebrew language hint to force correct pronunciation
+    // This prevents the model from reading Hebrew characters as English phonemes
+    let processedText = text.trim();
+
+    if (detectedLanguage === 'he') {
+      // Strip any stray non-Hebrew/English characters but keep Hebrew, English, numbers, punctuation
+      processedText = processedText.replace(/[^\u0590-\u05FFa-zA-Z0-9\s.,!?;:\-'"()\n]/g, '');
     }
 
-    // Log final language for debugging
-    const detectedLanguage = hasHebrew ? 'he' : 'en';
-    console.log(`Final language: ${detectedLanguage}`);
-
-    // Call ElevenLabs API - use eleven_multilingual_v2 which auto-detects language
-    // Note: This model does NOT support language_code parameter - it auto-detects from text
+    // Call ElevenLabs API with eleven_multilingual_v2 which supports Hebrew natively
     const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
       method: 'POST',
       headers: {
@@ -86,44 +69,38 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         text: processedText,
-        model_id: 'eleven_multilingual_v2', // Multilingual v2 - auto-detects Hebrew from text content
+        model_id: 'eleven_multilingual_v2',
         voice_settings: {
-          stability: 0.5, // Lower stability for more natural Hebrew pronunciation
+          stability: 0.5,
           similarity_boost: 0.75,
           style: 0.0,
           use_speaker_boost: true,
         },
-        speed: 0.85, // Slow down speech for clearer Hebrew pronunciation
+        // Normal speed - no artificial slowing
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('ElevenLabs API error:', response.status, errorText);
+      console.error('[TTS] ElevenLabs error:', response.status, errorText);
       throw new Error(`ElevenLabs API error: ${response.status} - ${errorText}`);
     }
 
-    // Convert audio to base64 using Deno's built-in encoder (avoids stack overflow)
     const arrayBuffer = await response.arrayBuffer();
     const base64Audio = encodeBase64(arrayBuffer);
 
-    console.log(`Successfully generated speech audio (${arrayBuffer.byteLength} bytes)`);
+    console.log(`[TTS] Generated ${arrayBuffer.byteLength} bytes, lang: ${detectedLanguage}`);
 
     return new Response(
       JSON.stringify({ audioContent: base64Audio }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error in text-to-speech function:', error);
+    console.error('[TTS] Error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: errorMessage }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
