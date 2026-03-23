@@ -311,8 +311,10 @@ Recommended conversation flow:
           messages: [
             { 
               role: "system", 
-              content: systemPrompt + quizContext + knowledgeContext + dataContext + 
-                `\n\n**CRITICAL LANGUAGE INSTRUCTION**: You MUST respond in ${language === 'he' ? 'Hebrew (עברית)' : 'English'}. The user's preferred language is ${language === 'he' ? 'Hebrew' : 'English'}. Even if the user writes in a different language, ALWAYS respond in ${language === 'he' ? 'Hebrew' : 'English'}.`
+              content: (language === 'en' ? DEFAULT_ENGLISH_PROMPT : systemPrompt) + quizContext + knowledgeContext + dataContext + 
+                (language === 'he' 
+                  ? `\n\n**הוראה קריטית**: עליך לענות אך ורק בעברית תקנית. כל תשובה חייבת להיות בעברית ברורה, נכונה ותקנית. אסור להשתמש במילים באנגלית (חוץ משמות מותגים). אסור סלנג ערבי.`
+                  : `\n\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in English. Every response must be in clear, proper English. Do not mix Hebrew words into your response.`)
             },
             ...conversationHistory,
             { role: "user", content: message }
