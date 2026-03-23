@@ -313,7 +313,7 @@ Recommended conversation flow:
               role: "system", 
               content: (language === 'en' ? DEFAULT_ENGLISH_PROMPT : systemPrompt) + quizContext + knowledgeContext + dataContext + 
                 (language === 'he' 
-                  ? `\n\n**הוראה קריטית**: עליך לענות אך ורק בעברית תקנית. כל תשובה חייבת להיות בעברית ברורה, נכונה ותקנית. אסור להשתמש במילים באנגלית (חוץ משמות מותגים). אסור סלנג ערבי.`
+                  ? `\n\n**הוראה קריטית**: עליך לענות אך ורק בעברית תקנית ורשמית. כל תשובה חייבת להיות בעברית ברורה, נכונה ותקנית. אסור להשתמש במילים באנגלית (חוץ משמות מותגים). אסור בהחלט להשתמש בסלנג ערבי או מילים ממקור ערבי כמו: כיף, יאללה, אחלה, סבבה, וואלה, חביבי, סחתיין, חלאס. במקום "כיף" אמור "הנאה" או "שמחה". במקום "יאללה" אמור "בואו" או "קדימה".`
                   : `\n\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in English. Every response must be in clear, proper English. Do not mix Hebrew words into your response.`)
             },
             ...conversationHistory,
