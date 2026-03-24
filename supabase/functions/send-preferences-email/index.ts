@@ -66,48 +66,48 @@ const handler = async (req: Request): Promise<Response> => {
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 8px; font-weight: bold; width: 40%;">שם:</td>
-              <td style="padding: 8px;">${contactInfo.name}</td>
+              <td style="padding: 8px;">${esc(contactInfo.name)}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">אימייל:</td>
-              <td style="padding: 8px;">${contactInfo.email}</td>
+              <td style="padding: 8px;">${esc(contactInfo.email)}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">חברה:</td>
-              <td style="padding: 8px;">${contactInfo.company}</td>
+              <td style="padding: 8px;">${esc(contactInfo.company)}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">מספר וואטסאפ:</td>
-              <td style="padding: 8px;">${contactInfo.whatsappNumber}</td>
+              <td style="padding: 8px;">${esc(contactInfo.whatsappNumber)}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">מספר משרד:</td>
-              <td style="padding: 8px;">${contactInfo.officeNumber}</td>
+              <td style="padding: 8px;">${esc(contactInfo.officeNumber)}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">מספר משתתפים משוער:</td>
-              <td style="padding: 8px;">${contactInfo.participantCount}</td>
+              <td style="padding: 8px;">${esc(contactInfo.participantCount)}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">סוג טיול:</td>
-              <td style="padding: 8px;">${contactInfo.tourType}</td>
+              <td style="padding: 8px;">${esc(contactInfo.tourType)}</td>
             </tr>
             ${suggestedDate ? `
             <tr>
               <td style="padding: 8px; font-weight: bold;">תאריך מוצע לאירוע:</td>
-              <td style="padding: 8px;">${suggestedDate}</td>
+              <td style="padding: 8px;">${esc(suggestedDate)}</td>
             </tr>
             ` : ''}
             ${contactInfo.specialComments ? `
             <tr>
               <td style="padding: 8px; font-weight: bold; vertical-align: top;">הערות ומשאלות מיוחדות:</td>
-              <td style="padding: 8px; white-space: pre-wrap;">${contactInfo.specialComments}</td>
+              <td style="padding: 8px; white-space: pre-wrap;">${esc(contactInfo.specialComments.slice(0, 2000))}</td>
             </tr>
             ` : ''}
             ${contactInfo.language ? `
             <tr>
               <td style="padding: 8px; font-weight: bold;">שפה נדרשת לאורחים:</td>
-              <td style="padding: 8px;">${contactInfo.language}</td>
+              <td style="padding: 8px;">${esc(contactInfo.language)}</td>
             </tr>
             ` : ''}
           </table>
