@@ -124,11 +124,11 @@ const handler = async (req: Request): Promise<Response> => {
         if (destination.sites.length > 0) {
           emailContent += `
             <div style="background-color: #faf5ff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-              <h4 style="color: #7c3aed; margin-top: 0;">${destination.region}</h4>
+              <h4 style="color: #7c3aed; margin-top: 0;">${esc(destination.region)}</h4>
               <ul style="margin: 10px 0;">
           `;
-          destination.sites.forEach(site => {
-            emailContent += `<li style="margin-bottom: 5px;">${site}</li>`;
+          destination.sites.slice(0, 50).forEach(site => {
+            emailContent += `<li style="margin-bottom: 5px;">${esc(site)}</li>`;
           });
           emailContent += `
               </ul>
@@ -141,17 +141,16 @@ const handler = async (req: Request): Promise<Response> => {
         <h3 style="color: #2563eb;">בחירות פעילויות:</h3>
       `;
       
-      // Add each section's selections
       Object.entries(selections).forEach(([sectionId, section]) => {
         if (section.activities.length > 0 || section.otherOption) {
           emailContent += `
-            <h3 style="color: #2563eb; margin-top: 20px;">קטגוריה ${sectionId}: ${section.sectionTitle}</h3>
+            <h3 style="color: #2563eb; margin-top: 20px;">קטגוריה ${esc(sectionId)}: ${esc(section.sectionTitle)}</h3>
           `;
           
           if (section.activities.length > 0) {
             emailContent += `<ul style="margin-top: 10px;">`;
-            section.activities.forEach(activity => {
-              emailContent += `<li style="margin-bottom: 8px;">${activity}</li>`;
+            section.activities.slice(0, 50).forEach(activity => {
+              emailContent += `<li style="margin-bottom: 8px;">${esc(activity)}</li>`;
             });
             emailContent += `</ul>`;
           }
@@ -159,7 +158,7 @@ const handler = async (req: Request): Promise<Response> => {
           if (section.otherOption) {
             emailContent += `
               <p style="margin-top: 10px; padding: 10px; background-color: #f3f4f6; border-radius: 5px;">
-                <strong>אפשרות אחרת:</strong> ${section.otherOption}
+                <strong>אפשרות אחרת:</strong> ${esc(section.otherOption.slice(0, 500))}
               </p>
             `;
           }
