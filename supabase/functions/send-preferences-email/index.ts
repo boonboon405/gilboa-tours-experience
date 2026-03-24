@@ -3,6 +3,7 @@ import { Resend } from "https://esm.sh/resend@3.5.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
