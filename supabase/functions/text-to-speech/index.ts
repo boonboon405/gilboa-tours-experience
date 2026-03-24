@@ -218,13 +218,21 @@ serve(async (req) => {
       throw new Error('Text is required');
     }
 
+    // Limit text length to prevent abuse
+    if (text.length > 2000) {
+      return new Response(
+        JSON.stringify({ error: 'Text exceeds maximum length of 2000 characters' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const voiceId = voiceIds[voice] || voiceIds['Rachel'];
 
     const requestedLanguage = language === 'en' ? 'en' : 'he';
     const detectedLanguage = requestedLanguage === 'he' || containsHebrew(text) ? 'he' : 'en';
     const processedText = cleanTextForSpeech(text, detectedLanguage);
 
-    console.log(`[TTS] Voice: ${voice}, requested lang: ${requestedLanguage}, detected lang: ${detectedLanguage}, text length: ${processedText.length}`);
+    console.log(`[TTS] Voice: ${voice}, lang: ${detectedLanguage}, text length: ${processedText.length}`);
 
     let arrayBuffer: ArrayBuffer;
     let mode = 'standard';
