@@ -226,7 +226,7 @@ serve(async (req) => {
       );
     }
 
-    const voiceId = voiceIds[voice] || voiceIds['Rachel'];
+  const voiceId = voiceIds[voice] || voiceIds['Rachel'];
 
     const requestedLanguage = language === 'en' ? 'en' : 'he';
     const detectedLanguage = requestedLanguage === 'he' || containsHebrew(text) ? 'he' : 'en';
@@ -238,20 +238,12 @@ serve(async (req) => {
     let mode = 'standard';
 
     if (detectedLanguage === 'he') {
-      const nativeHebrewAudio = await generateSpeechAudio(processedText, voiceId);
-      const transcript = await transcribeGeneratedHebrew(nativeHebrewAudio);
-      const validationPassed = isHebrewAudioValid(processedText, transcript);
-
-      if (validationPassed) {
-        arrayBuffer = nativeHebrewAudio;
-        mode = 'validated-native-hebrew';
-        console.log('[TTS] Hebrew validation passed');
-      } else {
-        const phoneticHebrew = transliterateHebrewText(processedText);
-        arrayBuffer = await generateSpeechAudio(phoneticHebrew, voiceId);
-        mode = 'phonetic-hebrew-fallback';
-        console.warn('[TTS] Hebrew validation failed, using phonetic fallback', { transcript });
-      }
+      // Prepend a short Hebrew-language anchor phrase (not spoken aloud due to SSML-like pause)
+      // This primes the multilingual model to stay in Hebrew throughout
+      const hebrewPrimedText = `[he] ${processedText}`;
+      arrayBuffer = await generateSpeechAudio(hebrewPrimedText, voiceId);
+      mode = 'native-hebrew';
+      console.log('[TTS] Using native Hebrew speech (no transliteration)');
     } else {
       arrayBuffer = await generateSpeechAudio(processedText, voiceId);
       mode = 'english';
