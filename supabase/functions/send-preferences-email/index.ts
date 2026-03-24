@@ -178,7 +178,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "David Tours <onboarding@resend.dev>",
       to: ["DavidIsraelTours@gmail.com"],
-      subject: `העדפות לקוח חדשות - ${contactInfo.name} - ${contactInfo.company}`,
+      subject: `העדפות לקוח חדשות - ${esc(contactInfo.name)} - ${esc(contactInfo.company)}`,
       html: emailContent,
     });
 
