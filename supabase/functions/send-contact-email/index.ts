@@ -45,15 +45,15 @@ const handler = async (req: Request): Promise<Response> => {
     const notificationEmail = await resend.emails.send({
       from: "David Tours <onboarding@resend.dev>",
       to: ["DavidIsraelTours@gmail.com"],
-      subject: `הודעה חדשה מ-${name}`,
+      subject: `הודעה חדשה מ-${safeName}`,
       html: `
         <div dir="rtl" style="font-family: Arial, sans-serif;">
           <h2>הודעה חדשה מאתר David Tours</h2>
-          <p><strong>שם:</strong> ${name}</p>
-          <p><strong>אימייל:</strong> ${email}</p>
-          <p><strong>טלפון:</strong> ${phone}</p>
+          <p><strong>שם:</strong> ${safeName}</p>
+          <p><strong>אימייל:</strong> ${safeEmail}</p>
+          <p><strong>טלפון:</strong> ${safePhone}</p>
           <p><strong>הודעה:</strong></p>
-          <p>${message}</p>
+          <p>${safeMessage}</p>
         </div>
       `,
     });
