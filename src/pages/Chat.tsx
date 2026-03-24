@@ -131,8 +131,9 @@ const Chat = () => {
             </TabsList>
 
             <TabsContent value="text" className="flex-1 flex flex-col min-h-0 mt-0">
-              <AIChat 
-                quizResults={quizResults} 
+              <AIChat
+                quizResults={quizResults}
+                selectedVoice={selectedVoice}
                 onRequestHumanAgent={() => setShowHumanHandoff(true)}
               />
             </TabsContent>
