@@ -3,6 +3,7 @@ import { Resend } from "https://esm.sh/resend@3.5.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -65,48 +66,48 @@ const handler = async (req: Request): Promise<Response> => {
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 8px; font-weight: bold; width: 40%;">שם:</td>
-              <td style="padding: 8px;">${contactInfo.name}</td>
+              <td style="padding: 8px;">${esc(contactInfo.name)}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">אימייל:</td>
-              <td style="padding: 8px;">${contactInfo.email}</td>
+              <td style="padding: 8px;">${esc(contactInfo.email)}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">חברה:</td>
-              <td style="padding: 8px;">${contactInfo.company}</td>
+              <td style="padding: 8px;">${esc(contactInfo.company)}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">מספר וואטסאפ:</td>
-              <td style="padding: 8px;">${contactInfo.whatsappNumber}</td>
+              <td style="padding: 8px;">${esc(contactInfo.whatsappNumber)}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">מספר משרד:</td>
-              <td style="padding: 8px;">${contactInfo.officeNumber}</td>
+              <td style="padding: 8px;">${esc(contactInfo.officeNumber)}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">מספר משתתפים משוער:</td>
-              <td style="padding: 8px;">${contactInfo.participantCount}</td>
+              <td style="padding: 8px;">${esc(contactInfo.participantCount)}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">סוג טיול:</td>
-              <td style="padding: 8px;">${contactInfo.tourType}</td>
+              <td style="padding: 8px;">${esc(contactInfo.tourType)}</td>
             </tr>
             ${suggestedDate ? `
             <tr>
               <td style="padding: 8px; font-weight: bold;">תאריך מוצע לאירוע:</td>
-              <td style="padding: 8px;">${suggestedDate}</td>
+              <td style="padding: 8px;">${esc(suggestedDate)}</td>
             </tr>
             ` : ''}
             ${contactInfo.specialComments ? `
             <tr>
               <td style="padding: 8px; font-weight: bold; vertical-align: top;">הערות ומשאלות מיוחדות:</td>
-              <td style="padding: 8px; white-space: pre-wrap;">${contactInfo.specialComments}</td>
+              <td style="padding: 8px; white-space: pre-wrap;">${esc(contactInfo.specialComments.slice(0, 2000))}</td>
             </tr>
             ` : ''}
             ${contactInfo.language ? `
             <tr>
               <td style="padding: 8px; font-weight: bold;">שפה נדרשת לאורחים:</td>
-              <td style="padding: 8px;">${contactInfo.language}</td>
+              <td style="padding: 8px;">${esc(contactInfo.language)}</td>
             </tr>
             ` : ''}
           </table>
@@ -123,11 +124,11 @@ const handler = async (req: Request): Promise<Response> => {
         if (destination.sites.length > 0) {
           emailContent += `
             <div style="background-color: #faf5ff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-              <h4 style="color: #7c3aed; margin-top: 0;">${destination.region}</h4>
+              <h4 style="color: #7c3aed; margin-top: 0;">${esc(destination.region)}</h4>
               <ul style="margin: 10px 0;">
           `;
-          destination.sites.forEach(site => {
-            emailContent += `<li style="margin-bottom: 5px;">${site}</li>`;
+          destination.sites.slice(0, 50).forEach(site => {
+            emailContent += `<li style="margin-bottom: 5px;">${esc(site)}</li>`;
           });
           emailContent += `
               </ul>
@@ -140,17 +141,16 @@ const handler = async (req: Request): Promise<Response> => {
         <h3 style="color: #2563eb;">בחירות פעילויות:</h3>
       `;
       
-      // Add each section's selections
       Object.entries(selections).forEach(([sectionId, section]) => {
         if (section.activities.length > 0 || section.otherOption) {
           emailContent += `
-            <h3 style="color: #2563eb; margin-top: 20px;">קטגוריה ${sectionId}: ${section.sectionTitle}</h3>
+            <h3 style="color: #2563eb; margin-top: 20px;">קטגוריה ${esc(sectionId)}: ${esc(section.sectionTitle)}</h3>
           `;
           
           if (section.activities.length > 0) {
             emailContent += `<ul style="margin-top: 10px;">`;
-            section.activities.forEach(activity => {
-              emailContent += `<li style="margin-bottom: 8px;">${activity}</li>`;
+            section.activities.slice(0, 50).forEach(activity => {
+              emailContent += `<li style="margin-bottom: 8px;">${esc(activity)}</li>`;
             });
             emailContent += `</ul>`;
           }
@@ -158,7 +158,7 @@ const handler = async (req: Request): Promise<Response> => {
           if (section.otherOption) {
             emailContent += `
               <p style="margin-top: 10px; padding: 10px; background-color: #f3f4f6; border-radius: 5px;">
-                <strong>אפשרות אחרת:</strong> ${section.otherOption}
+                <strong>אפשרות אחרת:</strong> ${esc(section.otherOption.slice(0, 500))}
               </p>
             `;
           }
@@ -178,7 +178,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "David Tours <onboarding@resend.dev>",
       to: ["DavidIsraelTours@gmail.com"],
-      subject: `העדפות לקוח חדשות - ${contactInfo.name} - ${contactInfo.company}`,
+      subject: `העדפות לקוח חדשות - ${esc(contactInfo.name)} - ${esc(contactInfo.company)}`,
       html: emailContent,
     });
 
