@@ -9,6 +9,8 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
 interface ContactEmailRequest {
   name: string;
   email: string;
@@ -17,7 +19,6 @@ interface ContactEmailRequest {
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -25,12 +26,20 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { name, email, phone, message }: ContactEmailRequest = await req.json();
 
-    console.log("Sending contact email for:", { name, email, phone });
-
-    // Validate input
     if (!name || !email || !phone || !message) {
       throw new Error("All fields are required");
     }
+
+    if (name.length > 200 || email.length > 255 || phone.length > 50 || message.length > 5000) {
+      throw new Error("Input exceeds maximum allowed length");
+    }
+
+    const safeName = esc(name);
+    const safeEmail = esc(email);
+    const safePhone = esc(phone);
+    const safeMessage = esc(message);
+
+    console.log("Sending contact email");
 
     // Send notification email to business
     const notificationEmail = await resend.emails.send({
