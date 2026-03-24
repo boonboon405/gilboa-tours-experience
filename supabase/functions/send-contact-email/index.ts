@@ -67,7 +67,7 @@ const handler = async (req: Request): Promise<Response> => {
       subject: "קיבלנו את הודעתך!",
       html: `
         <div dir="rtl" style="font-family: Arial, sans-serif;">
-          <h1>שלום ${name},</h1>
+          <h1>שלום ${safeName},</h1>
           <p>תודה שפנית אלינו!</p>
           <p>קיבלנו את הודעתך ונחזור אליך בהקדם האפשרי.</p>
           <br>
