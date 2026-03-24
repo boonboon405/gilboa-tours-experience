@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Bot, User, RotateCcw } from 'lucide-react';
+import { Bot, User, RotateCcw, Volume2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -33,9 +33,12 @@ interface AIChatProps {
     percentages: Record<string, number>;
   };
   onRequestHumanAgent?: () => void;
+  selectedVoice?: ElevenLabsVoice;
 }
 
-export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
+const HEBREW_VOICE_TEST_PHRASE = 'שלום וברוכים הבאים. אני מדברת בעברית תקינה וברורה. נשמח לעזור לכם לתכנן סיור בהיסטוריה, קולינריה וטבע בגלבוע ובצפון ישראל.';
+
+export const AIChat = ({ quizResults, onRequestHumanAgent, selectedVoice = 'Rachel' }: AIChatProps) => {
   const { language } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,7 +47,6 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [quickReplies, setQuickReplies] = useState<string[]>([]);
   const [showCategorySelector, setShowCategorySelector] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [selectedVoice] = useState<ElevenLabsVoice>('Rachel');
   const [conversationData, setConversationData] = useState<ConversationData>({});
   const [currentStep, setCurrentStep] = useState(0);
   const [showSummary, setShowSummary] = useState(false);
@@ -56,7 +58,6 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
 
   const isEn = language === 'en';
 
-  // Progress steps
   const steps = [
     { id: 'interests', label: isEn ? 'Interests' : 'תחומי עניין', completed: currentStep > 0, current: currentStep === 0 },
     { id: 'group', label: isEn ? 'Group Size' : 'גודל קבוצה', completed: currentStep > 1, current: currentStep === 1 },
@@ -86,21 +87,33 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
         message: greeting,
         created_at: new Date().toISOString()
       }]);
-      
+
       greetingSpokenRef.current = true;
       if (!quizResults) setShowCategorySelector(true);
     }
   }, [quizResults, language]);
 
-  const speakText = async (text: string) => {
+  const speakText = async (text: string, forcedLanguage?: 'he' | 'en') => {
     stopElevenLabsSpeech();
-    await speakWithElevenLabs(
+    return speakWithElevenLabs(
       text,
       selectedVoice,
       () => setIsSpeaking(true),
       () => setIsSpeaking(false),
-      language === 'en' ? 'en' : 'he'
+      forcedLanguage ?? (language === 'en' ? 'en' : 'he')
     );
+  };
+
+  const handleHebrewVoiceTest = async () => {
+    const didSpeak = await speakText(HEBREW_VOICE_TEST_PHRASE, 'he');
+
+    if (!didSpeak) {
+      toast({
+        title: 'בדיקת הקול נכשלה',
+        description: 'לא הצלחנו להשמיע את דוגמת העברית. נסו שוב בעוד רגע.',
+        variant: 'destructive'
+      });
+    }
   };
 
   const handleCategorySelect = async (categories: string[]) => {
@@ -135,7 +148,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
 
       if (error) throw error;
       if (data.error) {
-        toast({ title: isEn ? "Error" : "שגיאה", description: data.fallback || data.error, variant: "destructive" });
+        toast({ title: isEn ? 'Error' : 'שגיאה', description: data.fallback || data.error, variant: 'destructive' });
         return;
       }
 
@@ -151,7 +164,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
 
       setMessages(prev => [...prev, aiMessage]);
       setQuickReplies(data.quickReplies || []);
-      
+
       if (data.conversationData) {
         const updatedData = { ...conversationData, ...data.conversationData };
         setConversationData(updatedData);
@@ -162,8 +175,10 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
           setTimeout(() => setShowSummary(true), 1000);
         }
       }
-      
-      if (hasUserInteracted) speakText(data.message);
+
+      if (hasUserInteracted) {
+        await speakText(data.message);
+      }
 
       if (data.message.includes('דויד') || data.message.includes('0537314235') || data.message.includes('David')) {
         setTimeout(() => onRequestHumanAgent?.(), 1000);
@@ -172,9 +187,9 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
     } catch (error) {
       console.error('Chat error:', error);
       toast({
-        title: isEn ? "Send error" : "שגיאה בשליחה",
-        description: isEn ? "Please try again or call 053-731-4235" : "אנא נסו שוב או צרו קשר בטלפון 0537314235",
-        variant: "destructive"
+        title: isEn ? 'Send error' : 'שגיאה בשליחה',
+        description: isEn ? 'Please try again or call 053-731-4235' : 'אנא נסו שוב או צרו קשר בטלפון 0537314235',
+        variant: 'destructive'
       });
     } finally {
       setIsLoading(false);
@@ -223,7 +238,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
       setMessages(prev => [...prev, aiMessage]);
       speakText(msg);
     } catch {
-      toast({ title: isEn ? "Error" : "שגיאה", description: isEn ? "Could not generate recommendation." : "לא הצלחנו ליצור המלצה.", variant: "destructive" });
+      toast({ title: isEn ? 'Error' : 'שגיאה', description: isEn ? 'Could not generate recommendation.' : 'לא הצלחנו ליצור המלצה.', variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }
@@ -251,17 +266,22 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
 
   return (
     <div className="flex flex-col flex-1 min-h-0 bg-card rounded-xl border border-border/50 shadow-sm overflow-hidden">
-      {/* Header with progress + actions */}
       <div className="px-4 py-3 border-b border-border/40 bg-muted/30 space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-xs text-muted-foreground font-medium">
+            <span className="text-xs text-muted-foreground font-medium truncate">
               {isEn ? 'Text Chat' : 'צ\'אט טקסט'}
               {isSpeaking && (isEn ? ' • Speaking...' : ' • מדבר...')}
             </span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 shrink-0">
+            {!isEn && (
+              <Button variant="outline" size="sm" onClick={handleHebrewVoiceTest} className="text-xs h-7 px-2 gap-1.5">
+                <Volume2 className="w-3.5 h-3.5" />
+                בדיקת קול בעברית
+              </Button>
+            )}
             <ChatExport messages={messages} conversationData={conversationData} conversationId={conversationId} />
             {messages.length > 1 && (
               <Button variant="ghost" size="sm" onClick={handleResetConversation} className="text-xs h-7 px-2 text-muted-foreground">
@@ -270,13 +290,11 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
             )}
           </div>
         </div>
-        {/* Progress indicator — shows after first step */}
         {currentStep > 0 && (
           <ProgressIndicator steps={steps} className="pb-1" />
         )}
       </div>
 
-      {/* Messages */}
       <ScrollArea className="flex-1 min-h-0">
         <div className="p-4 space-y-4">
           {showSummary && (
@@ -297,8 +315,8 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
               className={`flex gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
             >
               <div className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs ${
-                msg.sender === 'user' 
-                  ? 'bg-primary text-primary-foreground' 
+                msg.sender === 'user'
+                  ? 'bg-primary text-primary-foreground'
                   : 'bg-muted text-muted-foreground'
               }`}>
                 {msg.sender === 'user' ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
@@ -333,16 +351,13 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
         </div>
       </ScrollArea>
 
-      {/* Input area */}
       <div className="border-t border-border/40 bg-background space-y-2">
-        {/* Category selector */}
         {showCategorySelector && (
           <div className="px-3 pt-3">
             <CategorySelector onSelect={handleCategorySelect} disabled={isLoading} />
           </div>
         )}
 
-        {/* Quick replies */}
         {quickReplies.length > 0 && !showCategorySelector && (
           <div className="flex gap-2 overflow-x-auto px-3 pt-2 pb-0 scrollbar-none">
             {quickReplies.slice(0, 5).map((reply, i) => (
@@ -360,12 +375,11 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
           </div>
         )}
 
-        {/* Text + voice input */}
         <VoiceTextInput
           onSend={handleSend}
           onTyping={() => {}}
           isLoading={isLoading}
-          placeholder={isEn ? "Type your message..." : "הקלידו את ההודעה שלכם..."}
+          placeholder={isEn ? 'Type your message...' : 'הקלידו את ההודעה שלכם...'}
           disabled={isLoading}
         />
       </div>
