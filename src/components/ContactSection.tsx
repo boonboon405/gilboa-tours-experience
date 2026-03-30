@@ -27,6 +27,7 @@ export const ContactSection = () => {
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const whatsappNumber = '972537314235';
   const email = 'DavidIsraelTours@gmail.com';
