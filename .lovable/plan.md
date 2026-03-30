@@ -1,94 +1,128 @@
 
 
-## Confirmation: Every Component and Section to Touch
+## Confirmation: Current Header Code
 
-### Global / Shared UI (3 files)
-1. **`src/components/ui/button.tsx`** — Update base variants and add `transition-all duration-200`
-2. **`src/components/ui/input.tsx`** — Ensure focus ring uses `ring-primary`
-3. **`src/components/ui/textarea.tsx`** — Same focus ring fix
+The current `src/components/Navigation.tsx` (434 lines) includes:
+- Logo with gradient text
+- MegaMenu component (elaborate dropdowns with images, breadcrumbs, highlights)
+- Quiz button with badge counter
+- LanguageSelector dropdown
+- Accessibility link
+- Book Tour button
+- Admin auth dropdown menu
+- Mobile menu (conditional render, not a drawer)
+- TeamDNAQuiz dialog
+- Scroll progress bar
+- IntersectionObserver for active section
 
-### Homepage Sections (10 component files)
-4. **`src/components/Hero.tsx`** — Section heading typography
-5. **`src/components/WhyChooseUs.tsx`** — Heading clamp sizing, body text line-height
-6. **`src/components/ServiceCards.tsx`** — Heading, body text, button variants in modal, CTA buttons
-7. **`src/components/ChooseYourDay.tsx`** — Heading, spacing, submit button loading state
-8. **`src/components/VIPTours.tsx`** — Heading, spacing, submit button loading state
-9. **`src/components/ODTSection.tsx`** — Heading, CTA buttons
-10. **`src/components/LandscapeGallery.tsx`** — Heading typography
-11. **`src/components/Testimonials.tsx`** — Heading typography consistency
-12. **`src/components/PublicFAQ.tsx`** — Heading typography
-13. **`src/components/ContactSection.tsx`** — Heading, form inputs, submit button (already has loading)
-
-### Forms (2 files)
-14. **`src/components/BookingForm.tsx`** — Submit button loading state (already has it — verify)
-15. **`src/components/TestimonialSubmissionForm.tsx`** — Submit button loading state (already has it — verify)
-
-### Modals/Dialogs (3 files — verify only)
-16. **`src/components/ui/dialog.tsx`** — Already has X close button + backdrop; verify backdrop opacity
-17. **`src/components/ODTTypesDialog.tsx`** — Uses Dialog; verify close behavior
-18. **`src/components/TeamDNAQuiz.tsx`** — Uses Dialog; verify close behavior
-19. **`src/components/ImageLightbox.tsx`** — Custom lightbox; verify backdrop + close
-
-### Global CSS (1 file)
-20. **`src/index.css`** — Add utility class for consistent section headings
-
-**Not touched**: Navigation, Footer (no buttons/forms), AIChat, VoiceChat, routing, TTS, any admin pages.
+The MegaMenu (`src/components/MegaMenu.tsx`, 239 lines) is a separate component with image-heavy dropdown panels.
 
 ---
 
-## Plan: Premium Polish Pass
+## Plan: Premium Header Rebuild
 
-### 1. Button System (`button.tsx`)
+### File to modify (1)
+**`src/components/Navigation.tsx`** — Complete rewrite
 
-Update the base CVA string to include `transition-all duration-200` (replacing `transition-colors`). Update variants:
-- `default` (primary CTA): `bg-accent text-white hover:brightness-110 rounded-full min-w-[140px]`
-- `hero`: keep gradient but add `rounded-full min-w-[140px]`
-- `whatsapp`: add `rounded-full min-w-[140px]`
-- `outline` (secondary/ghost-like): `border-primary text-primary bg-transparent hover:bg-primary/5 rounded-full`
-- `ghost`: keep as-is (used for icon buttons in chat toolbars — should not become rounded-full)
-- `secondary`, `destructive`, `link`: keep existing styles, just ensure `transition-all duration-200`
+### What gets removed
+- MegaMenu import and usage (the elaborate image dropdowns)
+- Scroll progress bar
+- Quiz button in the header (it can remain via the TeamDNAQuiz dialog triggered elsewhere)
+- The old mobile menu (inline conditional render)
 
-### 2. Dialog Backdrop (`dialog.tsx`)
+### What gets preserved
+- TeamDNAQuiz dialog (kept at bottom of component, opened from admin menu or elsewhere)
+- Auth/admin dropdown menu (kept in desktop right side, compact)
+- LanguageSelector (kept in desktop right side)
+- IntersectionObserver for active section highlighting
+- Smooth scroll handler (`handleNavClick`)
+- All imports from AuthContext, LanguageContext
 
-Change overlay from `bg-black/80` to `bg-black/60` to match spec. Already has X close button and close-on-backdrop-click (Radix default). No other changes needed.
+### New Structure
 
-### 3. Form Inputs (`input.tsx`, `textarea.tsx`)
+```text
+<nav> (fixed, top-0, w-full, z-[1000], h-[72px] desktop / h-[60px] mobile)
+  ├─ Transparent state (scrollY < 80): no bg, no border, no shadow
+  ├─ Scrolled state (scrollY >= 80): backdrop-blur-[12px], bg-[rgba(250,249,247,0.85)], shadow
+  │
+  ├─ <div max-w-7xl mx-auto px-6> (container)
+  │   ├─ LEFT: Logo
+  │   │   └─ Compass icon (Lucide) + "David Tours" text
+  │   │   └─ Color: gold-nav when transparent, primary when scrolled
+  │   │   └─ Heebo 800, 1.5rem desktop / 1.25rem mobile
+  │   │
+  │   ├─ CENTER (hidden below lg): Nav Links
+  │   │   └─ 6 links: Home|Tours|Team Building|VIP|About|Contact
+  │   │   └─ Each link has Hebrew subtitle (12px, 70% opacity)
+  │   │   └─ Color: gold-nav with text-shadow
+  │   │   └─ Hover: underline slides in from left (::after pseudo, scaleX, 300ms)
+  │   │   └─ Active: bottom border in accent color
+  │   │
+  │   ├─ RIGHT: CTA + utilities
+  │   │   └─ "Book Now / הזמן עכשיו" button (always visible, all viewports)
+  │   │   └─ LanguageSelector (desktop only)
+  │   │   └─ Admin auth dropdown (desktop only, if logged in)
+  │   │   └─ Hamburger ☰ (mobile only, below md)
+  │   │
+  ├─ MOBILE DRAWER (Sheet from right)
+  │   ├─ bg-[hsl(var(--primary-dark))]
+  │   ├─ X close button top-right
+  │   ├─ Nav links vertical, white, Heebo 600, 1.25rem, with Hebrew subtitles
+  │   ├─ Full-width "Book Now" CTA at bottom
+  │   ├─ LanguageSelector
+  │   ├─ Admin links if authenticated
+  │   └─ body overflow:hidden while open
+```
 
-Replace `focus-visible:ring-ring` with `focus-visible:ring-primary` so focus ring uses the teal brand color. Placeholder already uses `placeholder:text-muted-foreground` — no change needed.
+### Nav Links Definition (bilingual)
 
-### 4. Section Headings — Global Utility (`index.css`)
+| EN Label | HE Subtitle | Target |
+|---|---|---|
+| Home | בית | #home |
+| Tours | סיורים | #choose-your-day |
+| Team Building | גיבוש | #odt-section |
+| VIP | VIP | #vip-tours |
+| About | אודות | #accessibility (links to /accessibility) |
+| Contact | צור קשר | #contact |
 
-Add a utility class:
+### Hover Underline Effect
+
+Add CSS in `index.css`:
 ```css
-.section-heading {
-  font-family: 'Heebo', sans-serif;
-  font-weight: 700;
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  line-height: 1.2;
+.nav-link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: hsl(var(--accent));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 300ms ease;
+}
+.nav-link-underline:hover::after {
+  transform: scaleX(1);
 }
 ```
 
-### 5. Apply Heading Class + Body Text (10 section components)
+### Mobile Drawer
 
-In each section component, apply `section-heading` to the `<h2>` and ensure body/description text has `leading-[1.7]` (line-height 1.7). Ensure all sections use `py-20`.
+Use the existing `Sheet` component (`src/components/ui/sheet.tsx`) which is already in the project — it handles backdrop, close-on-click, body scroll lock, and slide-in animation from the right.
 
-Components: Hero (h1 stays as-is — already large), WhyChooseUs, ServiceCards, ChooseYourDay, VIPTours, ODTSection, LandscapeGallery, Testimonials, PublicFAQ, ContactSection.
+### Accessibility
+- `aria-label` on nav, hamburger, close button, all links, CTA
+- `role="navigation"`, `role="menuitem"` on links
+- `focus-visible:ring-2 focus-visible:ring-primary` on all interactive elements
+- Keyboard navigable (native `<a>` and `<button>` elements)
 
-### 6. Form Loading States
-
-- **ContactSection**: Already has `isSubmitting` — already disables button and shows "שולח..." — verified OK
-- **BookingForm**: Already has `isSubmitting` from Redux — verified OK
-- **TestimonialSubmissionForm**: Already has `submitting` state — verified OK
-- **ChooseYourDay**: Has a submit form — verify it shows loading state; add if missing
-- **VIPTours**: Has a submit form — verify it shows loading state; add if missing
-
-### 7. Verify No Timer/Exit-Intent Modals
-
-Search confirmed: no ExitIntentModal or timer-based modal opens exist. The only `setTimeout` + `setShow` is in AIChat for showing a summary after data collection (legitimate UX, not a popup). No changes needed.
+### Files to modify (2)
+1. **`src/components/Navigation.tsx`** — Full rewrite
+2. **`src/index.css`** — Add `.nav-link-underline` utility class
 
 ### What does NOT change
-- Content text, routing, TTS logic, voice selection
-- Admin pages, chat components (AIChat/VoiceChat)
-- Navigation, Footer layout
-- Ghost variant (used for toolbar icon buttons — must stay compact)
+- `MegaMenu.tsx` file (left untouched, just no longer imported)
+- `Index.tsx`, routing, TTS, AIChat, any other components
+- Auth logic, admin dropdown items
+- LanguageSelector component
 
