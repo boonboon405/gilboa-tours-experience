@@ -45,7 +45,7 @@ export const Hero = () => {
             <h1 className="font-['Heebo'] font-bold text-white mb-2" style={{ fontSize: 'clamp(2rem, 6vw, 4.5rem)' }}>
               {slide.he}
             </h1>
-            <p className="font-['Heebo'] text-2xl md:text-4xl text-white mb-3">
+            <p className="font-['Heebo'] text-white mb-3" style={{ fontSize: 'clamp(1.25rem, 3.5vw, 2.5rem)' }}>
               {slide.en}
             </p>
             <p className="text-white/80 text-lg md:text-xl max-w-2xl mb-8">

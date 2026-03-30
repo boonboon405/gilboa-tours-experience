@@ -77,7 +77,7 @@ const accessibilityFeatures = [
 
 export const AccessibilityInfoSection = () => {
   return (
-    <section className="py-16 bg-gradient-to-b from-muted/30 to-background" dir="rtl">
+    <section className="py-20 bg-gradient-to-b from-muted/30 to-background" dir="rtl">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
