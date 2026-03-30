@@ -3,6 +3,7 @@ import { trackPhoneCall } from '@/utils/contactTracking';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export const Footer = () => {
+  const { language } = useLanguage();
   const email = 'davidisraeltours@gmail.com';
   const phoneNumber = '0537314235';
 
