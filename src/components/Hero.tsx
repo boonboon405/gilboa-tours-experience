@@ -3,11 +3,11 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const slides = [
-  { he: 'גלה את הגליל', en: 'Discover the Galilee', subHe: 'סיורים מודרכים בנופים עוצרי הנשימה של ישראל', subEn: 'Guided tours through Israel\'s most breathtaking landscapes', img: '/images/hero/sea-of-galilee.jpg' },
-  { he: 'ימי גיבוש בטבע', en: 'Team Building in Nature', subHe: 'חוויות קבוצתיות בלתי נשכחות בהר הגלבוע', subEn: 'Unforgettable group experiences on Mount Gilboa', img: '/images/hero/mount-gilboa.jpg' },
-  { he: 'מעיינות עמק הבזלת', en: 'Springs Valley', subHe: 'סיורים במעיינות העתיקים הנסתרים', subEn: 'Hidden gem tours through ancient water springs', img: '/images/hero/springs-waterfall.jpg' },
-  { he: 'חוויות VIP', en: 'VIP Experiences', subHe: 'טיולים פרטיים ומותאמים אישית', subEn: 'Premium private tours tailored to you', img: '/images/hero/jezreel-valley.jpg' },
-  { he: 'עמק יזרעאל', en: 'Jezreel Valley', subHe: 'נופים מקראיים, מותרות מודרניות', subEn: 'Biblical landscapes, modern luxury', img: '/images/hero/upper-galilee.jpg' },
+  { he: 'גלה את הגליל', en: 'Discover the Galilee', subHe: 'סיורים מודרכים בנופים עוצרי הנשימה של ישראל', subEn: 'Guided tours through Israel\'s most breathtaking landscapes', img: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=1920&q=80&fit=crop' },
+  { he: 'ימי גיבוש בטבע', en: 'Team Building in Nature', subHe: 'חוויות קבוצתיות בלתי נשכחות בהר הגלבוע', subEn: 'Unforgettable group experiences on Mount Gilboa', img: 'https://images.unsplash.com/photo-1631709497146-a239ef373cf5?w=1920&q=80&fit=crop' },
+  { he: 'מעיינות עמק הבזלת', en: 'Springs Valley', subHe: 'סיורים במעיינות העתיקים הנסתרים', subEn: 'Hidden gem tours through ancient water springs', img: 'https://images.unsplash.com/photo-1558005530-a7958896ec60?w=1920&q=80&fit=crop' },
+  { he: 'חוויות VIP', en: 'VIP Experiences', subHe: 'טיולים פרטיים ומותאמים אישית', subEn: 'Premium private tours tailored to you', img: 'https://images.unsplash.com/photo-1527856263669-12c3a0af2571?w=1920&q=80&fit=crop' },
+  { he: 'עמק יזרעאל', en: 'Jezreel Valley', subHe: 'נופים מקראיים, מותרות מודרניות', subEn: 'Biblical landscapes, modern luxury', img: 'https://images.unsplash.com/photo-1580745294855-4507f1af8014?w=1920&q=80&fit=crop' },
 ];
 
 export const Hero = () => {
