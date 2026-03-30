@@ -118,7 +118,7 @@ export const ServiceCards = () => {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-b from-background to-muted/20 relative overflow-hidden">
+    <section className="py-20 bg-gradient-to-b from-background to-muted/20 relative overflow-hidden">
       {/* Background decorative elements with parallax */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div 
