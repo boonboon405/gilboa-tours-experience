@@ -13,12 +13,19 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/contexts/LanguageContext';
 
-const vipDestinations = [
+interface VipDestination {
+  id: number;
+  region: string;
+  sites: string[];
+}
+
+const getVipDestinations = (isHe: boolean): VipDestination[] => [
   {
     id: 1,
-    region: "🌿 צפון הארץ",
-    sites: [
+    region: isHe ? "🌿 צפון הארץ" : "🌿 Northern Israel",
+    sites: isHe ? [
       "ראש הנקרה – הנקרות הלבנות והנוף לים התיכון",
       "מצודת יחיעם – מבצר צלבני עתיק בגליל המערבי",
       "עכו העתיקה – חומות, נמל, שוק ומנהרת הטמפלרים",
@@ -35,12 +42,29 @@ const vipDestinations = [
       "שמורת הבניאס (נחל חרמון) – מפלים ומקדש פאן",
       "גולן – קצרין העתיקה, הר בנטל ותצפית על סוריה",
       "חמת גדר מעיינות חמים ועיר רומית"
+    ] : [
+      "Rosh HaNikra – White chalk grottoes overlooking the Mediterranean",
+      "Yehiam Fortress – Ancient Crusader fortress in Western Galilee",
+      "Old Acre (Akko) – Walls, harbor, market & Templar tunnel",
+      "Nahariya – Charming coastal promenade with Galilean atmosphere",
+      "Mount Meron – Scenic viewpoints & tomb of Rabbi Shimon Bar Yochai",
+      "Old Safed (Tzfat) – Alleys, art galleries & Kabbalah heritage",
+      "Sea of Galilee – Christian baptism sites & swimming beaches",
+      "Tomb of Maimonides – Tiberias",
+      "Mount Arbel – Stunning lookout over the Sea of Galilee",
+      "Nahal Amud – One of Israel's most beautiful nature trails",
+      "Hazor – Biblical-era archaeological site",
+      "Nahal Dan – Year-round flowing water nature reserve",
+      "Tel Dan – Canaanite city with original gate",
+      "Banias Nature Reserve (Hermon Stream) – Waterfalls & Pan's temple",
+      "Golan Heights – Ancient Katzrin, Mount Bental & view into Syria",
+      "Hamat Gader – Hot springs & Roman city"
     ]
   },
   {
     id: 2,
-    region: "🏞 עמק יזרעאל והגלבוע",
-    sites: [
+    region: isHe ? "🏞 עמק יזרעאל והגלבוע" : "🏞 Jezreel Valley & Gilboa",
+    sites: isHe ? [
       "גבעת המורה – נוף מרהיב לעמק",
       "נחל הקיבוצים – מסלול מים חווייתי לכל המשפחה",
       "הר הגלבוע – פריחה עונתית ונוף לעמק חרוד",
@@ -49,12 +73,21 @@ const vipDestinations = [
       "כנסיית הבשורה – נצרת",
       "יקב תבור – טעימות יין ונוף הרים",
       "סחנה-פארק גן השלושה (מים חמימים לאורך כל השנה)"
+    ] : [
+      "Givat HaMoreh – Stunning valley views",
+      "Nahal HaKibbutzim – Family-friendly water trail",
+      "Mount Gilboa – Seasonal wildflowers & Harod Valley views",
+      "Beit She'an – Impressive Roman antiquities",
+      "Mount Tabor – Site of the Transfiguration in Christian tradition",
+      "Church of the Annunciation – Nazareth",
+      "Tabor Winery – Wine tasting with mountain views",
+      "Sachne / Gan HaShlosha – Warm natural springs year-round"
     ]
   },
   {
     id: 3,
-    region: "🏙 חיפה והשרון",
-    sites: [
+    region: isHe ? "🏙 חיפה והשרון" : "🏙 Haifa & Sharon",
+    sites: isHe ? [
       "גני הבהאיים – אתר מורשת עולמית עוצר נשימה",
       "המושבה הגרמנית – חיפה",
       "מוזיאון ההעפלה וחיל הים – חיפה",
@@ -63,12 +96,21 @@ const vipDestinations = [
       "שמורת הבונים – מסלול חוף סלעי יפהפה",
       "גן לאומי אפולוניה – מבצר צלבני מעל הים בהרצליה",
       "מערות האדם הקדמון ע״י נחל אורן-מדרון הכרמל"
+    ] : [
+      "Baha'i Gardens – Breathtaking UNESCO World Heritage site",
+      "German Colony – Haifa",
+      "Clandestine Immigration & Naval Museum – Haifa",
+      "Caesarea – Roman aqueduct, amphitheater & harbor",
+      "Ra'anana Park – One of the largest in central Israel",
+      "HaBonim Nature Reserve – Beautiful rocky coastal trail",
+      "Apollonia National Park – Crusader fortress above the sea in Herzliya",
+      "Prehistoric caves near Nahal Oren – Carmel slopes"
     ]
   },
   {
     id: 4,
-    region: "🕍 ירושלים והסביבה",
-    sites: [
+    region: isHe ? "🕍 ירושלים והסביבה" : "🕍 Jerusalem & Surroundings",
+    sites: isHe ? [
       "העיר העתיקה בירושלים – הכותל המערבי, כנסיית הקבר, הר הבית",
       "יד ושם – מוזיאון השואה הלאומי",
       "מוזיאון ישראל – כולל דגם ירושלים ובית הספרים הלאומי",
@@ -77,12 +119,21 @@ const vipDestinations = [
       "שוק מחנה יהודה – תרבות, אוכל ואווירה ירושלמית",
       "עיר דוד – ארכאולוגיה מרתקת מימי בית ראשון",
       "אבו גוש כפר שוחר שלום-בדרך לבירה ירושלים"
+    ] : [
+      "Old City of Jerusalem – Western Wall, Church of the Holy Sepulchre, Temple Mount",
+      "Yad Vashem – National Holocaust Memorial Museum",
+      "Israel Museum – Including Jerusalem model & National Library",
+      "Mount of Olives – Panoramic view of the Old City",
+      "Mishkenot Sha'ananim – First Jewish neighborhood outside the walls",
+      "Mahane Yehuda Market – Culture, food & Jerusalem atmosphere",
+      "City of David – Fascinating First Temple-era archaeology",
+      "Abu Ghosh – Village of peace on the way to Jerusalem"
     ]
   },
   {
     id: 5,
-    region: "🏜 הדרום ומדבר יהודה",
-    sites: [
+    region: isHe ? "🏜 הדרום ומדבר יהודה" : "🏜 Southern Israel & Judean Desert",
+    sites: isHe ? [
       "ים המלח – הנקודה הנמוכה בעולם",
       "מצדה – סמל הגבורה היהודית ומורשת עולמית",
       "עין גדי – נווה מדבר ומסלולי מים",
@@ -95,51 +146,55 @@ const vipDestinations = [
       "שמורת האלמוגים – אחת היפות בעולם",
       "המצפה התת ימי באילת – עולם חי תת-ימי עשיר",
       "שייט בים האדום בספינה"
+    ] : [
+      "Dead Sea – The lowest point on Earth",
+      "Masada – Symbol of Jewish heroism & UNESCO World Heritage",
+      "Ein Gedi – Desert oasis with water trails",
+      "Qumran Caves – Where the Dead Sea Scrolls were discovered",
+      "Makhtesh Ramon – A global geological wonder",
+      "Mitzpe Ramon – Stargazing astronomy center",
+      "Be'er Sheva – City of the Patriarchs, Abraham's Well & Negev Museum",
+      "Timna Park – Desert landscapes & ancient copper mines",
+      "Eilat – Red Sea beaches, snorkeling & diving",
+      "Coral Reserve – One of the most beautiful in the world",
+      "Eilat Underwater Observatory – Rich marine life",
+      "Red Sea boat cruise"
     ]
   }
 ];
 
 export const VIPTours = () => {
   const { toast } = useToast();
+  const { language } = useLanguage();
+  const isHe = language === 'he';
+  const vipDestinations = getVipDestinations(isHe);
+
   const [vipSelections, setVipSelections] = useState<Record<number, number[]>>({
-    1: [],
-    2: [],
-    3: [],
-    4: [],
-    5: []
+    1: [], 2: [], 3: [], 4: [], 5: []
   });
   const [isSending, setIsSending] = useState(false);
   const [contactInfo, setContactInfo] = useState({
-    name: '',
-    email: '',
-    company: '',
-    whatsappNumber: '',
-    officeNumber: '',
-    participantCount: '',
-    budgetPerPerson: '275',
-    tourType: 'יום אחד',
-    specialComments: '',
-    language: ''
+    name: '', email: '', company: '', whatsappNumber: '', officeNumber: '',
+    participantCount: '', budgetPerPerson: '275', tourType: isHe ? 'יום אחד' : '1 Day',
+    specialComments: '', language: ''
   });
   const [suggestedDate, setSuggestedDate] = useState<Date>();
 
   const handleSendPreferences = async () => {
-    // Validate contact info
     if (!contactInfo.name || !contactInfo.email || !contactInfo.company || !contactInfo.whatsappNumber) {
       toast({
-        title: "פרטים חסרים",
-        description: "אנא מלא את כל השדות הנדרשים (שם, אימייל, חברה, ומספר וואטסאפ)",
+        title: isHe ? "פרטים חסרים" : "Missing Details",
+        description: isHe ? "אנא מלא את כל השדות הנדרשים (שם, אימייל, חברה, ומספר וואטסאפ)" : "Please fill in all required fields (name, email, company, and WhatsApp number)",
         variant: "destructive",
       });
       return;
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(contactInfo.email)) {
       toast({
-        title: "אימייל לא תקין",
-        description: "אנא הכנס כתובת אימייל תקינה",
+        title: isHe ? "אימייל לא תקין" : "Invalid Email",
+        description: isHe ? "אנא הכנס כתובת אימייל תקינה" : "Please enter a valid email address",
         variant: "destructive",
       });
       return;
@@ -148,7 +203,8 @@ export const VIPTours = () => {
     setIsSending(true);
     
     try {
-      const vipSelectionsData = vipDestinations.map(destination => ({
+      const heDestinations = getVipDestinations(true);
+      const vipSelectionsData = heDestinations.map(destination => ({
         region: destination.region,
         sites: (vipSelections[destination.id] || []).map(index => destination.sites[index])
       }));
@@ -167,36 +223,22 @@ export const VIPTours = () => {
       if (error) throw error;
 
       toast({
-        title: "ההעדפות נשלחו בהצלחה!",
-        description: "ניצור איתך קשר בהקדם",
+        title: isHe ? "ההעדפות נשלחו בהצלחה!" : "Preferences Sent Successfully!",
+        description: isHe ? "ניצור איתך קשר בהקדם" : "We'll contact you shortly",
       });
 
-      // Reset form
-      setVipSelections({
-        1: [],
-        2: [],
-        3: [],
-        4: [],
-        5: []
-      });
+      setVipSelections({ 1: [], 2: [], 3: [], 4: [], 5: [] });
       setContactInfo({
-        name: '',
-        email: '',
-        company: '',
-        whatsappNumber: '',
-        officeNumber: '',
-        participantCount: '',
-        budgetPerPerson: '275',
-        tourType: 'יום אחד',
-        specialComments: '',
-        language: ''
+        name: '', email: '', company: '', whatsappNumber: '', officeNumber: '',
+        participantCount: '', budgetPerPerson: '275', tourType: isHe ? 'יום אחד' : '1 Day',
+        specialComments: '', language: ''
       });
       setSuggestedDate(undefined);
     } catch (error) {
       console.error('Error sending preferences:', error);
       toast({
-        title: "שגיאה בשליחה",
-        description: "אירעה שגיאה בשליחת ההעדפות. נסה שוב מאוחר יותר.",
+        title: isHe ? "שגיאה בשליחה" : "Submission Error",
+        description: isHe ? "אירעה שגיאה בשליחת ההעדפות. נסה שוב מאוחר יותר." : "An error occurred while sending preferences. Please try again later.",
         variant: "destructive",
       });
     } finally {
@@ -205,6 +247,10 @@ export const VIPTours = () => {
   };
 
   const totalVipSelections = Object.values(vipSelections).reduce((sum, selections) => sum + selections.length, 0);
+
+  const tourDurations = isHe
+    ? [{ v: 'יום אחד', l: 'יום אחד' }, { v: 'יומיים', l: 'יומיים' }, { v: '3 ימים', l: '3 ימים' }, { v: '4 ימים', l: '4 ימים' }, { v: '5 ימים', l: '5 ימים' }, { v: 'שבוע', l: 'שבוע' }, { v: '10 ימים', l: '10 ימים' }, { v: 'שבועיים', l: 'שבועיים' }]
+    : [{ v: '1 Day', l: '1 Day' }, { v: '2 Days', l: '2 Days' }, { v: '3 Days', l: '3 Days' }, { v: '4 Days', l: '4 Days' }, { v: '5 Days', l: '5 Days' }, { v: '1 Week', l: '1 Week' }, { v: '10 Days', l: '10 Days' }, { v: '2 Weeks', l: '2 Weeks' }];
 
   return (
     <section id="vip-tours" className="py-20 bg-gradient-to-br from-purple-50/50 to-blue-50/50 dark:from-purple-950/20 dark:to-blue-950/20">
@@ -215,18 +261,22 @@ export const VIPTours = () => {
             <CardHeader className="text-center">
               <div className="flex justify-center mb-4">
                 <Badge className="text-xl px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
-                  טיולי VIP - עד 19 מטיילים
+                  {isHe ? 'טיולי VIP - עד 19 מטיילים' : 'VIP Tours – Up to 19 Guests'}
                 </Badge>
               </div>
               <CardTitle className="section-heading mb-4">
-                טיול VIP מיוחד לאורחים מחו״ל
+                {isHe ? 'טיול VIP מיוחד לאורחים מחו״ל' : 'Exclusive VIP Tours for International Guests'}
               </CardTitle>
               <CardDescription className="text-lg md:text-xl leading-[1.7]">
                 <p className="mb-4">
-                  החברה שלכם מארחת אורחים מחו״ל? דייויד טורס יכול לארח אותם בטיול VIP ברכב ממוזג מפואר ולהעניק להם חוויית טיול בלתי נשכחת ברחבי ישראל.
+                  {isHe 
+                    ? 'החברה שלכם מארחת אורחים מחו״ל? דייויד טורס יכול לארח אותם בטיול VIP ברכב ממוזג מפואר ולהעניק להם חוויית טיול בלתי נשכחת ברחבי ישראל.'
+                    : 'Is your company hosting international guests? David Tours can host them on a VIP tour in a luxury air-conditioned vehicle for an unforgettable experience across Israel.'}
                 </p>
                 <p className="font-semibold text-primary">
-                  מתאים לקבוצות של 1-19 מטיילים • נהג מקצועי ומדריך מומחה • רכב מפואר וממוזג • מסלולים מותאמים אישית
+                  {isHe 
+                    ? 'מתאים לקבוצות של 1-19 מטיילים • נהג מקצועי ומדריך מומחה • רכב מפואר וממוזג • מסלולים מותאמים אישית'
+                    : 'Suitable for groups of 1–19 guests • Professional driver & expert guide • Luxury air-conditioned vehicle • Fully customized itineraries'}
                 </p>
               </CardDescription>
             </CardHeader>
@@ -234,15 +284,15 @@ export const VIPTours = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <div className="flex items-center gap-2 text-lg">
                   <CheckCircle2 className="h-6 w-6 text-green-600" />
-                  <span>רכב VIP ממוזג</span>
+                  <span>{isHe ? 'רכב VIP ממוזג' : 'Air-Conditioned VIP Vehicle'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-lg">
                   <CheckCircle2 className="h-6 w-6 text-green-600" />
-                  <span>מדריך מקצועי</span>
+                  <span>{isHe ? 'מדריך מקצועי' : 'Professional Guide'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-lg">
                   <CheckCircle2 className="h-6 w-6 text-green-600" />
-                  <span>מסלול מותאם אישית</span>
+                  <span>{isHe ? 'מסלול מותאם אישית' : 'Custom Itinerary'}</span>
                 </div>
               </div>
             </CardContent>
@@ -252,12 +302,18 @@ export const VIPTours = () => {
         {/* VIP Destinations Selection */}
         <div className="max-w-7xl mx-auto mb-12">
           <div className="text-center mb-8">
-            <h3 className="text-3xl font-bold mb-4">בחרו את חבל הארץ ואת האתרים המועדפים עליכם</h3>
+            <h3 className="text-3xl font-bold mb-4">
+              {isHe ? 'בחרו את חבל הארץ ואת האתרים המועדפים עליכם' : 'Choose Your Preferred Region & Sites'}
+            </h3>
             <p className="text-lg text-muted-foreground">
-              רשימת 50 אתרים מומלצים לביקור בישראל, מחולקים לפי אזורים גיאוגרפיים – מצפון לדרום
+              {isHe 
+                ? 'רשימת 50 אתרים מומלצים לביקור בישראל, מחולקים לפי אזורים גיאוגרפיים – מצפון לדרום'
+                : '50 recommended sites across Israel, organized by geographic region — from north to south'}
             </p>
             <p className="text-base text-muted-foreground mt-2">
-              הרשימה כוללת אתרים היסטוריים, טבעיים, דתיים ותרבותיים, שנחשבים מהחשובים והמרתקים ביותר בארץ
+              {isHe 
+                ? 'הרשימה כוללת אתרים היסטוריים, טבעיים, דתיים ותרבותיים, שנחשבים מהחשובים והמרתקים ביותר בארץ'
+                : 'The list includes historical, natural, religious, and cultural sites — among the most important and fascinating in the country'}
             </p>
           </div>
 
@@ -266,27 +322,21 @@ export const VIPTours = () => {
               const currentSelections = vipSelections[destination.id] || [];
               
               return (
-                <Card 
-                  key={destination.id}
-                  className="border-2 hover:shadow-strong transition-all duration-300"
-                >
+                <Card key={destination.id} className="border-2 hover:shadow-strong transition-all duration-300">
                   <CardHeader>
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-2xl">
-                        {destination.region}
-                      </CardTitle>
+                      <CardTitle className="text-2xl">{destination.region}</CardTitle>
                       <Badge 
                         variant="secondary" 
-                        className={cn(
-                          "text-lg px-4 py-2",
-                          currentSelections.length > 0 && "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100"
-                        )}
+                        className={cn("text-lg px-4 py-2", currentSelections.length > 0 && "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100")}
                       >
-                        {currentSelections.length} נבחרו
+                        {currentSelections.length} {isHe ? 'נבחרו' : 'selected'}
                       </Badge>
                     </div>
                     <CardDescription className="text-base mt-3">
-                      בחר עד 5 פעילויות, יחד נקבע את האטרקציות הכי מתאימות בהיתחשב בזמנים ואפשרויות בשטח ומזג אויר
+                      {isHe 
+                        ? 'בחר עד 5 פעילויות, יחד נקבע את האטרקציות הכי מתאימות בהיתחשב בזמנים ואפשרויות בשטח ומזג אויר'
+                        : 'Select up to 5 attractions — we\'ll help you choose the best fit based on timing, logistics, and weather'}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -298,23 +348,14 @@ export const VIPTours = () => {
                           onClick={() => {
                             const isSelected = currentSelections.includes(index);
                             if (isSelected) {
-                              setVipSelections({
-                                ...vipSelections,
-                                [destination.id]: currentSelections.filter(i => i !== index)
-                              });
+                              setVipSelections({ ...vipSelections, [destination.id]: currentSelections.filter(i => i !== index) });
                             } else {
-                              setVipSelections({
-                                ...vipSelections,
-                                [destination.id]: [...currentSelections, index]
-                              });
+                              setVipSelections({ ...vipSelections, [destination.id]: [...currentSelections, index] });
                             }
                           }}
                         >
-                          <Checkbox
-                            checked={currentSelections.includes(index)}
-                            className="mt-1"
-                          />
-                          <span className="flex-1 text-right">{site}</span>
+                          <Checkbox checked={currentSelections.includes(index)} className="mt-1" />
+                          <span className="flex-1">{site}</span>
                         </div>
                       ))}
                     </div>
@@ -331,7 +372,7 @@ export const VIPTours = () => {
             <CardHeader>
               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <CardTitle className="text-3xl font-bold">
-                  סיכום הבחירות שלך לטיול VIP
+                  {isHe ? 'סיכום הבחירות שלך לטיול VIP' : 'Your VIP Tour Selection Summary'}
                 </CardTitle>
                 <Button 
                   onClick={handleSendPreferences}
@@ -340,157 +381,82 @@ export const VIPTours = () => {
                   className="bg-purple-600 hover:bg-purple-700 text-white px-8"
                 >
                   <Send className="h-5 w-5 ml-2" />
-                  {isSending ? 'שולח...' : 'שלח למייל'}
+                  {isSending ? (isHe ? 'שולח...' : 'Sending...') : (isHe ? 'שלח למייל' : 'Send via Email')}
                 </Button>
               </div>
             </CardHeader>
             <CardContent>
               <div className="flex justify-center py-6 mb-6 border-b">
                 <div className="text-center">
-                  <div className="text-5xl font-bold text-purple-600 mb-2">
-                    {totalVipSelections}
-                  </div>
-                  <div className="text-lg text-muted-foreground">
-                    אתרים נבחרו
-                  </div>
+                  <div className="text-5xl font-bold text-purple-600 mb-2">{totalVipSelections}</div>
+                  <div className="text-lg text-muted-foreground">{isHe ? 'אתרים נבחרו' : 'Sites Selected'}</div>
                 </div>
               </div>
 
-              {/* Contact Information Form */}
               <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-center mb-6">פרטי יצירת קשר</h3>
+                <h3 className="text-2xl font-bold text-center mb-6">{isHe ? 'פרטי יצירת קשר' : 'Contact Information'}</h3>
                 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium mb-2">שם מלא *</label>
-                    <Input
-                      value={contactInfo.name}
-                      onChange={(e) => setContactInfo({ ...contactInfo, name: e.target.value })}
-                      placeholder="הכנס את שמך המלא"
-                      required
-                    />
+                    <label className="block text-sm font-medium mb-2">{isHe ? 'שם מלא *' : 'Full Name *'}</label>
+                    <Input value={contactInfo.name} onChange={(e) => setContactInfo({ ...contactInfo, name: e.target.value })} placeholder={isHe ? "הכנס את שמך המלא" : "Enter your full name"} required />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium mb-2">אימייל *</label>
-                    <Input
-                      type="email"
-                      value={contactInfo.email}
-                      onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
-                      placeholder="example@company.com"
-                      required
-                    />
+                    <label className="block text-sm font-medium mb-2">{isHe ? 'אימייל *' : 'Email *'}</label>
+                    <Input type="email" value={contactInfo.email} onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })} placeholder="example@company.com" required />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium mb-2">שם החברה *</label>
-                    <Input
-                      value={contactInfo.company}
-                      onChange={(e) => setContactInfo({ ...contactInfo, company: e.target.value })}
-                      placeholder="הכנס את שם החברה"
-                      required
-                    />
+                    <label className="block text-sm font-medium mb-2">{isHe ? 'שם החברה *' : 'Company Name *'}</label>
+                    <Input value={contactInfo.company} onChange={(e) => setContactInfo({ ...contactInfo, company: e.target.value })} placeholder={isHe ? "הכנס את שם החברה" : "Enter company name"} required />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium mb-2">מספר וואטסאפ *</label>
-                    <Input
-                      type="tel"
-                      value={contactInfo.whatsappNumber}
-                      onChange={(e) => setContactInfo({ ...contactInfo, whatsappNumber: e.target.value })}
-                      placeholder="05X-XXXXXXX"
-                      required
-                    />
+                    <label className="block text-sm font-medium mb-2">{isHe ? 'מספר וואטסאפ *' : 'WhatsApp Number *'}</label>
+                    <Input type="tel" value={contactInfo.whatsappNumber} onChange={(e) => setContactInfo({ ...contactInfo, whatsappNumber: e.target.value })} placeholder="05X-XXXXXXX" required />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium mb-2">מספר משרדי</label>
-                    <Input
-                      type="tel"
-                      value={contactInfo.officeNumber}
-                      onChange={(e) => setContactInfo({ ...contactInfo, officeNumber: e.target.value })}
-                      placeholder="0X-XXXXXXX"
-                    />
+                    <label className="block text-sm font-medium mb-2">{isHe ? 'מספר משרדי' : 'Office Number'}</label>
+                    <Input type="tel" value={contactInfo.officeNumber} onChange={(e) => setContactInfo({ ...contactInfo, officeNumber: e.target.value })} placeholder="0X-XXXXXXX" />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium mb-2">מספר משתתפים</label>
-                    <Input
-                      type="number"
-                      value={contactInfo.participantCount}
-                      onChange={(e) => setContactInfo({ ...contactInfo, participantCount: e.target.value })}
-                      placeholder="מספר האורחים"
-                      min="1"
-                      max="19"
-                    />
+                    <label className="block text-sm font-medium mb-2">{isHe ? 'מספר משתתפים' : 'Number of Participants'}</label>
+                    <Input type="number" value={contactInfo.participantCount} onChange={(e) => setContactInfo({ ...contactInfo, participantCount: e.target.value })} placeholder={isHe ? "מספר האורחים" : "Number of guests"} min="1" max="19" />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium mb-2">מספר ימים</label>
-                    <Select
-                      value={contactInfo.tourType}
-                      onValueChange={(value) => setContactInfo({ ...contactInfo, tourType: value })}
-                    >
+                    <label className="block text-sm font-medium mb-2">{isHe ? 'מספר ימים' : 'Number of Days'}</label>
+                    <Select value={contactInfo.tourType} onValueChange={(value) => setContactInfo({ ...contactInfo, tourType: value })}>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="בחר מספר ימים" />
+                        <SelectValue placeholder={isHe ? "בחר מספר ימים" : "Select number of days"} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="יום אחד">יום אחד</SelectItem>
-                        <SelectItem value="יומיים">יומיים</SelectItem>
-                        <SelectItem value="3 ימים">3 ימים</SelectItem>
-                        <SelectItem value="4 ימים">4 ימים</SelectItem>
-                        <SelectItem value="5 ימים">5 ימים</SelectItem>
-                        <SelectItem value="שבוע">שבוע</SelectItem>
-                        <SelectItem value="10 ימים">10 ימים</SelectItem>
-                        <SelectItem value="שבועיים">שבועיים</SelectItem>
+                        {tourDurations.map(d => (
+                          <SelectItem key={d.v} value={d.v}>{d.l}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium mb-2">תאריך מוצע</label>
+                    <label className="block text-sm font-medium mb-2">{isHe ? 'תאריך מוצע' : 'Suggested Date'}</label>
                     <Popover>
                       <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-right font-normal",
-                            !suggestedDate && "text-muted-foreground"
-                          )}
-                        >
+                        <Button variant="outline" className={cn("w-full justify-start text-right font-normal", !suggestedDate && "text-muted-foreground")}>
                           <CalendarIcon className="ml-2 h-4 w-4" />
-                          {suggestedDate ? format(suggestedDate, "dd/MM/yyyy") : "בחר תאריך"}
+                          {suggestedDate ? format(suggestedDate, "dd/MM/yyyy") : (isHe ? "בחר תאריך" : "Select a date")}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={suggestedDate}
-                          onSelect={setSuggestedDate}
-                          initialFocus
-                        />
+                        <Calendar mode="single" selected={suggestedDate} onSelect={setSuggestedDate} initialFocus />
                       </PopoverContent>
                     </Popover>
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium mb-2">שפת הטיול</label>
-                    <Input
-                      value={contactInfo.language}
-                      onChange={(e) => setContactInfo({ ...contactInfo, language: e.target.value })}
-                      placeholder="למשל: עברית, אנגלית, וכו׳"
-                    />
+                    <label className="block text-sm font-medium mb-2">{isHe ? 'שפת הטיול' : 'Tour Language'}</label>
+                    <Input value={contactInfo.language} onChange={(e) => setContactInfo({ ...contactInfo, language: e.target.value })} placeholder={isHe ? "למשל: עברית, אנגלית, וכו׳" : "e.g. English, Spanish, etc."} />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">הערות ומשאלות מיוחדות אותם מבקשים האורחים</label>
-                  <Textarea
-                    value={contactInfo.specialComments}
-                    onChange={(e) => setContactInfo({ ...contactInfo, specialComments: e.target.value })}
-                    placeholder="ספר לנו עוד על הטיול שלך..."
-                    rows={4}
-                  />
+                  <label className="block text-sm font-medium mb-2">{isHe ? 'הערות ומשאלות מיוחדות אותם מבקשים האורחים' : 'Special Requests & Notes from Guests'}</label>
+                  <Textarea value={contactInfo.specialComments} onChange={(e) => setContactInfo({ ...contactInfo, specialComments: e.target.value })} placeholder={isHe ? "ספר לנו עוד על הטיול שלך..." : "Tell us more about your tour..."} rows={4} />
                 </div>
               </div>
             </CardContent>

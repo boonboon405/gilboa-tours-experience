@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import { Card } from "@/components/ui/card";
 import { HelpCircle } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface FAQItem {
   id: string;
@@ -19,6 +20,8 @@ interface FAQItem {
 export const PublicFAQ = () => {
   const [faqs, setFaqs] = useState<FAQItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const { language } = useLanguage();
+  const isHe = language === 'he';
 
   useEffect(() => {
     fetchFAQs();
@@ -48,7 +51,9 @@ export const PublicFAQ = () => {
         <div className="container mx-auto px-4">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">טוען שאלות נפוצות...</p>
+            <p className="mt-4 text-muted-foreground">
+              {isHe ? 'טוען שאלות נפוצות...' : 'Loading FAQs...'}
+            </p>
           </div>
         </div>
       </section>
@@ -59,8 +64,7 @@ export const PublicFAQ = () => {
     return null;
   }
 
-  // Group FAQs by category
-  const categories = Array.from(new Set(faqs.map(faq => faq.category || 'כללי')));
+  const categories = Array.from(new Set(faqs.map(faq => faq.category || (isHe ? 'כללי' : 'General'))));
 
   return (
     <section id="faq" className="py-20 bg-muted/30">
@@ -70,15 +74,17 @@ export const PublicFAQ = () => {
             <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-4">
               <HelpCircle className="h-8 w-8 text-primary" />
             </div>
-            <h2 className="section-heading mb-4">שאלות נפוצות</h2>
+            <h2 className="section-heading mb-4">
+              {isHe ? 'שאלות נפוצות' : 'Frequently Asked Questions'}
+            </h2>
             <p className="text-muted-foreground text-lg leading-[1.7]">
-              מצא תשובות לשאלות הנפוצות ביותר
+              {isHe ? 'מצא תשובות לשאלות הנפוצות ביותר' : 'Find answers to the most common questions'}
             </p>
           </div>
 
           <div className="space-y-8">
             {categories.map(category => {
-              const categoryFaqs = faqs.filter(faq => (faq.category || 'כללי') === category);
+              const categoryFaqs = faqs.filter(faq => (faq.category || (isHe ? 'כללי' : 'General')) === category);
               
               return (
                 <Card key={category} className="p-6">
@@ -101,10 +107,12 @@ export const PublicFAQ = () => {
           </div>
 
           <div className="mt-12 text-center">
-            <p className="text-muted-foreground mb-4">לא מצאת את התשובה שחיפשת?</p>
+            <p className="text-muted-foreground mb-4">
+              {isHe ? 'לא מצאת את התשובה שחיפשת?' : "Didn't find the answer you were looking for?"}
+            </p>
             <a href="#contact">
               <button className="rounded-full px-8 py-3 bg-accent text-white font-semibold text-lg hover:brightness-110 transition-all duration-200 min-w-[140px] min-h-[44px]">
-                צור קשר איתנו
+                {isHe ? 'צור קשר איתנו' : 'Contact Us'}
               </button>
             </a>
           </div>
