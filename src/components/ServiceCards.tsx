@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Calendar, Users, Briefcase, CheckCircle2, ArrowLeft } from "lucide-react";
+import { Calendar, Users, Briefcase, CheckCircle2, ArrowLeft, ArrowRight } from "lucide-react";
 import { useParallax } from '@/hooks/use-parallax';
 import { use3DTilt } from '@/hooks/use-3d-tilt';
 import { getClickableProps } from '@/hooks/use-keyboard-nav';
@@ -31,20 +31,31 @@ const getServices = (language: string): Service[] => [
     longDesc: language === 'he'
       ? "יום שלם של הליכה בנופים מרהיבים, מעיינות טבעיים, ואתרים היסטוריים. מתאים למשפחות, קבוצות חברים וצוותי עבודה."
       : "A full day of stunning landscapes, natural springs, and historical sites. Suitable for families, friend groups, and work teams.",
-    features: [
+    features: language === 'he' ? [
       "בחירה מ-3 חבילות סיור מותאמות",
       "מדריך מקצועי ומנוסה",
       "התאמה אישית למשפחות וקבוצות",
       "אתרים היסטוריים ותצפיות נוף מדהימות",
       "ביקור במעיינות צלולים",
       "ארוחה כלולה באזור"
+    ] : [
+      "Choose from 3 tailored tour packages",
+      "Professional, experienced guide",
+      "Personalized for families and groups",
+      "Historical sites and breathtaking viewpoints",
+      "Visit crystal-clear natural springs",
+      "Meal included in the area"
     ],
-    highlights: [
-      "משך הסיור: 7-8 שעות",
-      "מתאים לגילאי 8-88+",
-      "כולל מדריך לא כולל הסעות"
+    highlights: language === 'he' ? [
+      "משך הסיור: 7–8 שעות",
+      "מתאים לגילאי 8–88+",
+      "כולל מדריך, לא כולל הסעות"
+    ] : [
+      "Tour duration: 7–8 hours",
+      "Suitable for ages 8–88+",
+      "Includes guide, excludes transportation"
     ],
-    cta: language === 'he' ? "בחר את הסיור שלך" : "Choose Your Tour",
+    cta: language === 'he' ? "בחרו את הסיור שלכם" : "Choose Your Tour",
     scrollTo: "choose-your-day"
   },
   {
@@ -57,20 +68,31 @@ const getServices = (language: string): Service[] => [
     longDesc: language === 'he'
       ? "סיור אקסקלוסיבי ומותאם באופן מלא לרצונותיכם. שירות אישי, רכבי יוקרה, וחוויות קולינריות ברמה הגבוהה ביותר."
       : "An exclusive, fully personalized tour. Private service, luxury vehicles, and premium culinary experiences.",
-    features: [
+    features: language === 'he' ? [
       "מסלול מותאם אישית 100%",
       "רכבי יוקרה פרטיים עם נהג",
       "חוויות קולינריות בוטיק ייחודיות",
       "מדריך פרטי צמוד לאורך כל הסיור",
       "גישה לאתרים ייחודיים",
-      "שירות קונסיירז' מלא"
+      "שירות קונסיירז׳ מלא"
+    ] : [
+      "100% custom itinerary",
+      "Private luxury vehicles with driver",
+      "Unique boutique culinary experiences",
+      "Dedicated private guide throughout",
+      "Access to exclusive sites",
+      "Full concierge service"
     ],
-    highlights: [
-      "1-45 משתתפים",
+    highlights: language === 'he' ? [
+      "1–45 משתתפים",
       "תיאום מלא לפי לוח הזמנים שלכם",
       "אפשרות לשילוב לינה"
+    ] : [
+      "1–45 participants",
+      "Fully coordinated to your schedule",
+      "Option to include accommodation"
     ],
-    cta: language === 'he' ? "תכנן סיור VIP" : "Plan a VIP Tour",
+    cta: language === 'he' ? "תכננו סיור VIP" : "Plan a VIP Tour",
     scrollTo: "vip-tours"
   },
   {
@@ -83,26 +105,38 @@ const getServices = (language: string): Service[] => [
     longDesc: language === 'he'
       ? "תוכנית גיבוש מקצועית בטבע המשלבת אתגרים, עבודת צוות, ופעילויות בנופי הגלבוע ועמק המעיינות. מתאים לחברות בכל הגדלים."
       : "Professional outdoor team-building combining challenges, teamwork, and activities in the Gilboa and Springs Valley landscapes. Suitable for companies of all sizes.",
-    features: [
+    features: language === 'he' ? [
       "תכנון אירוע מותאם לצרכי הארגון",
       "פעילויות גיבוש מקצועיות ומנחים מוסמכים",
-      "מתאים לקבוצות 10-200 משתתפים",
+      "מתאים לקבוצות 10–200 משתתפים",
       "שילוב בין פעילות גופנית לתוכן ערכי",
       "דגש על עבודת צוות ומנהיגות",
       "אפשרות לשילוב הרצאות וסדנאות"
+    ] : [
+      "Event planning tailored to your organization",
+      "Professional team-building with certified facilitators",
+      "Suitable for groups of 10–200 participants",
+      "Combines physical activity with meaningful content",
+      "Focus on teamwork and leadership",
+      "Option to include lectures and workshops"
     ],
-    highlights: [
+    highlights: language === 'he' ? [
       "משך האירוע: חצי יום עד יומיים",
       "כולל ציוד מקצועי",
       "צוות מדריכים וצוות תמיכה"
+    ] : [
+      "Event duration: half day to 2 days",
+      "Includes professional equipment",
+      "Full guide and support team"
     ],
-    cta: language === 'he' ? "צור קשר לתכנון" : "Contact Us to Plan",
+    cta: language === 'he' ? "צרו קשר לתכנון" : "Contact Us to Plan",
     scrollTo: "odt-section"
   }
 ];
 
 export const ServiceCards = () => {
   const { language } = useLanguage();
+  const isHe = language === 'he';
   const services = getServices(language);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const parallaxSlow = useParallax(0.15);
@@ -117,9 +151,10 @@ export const ServiceCards = () => {
     }
   };
 
+  const ArrowIcon = isHe ? ArrowLeft : ArrowRight;
+
   return (
     <section className="py-20 bg-gradient-to-b from-background to-muted/20 relative overflow-hidden">
-      {/* Background decorative elements with parallax */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div 
           className="absolute top-40 left-10 w-72 h-72 bg-primary/5 rounded-full blur-[90px]"
@@ -134,10 +169,10 @@ export const ServiceCards = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
           <h2 className="section-heading mb-4">
-            {language === 'he' ? 'השירותים שלנו' : 'Our Services'}
+            {isHe ? 'השירותים שלנו' : 'Our Services'}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-[1.7]">
-            {language === 'he'
+            {isHe
               ? 'סיורי טבע ונוף מודרכים, ימי גיבוש לארגונים, וחוויות VIP פרטיות — בהרי הגלבוע, עמק המעיינות והגליל'
               : 'Guided nature and landscape tours, corporate team-building days, and private VIP experiences — in the Gilboa mountains, Springs Valley, and the Galilee'}
           </p>
@@ -157,7 +192,7 @@ export const ServiceCards = () => {
                   onMouseMove={tilt.onMouseMove}
                   onMouseLeave={tilt.onMouseLeave}
                   {...getClickableProps(() => setSelectedService(service))}
-                  aria-label={`${service.title} - ${service.shortDesc}. לחץ Enter לפרטים נוספים`}
+                  aria-label={`${service.title} — ${service.shortDesc}`}
                 >
                 <CardHeader className="text-center pb-4">
                   <div className="mx-auto mb-4 p-6 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
@@ -173,7 +208,7 @@ export const ServiceCards = () => {
                     className="w-full"
                     variant="outline"
                   >
-                    {language === 'he' ? 'לחץ לפרטים מלאים' : 'Click for full details'}
+                    {isHe ? 'לחצו לפרטים מלאים' : 'Click for Full Details'}
                   </Button>
                 </CardContent>
               </Card>
@@ -202,9 +237,8 @@ export const ServiceCards = () => {
               </DialogHeader>
 
               <div className="space-y-6 pt-4">
-                {/* Features */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-3 text-right">{language === 'he' ? 'מה כולל?' : 'What\'s Included?'}</h3>
+                  <h3 className="text-lg font-semibold mb-3 text-right">{isHe ? 'מה כולל?' : "What's Included?"}</h3>
                   <div className="grid gap-3">
                     {selectedService.features.map((feature, idx) => (
                       <div key={idx} className="flex items-start gap-3 text-right">
@@ -215,9 +249,8 @@ export const ServiceCards = () => {
                   </div>
                 </div>
 
-                {/* Highlights */}
                 <div className="bg-muted/50 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold mb-3 text-right">{language === 'he' ? 'נקודות מרכזיות' : 'Key Highlights'}</h3>
+                  <h3 className="text-lg font-semibold mb-3 text-right">{isHe ? 'נקודות מרכזיות' : 'Key Highlights'}</h3>
                   <div className="space-y-2">
                     {selectedService.highlights.map((highlight, idx) => (
                       <p key={idx} className="text-sm text-muted-foreground text-right">
@@ -227,14 +260,13 @@ export const ServiceCards = () => {
                   </div>
                 </div>
 
-                {/* CTA Button */}
                 <Button 
                   size="lg"
                   className="w-full gap-2"
                   onClick={() => handleCTA(selectedService)}
                 >
                   {selectedService.cta}
-                  <ArrowLeft className="h-5 w-5" />
+                  <ArrowIcon className="h-5 w-5" />
                 </Button>
               </div>
             </>
