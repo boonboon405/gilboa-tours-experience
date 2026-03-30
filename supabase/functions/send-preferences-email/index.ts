@@ -9,6 +9,18 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+const rateLimit = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT = 30;
+const WINDOW_MS = 60_000;
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimit.get(ip);
+  if (!entry || now > entry.resetAt) { rateLimit.set(ip, { count: 1, resetAt: now + WINDOW_MS }); return true; }
+  if (entry.count >= RATE_LIMIT) return false;
+  entry.count++;
+  return true;
+}
+
 function esc(s: string): string {
   return s
     .replace(/&/g, '&amp;')
@@ -50,6 +62,11 @@ interface PreferencesEmailRequest {
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? req.headers.get('cf-connecting-ip') ?? 'unknown';
+  if (!checkRateLimit(ip)) {
+    return new Response('Too many requests', { status: 429, headers: corsHeaders });
   }
 
   try {

@@ -6,6 +6,18 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const rateLimit = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT = 30;
+const WINDOW_MS = 60_000;
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimit.get(ip);
+  if (!entry || now > entry.resetAt) { rateLimit.set(ip, { count: 1, resetAt: now + WINDOW_MS }); return true; }
+  if (entry.count >= RATE_LIMIT) return false;
+  entry.count++;
+  return true;
+}
+
 const locationPrompts: Record<string, string> = {
   "sea-of-galilee": "Ultra high resolution realistic photograph of the Sea of Galilee (Kinneret) in Israel at golden hour, calm blue waters reflecting the sky, surrounding mountains, peaceful Mediterranean atmosphere, professional landscape photography, 16:9 aspect ratio",
   "mount-hermon": "Ultra high resolution realistic photograph of Mount Hermon in Northern Israel with snow-capped peak, dramatic mountain landscape, green valleys below, clear blue sky, professional nature photography, 16:9 aspect ratio",
@@ -76,6 +88,11 @@ const locationPrompts: Record<string, string> = {
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? req.headers.get('cf-connecting-ip') ?? 'unknown';
+  if (!checkRateLimit(ip)) {
+    return new Response('Too many requests', { status: 429, headers: corsHeaders });
   }
 
   try {
