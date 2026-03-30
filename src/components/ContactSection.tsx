@@ -160,11 +160,12 @@ export const ContactSection = () => {
                   />
                 </div>
                 <div>
-                  <Textarea
+                <Textarea
                     placeholder="הודעה"
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     required
+                    maxLength={2000}
                     rows={5}
                     className="border-2"
                   />

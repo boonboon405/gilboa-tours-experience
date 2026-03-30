@@ -8,6 +8,15 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+function esc(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
 interface LeadNotificationRequest {
   name: string;
   email?: string;
@@ -28,7 +37,13 @@ const handler = async (req: Request): Promise<Response> => {
 
     const { name, email, phone, notes, source_platform, interested_keywords } = leadData;
 
-    // Send notification to admin
+    const safeName = esc(name);
+    const safeEmail = email ? esc(email) : '';
+    const safePhone = phone ? esc(phone) : '';
+    const safeNotes = notes ? esc(notes) : '';
+    const safeSource = source_platform ? esc(source_platform) : '';
+    const safeKeywords = interested_keywords ? interested_keywords.map(k => esc(k)) : [];
+
     const adminEmailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0;">
@@ -41,30 +56,30 @@ const handler = async (req: Request): Promise<Response> => {
           <table style="width: 100%; margin: 20px 0;">
             <tr>
               <td style="padding: 10px; background: #f5f5f5; font-weight: bold; width: 150px;">שם:</td>
-              <td style="padding: 10px;">${name}</td>
+              <td style="padding: 10px;">${safeName}</td>
             </tr>
             ${email ? `
             <tr>
               <td style="padding: 10px; background: #f5f5f5; font-weight: bold;">אימייל:</td>
-              <td style="padding: 10px;"><a href="mailto:${email}" style="color: #667eea;">${email}</a></td>
+              <td style="padding: 10px;"><a href="mailto:${safeEmail}" style="color: #667eea;">${safeEmail}</a></td>
             </tr>
             ` : ''}
             ${phone ? `
             <tr>
               <td style="padding: 10px; background: #f5f5f5; font-weight: bold;">טלפון:</td>
-              <td style="padding: 10px;"><a href="tel:${phone}" style="color: #667eea;">${phone}</a></td>
+              <td style="padding: 10px;"><a href="tel:${safePhone}" style="color: #667eea;">${safePhone}</a></td>
             </tr>
             ` : ''}
             ${source_platform ? `
             <tr>
               <td style="padding: 10px; background: #f5f5f5; font-weight: bold;">מקור:</td>
-              <td style="padding: 10px;">${source_platform}</td>
+              <td style="padding: 10px;">${safeSource}</td>
             </tr>
             ` : ''}
-            ${interested_keywords && interested_keywords.length > 0 ? `
+            ${safeKeywords.length > 0 ? `
             <tr>
               <td style="padding: 10px; background: #f5f5f5; font-weight: bold;">תחומי עניין:</td>
-              <td style="padding: 10px;">${interested_keywords.join(', ')}</td>
+              <td style="padding: 10px;">${safeKeywords.join(', ')}</td>
             </tr>
             ` : ''}
           </table>
@@ -72,7 +87,7 @@ const handler = async (req: Request): Promise<Response> => {
           ${notes ? `
           <div style="margin: 20px 0; padding: 15px; background: #fff3cd; border-right: 4px solid #ffc107; border-radius: 4px;">
             <h3 style="margin: 0 0 10px 0; color: #856404;">הערות:</h3>
-            <p style="margin: 0; color: #856404;">${notes}</p>
+            <p style="margin: 0; color: #856404;">${safeNotes}</p>
           </div>
           ` : ''}
 
@@ -90,13 +105,12 @@ const handler = async (req: Request): Promise<Response> => {
     const adminEmail = await resend.emails.send({
       from: "David Tours <onboarding@resend.dev>",
       to: ["DavidIsraelTours@gmail.com"],
-      subject: `🎯 ליד חדש: ${name}`,
+      subject: `🎯 ליד חדש: ${safeName}`,
       html: adminEmailHtml,
     });
 
     console.log("Admin notification sent:", adminEmail);
 
-    // Send confirmation to lead if email provided
     let leadEmail = null;
     if (email) {
       const leadEmailHtml = `
@@ -107,7 +121,8 @@ const handler = async (req: Request): Promise<Response> => {
           </div>
           
           <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-...
+            <h2>שלום ${safeName},</h2>
+            <p>תודה על פנייתך! נחזור אליך בהקדם.</p>
           </div>
 
           <div style="text-align: center; margin-top: 20px; color: #888; font-size: 12px;">

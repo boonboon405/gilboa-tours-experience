@@ -6,15 +6,23 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+function esc(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
 const requestSchema = z.object({
   name: z.string().trim().min(1).max(100),
-  email: z.string().trim().email().max(255),
-  phone: z.string().trim().min(6).max(30),
-  message: z.string().trim().min(1).max(1000),
+  email: z.string().trim().email().max(150),
+  phone: z.string().trim().min(6).max(20),
+  message: z.string().trim().min(1).max(2000),
 });
 
 serve(async (req: Request): Promise<Response> => {
-  // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -38,10 +46,10 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     const params = new URLSearchParams({
-      name: parsed.data.name,
-      email: parsed.data.email,
-      phone: parsed.data.phone,
-      message: parsed.data.message,
+      name: esc(parsed.data.name),
+      email: esc(parsed.data.email),
+      phone: esc(parsed.data.phone),
+      message: esc(parsed.data.message),
       source: "website",
       timestamp: new Date().toISOString(),
     });
