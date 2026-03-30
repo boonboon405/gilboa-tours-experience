@@ -50,7 +50,10 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
   const [quickReplies, setQuickReplies] = useState<string[]>([]);
   const [showCategorySelector, setShowCategorySelector] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [selectedVoice, setSelectedVoice] = useState<ElevenLabsVoice>('Rachel');
+  const [selectedVoice, setSelectedVoice] = useState<ElevenLabsVoice>(() => {
+    const saved = localStorage.getItem('preferred-voice');
+    return (saved as ElevenLabsVoice) || 'Rachel';
+  });
   const [typingPreview, setTypingPreview] = useState('');
   const [conversationData, setConversationData] = useState<ConversationData>({});
   const [currentStep, setCurrentStep] = useState(0);
