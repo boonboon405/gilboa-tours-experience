@@ -133,7 +133,8 @@ const getServices = (language: string): Service[] => [
       "Full guide and support team"
     ],
     cta: language === 'he' ? "צרו קשר לתכנון" : "Contact Us to Plan",
-    scrollTo: "odt-section"
+    scrollTo: "odt-section",
+    badge: { he: 'תאריכים מוגבלים', en: 'Limited Dates' }
   }
 ];
 
