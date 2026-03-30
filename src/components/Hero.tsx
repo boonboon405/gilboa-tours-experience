@@ -2,11 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const slides = [
-  { he: 'גלה את הגליל', en: 'Discover the Galilee', sub: 'Guided tours through Israel\'s most breathtaking landscapes' },
-  { he: 'ימי גיבוש בטבע', en: 'Team Building in Nature', sub: 'Unforgettable group experiences on Mount Gilboa' },
-  { he: 'מעיינות עמק הבזלת', en: 'Springs Valley', sub: 'Hidden gem tours through ancient water springs' },
-  { he: 'חוויות VIP', en: 'VIP Experiences', sub: 'Premium private tours tailored to you' },
-  { he: 'עמק יזרעאל', en: 'Jezreel Valley', sub: 'Biblical landscapes, modern luxury' },
+  { he: 'גלה את הגליל', en: 'Discover the Galilee', sub: 'Guided tours through Israel\'s most breathtaking landscapes', img: '/images/hero/sea-of-galilee.jpg' },
+  { he: 'ימי גיבוש בטבע', en: 'Team Building in Nature', sub: 'Unforgettable group experiences on Mount Gilboa', img: '/images/hero/mount-gilboa.jpg' },
+  { he: 'מעיינות עמק הבזלת', en: 'Springs Valley', sub: 'Hidden gem tours through ancient water springs', img: '/images/hero/springs-waterfall.jpg' },
+  { he: 'חוויות VIP', en: 'VIP Experiences', sub: 'Premium private tours tailored to you', img: '/images/hero/jezreel-valley.jpg' },
+  { he: 'עמק יזרעאל', en: 'Jezreel Valley', sub: 'Biblical landscapes, modern luxury', img: '/images/hero/upper-galilee.jpg' },
 ];
 
 export const Hero = () => {
