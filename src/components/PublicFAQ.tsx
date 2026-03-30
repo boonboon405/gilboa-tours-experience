@@ -102,11 +102,10 @@ export const PublicFAQ = () => {
 
           <div className="mt-12 text-center">
             <p className="text-muted-foreground mb-4">לא מצאת את התשובה שחיפשת?</p>
-            <a 
-              href="#contact" 
-              className="inline-block px-6 py-3 bg-gradient-hero text-white font-semibold rounded-lg hover:opacity-90 transition-all hover:scale-105 shadow-glow"
-            >
-              צור קשר איתנו
+            <a href="#contact">
+              <button className="rounded-full px-8 py-3 bg-accent text-white font-semibold text-lg hover:brightness-110 transition-all duration-200 min-w-[140px] min-h-[44px]">
+                צור קשר איתנו
+              </button>
             </a>
           </div>
         </div>
