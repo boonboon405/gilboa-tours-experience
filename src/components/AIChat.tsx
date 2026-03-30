@@ -781,7 +781,10 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
             <div className="flex items-center gap-2">
               <VoiceSelector
                 selectedVoice={selectedVoice}
-                onVoiceChange={setSelectedVoice}
+                onVoiceChange={(voice) => {
+                  setSelectedVoice(voice);
+                  localStorage.setItem('preferred-voice', voice);
+                }}
               />
               <Button
                 variant="ghost"
