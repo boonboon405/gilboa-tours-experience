@@ -2,31 +2,41 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Award, Settings, Shield, Truck } from 'lucide-react';
 import { useParallax } from '@/hooks/use-parallax';
 import { use3DTilt } from '@/hooks/use-3d-tilt';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const WhyChooseUs = () => {
   const parallaxSlow = useParallax(0.1);
   const parallaxFast = useParallax(0.2);
+  const { language } = useLanguage();
 
   const reasons = [
     {
       icon: Award,
-      title: 'מקצועי ומוסמך',
-      desc: 'מדריך טיולים מורשה עם שנות ניסיון',
+      title: language === 'he' ? 'מקצועי ומוסמך' : 'Professional & Certified',
+      desc: language === 'he'
+        ? 'מדריך טיולים מורשה עם שנות ניסיון בהרי הגלבוע, עמק המעיינות והגליל'
+        : 'Licensed tour guide with years of experience in the Gilboa mountains, Springs Valley, and the Galilee',
     },
     {
       icon: Settings,
-      title: 'חוויות מותאמות אישית',
-      desc: 'מעוצב במיוחד לקבוצות עסקיות, חברות הי טק, ועדי עובדים וחברות מקצועיות',
+      title: language === 'he' ? 'חוויות מותאמות אישית' : 'Tailored Experiences',
+      desc: language === 'he'
+        ? 'סיורי טבע ונוף, ימי גיבוש לצוותים, וחוויות VIP פרטיות — מותאמים לקבוצות, חברות וארגונים'
+        : 'Nature and landscape tours, team-building days, and private VIP experiences — tailored for groups, companies, and organizations',
     },
     {
       icon: Shield,
-      title: 'בטוח ומרענן',
-      desc: 'מושלם לקיץ הישראלי החם',
+      title: language === 'he' ? 'בטוח ומרענן' : 'Safe & Refreshing',
+      desc: language === 'he'
+        ? 'מעיינות צלולים, נופים ירוקים ואוויר הרים — מושלם לקיץ הישראלי'
+        : 'Crystal-clear springs, green landscapes, and mountain air — perfect for the Israeli summer',
     },
     {
       icon: Truck,
-      title: 'שירות מלא',
-      desc: 'כל הלוגיסטיקה מטופלת מתחילה ועד סוף',
+      title: language === 'he' ? 'שירות מלא' : 'Full Service',
+      desc: language === 'he'
+        ? 'כל הלוגיסטיקה מטופלת — מדריך, מסלול, ארוחות ותיאומים'
+        : 'Full logistics handled — guide, route, meals, and coordination',
     },
   ];
 
