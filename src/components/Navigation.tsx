@@ -335,7 +335,8 @@ export const Navigation = () => {
                       key={item.label}
                       to={item.href}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-2 py-3 px-4 rounded-lg text-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 hover:translate-x-1 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                      style={{ textShadow: '0px 1px 3px rgba(0,0,0,0.5)' }}
+                      className="flex items-center gap-2 py-3 px-4 rounded-lg text-gold-nav hover:bg-primary/5 transition-all duration-300 hover:translate-x-1 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                     >
                       <Accessibility className="h-4 w-4" />
                       {item.label}
