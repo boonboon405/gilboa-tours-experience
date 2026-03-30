@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Mountain, Sparkles, Search } from 'lucide-react';
 import { ImageGallery } from './ImageGallery';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
 import galileeNature from '@/assets/galilee-nature.jpg';
@@ -217,13 +218,21 @@ export const LandscapeGallery = () => {
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <Card key={index} className="text-center backdrop-blur-sm bg-card/30 border-2 border-border/50 hover:border-primary/50 transition-all duration-500 hover:shadow-[0_8px_30px_hsl(var(--primary)/0.2)] hover:scale-105 group" style={{ animationDelay: `${index * 100}ms` }}>
-                <CardContent className="pt-6">
-                  <Icon className="h-12 w-12 mx-auto mb-4 text-primary transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6" />
-                  <div className="text-4xl font-bold text-primary mb-2 group-hover:scale-110 transition-transform duration-300">{stat.number}</div>
-                  <div className="text-muted-foreground font-medium">{stat.label}</div>
-                </CardContent>
-              </Card>
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ duration: 0.5, delay: index * 0.15 }}
+              >
+                <Card className="text-center backdrop-blur-sm bg-card/30 border-2 border-border/50 hover:border-primary/50 transition-all duration-500 hover:shadow-[0_8px_30px_hsl(var(--primary)/0.2)] hover:scale-105 group">
+                  <CardContent className="pt-6">
+                    <Icon className="h-12 w-12 mx-auto mb-4 text-primary transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6" />
+                    <div className="text-4xl font-bold text-primary mb-2 group-hover:scale-110 transition-transform duration-300">{stat.number}</div>
+                    <div className="text-muted-foreground font-medium">{stat.label}</div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             );
           })}
         </div>
