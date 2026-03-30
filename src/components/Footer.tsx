@@ -84,7 +84,7 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-border pt-8 text-center text-muted-foreground">
-          <p>{isHe ? '© 2025 דויד טורס. כל הזכויות שמורות.' : '© 2025 David Tours. All rights reserved.'}</p>
+          <p>{isHe ? `© ${new Date().getFullYear()} דויד טורס. כל הזכויות שמורות.` : `© ${new Date().getFullYear()} David Tours. All rights reserved.`}</p>
         </div>
       </div>
     </footer>

@@ -12,6 +12,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AccessibilityProvider } from "@/hooks/use-accessibility";
 import { AccessibilityWidget } from "@/components/AccessibilityWidget";
 import { WhatsAppFAB } from "@/components/WhatsAppFAB";
+import { BackToTop } from "@/components/BackToTop";
 import Index from "./pages/Index";
 import Booking from "./pages/Booking";
 import Chat from "./pages/Chat";
@@ -181,6 +182,7 @@ const App = () => {
               
               <AccessibilityWidget />
               <WhatsAppFAB />
+              <BackToTop />
             </BrowserRouter>
             </TooltipProvider>
           </AccessibilityProvider>

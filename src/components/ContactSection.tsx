@@ -234,6 +234,25 @@ export const ContactSection = () => {
             )}
           </Card>
         </div>
+
+        {/* Google Maps Embed */}
+        <div className="mt-12 max-w-6xl mx-auto">
+          <h3 className="text-xl font-bold text-foreground mb-4 text-center">
+            {isHe ? 'מיקום' : 'Our Location'}
+          </h3>
+          <div className="rounded-xl overflow-hidden border-2 border-border shadow-soft">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d108889.7530498498!2d35.35!3d32.48!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x151c6f48b0e96d4d%3A0x9b7c8b5e0dc8e0e4!2sGilboa!5e0!3m2!1sen!2sil!4v1700000000000!5m2!1sen!2sil"
+              width="100%"
+              height="300"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title={isHe ? 'מפת אזור הגלבוע ועמק המעיינות' : 'Map of Gilboa & Springs Valley area'}
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
