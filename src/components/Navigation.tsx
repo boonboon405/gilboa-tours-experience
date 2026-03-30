@@ -26,7 +26,7 @@ const navLinks = [
   { en: 'Tours', he: 'סיורים', target: '#choose-your-day', sectionId: 'choose-your-day' },
   { en: 'Team Building', he: 'גיבוש', target: '#odt-section', sectionId: 'odt-section' },
   { en: 'VIP', he: 'VIP', target: '#vip-tours', sectionId: 'vip-tours' },
-  { en: 'About', he: 'אודות', target: '/accessibility', isLink: true },
+  { en: 'About', he: 'אודות', target: '#about', sectionId: 'about' },
   { en: 'Contact', he: 'צור קשר', target: '#contact', sectionId: 'contact' },
 ];
 
