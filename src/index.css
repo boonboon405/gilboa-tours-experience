@@ -8,83 +8,93 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Nature-inspired color palette for DavidTours */
-    --background: 45 20% 98%;
-    --foreground: 150 30% 15%;
+    /* David Tours design tokens */
+    --background: 40 23% 97%;
+    --foreground: 0 0% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 150 30% 15%;
+    --card-foreground: 0 0% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 150 30% 15%;
+    --popover-foreground: 0 0% 10%;
 
-    /* Gilboa Mountain Green */
-    --primary: 145 55% 35%;
+    /* Teal/Emerald Primary */
+    --primary: 174 77% 26%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 145 45% 45%;
+    --primary-light: 174 72% 40%;
+    --primary-dark: 174 80% 21%;
     
-    /* Spring Water Blue */
+    /* Secondary (kept for existing usage) */
     --secondary: 200 85% 45%;
     --secondary-foreground: 0 0% 100%;
     --secondary-light: 200 75% 55%;
 
-    /* Earthy Warm Tones */
-    --accent: 30 75% 55%;
+    /* Sunset Orange Accent */
+    --accent: 25 95% 53%;
     --accent-foreground: 0 0% 100%;
     
-    --muted: 45 15% 92%;
-    --muted-foreground: 150 20% 40%;
+    --muted: 40 20% 94%;
+    --muted-foreground: 220 9% 46%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 45 20% 88%;
-    --input: 45 20% 88%;
-    --ring: 145 55% 35%;
+    --border: 40 20% 88%;
+    --input: 40 20% 88%;
+    --ring: 174 77% 26%;
 
     --radius: 0.75rem;
 
+    /* Additional tokens */
+    --highlight: 45 93% 47%;
+    --gold-nav: 43 100% 50%;
+
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(145 55% 35%) 0%, hsl(145 45% 25%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(30 75% 55%) 0%, hsl(30 85% 65%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(174 77% 26%) 0%, hsl(174 80% 21%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(25 95% 53%) 0%, hsl(25 95% 63%) 100%);
     --gradient-water: linear-gradient(135deg, hsl(200 85% 45%) 0%, hsl(200 75% 35%) 100%);
     
     /* Shadows */
-    --shadow-soft: 0 4px 20px -4px hsl(145 55% 35% / 0.15);
-    --shadow-strong: 0 10px 40px -10px hsl(145 55% 35% / 0.3);
+    --shadow-soft: 0 4px 20px -4px hsl(174 77% 26% / 0.15);
+    --shadow-strong: 0 10px 40px -10px hsl(174 77% 26% / 0.3);
     
     /* Animations */
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dark {
-    --background: 150 25% 8%;
-    --foreground: 45 20% 95%;
+    --background: 174 20% 8%;
+    --foreground: 40 20% 95%;
 
-    --card: 150 20% 12%;
-    --card-foreground: 45 20% 95%;
+    --card: 174 15% 12%;
+    --card-foreground: 40 20% 95%;
 
-    --popover: 150 20% 12%;
-    --popover-foreground: 45 20% 95%;
+    --popover: 174 15% 12%;
+    --popover-foreground: 40 20% 95%;
 
-    --primary: 145 50% 45%;
+    --primary: 174 65% 40%;
     --primary-foreground: 0 0% 100%;
+    --primary-light: 174 60% 50%;
+    --primary-dark: 174 70% 30%;
 
     --secondary: 200 75% 50%;
     --secondary-foreground: 0 0% 100%;
 
-    --accent: 30 70% 60%;
+    --accent: 25 90% 58%;
     --accent-foreground: 0 0% 100%;
 
-    --muted: 150 15% 18%;
-    --muted-foreground: 45 15% 65%;
+    --muted: 174 10% 18%;
+    --muted-foreground: 220 8% 65%;
 
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 150 15% 22%;
-    --input: 150 15% 22%;
-    --ring: 145 50% 45%;
+    --border: 174 10% 22%;
+    --input: 174 10% 22%;
+    --ring: 174 65% 40%;
+
+    --highlight: 45 90% 50%;
+    --gold-nav: 43 100% 55%;
   }
 }
 
