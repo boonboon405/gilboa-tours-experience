@@ -70,15 +70,19 @@ const getServices = (language: string): Service[] => [
       "תיאום מלא לפי לוח הזמנים שלכם",
       "אפשרות לשילוב לינה"
     ],
-    cta: "תכנן סיור VIP",
+    cta: language === 'he' ? "תכנן סיור VIP" : "Plan a VIP Tour",
     scrollTo: "vip-tours"
   },
   {
     id: "odt",
     icon: Briefcase,
-    title: "ODT לארגונים",
-    shortDesc: "פיתוח ארגוני בחוץ - גיבוש וצוות לחברות",
-    longDesc: "תוכנית ODT מקצועית המשלבת אתגרים, פעילויות גיבוש, וחוויות בטבע. מתאים לחברות בכל הגדלים.",
+    title: language === 'he' ? "ODT לארגונים" : "ODT for Organizations",
+    shortDesc: language === 'he'
+      ? "ימי גיבוש וצוות בטבע הפתוח — הרי הגלבוע ועמק המעיינות"
+      : "Team-building days in the open — Gilboa mountains and Springs Valley",
+    longDesc: language === 'he'
+      ? "תוכנית גיבוש מקצועית בטבע המשלבת אתגרים, עבודת צוות, ופעילויות בנופי הגלבוע ועמק המעיינות. מתאים לחברות בכל הגדלים."
+      : "Professional outdoor team-building combining challenges, teamwork, and activities in the Gilboa and Springs Valley landscapes. Suitable for companies of all sizes.",
     features: [
       "תכנון אירוע מותאם לצרכי הארגון",
       "פעילויות גיבוש מקצועיות ומנחים מוסמכים",
