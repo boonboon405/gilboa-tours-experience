@@ -51,8 +51,8 @@ export const ContactSection = () => {
 
       if (error) throw error;
 
-      toast.success(isHe ? 'ההודעה נשלחה! נחזור אליך בקרוב.' : 'Message sent! We\'ll get back to you soon.');
       setFormData({ name: '', email: '', phone: '', message: '' });
+      setSubmitted(true);
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error(isHe ? 'שגיאה בשליחת ההודעה. אנא נסו שוב.' : 'Error sending message. Please try again.');
