@@ -162,10 +162,8 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
         setShowCategorySelector(true);
       }
       
-      // Speak the greeting
-      setTimeout(() => speakText(greeting), 500);
-    }
-  }, [quizResults]);
+      // Do NOT auto-speak greeting — wait for user interaction
+
 
   const speakText = async (text: string) => {
     // Stop any ongoing speech

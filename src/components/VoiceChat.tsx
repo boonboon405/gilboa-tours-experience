@@ -220,8 +220,7 @@ Tell me, how many people? What interests you?`;
       };
       setMessages([initialMsg]);
       greetingSpokenRef.current = true;
-      
-      setTimeout(() => speakText(greeting), 500);
+      // Do NOT auto-speak greeting — only speak after user interaction
     }
   }, [language, quizResults]);
 
