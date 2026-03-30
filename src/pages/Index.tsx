@@ -15,6 +15,7 @@ import { TestimonialSubmissionForm } from '@/components/TestimonialSubmissionFor
 import { LandscapeGallery } from '@/components/LandscapeGallery';
 import NorthIsraelGallery from '@/components/NorthIsraelGallery';
 import { AccessibilityInfoSection } from '@/components/AccessibilityInfoSection';
+import { AboutDavid } from '@/components/AboutDavid';
 
 const Index = () => {
   return (
