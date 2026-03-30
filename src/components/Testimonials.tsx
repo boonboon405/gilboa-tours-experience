@@ -1,4 +1,10 @@
+import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { MessageSquarePlus } from 'lucide-react';
+import { TestimonialSubmissionForm } from '@/components/TestimonialSubmissionForm';
 
 const testimonials = [
   {
@@ -21,9 +27,23 @@ const testimonials = [
   },
 ];
 
+const cardVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.15,
+      duration: 0.5,
+      ease: "easeOut" as const,
+    },
+  }),
+};
+
 const Testimonials = () => {
   const { language } = useLanguage();
   const lang = language as 'he' | 'en';
+  const [showForm, setShowForm] = useState(false);
 
   return (
     <section className="bg-background border-t-[3px] border-primary py-20 px-4">
@@ -34,8 +54,13 @@ const Testimonials = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {testimonials.map((t, i) => (
-            <div
+            <motion.div
               key={i}
+              custom={i}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={cardVariants}
               className="bg-card rounded-2xl p-8 shadow-[0_4px_24px_rgba(0,0,0,0.07)] flex flex-col"
             >
               <div className="flex gap-1 mb-5">
@@ -44,13 +69,13 @@ const Testimonials = () => {
                 ))}
               </div>
 
-              <p className="italic text-foreground text-base leading-relaxed mb-6 flex-1" style={{ fontFamily: 'Heebo, sans-serif' }}>
+              <p className="italic text-foreground text-base leading-[1.7] mb-6 flex-1" style={{ fontFamily: 'Heebo, sans-serif' }}>
                 "{t.quote[lang]}"
               </p>
 
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                  <span className="text-primary-foreground font-bold text-lg text-primary">
+                  <span className="text-primary font-bold text-lg">
                     {t.initials[lang]}
                   </span>
                 </div>
@@ -59,10 +84,29 @@ const Testimonials = () => {
                   <p className="text-muted-foreground text-[13px]">{t.tour[lang]}</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
+
+        {/* Leave a Review */}
+        <div className="text-center mt-12">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => setShowForm(true)}
+            className="gap-2"
+          >
+            <MessageSquarePlus className="h-5 w-5" />
+            {lang === 'he' ? 'השאר המלצה' : 'Leave a Review'}
+          </Button>
+        </div>
       </div>
+
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <TestimonialSubmissionForm />
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
