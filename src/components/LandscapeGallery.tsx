@@ -174,7 +174,7 @@ export const LandscapeGallery = () => {
             <span className="font-medium">גלריית נופים</span>
             <Sparkles className="h-4 w-4" />
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-l from-primary via-foreground to-primary bg-clip-text text-transparent">
+          <h2 className="section-heading mb-4 bg-gradient-to-l from-primary via-foreground to-primary bg-clip-text text-transparent">
             הנופים המדהימים שלנו
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
