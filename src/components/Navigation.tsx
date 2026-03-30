@@ -126,6 +126,17 @@ export const Navigation = () => {
           </div>
 
           <div className="flex items-center gap-2 md:gap-3">
+            <Link to="/chat" className="hidden md:block">
+              <Button
+                variant="outline"
+                className="rounded-full px-4 py-2 text-sm font-semibold border-accent text-accent hover:bg-accent hover:text-accent-foreground transition-all duration-200 gap-1.5"
+                aria-label={language === 'he' ? 'תכנן עם AI' : 'Plan with AI'}
+              >
+                <MessageCircle className="h-4 w-4" />
+                {language === 'he' ? 'תכנן עם AI' : 'Plan with AI'}
+              </Button>
+            </Link>
+
             <Link to="/booking">
               <Button
                 className="bg-accent text-accent-foreground rounded-full px-5 md:px-6 py-2 text-sm md:text-base font-semibold hover:brightness-110 hover:scale-[1.02] transition-all duration-200 min-w-0 md:min-w-[140px]"
