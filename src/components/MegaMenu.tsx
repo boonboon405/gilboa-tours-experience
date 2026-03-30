@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { ChevronDown, Home, Users, Star, Target, Phone, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import heroImage from '@/assets/hero-gilboa.jpg';
 import clubCarsImage from '@/assets/club-cars.jpg';
 import odtTeamImage from '@/assets/odt-team.jpg';
 import culinaryImage from '@/assets/culinary-experience.jpg';
@@ -75,7 +76,7 @@ const menuItems: MenuItem[] = [
 export const MegaMenu = ({ activeSection, onNavClick }: MegaMenuProps) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [imageLoaded, setImageLoaded] = useState<Record<string, boolean>>({});
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = useCallback((href: string) => {
     if (timeoutRef.current) {

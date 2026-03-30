@@ -1,129 +1,229 @@
-import { useState } from 'react';
-import { Users, Crown, Mountain, X, MessageCircle, Check } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { motion, useReducedMotion } from 'framer-motion';
-import type { Variants } from 'framer-motion';
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Calendar, Users, Briefcase, CheckCircle2, ArrowLeft } from "lucide-react";
+import { useParallax } from '@/hooks/use-parallax';
+import { use3DTilt } from '@/hooks/use-3d-tilt';
+import { getClickableProps } from '@/hooks/use-keyboard-nav';
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.12, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
-  }),
-};
+interface Service {
+  id: string;
+  icon: typeof Calendar;
+  title: string;
+  shortDesc: string;
+  longDesc: string;
+  features: string[];
+  highlights: string[];
+  cta: string;
+  scrollTo?: string;
+}
+
+const services: Service[] = [
+  {
+    id: "daily",
+    icon: Calendar,
+    title: "סיורים יומיים",
+    shortDesc: "חוויות מודרכות באזור הגלבוע ועמק בית שאן",
+    longDesc: "יום מלא בחוויות היסטוריות וטבעיות מרהיבות. מתאים למשפחות, קבוצות חברים, וצוותי עבודה.",
+    features: [
+      "בחירה מ-3 חבילות סיור מותאמות",
+      "מדריך מקצועי ומנוסה",
+      "התאמה אישית למשפחות וקבוצות",
+      "אתרים היסטוריים ותצפיות נוף מדהימות",
+      "ביקור במעיינות צלולים",
+      "ארוחה כלולה באזור"
+    ],
+    highlights: [
+      "משך הסיור: 7-8 שעות",
+      "מתאים לגילאי 8-88+",
+      "כולל מדריך לא כולל הסעות"
+    ],
+    cta: "בחר את הסיור שלך",
+    scrollTo: "choose-your-day"
+  },
+  {
+    id: "vip",
+    icon: Users,
+    title: "סיורי VIP",
+    shortDesc: "חוויה פרימיום מותאמת אישית עם שירות יוקרתי",
+    longDesc: "סיור אקסקלוסיבי ומותאם באופן מלא לרצונותיכם. שירות אישי, רכבי יוקרה, וחוויות קולינריות ברמה הגבוהה ביותר.",
+    features: [
+      "מסלול מותאם אישית 100%",
+      "רכבי יוקרה פרטיים עם נהג",
+      "חוויות קולינריות בוטיק ייחודיות",
+      "מדריך פרטי צמוד לאורך כל הסיור",
+      "גישה לאתרים ייחודיים",
+      "שירות קונסיירז' מלא"
+    ],
+    highlights: [
+      "1-45 משתתפים",
+      "תיאום מלא לפי לוח הזמנים שלכם",
+      "אפשרות לשילוב לינה"
+    ],
+    cta: "תכנן סיור VIP",
+    scrollTo: "vip-tours"
+  },
+  {
+    id: "odt",
+    icon: Briefcase,
+    title: "ODT לארגונים",
+    shortDesc: "פיתוח ארגוני בחוץ - גיבוש וצוות לחברות",
+    longDesc: "תוכנית ODT מקצועית המשלבת אתגרים, פעילויות גיבוש, וחוויות בטבע. מתאים לחברות בכל הגדלים.",
+    features: [
+      "תכנון אירוע מותאם לצרכי הארגון",
+      "פעילויות גיבוש מקצועיות ומנחים מוסמכים",
+      "מתאים לקבוצות 10-200 משתתפים",
+      "שילוב בין פעילות גופנית לתוכן ערכי",
+      "דגש על עבודת צוות ומנהיגות",
+      "אפשרות לשילוב הרצאות וסדנאות"
+    ],
+    highlights: [
+      "משך האירוע: חצי יום עד יומיים",
+      "כולל ציוד מקצועי",
+      "צוות מדריכים וצוות תמיכה"
+    ],
+    cta: "צור קשר לתכנון",
+    scrollTo: "odt-section"
+  }
+];
 
 export const ServiceCards = () => {
-  const { t } = useLanguage();
-  const [openService, setOpenService] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const parallaxSlow = useParallax(0.15);
+  const parallaxMedium = useParallax(0.25);
 
-  const services = [
-    { key: 'daily', icon: Users },
-    { key: 'vip', icon: Crown },
-    { key: 'odt', icon: Mountain },
-  ];
-
-  const activeService = services.find((s) => s.key === openService);
+  const handleCTA = (service: Service) => {
+    setSelectedService(null);
+    if (service.scrollTo) {
+      setTimeout(() => {
+        document.getElementById(service.scrollTo!)?.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    }
+  };
 
   return (
-    <>
-      <section id="services" className="py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{t('services.title')}</h2>
-            <p className="text-muted-foreground max-w-md mx-auto">{t('services.subtitle')}</p>
-          </motion.div>
+    <section className="py-16 bg-gradient-to-b from-background to-muted/20 relative overflow-hidden">
+      {/* Background decorative elements with parallax */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div 
+          className="absolute top-40 left-10 w-72 h-72 bg-primary/5 rounded-full blur-[90px]"
+          style={parallaxSlow}
+        />
+        <div 
+          className="absolute bottom-40 right-10 w-96 h-96 bg-accent/5 rounded-full blur-[110px]"
+          style={parallaxMedium}
+        />
+      </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {services.map((s, i) => (
-              <motion.div
-                key={s.key}
-                custom={i}
-                initial="visible"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.1 }}
-                variants={fadeUp}
-              >
-                <Card
-                  className="border-border bg-card hover:shadow-md transition-shadow cursor-pointer h-full"
-                  onClick={() => setOpenService(s.key)}
-                >
-                  <CardContent className="p-8 text-center">
-                    <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-6">
-                      <s.icon className="h-7 w-7 text-primary" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-foreground mb-3">
-                      {t(`services.${s.key}.title`)}
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-                      {t(`services.${s.key}.desc`)}
-                    </p>
-                    <Button variant="outline" size="sm" className="text-primary border-primary/30 hover:bg-primary/5">
-                      {t('services.cta')}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            השירותים שלנו
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+            בחר את החוויה המושלמת עבורך - סיורים יומיים, חוויות VIP, או אירועי גיבוש לארגונים
+          </p>
         </div>
-      </section>
 
-      {/* Detail Modal */}
-      <Dialog open={!!openService} onOpenChange={() => setOpenService(null)}>
-        <DialogContent className="sm:max-w-lg p-0 overflow-hidden border-border">
-          {activeService && (
-            <div className="p-8">
-              <div className="flex items-start justify-between mb-6">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <activeService.icon className="h-6 w-6 text-primary" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {services.map((service) => {
+            const Icon = service.icon;
+            const tilt = use3DTilt({ maxTilt: 10, scale: 1.03, speed: 500 });
+            
+              return (
+                <Card 
+                  key={service.id}
+                  ref={tilt.ref}
+                  className="relative hover:shadow-2xl transition-all duration-500 cursor-pointer group border-2 hover:border-primary/50 bg-card/80 backdrop-blur-sm overflow-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                  style={tilt.style}
+                  onMouseMove={tilt.onMouseMove}
+                  onMouseLeave={tilt.onMouseLeave}
+                  {...getClickableProps(() => setSelectedService(service))}
+                  aria-label={`${service.title} - ${service.shortDesc}. לחץ Enter לפרטים נוספים`}
+                >
+                <CardHeader className="text-center pb-4">
+                  <div className="mx-auto mb-4 p-6 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                    <Icon className="h-10 w-10" />
+                  </div>
+                  <CardTitle className="text-2xl mb-2">{service.title}</CardTitle>
+                  <CardDescription className="text-base">
+                    {service.shortDesc}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button 
+                    className="w-full"
+                    variant="outline"
+                  >
+                    לחץ לפרטים מלאים
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Modal Dialog */}
+      <Dialog open={!!selectedService} onOpenChange={() => setSelectedService(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          {selectedService && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-4 mb-2">
+                  <div className="p-3 rounded-full bg-primary/10 text-primary">
+                    <selectedService.icon className="h-8 w-8" />
+                  </div>
+                  <div className="text-right flex-1">
+                    <DialogTitle className="text-2xl">{selectedService.title}</DialogTitle>
+                  </div>
                 </div>
-                <button onClick={() => setOpenService(null)} className="text-muted-foreground hover:text-foreground">
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
+                <DialogDescription className="text-base text-right pt-2">
+                  {selectedService.longDesc}
+                </DialogDescription>
+              </DialogHeader>
 
-              <h3 className="text-2xl font-bold text-foreground mb-3">
-                {t(`services.${openService}.title`)}
-              </h3>
+              <div className="space-y-6 pt-4">
+                {/* Features */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 text-right">מה כולל?</h3>
+                  <div className="grid gap-3">
+                    {selectedService.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-start gap-3 text-right">
+                        <span className="text-muted-foreground flex-1">{feature}</span>
+                        <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-              <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-                {t(`services.${openService}.detail`)}
-              </p>
+                {/* Highlights */}
+                <div className="bg-muted/50 rounded-lg p-4">
+                  <h3 className="text-lg font-semibold mb-3 text-right">נקודות מרכזיות</h3>
+                  <div className="space-y-2">
+                    {selectedService.highlights.map((highlight, idx) => (
+                      <p key={idx} className="text-sm text-muted-foreground text-right">
+                        • {highlight}
+                      </p>
+                    ))}
+                  </div>
+                </div>
 
-              <div className="flex flex-wrap gap-2 mb-8">
-                {t(`services.${openService}.highlights`).split(' • ').map((h) => (
-                  <span key={h} className="inline-flex items-center gap-1.5 text-xs font-medium bg-muted text-foreground px-3 py-1.5 rounded-full">
-                    <Check className="h-3 w-3 text-primary" />
-                    {h}
-                  </span>
-                ))}
-              </div>
-
-              <a
-                href="https://wa.me/972537314235?text=Hi%20Simcha%2C%20I'd%20like%20more%20info"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground">
-                  <MessageCircle className="h-5 w-5" />
-                  {t('services.detail.cta')}
+                {/* CTA Button */}
+                <Button 
+                  size="lg"
+                  className="w-full gap-2"
+                  onClick={() => handleCTA(selectedService)}
+                >
+                  {selectedService.cta}
+                  <ArrowLeft className="h-5 w-5" />
                 </Button>
-              </a>
-            </div>
+              </div>
+            </>
           )}
         </DialogContent>
       </Dialog>
-    </>
+    </section>
   );
 };

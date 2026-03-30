@@ -607,33 +607,6 @@ export type Database = {
         }
         Relationships: []
       }
-      generated_images: {
-        Row: {
-          created_at: string
-          id: string
-          image_key: string
-          image_type: string
-          image_url: string
-          prompt: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          image_key: string
-          image_type: string
-          image_url: string
-          prompt?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          image_key?: string
-          image_type?: string
-          image_url?: string
-          prompt?: string | null
-        }
-        Relationships: []
-      }
       knowledge_base: {
         Row: {
           answer: string
@@ -642,7 +615,6 @@ export type Database = {
           id: string
           is_active: boolean
           keywords: string[] | null
-          language: string
           priority: number | null
           question: string
           updated_at: string
@@ -655,7 +627,6 @@ export type Database = {
           id?: string
           is_active?: boolean
           keywords?: string[] | null
-          language?: string
           priority?: number | null
           question: string
           updated_at?: string
@@ -668,7 +639,6 @@ export type Database = {
           id?: string
           is_active?: boolean
           keywords?: string[] | null
-          language?: string
           priority?: number | null
           question?: string
           updated_at?: string
@@ -943,7 +913,6 @@ export type Database = {
           id: string
           image_url: string | null
           is_featured: boolean
-          language: string
           rating: number
           status: string
           testimonial_text: string
@@ -961,7 +930,6 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean
-          language?: string
           rating: number
           status?: string
           testimonial_text: string
@@ -979,7 +947,6 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean
-          language?: string
           rating?: number
           status?: string
           testimonial_text?: string

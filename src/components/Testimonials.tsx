@@ -1,18 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useAppSelector } from '@/store/hooks';
+import { getLanguage } from '@/store/slices/languageSlice';
+import { Card, CardContent } from '@/components/ui/card';
 import { Star, Quote } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
-import { motion, useReducedMotion } from 'framer-motion';
-import type { Variants } from 'framer-motion';
-
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.12, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
-  }),
-};
 
 interface Testimonial {
   id: string;
@@ -20,84 +11,143 @@ interface Testimonial {
   customer_company: string | null;
   testimonial_text: string;
   rating: number;
+  is_featured: boolean;
 }
 
-export const Testimonials = () => {
-  const { language, t } = useLanguage();
-  const [items, setItems] = useState<Testimonial[]>([]);
+const Testimonials = () => {
+  const language = useAppSelector(getLanguage);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
-  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
-    const fetchTestimonials = async () => {
-      const { data } = await supabase
-        .from('testimonials')
-        .select('id, customer_name, customer_company, testimonial_text, rating')
-        .eq('status', 'approved')
-        .eq('language', language)
-        .order('is_featured', { ascending: false })
-        .limit(3);
-      if (data && data.length > 0) setItems(data);
-      setLoading(false);
-    };
     fetchTestimonials();
-  }, [language]);
+  }, []);
 
-  const fallback = [
-    { id: '1', customer_name: t('testimonials.1.name'), customer_company: t('testimonials.1.company'), testimonial_text: t('testimonials.1.text'), rating: 5 },
-    { id: '2', customer_name: t('testimonials.2.name'), customer_company: t('testimonials.2.company'), testimonial_text: t('testimonials.2.text'), rating: 5 },
-    { id: '3', customer_name: t('testimonials.3.name'), customer_company: t('testimonials.3.company'), testimonial_text: t('testimonials.3.text'), rating: 5 },
+  const fetchTestimonials = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('testimonials')
+        .select('*')
+        .eq('status', 'approved')
+        .order('is_featured', { ascending: false })
+        .order('created_at', { ascending: false })
+        .limit(6);
+
+      if (error) throw error;
+      
+      // If we have database testimonials, use them
+      if (data && data.length > 0) {
+        setTestimonials(data);
+      } else {
+        // Fallback to default testimonials if none in database
+        setTestimonials(getDefaultTestimonials());
+      }
+    } catch (error) {
+      console.error('Error fetching testimonials:', error);
+      setTestimonials(getDefaultTestimonials());
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getDefaultTestimonials = () => [
+    {
+      id: '1',
+      customer_name: language === 'he' ? 'רונית כהן' : 'Ronit Cohen',
+      customer_company: language === 'he' ? 'מנהלת משאבי אנוש, חברת הייטק' : 'HR Manager, Tech Company',
+      testimonial_text: language === 'he' 
+        ? 'יום מדהים! הצוות שלנו חזר מאוחד ומלא אנרגיה. השילוב של פעילויות גיבוש והיסטוריה היה מושלם.'
+        : 'Amazing day! Our team came back united and energized. The combination of team-building and history was perfect.',
+      rating: 5,
+      is_featured: true,
+    },
+    {
+      id: '2',
+      customer_name: language === 'he' ? 'יוסי לוי' : 'Yossi Levi',
+      customer_company: language === 'he' ? 'מנכ"ל, חברת ייצור' : 'CEO, Manufacturing Company',
+      testimonial_text: language === 'he'
+        ? 'חוויה בלתי נשכחת! הפעילויות היו מגוונות והמדריכים היו מעולים.'
+        : 'Unforgettable experience! The activities were diverse and the guides were excellent.',
+      rating: 5,
+      is_featured: false,
+    },
+    {
+      id: '3',
+      customer_name: language === 'he' ? 'מיכל אברהם' : 'Michal Avraham',
+      customer_company: language === 'he' ? 'סמנכ"לית שיווק' : 'VP Marketing',
+      testimonial_text: language === 'he'
+        ? 'ארגון מושלם מתחילה ועד סוף. תשומת הלב לפרטים, הגמישות בהתאמת התוכנית - הכל היה ברמה הכי גבוהה.'
+        : 'Perfect organization from start to finish. Attention to detail and flexibility - everything was top-notch.',
+      rating: 5,
+      is_featured: false,
+    },
   ];
 
-  const displayItems = items.length > 0 ? items : (loading ? [] : fallback);
-
-  if (loading) return null;
+  if (loading) {
+    return (
+      <section className="py-20 px-4 bg-gradient-to-b from-background to-muted/20">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section className="py-24 bg-muted/50">
-      <div className="container mx-auto px-4">
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 1, y: 0 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{t('testimonials.title')}</h2>
-          <p className="text-muted-foreground">{t('testimonials.subtitle')}</p>
-        </motion.div>
+    <section className="py-20 px-4 bg-gradient-to-b from-background to-muted/20">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16 animate-fade-in">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            {language === 'he' ? 'מה הלקוחות שלנו אומרים' : 'What Our Clients Say'}
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            {language === 'he' 
+              ? 'אלפי חברות סומכות עלינו ליצירת חוויות בלתי נשכחות' 
+              : 'Thousands of companies trust us to create unforgettable experiences'}
+          </p>
+        </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {displayItems.map((item, i) => (
-            <motion.div
-              key={item.id}
-              custom={i}
-              initial="visible"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.1 }}
-              variants={fadeUp}
-              className="relative bg-card border border-border rounded-lg p-8"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {testimonials.map((testimonial, index) => (
+            <Card 
+              key={index} 
+              className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 animate-fade-in relative overflow-hidden"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <Quote className="absolute top-6 end-6 h-8 w-8 text-primary/10" />
-              <div className="flex gap-1 mb-5">
-                {Array.from({ length: item.rating }).map((_, j) => (
-                  <Star key={j} className="h-4 w-4 fill-accent text-accent" />
-                ))}
-              </div>
-              <p className="text-foreground text-sm leading-relaxed mb-8 italic">"{item.testimonial_text}"</p>
-              <div className="flex items-center gap-3 border-t border-border pt-5">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-                  {item.customer_name.charAt(0)}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
+              <CardContent className="p-6 relative">
+                <Quote className="w-10 h-10 text-primary/20 mb-4" />
+                
+                <div className="flex gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                  ))}
                 </div>
-                <div>
-                  <p className="font-semibold text-foreground text-sm">{item.customer_name}</p>
-                  {item.customer_company && <p className="text-muted-foreground text-xs">{item.customer_company}</p>}
+
+                <p className="text-muted-foreground mb-6 leading-relaxed">
+                  "{testimonial.testimonial_text}"
+                </p>
+
+                <div className="border-t pt-4">
+                  <p className="font-semibold text-foreground">
+                    {testimonial.customer_name}
+                  </p>
+                  {testimonial.customer_company && (
+                    <p className="text-sm text-muted-foreground">
+                      {testimonial.customer_company}
+                    </p>
+                  )}
+                  {testimonial.is_featured && (
+                    <span className="text-xs text-primary font-semibold">⭐ המלצה מודגשת</span>
+                  )}
                 </div>
-              </div>
-            </motion.div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
     </section>
   );
 };
+
+export { Testimonials };

@@ -72,10 +72,6 @@ export async function speakWithElevenLabs(
       throw new Error('No audio content returned');
     }
 
-    if (ttsConfig.enableLogging) {
-      console.log('[ElevenLabs TTS] Mode:', data.mode ?? 'unknown');
-    }
-
     // Convert base64 to audio and play
     const audioBlob = base64ToBlob(data.audioContent, 'audio/mpeg');
     const audioUrl = URL.createObjectURL(audioBlob);
@@ -112,13 +108,9 @@ export async function speakWithElevenLabs(
   } catch (error) {
     console.error('[ElevenLabs TTS] Error, falling back to Web Speech API:', error);
     onEnd?.();
-
-    // Avoid incorrect non-Hebrew browser fallback for Hebrew content
-    if (language === 'he') {
-      return false;
-    }
-
-    return speakWithWebSpeech(sanitizedText, language, onStart, onEnd);
+    
+    // Fallback to Web Speech API
+    return speakWithWebSpeech(sanitizedText, onStart, onEnd);
   }
 }
 
@@ -127,7 +119,6 @@ export async function speakWithElevenLabs(
  */
 function speakWithWebSpeech(
   text: string,
-  language: 'he' | 'en',
   onStart?: () => void,
   onEnd?: () => void
 ): boolean {
@@ -137,14 +128,14 @@ function speakWithWebSpeech(
   }
 
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = language === 'he' ? 'he-IL' : 'en-US';
+  utterance.lang = 'he-IL';
   utterance.rate = ttsConfig.defaultRate;
 
-   // Try to find a matching browser voice
+  // Try to find a Hebrew voice
   const voices = window.speechSynthesis.getVoices();
-   const matchingVoice = voices.find(v => language === 'he' ? v.lang.includes('he') : v.lang.toLowerCase().startsWith('en'));
-   if (matchingVoice) {
-     utterance.voice = matchingVoice;
+  const hebrewVoice = voices.find(v => v.lang.includes('he'));
+  if (hebrewVoice) {
+    utterance.voice = hebrewVoice;
   }
 
   utterance.onstart = () => onStart?.();

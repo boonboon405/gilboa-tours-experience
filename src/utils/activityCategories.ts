@@ -124,69 +124,53 @@ export const activityDNAMap: Record<string, Partial<ActivityTag>> = {
 };
 
 // Category metadata
-export const categoryMetadata: Record<DNACategory, { name: string; nameEn: string; icon: string; description: string; descriptionEn: string; color: string }> = {
+export const categoryMetadata = {
   adventure: {
     name: 'הרפתקאות ואקסטרים',
-    nameEn: 'Adventure & Extreme',
     icon: '🔥',
     description: 'פעילויות אדרנלין, אתגרים פיזיים ואקשן',
-    descriptionEn: 'Adrenaline activities, physical challenges, and action',
     color: 'from-red-500 to-orange-500'
   },
   nature: {
     name: 'טבע, מים ורוגע',
-    nameEn: 'Nature, Water & Serenity',
     icon: '💧',
     description: 'חיבור לטבע, מעיינות ושלווה',
-    descriptionEn: 'Connecting with nature, springs, and tranquility',
     color: 'from-blue-500 to-cyan-400'
   },
   history: {
     name: 'היסטוריה, תרבות ומורשת',
-    nameEn: 'History, Culture & Heritage',
     icon: '🏛️',
     description: 'למידה, אתרים היסטוריים ותרבות',
-    descriptionEn: 'Learning, historical sites, and culture',
     color: 'from-amber-600 to-orange-500'
   },
   culinary: {
     name: 'קולינריה, יין וטעמים',
-    nameEn: 'Culinary, Wine & Flavors',
     icon: '🍷',
     description: 'חוויות קולינריות, טעימות ואוכל',
-    descriptionEn: 'Culinary experiences, tastings, and food',
     color: 'from-purple-600 to-pink-500'
   },
   sports: {
     name: 'ODT ספורט, תחרות וצוותיות',
-    nameEn: 'Sports, Competition & Teamwork',
     icon: '⚡',
     description: 'תחרויות, משחקי צוות ואתגרים ספורטיביים',
-    descriptionEn: 'Competitions, team games, and sports challenges',
     color: 'from-green-500 to-emerald-400'
   },
   creative: {
     name: 'יצירה ורוחניות',
-    nameEn: 'Creativity & Spirituality',
     icon: '🎨',
     description: 'אמנות, יצירה והתבוננות',
-    descriptionEn: 'Art, creation, and contemplation',
     color: 'from-pink-500 to-purple-400'
   },
   wellness: {
     name: 'בריאות ופינוק',
-    nameEn: 'Wellness & Pampering',
     icon: '🌿',
     description: 'רוגע, עיסויים ופינוק',
-    descriptionEn: 'Relaxation, massages, and pampering',
     color: 'from-teal-500 to-green-400'
   },
   teambuilding: {
     name: 'בניית צוות ומנהיגות',
-    nameEn: 'Team Building & Leadership',
     icon: '🤝',
     description: 'פעילויות לחיזוק קבוצות, תקשורת וליווי ארגוני',
-    descriptionEn: 'Group strengthening activities, communication, and organizational guidance',
     color: 'from-indigo-500 to-blue-500'
   }
 };

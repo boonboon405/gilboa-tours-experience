@@ -176,6 +176,7 @@ export const QuizCategoryIntegration = ({ onQuizComplete, language = 'he' }: Qui
               topCategories: quizResults.topCategories,
               percentages: quizResults.percentages
             } : undefined}
+            language={language}
           />
         </CardContent>
       </Card>

@@ -2,44 +2,89 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap');
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
 
 @layer base {
   :root {
-    --background: 40 33% 98%;
-    --foreground: 220 20% 14%;
+    /* Nature-inspired color palette for DavidTours */
+    --background: 45 20% 98%;
+    --foreground: 150 30% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 14%;
+    --card-foreground: 150 30% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 14%;
+    --popover-foreground: 150 30% 15%;
 
-    --primary: 160 84% 39%;
+    /* Gilboa Mountain Green */
+    --primary: 145 55% 35%;
     --primary-foreground: 0 0% 100%;
-
-    --secondary: 25 95% 53%;
+    --primary-light: 145 45% 45%;
+    
+    /* Spring Water Blue */
+    --secondary: 200 85% 45%;
     --secondary-foreground: 0 0% 100%;
+    --secondary-light: 200 75% 55%;
 
-    --accent: 45 93% 58%;
-    --accent-foreground: 220 20% 14%;
-
-    --muted: 160 10% 92%;
-    --muted-foreground: 220 10% 40%;
+    /* Earthy Warm Tones */
+    --accent: 30 75% 55%;
+    --accent-foreground: 0 0% 100%;
+    
+    --muted: 45 15% 92%;
+    --muted-foreground: 150 20% 40%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 160 10% 85%;
-    --input: 160 10% 85%;
-    --ring: 160 84% 39%;
+    --border: 45 20% 88%;
+    --input: 45 20% 88%;
+    --ring: 145 55% 35%;
 
     --radius: 0.75rem;
 
-    --gradient-primary: linear-gradient(135deg, hsl(160 84% 39%), hsl(170 70% 45%));
-    --gradient-warm: linear-gradient(135deg, hsl(25 95% 53%), hsl(45 93% 58%));
-    --shadow-primary: 0 10px 30px -10px hsl(160 84% 39% / 0.3);
-    --shadow-warm: 0 10px 30px -10px hsl(25 95% 53% / 0.3);
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(145 55% 35%) 0%, hsl(145 45% 25%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(30 75% 55%) 0%, hsl(30 85% 65%) 100%);
+    --gradient-water: linear-gradient(135deg, hsl(200 85% 45%) 0%, hsl(200 75% 35%) 100%);
+    
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -4px hsl(145 55% 35% / 0.15);
+    --shadow-strong: 0 10px 40px -10px hsl(145 55% 35% / 0.3);
+    
+    /* Animations */
+    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    --background: 150 25% 8%;
+    --foreground: 45 20% 95%;
+
+    --card: 150 20% 12%;
+    --card-foreground: 45 20% 95%;
+
+    --popover: 150 20% 12%;
+    --popover-foreground: 45 20% 95%;
+
+    --primary: 145 50% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 200 75% 50%;
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 30 70% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 150 15% 18%;
+    --muted-foreground: 45 15% 65%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 150 15% 22%;
+    --input: 150 15% 22%;
+    --ring: 145 50% 45%;
   }
 }
 
@@ -50,11 +95,242 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Heebo', sans-serif;
+  }
+  
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out;
+  }
+  
+  @keyframes scroll-indicator {
+    0%, 100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    50% {
+      transform: translateY(8px);
+      opacity: 0.5;
+    }
+  }
+  
+  @keyframes zoom-fade-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.9) translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  @keyframes ring {
+    0%, 100% {
+      transform: rotate(0deg);
+    }
+    10%, 30%, 50%, 70%, 90% {
+      transform: rotate(-10deg);
+    }
+    20%, 40%, 60%, 80% {
+      transform: rotate(10deg);
+    }
+  }
+  
+  @keyframes slow-pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+  
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  .animate-scale-in {
+    animation: scale-in 0.2s ease-out;
+  }
+  
+  /* Ripple Effect */
+  .ripple-effect {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .ripple-effect::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  .ripple-effect:active::after {
+    width: 300px;
+    height: 300px;
+    transition: width 0s, height 0s;
+  }
+  
+  /* Hero text glow effects */
+  .hero-glow {
+    text-shadow: 
+      0 0 20px hsl(var(--primary) / 0.3),
+      0 0 40px hsl(var(--primary) / 0.2),
+      0 0 60px hsl(var(--primary) / 0.1);
+  }
+
+  .hero-glow-accent {
+    text-shadow: 
+      0 0 20px hsl(var(--accent) / 0.4),
+      0 0 40px hsl(var(--accent) / 0.3),
+      0 0 60px hsl(var(--accent) / 0.2);
+  }
+
+  /* Pulse once animation for section highlight */
+  @keyframes pulse-once {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+    }
+    50% {
+      transform: scale(1.005);
+      box-shadow: 0 0 0 20px hsl(var(--primary) / 0);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 hsl(var(--primary) / 0);
+    }
+  }
+
+  .animate-pulse-once {
+    animation: pulse-once 1s ease-out;
   }
 }
 
-*:focus-visible {
-  outline: 2px solid hsl(var(--ring));
+/* Custom animation utilities */
+@layer utilities {
+  .animate-pulse-slow {
+    animation: slow-pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .shadow-glow {
+    box-shadow: 
+      0 0 20px hsl(var(--primary) / 0.2),
+      0 0 40px hsl(var(--primary) / 0.1);
+  }
+  
+  .shadow-glow-accent {
+    box-shadow: 
+      0 0 20px hsl(var(--accent) / 0.3),
+      0 0 40px hsl(var(--accent) / 0.15);
+  }
+}
+
+/* ===== ACCESSIBILITY STYLES ===== */
+
+/* High Contrast Mode */
+.high-contrast {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --primary: 60 100% 50%;
+  --primary-foreground: 0 0% 0%;
+  --muted: 0 0% 20%;
+  --muted-foreground: 0 0% 100%;
+  --accent: 60 100% 50%;
+  --accent-foreground: 0 0% 0%;
+  --border: 0 0% 100%;
+}
+
+.high-contrast * {
+  border-color: hsl(0 0% 100%) !important;
+}
+
+.high-contrast img {
+  filter: contrast(1.2);
+}
+
+/* Grayscale Mode */
+.grayscale-mode {
+  filter: grayscale(100%);
+}
+
+/* Highlight Links Mode */
+.highlight-links a,
+.highlight-links button {
+  outline: 3px solid hsl(var(--primary)) !important;
   outline-offset: 2px;
+  text-decoration: underline !important;
+}
+
+/* Stop Animations Mode */
+.stop-animations,
+.stop-animations * {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Readable Font Mode */
+.readable-font,
+.readable-font * {
+  font-family: Arial, Helvetica, sans-serif !important;
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.1em !important;
+  line-height: 1.8 !important;
+}
+
+/* Large Cursor Mode */
+.large-cursor,
+.large-cursor * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='white' stroke-width='1' d='M5.5 3.21V20.8l4.86-4.86h6.21L5.5 3.21z'/%3E%3C/svg%3E") 0 0, auto !important;
+}
+
+/* Focus Styles for Keyboard Navigation */
+*:focus-visible {
+  outline: 3px solid hsl(var(--primary)) !important;
+  outline-offset: 2px !important;
+}
+
+/* Screen Reader Only (but visible on focus) */
+.sr-only-focusable:focus {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: inherit !important;
+  margin: inherit !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: normal !important;
 }

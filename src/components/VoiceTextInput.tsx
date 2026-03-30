@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mic, MicOff, Send, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 interface VoiceTextInputProps {
   onSend: (message: string) => void;
@@ -17,32 +16,29 @@ export const VoiceTextInput = ({
   onSend, 
   onTyping, 
   isLoading = false, 
-  placeholder,
+  placeholder = 'הקלידו או דברו...',
   disabled = false
 }: VoiceTextInputProps) => {
-  const { language } = useLanguage();
   const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(true);
   const recognitionRef = useRef<any>(null);
-  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
 
-  const isHebrew = language === 'he';
-  const defaultPlaceholder = isHebrew ? 'הקלידו או דברו...' : 'Type or speak...';
-
   useEffect(() => {
+    // Check for speech recognition support
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
       setSpeechSupported(false);
       return;
     }
 
+    // Initialize speech recognition
     const recognition = new SpeechRecognition();
     recognition.continuous = false;
     recognition.interimResults = true;
-    // Set language based on current app language
-    recognition.lang = isHebrew ? 'he-IL' : 'en-US';
+    recognition.lang = 'he-IL'; // Hebrew language
 
     recognition.onstart = () => {
       setIsListening(true);
@@ -64,10 +60,12 @@ export const VoiceTextInput = ({
       if (finalTranscript) {
         const newText = input + finalTranscript;
         setInput(newText);
+        // Trigger real-time update
         if (onTyping) {
           onTyping(newText);
         }
       } else if (interimTranscript) {
+        // Show interim results in real-time
         if (onTyping) {
           onTyping(input + interimTranscript);
         }
@@ -80,8 +78,8 @@ export const VoiceTextInput = ({
       
       if (event.error === 'not-allowed') {
         toast({
-          title: isHebrew ? "נדרשת הרשאה" : "Permission required",
-          description: isHebrew ? "אנא אפשרו גישה למיקרופון בדפדפן" : "Please allow microphone access in your browser",
+          title: "נדרשת הרשאה",
+          description: "אנא אפשרו גישה למיקרופון בדפדפן",
           variant: "destructive"
         });
       }
@@ -98,7 +96,7 @@ export const VoiceTextInput = ({
         recognitionRef.current.abort();
       }
     };
-  }, [input, onTyping, toast, isHebrew]);
+  }, [input, onTyping, toast]);
 
   const startListening = () => {
     if (!recognitionRef.current || isListening || disabled) return;
@@ -119,10 +117,12 @@ export const VoiceTextInput = ({
   const handleInputChange = (value: string) => {
     setInput(value);
     
+    // Clear previous timeout
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
     
+    // Immediately update typing preview if callback provided
     if (onTyping) {
       onTyping(value);
     }
@@ -132,17 +132,23 @@ export const VoiceTextInput = ({
     e.preventDefault();
     const messageToSend = input.trim();
     
+    console.log('📤 Submitting message:', messageToSend);
+    
     if (messageToSend && !isLoading && !disabled) {
+      // Clear input immediately for better UX
       setInput('');
       
+      // Clear typing preview
       if (onTyping) {
         onTyping('');
       }
       
+      // Clear typing timeout
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
       
+      // Send the message
       onSend(messageToSend);
     }
   };
@@ -164,10 +170,10 @@ export const VoiceTextInput = ({
       <Input
         value={input}
         onChange={(e) => handleInputChange(e.target.value)}
-        placeholder={placeholder || defaultPlaceholder}
+        placeholder={placeholder}
         disabled={disabled || isLoading}
-        className="flex-1"
-        dir={isHebrew ? 'rtl' : 'ltr'}
+        className="flex-1 text-right"
+        dir="rtl"
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
             handleSubmit(e as any);

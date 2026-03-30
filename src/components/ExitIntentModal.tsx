@@ -31,7 +31,7 @@ export const ExitIntentModal = () => {
     };
 
     // Hesitation detection - idle for 45 seconds on key pages
-    let idleTimer: ReturnType<typeof setTimeout>;
+    let idleTimer: NodeJS.Timeout;
     const resetIdleTimer = () => {
       clearTimeout(idleTimer);
       if (!hasShown) {
@@ -123,7 +123,7 @@ export const ExitIntentModal = () => {
         
         <div className="space-y-3 mt-4">
           <Button
-            variant="secondary"
+            variant="whatsapp"
             size="lg"
             className="w-full text-lg shadow-strong animate-bounce-slow"
             onClick={() => {
@@ -136,7 +136,7 @@ export const ExitIntentModal = () => {
           </Button>
 
           <Button
-            variant="default"
+            variant="hero"
             size="lg"
             className="w-full text-lg"
             onClick={() => {

@@ -161,42 +161,13 @@ serve(async (req) => {
       .eq('prompt_key', 'ai_chat_agent')
       .single();
 
-    // Use English system prompt for English mode
-    const DEFAULT_ENGLISH_PROMPT = `You are a tour expert for Simcha Tours in Northern Israel. You help users plan their perfect tour experience in the Gilboa, Springs Valley, and Galilee region.
+    const systemPrompt = promptData?.prompt_text || DEFAULT_SYSTEM_PROMPT;
 
-Opening message (only at start of new conversation):
-"Hello! I'm a tour expert offering experiences:
-🔥 Adventure | 💧 Nature | 🏛️ History | 🍷 Culinary | ⚡ Sports | 🎨 Creative | 🌿 Wellness | 🤝 Team Building
-
-Answer the questions and I'll recommend activities that suit you!
-Tell me - how many people are you? What interests you? 100 activities are waiting for you!"
-
-Communication rules:
-1. Ask only 1-2 questions per response
-2. Wait for the user to answer before continuing
-3. Show top 4 recommendations first
-4. Be patient - let the customer lead the conversation
-
-Closing statement when mentioning David and phone:
-"Let's continue planning your amazing day! And when you're ready to finalize all the details, remember that David at 0537314235 is your go-to person!"
-
-Recommended conversation flow:
-1. Show top 4 recommendations
-2. Ask about group size and occasion (wait for answer)
-3. Ask about dates and budget (wait for answer)
-4. Ask what specifically interests them (wait for answer)
-5. Suggest a customized package`;
-
-    const systemPrompt = language === 'en' 
-      ? (promptData?.prompt_text || DEFAULT_ENGLISH_PROMPT)
-      : (promptData?.prompt_text || DEFAULT_SYSTEM_PROMPT);
-
-    // Fetch knowledge base entries filtered by language
+    // Fetch knowledge base entries
     const { data: knowledgeBase } = await supabase
       .from('knowledge_base')
       .select('*')
       .eq('is_active', true)
-      .eq('language', language)
       .order('priority', { ascending: false });
 
     // Get or create conversation
@@ -311,10 +282,8 @@ Recommended conversation flow:
           messages: [
             { 
               role: "system", 
-              content: (language === 'en' ? DEFAULT_ENGLISH_PROMPT : systemPrompt) + quizContext + knowledgeContext + dataContext + 
-                (language === 'he' 
-                  ? `\n\n**הוראה קריטית**: עליך לענות אך ורק בעברית תקנית ורשמית. כל תשובה חייבת להיות בעברית ברורה, נכונה ותקנית. אסור להשתמש במילים באנגלית (חוץ משמות מותגים). אסור בהחלט להשתמש בסלנג ערבי או מילים ממקור ערבי כמו: כיף, יאללה, אחלה, סבבה, וואלה, חביבי, סחתיין, חלאס. במקום "כיף" אמור "הנאה" או "שמחה". במקום "יאללה" אמור "בואו" או "קדימה".`
-                  : `\n\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in English. Every response must be in clear, proper English. Do not mix Hebrew words into your response.`)
+              content: systemPrompt + quizContext + knowledgeContext + dataContext + 
+                `\n\n**CRITICAL LANGUAGE INSTRUCTION**: You MUST respond in ${language === 'he' ? 'Hebrew (עברית)' : 'English'}. The user's preferred language is ${language === 'he' ? 'Hebrew' : 'English'}. Even if the user writes in a different language, ALWAYS respond in ${language === 'he' ? 'Hebrew' : 'English'}.`
             },
             ...conversationHistory,
             { role: "user", content: message }
@@ -341,52 +310,30 @@ Recommended conversation flow:
       clearTimeout(timeoutId);
     }
 
-    // Generate quick reply suggestions based on context and language
-    const isEnglish = language === 'en';
+    // Generate quick reply suggestions based on context
     const quickReplies = [];
     if (!messages || messages.length <= 1) {
       // First interaction - offer main options
-      if (isEnglish) {
-        quickReplies.push(
-          "What do you offer?",
-          "How much does it cost?",
-          "Where are you located?",
-          "I'd like to speak with someone"
-        );
-      } else {
-        quickReplies.push(
-          "מה אתם מציעים?",
-          "כמה עולה?",
-          "איפה אתם ממוקמים?",
-          "רוצה לדבר עם בן אדם"
-        );
-      }
+      quickReplies.push(
+        "מה אתם מציעים?",
+        "כמה עולה?",
+        "איפה אתם ממוקמים?",
+        "רוצה לדבר עם בן אדם"
+      );
     } else {
       // Context-aware suggestions
       const lastMessages = messages?.slice(-3).map((m: any) => m.message).join(' ') || '';
-      if (lastMessages.includes('מחיר') || lastMessages.includes('עולה') || lastMessages.includes('cost') || lastMessages.includes('price')) {
-        quickReplies.push(
-          isEnglish ? "Give me a quote" : "תנו לי הצעת מחיר",
-          isEnglish ? "What's included?" : "מה כלול במחיר?"
-        );
+      if (lastMessages.includes('מחיר') || lastMessages.includes('עולה')) {
+        quickReplies.push("תנו לי הצעת מחיר", "מה כלול במחיר?");
       }
-      if (lastMessages.includes('זמן') || lastMessages.includes('משך') || lastMessages.includes('time') || lastMessages.includes('long')) {
-        quickReplies.push(
-          isEnglish ? "How long does it take?" : "כמה זמן נמשך?",
-          isEnglish ? "When can we start?" : "מתי אפשר להתחיל?"
-        );
+      if (lastMessages.includes('זמן') || lastMessages.includes('משך')) {
+        quickReplies.push("כמה זמן נמשך?", "מתי אפשר להתחיל?");
       }
-      if (lastMessages.includes('קבוצה') || lastMessages.includes('צוות') || lastMessages.includes('group') || lastMessages.includes('team')) {
-        quickReplies.push(
-          isEnglish ? "What's the minimum group size?" : "כמה אנשים מינימום?",
-          isEnglish ? "What suits our group?" : "מה מתאים לקבוצה שלנו?"
-        );
+      if (lastMessages.includes('קבוצה') || lastMessages.includes('צוות')) {
+        quickReplies.push("כמה אנשים מינימום?", "מה מתאים לקבוצה שלנו?");
       }
       if (quickReplies.length < 3) {
-        quickReplies.push(
-          isEnglish ? "Interesting, tell me more" : "מעניין, ספרו עוד",
-          isEnglish ? "I'd like to speak with someone" : "רוצה לדבר עם בן אדם"
-        );
+        quickReplies.push("מעניין, ספרו עוד", "רוצה לדבר עם בן אדם");
       }
     }
 

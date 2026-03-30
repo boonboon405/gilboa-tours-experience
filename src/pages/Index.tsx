@@ -1,54 +1,66 @@
 import { Navigation } from '@/components/Navigation';
 import { Hero } from '@/components/Hero';
-import { WhyChooseUs } from '@/components/WhyChooseUs';
 import { ServiceCards } from '@/components/ServiceCards';
-import { CategoryShowcase } from '@/components/CategoryShowcase';
 import { ChooseYourDay } from '@/components/ChooseYourDay';
 import { VIPTours } from '@/components/VIPTours';
 import { ODTSection } from '@/components/ODTSection';
-import { LandscapeGallery } from '@/components/LandscapeGallery';
-import { WhatToBring } from '@/components/WhatToBring';
 import { Testimonials } from '@/components/Testimonials';
-import { PublicFAQ } from '@/components/PublicFAQ';
 import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
-import { AIChatWidget } from '@/components/AIChatWidget';
-import { motion } from 'framer-motion';
-
-const reveal = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' as const } },
-};
-
-const ScrollReveal = ({ children }: { children: React.ReactNode }) => (
-  <motion.div
-    variants={reveal}
-    initial="hidden"
-    whileInView="visible"
-    viewport={{ once: true, amount: 0.15 }}
-  >
-    {children}
-  </motion.div>
-);
+import SEOKeywords from '@/components/SEOKeywords';
+import { ExitIntentModal } from '@/components/ExitIntentModal';
+import { EmergencyContactButton } from '@/components/EmergencyContactButton';
+import { PublicFAQ } from '@/components/PublicFAQ';
+import { TestimonialSubmissionForm } from '@/components/TestimonialSubmissionForm';
+import { LandscapeGallery } from '@/components/LandscapeGallery';
+import NorthIsraelGallery from '@/components/NorthIsraelGallery';
+import { AccessibilityInfoSection } from '@/components/AccessibilityInfoSection';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEOKeywords />
+      <ExitIntentModal />
+      <EmergencyContactButton />
       <Navigation />
-      <Hero />
-      <ScrollReveal><WhyChooseUs /></ScrollReveal>
-      <ScrollReveal><ServiceCards /></ScrollReveal>
-      <ScrollReveal><CategoryShowcase /></ScrollReveal>
-      <ScrollReveal><ChooseYourDay /></ScrollReveal>
-      <ScrollReveal><VIPTours /></ScrollReveal>
-      <ScrollReveal><ODTSection /></ScrollReveal>
-      <ScrollReveal><LandscapeGallery /></ScrollReveal>
-      <ScrollReveal><WhatToBring /></ScrollReveal>
-      <ScrollReveal><Testimonials /></ScrollReveal>
-      <ScrollReveal><PublicFAQ /></ScrollReveal>
-      <ScrollReveal><ContactSection /></ScrollReveal>
+      <div id="home">
+        <Hero />
+      </div>
+      <ServiceCards />
+      
+      {/* Hidden sections - accessed via TourServices CTAs */}
+      <div id="choose-your-day" className="scroll-mt-20">
+        <ChooseYourDay />
+      </div>
+      <div id="vip-tours" className="scroll-mt-20">
+        <VIPTours />
+      </div>
+      <div id="odt-section" className="scroll-mt-20">
+        <ODTSection />
+      </div>
+      
+      <div id="landscape-gallery" className="scroll-mt-20">
+        <LandscapeGallery />
+      </div>
+      
+      <div id="north-israel-gallery" className="scroll-mt-20">
+        <NorthIsraelGallery />
+      </div>
+      
+      <Testimonials />
+      <PublicFAQ />
+      <div id="testimonial-form" className="scroll-mt-20 py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <TestimonialSubmissionForm />
+        </div>
+      </div>
+      <div id="contact" className="scroll-mt-20">
+        <ContactSection />
+      </div>
+      <div id="accessibility-info" className="scroll-mt-20">
+        <AccessibilityInfoSection />
+      </div>
       <Footer />
-      <AIChatWidget />
     </div>
   );
 };

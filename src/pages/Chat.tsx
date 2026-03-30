@@ -3,16 +3,13 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { AIChat } from '@/components/AIChat';
 import { VoiceChat } from '@/components/VoiceChat';
+import { VoiceChatComparison } from '@/components/VoiceChatComparison';
+import { QuizCategoryIntegration } from '@/components/QuizCategoryIntegration';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Phone, ArrowLeft, MessageSquare, Mic, Settings, Volume2 } from 'lucide-react';
+import { Phone, ArrowRight, Mic, MessageSquare, Info, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { checkAndResetForNewClient } from '@/utils/clientSession';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { SoundToggle } from '@/components/SoundToggle';
-import { VoiceSelector } from '@/components/VoiceSelector';
-import { ElevenLabsVoice } from '@/utils/elevenLabsTTS';
-import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -26,30 +23,29 @@ import {
 const Chat = () => {
   const [showHumanHandoff, setShowHumanHandoff] = useState(false);
   const [quizResults, setQuizResults] = useState<any>(null);
-  const [showSettings, setShowSettings] = useState(false);
-  const [selectedVoice, setSelectedVoice] = useState<ElevenLabsVoice>(() => {
-    const saved = localStorage.getItem('preferred-voice');
-    return (saved as ElevenLabsVoice) || 'Rachel';
-  });
   const navigate = useNavigate();
-  const { language } = useLanguage();
-  const isEn = language === 'en';
 
   useEffect(() => {
+    // Check if this is a new client and reset data if needed
     const isNewClient = checkAndResetForNewClient();
+    
     if (isNewClient) {
+      // New client - don't load old quiz results
+      console.log('[Chat] New client detected, starting fresh');
       setQuizResults(null);
       return;
     }
+    
+    // Load quiz results from localStorage if available (returning client)
     const stored = localStorage.getItem('quizResults');
     if (stored) {
-      try { setQuizResults(JSON.parse(stored)); } catch {}
+      try {
+        setQuizResults(JSON.parse(stored));
+      } catch (e) {
+        console.error('Failed to parse quiz results:', e);
+      }
     }
   }, []);
-
-  useEffect(() => {
-    if (selectedVoice) localStorage.setItem('preferred-voice', selectedVoice);
-  }, [selectedVoice]);
 
   const handleCallOwner = () => {
     window.location.href = 'tel:972537314235';
@@ -59,89 +55,80 @@ const Chat = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <Navigation />
       
-      <main className="flex-1 flex flex-col pt-16">
-        {/* Header bar */}
-        <div className="border-b border-border/50 bg-muted/30">
-          <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => navigate('/')} 
-              className="gap-1.5 text-muted-foreground hover:text-foreground"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              {isEn ? 'Home' : 'בית'}
-            </Button>
-            <h1 className="text-sm font-semibold text-foreground">
-              {isEn ? 'AI Tour Advisor' : 'יועץ טיולים חכם'}
-            </h1>
-            <div className="flex items-center gap-1">
-              <SoundToggle size="sm" />
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => setShowSettings(!showSettings)}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <Settings className="w-4 h-4" />
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleCallOwner}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <Phone className="w-3.5 h-3.5" />
-              </Button>
+      <main className="flex-1 container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+            שיחה עם הסוכן החכם שלנו
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            ספרו, מה אתם מחפשים ואני אמליץ לכם על החוויה המושלמת בצפון, סובב כנרת, גלבוע, גליל ועמק המעינות
+          </p>
+          {quizResults && (
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm">
+              ✨ מזהה את העדפותיכם מה-Quiz שעשיתם
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Collapsible voice settings */}
-        <Collapsible open={showSettings} onOpenChange={setShowSettings}>
-          <CollapsibleContent>
-            <div className="border-b border-border/40 bg-muted/20">
-              <div className="container mx-auto px-4 py-3 max-w-3xl">
-                <div className="flex items-center gap-2 mb-2">
-                  <Volume2 className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm font-medium">{isEn ? 'Voice Settings' : 'הגדרות קול'}</span>
-                </div>
-                <VoiceSelector
-                  selectedVoice={selectedVoice}
-                  onVoiceChange={setSelectedVoice}
-                  language={language === 'en' ? 'en' : 'he'}
-                />
-              </div>
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
+        {/* Quiz & Categories Section */}
+        <div className="mb-8 max-w-6xl mx-auto">
+          <QuizCategoryIntegration language="he" />
+        </div>
 
-        {/* Tabs + Chat area */}
-        <div className="flex-1 container mx-auto px-4 py-4 max-w-3xl flex flex-col min-h-0">
-          <Tabs defaultValue="text" className="flex-1 flex flex-col min-h-0">
-            <TabsList className="w-full grid grid-cols-2 mb-3">
-              <TabsTrigger value="text" className="gap-2">
-                <MessageSquare className="w-4 h-4" />
-                {isEn ? 'Text Chat' : 'צ\'אט טקסט'}
-              </TabsTrigger>
-              <TabsTrigger value="voice" className="gap-2">
-                <Mic className="w-4 h-4" />
-                {isEn ? 'Voice Chat' : 'צ\'אט קולי'}
-              </TabsTrigger>
-            </TabsList>
+        {/* Chat Interface with Tabs */}
+        <Tabs defaultValue="voice" className="w-full max-w-4xl mx-auto">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsTrigger value="voice" className="gap-2">
+              <Mic className="w-4 h-4" />
+              צ'אט קולי
+            </TabsTrigger>
+            <TabsTrigger value="text" className="gap-2">
+              <MessageSquare className="w-4 h-4" />
+              צ'אט טקסט
+            </TabsTrigger>
+            <TabsTrigger value="compare" className="gap-2">
+              <Info className="w-4 h-4" />
+              השוואה
+            </TabsTrigger>
+          </TabsList>
 
-            <TabsContent value="text" className="flex-1 flex flex-col min-h-0 mt-0">
-              <AIChat
-                quizResults={quizResults}
-                selectedVoice={selectedVoice}
-                onRequestHumanAgent={() => setShowHumanHandoff(true)}
-              />
-            </TabsContent>
+          <TabsContent value="voice">
+            <VoiceChat quizResults={quizResults} />
+          </TabsContent>
 
-            <TabsContent value="voice" className="flex-1 flex flex-col min-h-0 mt-0">
-              <VoiceChat quizResults={quizResults} />
-            </TabsContent>
-          </Tabs>
+          <TabsContent value="text">
+            <AIChat 
+              quizResults={quizResults} 
+              onRequestHumanAgent={() => setShowHumanHandoff(true)}
+            />
+          </TabsContent>
+
+          <TabsContent value="compare">
+            <VoiceChatComparison />
+          </TabsContent>
+        </Tabs>
+
+        {/* Quick Actions */}
+        <div className="mt-8 flex flex-wrap justify-center gap-4">
+          {!quizResults && (
+            <Button
+              variant="outline"
+              onClick={() => navigate('/')}
+              className="gap-2"
+            >
+              <ArrowRight className="w-4 h-4" />
+              חזרה לדף הבית
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            onClick={handleCallOwner}
+            className="gap-2"
+          >
+            <Phone className="w-4 h-4" />
+            התקשרו ישירות לדויד
+          </Button>
         </div>
       </main>
 
@@ -151,20 +138,17 @@ const Chat = () => {
       <AlertDialog open={showHumanHandoff} onOpenChange={setShowHumanHandoff}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              {isEn ? 'We\'d love to talk to you personally! 📞' : 'נשמח לדבר איתכם אישית! 📞'}
-            </AlertDialogTitle>
+            <AlertDialogTitle>נשמח לדבר איתכם אישית! 📞</AlertDialogTitle>
             <AlertDialogDescription className="space-y-4">
               <p>
-                {isEn
-                  ? 'Our smart agent understood you\'d like to speak with a person. David, the company owner, would be happy to help!'
-                  : 'הסוכן החכם שלנו הבין שתרצו לדבר עם בן אדם. דויד, בעל החברה, ישמח לעזור לכם אישית!'}
+                הסוכן החכם שלנו הבין שתרצו לדבר עם בן אדם. 
+                דויד, בעל החברה, ישמח לעזור לכם אישית!
               </p>
-              <div className="p-4 bg-primary/10 rounded-lg">
-                <p className="font-semibold text-foreground">{isEn ? 'David Rahimi' : 'דויד רחימי'}</p>
-                <p className="text-foreground">053-731-4235</p>
+              <div className="p-4 bg-primary/10 rounded-lg text-right">
+                <p className="font-semibold text-foreground">דויד רחימי</p>
+                <p className="text-foreground">0537314235</p>
                 <p className="text-sm text-muted-foreground mt-2">
-                  {isEn ? 'Available during business hours' : 'זמין לשיחה בשעות העבודה'}
+                  זמין לשיחה בשעות העבודה
                 </p>
               </div>
             </AlertDialogDescription>
@@ -172,10 +156,14 @@ const Chat = () => {
           <AlertDialogFooter className="flex-col sm:flex-row gap-2">
             <AlertDialogAction onClick={handleCallOwner} className="w-full sm:w-auto">
               <Phone className="w-4 h-4 ml-2" />
-              {isEn ? 'Call Now' : 'התקשר עכשיו'}
+              התקשר עכשיו
             </AlertDialogAction>
-            <Button variant="outline" onClick={() => setShowHumanHandoff(false)} className="w-full sm:w-auto">
-              {isEn ? 'Continue in Chat' : 'המשך בצ\'אט'}
+            <Button
+              variant="outline"
+              onClick={() => setShowHumanHandoff(false)}
+              className="w-full sm:w-auto"
+            >
+              המשך בצ'אט
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

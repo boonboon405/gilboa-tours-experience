@@ -61,12 +61,9 @@ const cleanSpecialCharacters = (text: string): string => {
 const replaceColloquialWords = (text: string): string => {
   let result = text;
   
-  // Apply all word replacements from config using word boundaries
-  // to avoid corrupting Hebrew words that contain the pattern as a substring
+  // Apply all word replacements from config
   Object.entries(ttsConfig.wordReplacements).forEach(([original, replacement]) => {
-    // Use lookbehind/lookahead for non-word-char or start/end to avoid partial matches
-    // Hebrew doesn't have \b word boundaries, so we match on whitespace/punctuation/start/end
-    const regex = new RegExp(`(?<=^|[\\s.,!?;:\\-])${original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?=$|[\\s.,!?;:\\-])`, 'g');
+    const regex = new RegExp(original, 'g');
     result = result.replace(regex, replacement);
   });
   

@@ -8,8 +8,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
 interface LeadNotificationRequest {
   name: string;
   email?: string;
@@ -26,15 +24,11 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const leadData: LeadNotificationRequest = await req.json();
-
-    if (!leadData.name || leadData.name.length > 200) {
-      throw new Error("Invalid lead data");
-    }
-
-    console.log("Processing lead notification");
+    console.log("Processing lead notification for:", leadData.name);
 
     const { name, email, phone, notes, source_platform, interested_keywords } = leadData;
 
+    // Send notification to admin
     const adminEmailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0;">
@@ -47,30 +41,30 @@ const handler = async (req: Request): Promise<Response> => {
           <table style="width: 100%; margin: 20px 0;">
             <tr>
               <td style="padding: 10px; background: #f5f5f5; font-weight: bold; width: 150px;">שם:</td>
-              <td style="padding: 10px;">${esc(name)}</td>
+              <td style="padding: 10px;">${name}</td>
             </tr>
             ${email ? `
             <tr>
               <td style="padding: 10px; background: #f5f5f5; font-weight: bold;">אימייל:</td>
-              <td style="padding: 10px;"><a href="mailto:${esc(email)}" style="color: #667eea;">${esc(email)}</a></td>
+              <td style="padding: 10px;"><a href="mailto:${email}" style="color: #667eea;">${email}</a></td>
             </tr>
             ` : ''}
             ${phone ? `
             <tr>
               <td style="padding: 10px; background: #f5f5f5; font-weight: bold;">טלפון:</td>
-              <td style="padding: 10px;"><a href="tel:${esc(phone)}" style="color: #667eea;">${esc(phone)}</a></td>
+              <td style="padding: 10px;"><a href="tel:${phone}" style="color: #667eea;">${phone}</a></td>
             </tr>
             ` : ''}
             ${source_platform ? `
             <tr>
               <td style="padding: 10px; background: #f5f5f5; font-weight: bold;">מקור:</td>
-              <td style="padding: 10px;">${esc(source_platform)}</td>
+              <td style="padding: 10px;">${source_platform}</td>
             </tr>
             ` : ''}
             ${interested_keywords && interested_keywords.length > 0 ? `
             <tr>
               <td style="padding: 10px; background: #f5f5f5; font-weight: bold;">תחומי עניין:</td>
-              <td style="padding: 10px;">${interested_keywords.slice(0, 20).map(k => esc(k)).join(', ')}</td>
+              <td style="padding: 10px;">${interested_keywords.join(', ')}</td>
             </tr>
             ` : ''}
           </table>
@@ -78,7 +72,7 @@ const handler = async (req: Request): Promise<Response> => {
           ${notes ? `
           <div style="margin: 20px 0; padding: 15px; background: #fff3cd; border-right: 4px solid #ffc107; border-radius: 4px;">
             <h3 style="margin: 0 0 10px 0; color: #856404;">הערות:</h3>
-            <p style="margin: 0; color: #856404;">${esc(notes.slice(0, 2000))}</p>
+            <p style="margin: 0; color: #856404;">${notes}</p>
           </div>
           ` : ''}
 
@@ -96,14 +90,15 @@ const handler = async (req: Request): Promise<Response> => {
     const adminEmail = await resend.emails.send({
       from: "David Tours <onboarding@resend.dev>",
       to: ["DavidIsraelTours@gmail.com"],
-      subject: `🎯 ליד חדש: ${esc(name)}`,
+      subject: `🎯 ליד חדש: ${name}`,
       html: adminEmailHtml,
     });
 
-    console.log("Admin notification sent");
+    console.log("Admin notification sent:", adminEmail);
 
+    // Send confirmation to lead if email provided
     let leadEmail = null;
-    if (email && email.length < 255) {
+    if (email) {
       const leadEmailHtml = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
@@ -112,8 +107,7 @@ const handler = async (req: Request): Promise<Response> => {
           </div>
           
           <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <h2 style="color: #333;">שלום ${esc(name)},</h2>
-            <p>תודה על פנייתך! נחזור אליך בהקדם.</p>
+...
           </div>
 
           <div style="text-align: center; margin-top: 20px; color: #888; font-size: 12px;">
@@ -129,20 +123,24 @@ const handler = async (req: Request): Promise<Response> => {
         html: leadEmailHtml,
       });
 
-      console.log("Lead confirmation sent");
+      console.log("Lead confirmation sent:", leadEmail);
     }
 
     return new Response(
-      JSON.stringify({ success: true, adminEmail, leadEmail }),
+      JSON.stringify({
+        success: true,
+        adminEmail,
+        leadEmail,
+      }),
       {
         status: 200,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       }
     );
   } catch (error: any) {
-    console.error("Error in send-lead-notification:", error.message);
+    console.error("Error in send-lead-notification:", error);
     return new Response(
-      JSON.stringify({ error: "Failed to send notification" }),
+      JSON.stringify({ error: error.message }),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },
