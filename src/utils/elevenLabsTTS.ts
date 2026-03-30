@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeForTTS } from "./ttsSanitizer";
 import { ttsConfig } from "./ttsConfig";
+import { toast } from "sonner";
 
 /**
  * Available ElevenLabs voices with Hebrew support
