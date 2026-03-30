@@ -138,12 +138,13 @@ export const ContactSection = () => {
                   />
                 </div>
                 <div>
-                  <Input
+                <Input
                     type="email"
                     placeholder='דוא"ל'
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
+                    maxLength={150}
                     className="border-2"
                   />
                 </div>
