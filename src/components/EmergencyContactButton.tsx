@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/sheet';
 import { Phone, Mail, MessageCircle, HeadphonesIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { openWhatsApp, whatsappTemplates, trackPhoneCall } from '@/utils/contactTracking';
+import { openWhatsApp, getWhatsappTemplate, trackPhoneCall } from '@/utils/contactTracking';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export const EmergencyContactButton = () => {
@@ -81,7 +81,7 @@ export const EmergencyContactButton = () => {
               variant="whatsapp"
               size="lg"
               className="w-full text-lg shadow-strong justify-start"
-              onClick={() => openWhatsApp(ownerWhatsApp, whatsappTemplates.inquiry, 'emergency-contact-button')}
+              onClick={() => openWhatsApp(ownerWhatsApp, getWhatsappTemplate('inquiry', language), 'emergency-contact-button')}
             >
               <MessageCircle className="ml-2 h-6 w-6" />
               <div className="flex-1 text-right">

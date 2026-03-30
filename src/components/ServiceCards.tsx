@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Calendar, Users, Briefcase, CheckCircle2, ArrowLeft, ArrowRight } from "lucide-react";
+import { Badge } from '@/components/ui/badge';
 import { useParallax } from '@/hooks/use-parallax';
 import { use3DTilt } from '@/hooks/use-3d-tilt';
 import { getClickableProps } from '@/hooks/use-keyboard-nav';
@@ -18,6 +19,7 @@ interface Service {
   highlights: string[];
   cta: string;
   scrollTo?: string;
+  badge?: { he: string; en: string };
 }
 
 const getServices = (language: string): Service[] => [
@@ -56,7 +58,8 @@ const getServices = (language: string): Service[] => [
       "Includes guide, excludes transportation"
     ],
     cta: language === 'he' ? "בחרו את הסיור שלכם" : "Choose Your Tour",
-    scrollTo: "choose-your-day"
+    scrollTo: "choose-your-day",
+    badge: { he: 'הכי פופולרי', en: 'Most Popular' }
   },
   {
     id: "vip",
@@ -130,7 +133,8 @@ const getServices = (language: string): Service[] => [
       "Full guide and support team"
     ],
     cta: language === 'he' ? "צרו קשר לתכנון" : "Contact Us to Plan",
-    scrollTo: "odt-section"
+    scrollTo: "odt-section",
+    badge: { he: 'תאריכים מוגבלים', en: 'Limited Dates' }
   }
 ];
 
@@ -194,6 +198,11 @@ export const ServiceCards = () => {
                   {...getClickableProps(() => setSelectedService(service))}
                   aria-label={`${service.title} — ${service.shortDesc}`}
                 >
+                {service.badge && (
+                  <Badge className="absolute top-4 right-4 bg-accent text-accent-foreground text-xs z-10">
+                    {isHe ? service.badge.he : service.badge.en}
+                  </Badge>
+                )}
                 <CardHeader className="text-center pb-4">
                   <div className="mx-auto mb-4 p-6 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                     <Icon className="h-10 w-10" />
