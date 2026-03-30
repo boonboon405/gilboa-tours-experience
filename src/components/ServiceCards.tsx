@@ -173,7 +173,7 @@ export const ServiceCards = () => {
                     className="w-full"
                     variant="outline"
                   >
-                    לחץ לפרטים מלאים
+                    {language === 'he' ? 'לחץ לפרטים מלאים' : 'Click for full details'}
                   </Button>
                 </CardContent>
               </Card>
