@@ -10,7 +10,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AccessibilityProvider } from "@/hooks/use-accessibility";
-import { AccessibilityWidget } from "@/components/AccessibilityWidget";
+
 import { WhatsAppFAB } from "@/components/WhatsAppFAB";
 import { BackToTop } from "@/components/BackToTop";
 import Index from "./pages/Index";
@@ -180,7 +180,7 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Routes>
               
-              <AccessibilityWidget />
+              
               <WhatsAppFAB />
               <BackToTop />
             </BrowserRouter>
