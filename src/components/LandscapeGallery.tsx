@@ -7,16 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
-import galileeNature from '@/assets/galilee-nature.jpg';
-import springsNature from '@/assets/springs-nature.jpg';
-import heroGilboa from '@/assets/hero-gilboa.jpg';
-import clubCars from '@/assets/club-cars.jpg';
-import culinary from '@/assets/culinary-experience.jpg';
-import beitShean from '@/assets/beit-shean.jpg';
-import beitSheanPanorama from '@/assets/beit-shean-panorama.jpg';
-import pelicans from '@/assets/pelicans.jpg';
-import springsActivity from '@/assets/springs-activity.jpg';
-import odtTeam from '@/assets/odt-team.jpg';
 
 interface GallerySection {
   id: string;
@@ -40,12 +30,12 @@ const getStaticSections = (isHe: boolean): GallerySection[] => [
     title: isHe ? 'הגליל והכנרת' : 'The Galilee & Sea of Galilee',
     description: isHe ? 'נופים עוצרי נשימה של אזור הגליל והכנרת' : 'Breathtaking landscapes of the Galilee and Sea of Galilee region',
     images: [
-      { src: galileeNature, alt: isHe ? 'נוף ירוק ופורח של הרי הגליל' : 'Lush green landscape of the Galilee mountains', title: isHe ? 'נופי הגליל' : 'Galilee Views', description: isHe ? 'נוף פנורמי של הרי הגליל' : 'Panoramic view of the Galilee mountains' },
-      { src: pelicans, alt: isHe ? 'להקת שקנאים בנדידה מעל אגמון החולה' : 'Pelican flock migrating over the Hula Valley', title: isHe ? 'נדידת ציפורים' : 'Bird Migration', description: isHe ? 'חיות בר באגמון החולה' : 'Wildlife at the Hula Valley' },
-      { src: beitShean, alt: isHe ? 'שרידי העיר הרומית סקיתופוליס בבית שאן' : 'Ruins of the Roman city Scythopolis in Beit She\'an', title: isHe ? 'עמק בית שאן' : 'Beit She\'an Valley', description: isHe ? 'נוף היסטורי מרהיב' : 'Stunning historical landscape' },
-      { src: beitSheanPanorama, alt: isHe ? 'פנורמה של התיאטרון הרומי העתיק בבית שאן' : 'Panorama of the ancient Roman theater in Beit She\'an', title: isHe ? 'התיאטרון הרומי' : 'The Roman Theater', description: isHe ? 'מבט פנורמי על העתיקות' : 'Panoramic view of the antiquities' },
-      { src: springsNature, alt: isHe ? 'מעיינות הכנרת והגליל' : 'Springs of the Galilee', title: isHe ? 'מעיינות הגליל' : 'Galilee Springs', description: isHe ? 'מעיינות טבעיים באזור' : 'Natural springs in the region' },
-      { src: culinary, alt: isHe ? 'טעמי הגליל - יין ומטעמים מקומיים' : 'Flavors of the Galilee - local wine and delicacies', title: isHe ? 'טעמי הגליל' : 'Flavors of the Galilee', description: isHe ? 'חוויות קולינריות באזור' : 'Culinary experiences in the region' },
+      { src: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&q=80&fit=crop', alt: isHe ? 'נוף ירוק ופורח של הרי הגליל' : 'Lush green landscape of the Galilee mountains', title: isHe ? 'נופי הגליל' : 'Galilee Views', description: isHe ? 'נוף פנורמי של הרי הגליל' : 'Panoramic view of the Galilee mountains' },
+      { src: 'https://images.unsplash.com/photo-1551085254-e96b210db58a?w=800&q=80&fit=crop', alt: isHe ? 'להקת שקנאים בנדידה מעל אגמון החולה' : 'Pelican flock migrating over the Hula Valley', title: isHe ? 'נדידת ציפורים' : 'Bird Migration', description: isHe ? 'חיות בר באגמון החולה' : 'Wildlife at the Hula Valley' },
+      { src: 'https://images.unsplash.com/photo-1580835832666-75a8f4f54ec3?w=800&q=80&fit=crop', alt: isHe ? 'שרידי העיר הרומית סקיתופוליס בבית שאן' : 'Ruins of the Roman city Scythopolis in Beit She\'an', title: isHe ? 'עמק בית שאן' : 'Beit She\'an Valley', description: isHe ? 'נוף היסטורי מרהיב' : 'Stunning historical landscape' },
+      { src: 'https://images.unsplash.com/photo-1580835832666-75a8f4f54ec3?w=800&q=80&fit=crop', alt: isHe ? 'פנורמה של התיאטרון הרומי העתיק בבית שאן' : 'Panorama of the ancient Roman theater in Beit She\'an', title: isHe ? 'התיאטרון הרומי' : 'The Roman Theater', description: isHe ? 'מבט פנורמי על העתיקות' : 'Panoramic view of the antiquities' },
+      { src: 'https://images.unsplash.com/photo-1558005530-a7958896ec60?w=800&q=80&fit=crop', alt: isHe ? 'מעיינות הכנרת והגליל' : 'Springs of the Galilee', title: isHe ? 'מעיינות הגליל' : 'Galilee Springs', description: isHe ? 'מעיינות טבעיים באזור' : 'Natural springs in the region' },
+      { src: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80&fit=crop', alt: isHe ? 'טעמי הגליל - יין ומטעמים מקומיים' : 'Flavors of the Galilee - local wine and delicacies', title: isHe ? 'טעמי הגליל' : 'Flavors of the Galilee', description: isHe ? 'חוויות קולינריות באזור' : 'Culinary experiences in the region' },
     ]
   },
   {
@@ -53,11 +43,11 @@ const getStaticSections = (isHe: boolean): GallerySection[] => [
     title: isHe ? 'הרי הגלבוע' : 'Mount Gilboa',
     description: isHe ? 'הפנינה הטבעית של צפון הארץ' : 'The natural gem of northern Israel',
     images: [
-      { src: heroGilboa, alt: isHe ? 'תצפית מפסגת הרי הגלבוע' : 'View from the summit of Mount Gilboa', title: isHe ? 'הרי הגלבוע' : 'Mount Gilboa', description: isHe ? 'שקיעה מדהימה מפסגות הגלבוע' : 'Stunning sunset from the Gilboa peaks' },
-      { src: springsNature, alt: isHe ? 'מעיינות בגן השלושה' : 'Springs at Gan HaShlosha', title: isHe ? 'עמק המעיינות' : 'Springs Valley', description: isHe ? 'מעיינות צלולים בלב הטבע' : 'Crystal-clear springs in nature' },
-      { src: springsActivity, alt: isHe ? 'פעילות מים במעיינות' : 'Water activities at the springs', title: isHe ? 'פעילויות במעיינות' : 'Spring Activities', description: isHe ? 'חוויות ייחודיות במים' : 'Unique water experiences' },
-      { src: beitShean, alt: isHe ? 'נוף עמק בית שאן מהגלבוע' : 'Beit She\'an Valley view from Gilboa', title: isHe ? 'תצפית העמק' : 'Valley Lookout', description: isHe ? 'מבט לעמק מהפסגה' : 'View of the valley from the summit' },
-      { src: clubCars, alt: isHe ? 'טיול רכבי שטח בגלבוע' : 'Off-road vehicle tour on Gilboa', title: isHe ? 'טיולי שטח' : 'Off-Road Tours', description: isHe ? 'הרפתקאות בגלבוע' : 'Adventures on Gilboa' },
+      { src: 'https://images.unsplash.com/photo-1631709497146-a239ef373cf5?w=800&q=80&fit=crop', alt: isHe ? 'תצפית מפסגת הרי הגלבוע' : 'View from the summit of Mount Gilboa', title: isHe ? 'הרי הגלבוע' : 'Mount Gilboa', description: isHe ? 'שקיעה מדהימה מפסגות הגלבוע' : 'Stunning sunset from the Gilboa peaks' },
+      { src: 'https://images.unsplash.com/photo-1558005530-a7958896ec60?w=800&q=80&fit=crop', alt: isHe ? 'מעיינות בגן השלושה' : 'Springs at Gan HaShlosha', title: isHe ? 'עמק המעיינות' : 'Springs Valley', description: isHe ? 'מעיינות צלולים בלב הטבע' : 'Crystal-clear springs in nature' },
+      { src: 'https://images.unsplash.com/photo-1558005530-a7958896ec60?w=800&q=80&fit=crop', alt: isHe ? 'פעילות מים במעיינות' : 'Water activities at the springs', title: isHe ? 'פעילויות במעיינות' : 'Spring Activities', description: isHe ? 'חוויות ייחודיות במים' : 'Unique water experiences' },
+      { src: 'https://images.unsplash.com/photo-1580835832666-75a8f4f54ec3?w=800&q=80&fit=crop', alt: isHe ? 'נוף עמק בית שאן מהגלבוע' : 'Beit She\'an Valley view from Gilboa', title: isHe ? 'תצפית העמק' : 'Valley Lookout', description: isHe ? 'מבט לעמק מהפסגה' : 'View of the valley from the summit' },
+      { src: 'https://images.unsplash.com/photo-1533591380348-14193f1de18f?w=800&q=80&fit=crop', alt: isHe ? 'טיול רכבי שטח בגלבוע' : 'Off-road vehicle tour on Gilboa', title: isHe ? 'טיולי שטח' : 'Off-Road Tours', description: isHe ? 'הרפתקאות בגלבוע' : 'Adventures on Gilboa' },
     ]
   },
   {
@@ -65,11 +55,11 @@ const getStaticSections = (isHe: boolean): GallerySection[] => [
     title: isHe ? 'פעילויות וחוויות' : 'Activities & Experiences',
     description: isHe ? 'מגוון פעילויות מרתקות בטבע' : 'A variety of exciting activities in nature',
     images: [
-      { src: clubCars, alt: isHe ? 'רכבי שטח חשמליים בגלבוע' : 'Electric off-road vehicles on Gilboa', title: isHe ? 'רכבי שטח חשמליים' : 'Electric Off-Road Vehicles', description: isHe ? 'טיולים מאתגרים בשטח' : 'Challenging off-road tours' },
-      { src: culinary, alt: isHe ? 'מטעמים מקומיים' : 'Local delicacies', title: isHe ? 'חוויות קולינריות' : 'Culinary Experiences', description: isHe ? 'טעמים אותנטיים של האזור' : 'Authentic flavors of the region' },
-      { src: odtTeam, alt: isHe ? 'פעילות גיבוש ODT' : 'ODT team building activity', title: isHe ? 'גיבוש ODT' : 'ODT Team Building', description: isHe ? 'פעילויות גיבוש צוותיות' : 'Team building activities' },
-      { src: springsActivity, alt: isHe ? 'פעילויות מים' : 'Water activities', title: isHe ? 'פעילויות מים' : 'Water Activities', description: isHe ? 'הרפתקאות במים' : 'Water adventures' },
-      { src: galileeNature, alt: isHe ? 'טיולים בטבע הצפון' : 'Hiking in northern nature', title: isHe ? 'טיולי טבע' : 'Nature Hikes', description: isHe ? 'סיורים מודרכים בטבע' : 'Guided nature tours' },
+      { src: 'https://images.unsplash.com/photo-1533591380348-14193f1de18f?w=800&q=80&fit=crop', alt: isHe ? 'רכבי שטח חשמליים בגלבוע' : 'Electric off-road vehicles on Gilboa', title: isHe ? 'רכבי שטח חשמליים' : 'Electric Off-Road Vehicles', description: isHe ? 'טיולים מאתגרים בשטח' : 'Challenging off-road tours' },
+      { src: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80&fit=crop', alt: isHe ? 'מטעמים מקומיים' : 'Local delicacies', title: isHe ? 'חוויות קולינריות' : 'Culinary Experiences', description: isHe ? 'טעמים אותנטיים של האזור' : 'Authentic flavors of the region' },
+      { src: 'https://images.unsplash.com/photo-1527525443983-6e60c75fff46?w=800&q=80&fit=crop', alt: isHe ? 'פעילות גיבוש ODT' : 'ODT team building activity', title: isHe ? 'גיבוש ODT' : 'ODT Team Building', description: isHe ? 'פעילויות גיבוש צוותיות' : 'Team building activities' },
+      { src: 'https://images.unsplash.com/photo-1558005530-a7958896ec60?w=800&q=80&fit=crop', alt: isHe ? 'פעילויות מים' : 'Water activities', title: isHe ? 'פעילויות מים' : 'Water Activities', description: isHe ? 'הרפתקאות במים' : 'Water adventures' },
+      { src: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop', alt: isHe ? 'טיולים בטבע הצפון' : 'Hiking in northern nature', title: isHe ? 'טיולי טבע' : 'Nature Hikes', description: isHe ? 'סיורים מודרכים בטבע' : 'Guided nature tours' },
     ]
   }
 ];
