@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { updateFormField, setTourDate, setIsSubmitting, resetBookingForm } from "@/store/slices/bookingSlice";
+import { getLanguage } from "@/store/slices/languageSlice";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
