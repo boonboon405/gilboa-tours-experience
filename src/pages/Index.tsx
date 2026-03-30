@@ -28,6 +28,9 @@ const Index = () => {
         <Hero />
       </div>
       <ServiceCards />
+      <div id="about" className="scroll-mt-20">
+        <AboutDavid />
+      </div>
       
       {/* Hidden sections - accessed via TourServices CTAs */}
       <div id="choose-your-day" className="scroll-mt-20">
