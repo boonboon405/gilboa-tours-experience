@@ -20,13 +20,17 @@ interface Service {
   scrollTo?: string;
 }
 
-const services: Service[] = [
+const getServices = (language: string): Service[] => [
   {
     id: "daily",
     icon: Calendar,
-    title: "סיורים יומיים",
-    shortDesc: "חוויות מודרכות באזור הגלבוע ועמק בית שאן",
-    longDesc: "יום מלא בחוויות היסטוריות וטבעיות מרהיבות. מתאים למשפחות, קבוצות חברים, וצוותי עבודה.",
+    title: language === 'he' ? "סיורים יומיים" : "Daily Tours",
+    shortDesc: language === 'he'
+      ? "סיורי טבע ונוף מודרכים בהרי הגלבוע, עמק המעיינות והגליל"
+      : "Guided nature and landscape tours in the Gilboa mountains, Springs Valley, and the Galilee",
+    longDesc: language === 'he'
+      ? "יום שלם של הליכה בנופים מרהיבים, מעיינות טבעיים, ואתרים היסטוריים. מתאים למשפחות, קבוצות חברים וצוותי עבודה."
+      : "A full day of stunning landscapes, natural springs, and historical sites. Suitable for families, friend groups, and work teams.",
     features: [
       "בחירה מ-3 חבילות סיור מותאמות",
       "מדריך מקצועי ומנוסה",
