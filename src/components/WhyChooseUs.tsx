@@ -55,7 +55,7 @@ export const WhyChooseUs = () => {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <h2 className="text-4xl md:text-5xl font-bold text-center text-foreground mb-16">
+        <h2 className="section-heading text-center text-foreground mb-16">
           {language === 'he' ? 'למה לבחור בדויד טורס?' : 'Why Choose David Tours?'}
         </h2>
 
