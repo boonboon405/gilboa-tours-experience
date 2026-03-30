@@ -102,6 +102,8 @@ const getServices = (language: string): Service[] => [
 ];
 
 export const ServiceCards = () => {
+  const { language } = useLanguage();
+  const services = getServices(language);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const parallaxSlow = useParallax(0.15);
   const parallaxMedium = useParallax(0.25);
