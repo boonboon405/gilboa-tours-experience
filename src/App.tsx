@@ -33,7 +33,7 @@ import AdminCategories from "./pages/AdminCategories";
 import AdminGallery from "./pages/AdminGallery";
 import AccessibilityStatement from "./pages/AccessibilityStatement";
 import NotFound from "./pages/NotFound";
-import { LiveChatWidget } from "./components/LiveChatWidget";
+
 
 const queryClient = new QueryClient();
 
