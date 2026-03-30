@@ -128,11 +128,12 @@ export const ContactSection = () => {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <Input
+                <Input
                     placeholder="שם מלא"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
+                    maxLength={100}
                     className="border-2"
                   />
                 </div>
