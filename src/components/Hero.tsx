@@ -2,11 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const slides = [
-  { he: 'גלה את הגליל', en: 'Discover the Galilee', sub: 'Guided tours through Israel\'s most breathtaking landscapes' },
-  { he: 'ימי גיבוש בטבע', en: 'Team Building in Nature', sub: 'Unforgettable group experiences on Mount Gilboa' },
-  { he: 'מעיינות עמק הבזלת', en: 'Springs Valley', sub: 'Hidden gem tours through ancient water springs' },
-  { he: 'חוויות VIP', en: 'VIP Experiences', sub: 'Premium private tours tailored to you' },
-  { he: 'עמק יזרעאל', en: 'Jezreel Valley', sub: 'Biblical landscapes, modern luxury' },
+  { he: 'גלה את הגליל', en: 'Discover the Galilee', sub: 'Guided tours through Israel\'s most breathtaking landscapes', img: '/images/hero/sea-of-galilee.jpg' },
+  { he: 'ימי גיבוש בטבע', en: 'Team Building in Nature', sub: 'Unforgettable group experiences on Mount Gilboa', img: '/images/hero/mount-gilboa.jpg' },
+  { he: 'מעיינות עמק הבזלת', en: 'Springs Valley', sub: 'Hidden gem tours through ancient water springs', img: '/images/hero/springs-waterfall.jpg' },
+  { he: 'חוויות VIP', en: 'VIP Experiences', sub: 'Premium private tours tailored to you', img: '/images/hero/jezreel-valley.jpg' },
+  { he: 'עמק יזרעאל', en: 'Jezreel Valley', sub: 'Biblical landscapes, modern luxury', img: '/images/hero/upper-galilee.jpg' },
 ];
 
 export const Hero = () => {
@@ -35,8 +35,8 @@ export const Hero = () => {
           key={i}
           className={`absolute inset-0 transition-opacity duration-[800ms] ${i === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
         >
-          {/* Background placeholder */}
-          <div className="absolute inset-0 bg-[#1a3a2a]" />
+          {/* Background image */}
+          <img src={slide.img} alt={slide.en} className="absolute inset-0 w-full h-full object-cover" loading={i === 0 ? 'eager' : 'lazy'} />
           {/* Gradient overlay – bottom 60% */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" style={{ top: '40%' }} />
 
