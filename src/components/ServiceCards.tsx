@@ -134,10 +134,12 @@ export const ServiceCards = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            השירותים שלנו
+            {language === 'he' ? 'השירותים שלנו' : 'Our Services'}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-            בחר את החוויה המושלמת עבורך - סיורים יומיים, חוויות VIP, או אירועי גיבוש לארגונים
+            {language === 'he'
+              ? 'סיורי טבע ונוף מודרכים, ימי גיבוש לארגונים, וחוויות VIP פרטיות — בהרי הגלבוע, עמק המעיינות והגליל'
+              : 'Guided nature and landscape tours, corporate team-building days, and private VIP experiences — in the Gilboa mountains, Springs Valley, and the Galilee'}
           </p>
         </div>
 
