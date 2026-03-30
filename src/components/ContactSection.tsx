@@ -123,77 +123,115 @@ export const ContactSection = () => {
             </Button>
           </div>
 
-          {/* Contact Form */}
+          {/* Contact Form or Confirmation */}
           <Card className="border-2">
-            <CardHeader>
-              <CardTitle className="text-2xl">{isHe ? 'שלחו לנו הודעה' : 'Send Us a Message'}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Input
-                    placeholder={isHe ? 'שם מלא' : 'Full Name'}
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                    maxLength={100}
-                    className="border-2"
-                  />
+            {submitted ? (
+              <CardContent className="p-8 text-center space-y-5 animate-fade-in">
+                <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                  <CheckCircle2 className="h-8 w-8 text-primary" />
                 </div>
-                <div>
-                  <Input
-                    type="email"
-                    placeholder={isHe ? 'דוא"ל' : 'Email Address'}
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
-                    maxLength={150}
-                    className="border-2"
-                  />
+                <h3 className="text-2xl font-bold text-foreground">
+                  {isHe ? 'ההודעה נשלחה בהצלחה!' : 'Message Sent Successfully!'}
+                </h3>
+                <p className="text-muted-foreground leading-[1.7]">
+                  {isHe
+                    ? 'תודה שפניתם אלינו! נחזור אליכם תוך 24 שעות. לתגובה מהירה יותר, שלחו לנו הודעה בוואטסאפ.'
+                    : 'Thank you for reaching out! We\'ll get back to you within 24 hours. For a faster response, send us a WhatsApp message.'}
+                </p>
+                <div className="flex flex-col gap-3 pt-2">
+                  <Button
+                    variant="whatsapp"
+                    size="lg"
+                    className="w-full"
+                    onClick={() => window.open('https://wa.me/972537314235', '_blank')}
+                  >
+                    <MessageCircle className="ml-2 h-5 w-5" />
+                    {isHe ? 'שלחו הודעה בוואטסאפ' : 'Chat on WhatsApp'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full"
+                    onClick={() => setSubmitted(false)}
+                  >
+                    <ArrowLeft className="ml-2 h-4 w-4" />
+                    {isHe ? 'שליחת הודעה נוספת' : 'Send Another Message'}
+                  </Button>
                 </div>
-                <div>
-                  <Input
-                    type="tel"
-                    placeholder={isHe ? 'טלפון' : 'Phone Number'}
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    required
-                    maxLength={20}
-                    className="border-2"
-                  />
-                </div>
-                <div>
-                  <Textarea
-                    placeholder={isHe ? 'הודעה' : 'Your Message'}
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    required
-                    maxLength={2000}
-                    rows={5}
-                    className="border-2"
-                  />
-                </div>
-                <Button 
-                  type="submit" 
-                  variant="hero" 
-                  size="lg" 
-                  className="w-full text-lg"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="ml-2 h-5 w-5 animate-spin" />
-                      {isHe ? 'שולח...' : 'Sending...'}
-                    </>
-                  ) : (
-                    <>
-                      <Send className="ml-2 h-5 w-5" />
-                      {isHe ? 'שלח הודעה' : 'Send Message'}
-                    </>
-                  )}
-                </Button>
-              </form>
-            </CardContent>
+              </CardContent>
+            ) : (
+              <>
+                <CardHeader>
+                  <CardTitle className="text-2xl">{isHe ? 'שלחו לנו הודעה' : 'Send Us a Message'}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                      <Input
+                        placeholder={isHe ? 'שם מלא' : 'Full Name'}
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        required
+                        maxLength={100}
+                        className="border-2"
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        type="email"
+                        placeholder={isHe ? 'דוא"ל' : 'Email Address'}
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        required
+                        maxLength={150}
+                        className="border-2"
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        type="tel"
+                        placeholder={isHe ? 'טלפון' : 'Phone Number'}
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        required
+                        maxLength={20}
+                        className="border-2"
+                      />
+                    </div>
+                    <div>
+                      <Textarea
+                        placeholder={isHe ? 'הודעה' : 'Your Message'}
+                        value={formData.message}
+                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        required
+                        maxLength={2000}
+                        rows={5}
+                        className="border-2"
+                      />
+                    </div>
+                    <Button 
+                      type="submit" 
+                      variant="hero" 
+                      size="lg" 
+                      className="w-full text-lg"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="ml-2 h-5 w-5 animate-spin" />
+                          {isHe ? 'שולח...' : 'Sending...'}
+                        </>
+                      ) : (
+                        <>
+                          <Send className="ml-2 h-5 w-5" />
+                          {isHe ? 'שלח הודעה' : 'Send Message'}
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </CardContent>
+              </>
+            )}
           </Card>
         </div>
       </div>
