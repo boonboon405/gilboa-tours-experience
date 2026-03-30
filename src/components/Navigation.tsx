@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, Compass } from 'lucide-react';
+import { Menu, Compass, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { TeamDNAQuiz } from '@/components/TeamDNAQuiz';
@@ -126,6 +126,17 @@ export const Navigation = () => {
           </div>
 
           <div className="flex items-center gap-2 md:gap-3">
+            <Link to="/chat" className="hidden md:block">
+              <Button
+                variant="outline"
+                className="rounded-full px-4 py-2 text-sm font-semibold border-accent text-accent hover:bg-accent hover:text-accent-foreground transition-all duration-200 gap-1.5"
+                aria-label={language === 'he' ? 'תכנן עם AI' : 'Plan with AI'}
+              >
+                <MessageCircle className="h-4 w-4" />
+                {language === 'he' ? 'תכנן עם AI' : 'Plan with AI'}
+              </Button>
+            </Link>
+
             <Link to="/booking">
               <Button
                 className="bg-accent text-accent-foreground rounded-full px-5 md:px-6 py-2 text-sm md:text-base font-semibold hover:brightness-110 hover:scale-[1.02] transition-all duration-200 min-w-0 md:min-w-[140px]"
@@ -186,7 +197,17 @@ export const Navigation = () => {
 
             <div className="flex-1" />
 
-            <Link to="/booking" onClick={() => setDrawerOpen(false)} className="mt-6">
+            <Link to="/chat" onClick={() => setDrawerOpen(false)} className="mt-6">
+              <Button
+                variant="outline"
+                className="w-full rounded-full py-3 text-lg font-semibold border-accent text-white hover:bg-accent hover:text-accent-foreground transition-all duration-200 gap-2"
+              >
+                <MessageCircle className="h-5 w-5" />
+                {language === 'he' ? 'תכנן עם AI' : 'Plan with AI'}
+              </Button>
+            </Link>
+
+            <Link to="/booking" onClick={() => setDrawerOpen(false)} className="mt-3">
               <Button
                 className="w-full bg-accent text-accent-foreground rounded-full py-3 text-lg font-semibold hover:brightness-110 transition-all duration-200"
                 aria-label={language === 'he' ? 'הזמן עכשיו' : 'Book Now'}

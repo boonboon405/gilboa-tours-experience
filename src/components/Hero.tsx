@@ -4,10 +4,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 const slides = [
   { he: 'גלה את הגליל', en: 'Discover the Galilee', subHe: 'סיורים מודרכים בנופים עוצרי הנשימה של ישראל', subEn: 'Guided tours through Israel\'s most breathtaking landscapes', img: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=1920&q=80&fit=crop' },
-  { he: 'ימי גיבוש בטבע', en: 'Team Building in Nature', subHe: 'חוויות קבוצתיות בלתי נשכחות בהר הגלבוע', subEn: 'Unforgettable group experiences on Mount Gilboa', img: 'https://images.unsplash.com/photo-1631709497146-a239ef373cf5?w=1920&q=80&fit=crop' },
+  { he: 'ימי גיבוש בטבע', en: 'Team Building in Nature', subHe: 'חוויות קבוצתיות בלתי נשכחות בהר הגלבוע', subEn: 'Unforgettable group experiences on Mount Gilboa', img: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=80&fit=crop' },
   { he: 'מעיינות עמק הבזלת', en: 'Springs Valley', subHe: 'סיורים במעיינות העתיקים הנסתרים', subEn: 'Hidden gem tours through ancient water springs', img: 'https://images.unsplash.com/photo-1558005530-a7958896ec60?w=1920&q=80&fit=crop' },
-  { he: 'חוויות VIP', en: 'VIP Experiences', subHe: 'טיולים פרטיים ומותאמים אישית', subEn: 'Premium private tours tailored to you', img: 'https://images.unsplash.com/photo-1527856263669-12c3a0af2571?w=1920&q=80&fit=crop' },
-  { he: 'עמק יזרעאל', en: 'Jezreel Valley', subHe: 'נופים מקראיים, מותרות מודרניות', subEn: 'Biblical landscapes, modern luxury', img: 'https://images.unsplash.com/photo-1580745294855-4507f1af8014?w=1920&q=80&fit=crop' },
+  { he: 'חוויות VIP', en: 'VIP Experiences', subHe: 'טיולים פרטיים ומותאמים אישית', subEn: 'Premium private tours tailored to you', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=80&fit=crop' },
+  { he: 'עמק יזרעאל', en: 'Jezreel Valley', subHe: 'נופים מקראיים, מותרות מודרניות', subEn: 'Biblical landscapes, modern luxury', img: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=1920&q=80&fit=crop' },
 ];
 
 export const Hero = () => {

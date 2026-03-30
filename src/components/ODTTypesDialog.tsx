@@ -56,7 +56,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Raft Building',
     descriptionHe: 'צוותים בונים רפסודות מחומרים בסיסיים ומפליגים עליהן.',
     descriptionEn: 'Teams build rafts from basic materials and sail on them.',
-    imageUrl: 'https://images.unsplash.com/photo-1530866495561-507c83e2e89b?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&q=80&fit=crop'
   },
   {
     id: 6,
@@ -120,7 +120,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Adventure Sports',
     descriptionHe: 'פעילויות כמו רפטינג, קיאקינג או טיפוס סלעים.',
     descriptionEn: 'Activities like rafting, kayaking, or rock climbing.',
-    imageUrl: 'https://images.unsplash.com/photo-1530866495561-507c83e2e89b?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&q=80&fit=crop'
   },
   {
     id: 14,
