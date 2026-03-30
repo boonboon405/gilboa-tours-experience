@@ -1,19 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Menu, Compass, LogOut, Shield } from 'lucide-react';
+import { Menu, Compass } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { TeamDNAQuiz } from '@/components/TeamDNAQuiz';
 import { QuizResults } from '@/utils/quizScoring';
-import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { LanguageSelector } from '@/components/LanguageSelector';
 import {
   Sheet,
@@ -32,9 +23,7 @@ const navLinks = [
 
 export const Navigation = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { user, isAdmin, signOut } = useAuth();
   const { language } = useLanguage();
-  const navigate = useNavigate();
   const [showQuiz, setShowQuiz] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('home');
   const [isScrolled, setIsScrolled] = useState(false);
@@ -48,7 +37,6 @@ export const Navigation = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Intersection Observer for active section
   useEffect(() => {
     const sectionIds = navLinks.filter(l => l.sectionId).map(l => l.sectionId!);
     const observer = new IntersectionObserver(
@@ -88,15 +76,8 @@ export const Navigation = () => {
     console.log('Quiz completed:', results);
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-  };
-
   const logoColor = isScrolled ? 'text-primary' : 'text-gold-nav';
-  const linkColor = isScrolled
-    ? 'text-foreground'
-    : 'text-gold-nav';
+  const linkColor = isScrolled ? 'text-foreground' : 'text-gold-nav';
 
   return (
     <>
@@ -110,7 +91,6 @@ export const Navigation = () => {
         aria-label={language === 'he' ? 'תפריט ראשי' : 'Main navigation'}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-[60px] md:h-[72px]">
-          {/* LEFT — Logo */}
           <a
             href="#home"
             onClick={(e) => handleNavClick(e, '#home')}
@@ -123,14 +103,9 @@ export const Navigation = () => {
             </span>
           </a>
 
-          {/* CENTER — Desktop Nav Links */}
           <div className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => {
               const isActive = link.sectionId ? activeSection === link.sectionId : false;
-
-
-
-
               return (
                 <a
                   key={link.en}
@@ -150,9 +125,7 @@ export const Navigation = () => {
             })}
           </div>
 
-          {/* RIGHT — CTA + utilities */}
           <div className="flex items-center gap-2 md:gap-3">
-            {/* Book Now — always visible */}
             <Link to="/booking">
               <Button
                 className="bg-accent text-accent-foreground rounded-full px-5 md:px-6 py-2 text-sm md:text-base font-semibold hover:brightness-110 hover:scale-[1.02] transition-all duration-200 min-w-0 md:min-w-[140px]"
@@ -162,68 +135,10 @@ export const Navigation = () => {
               </Button>
             </Link>
 
-            {/* Desktop-only: Language + Auth */}
             <div className="hidden lg:flex items-center gap-2">
               <LanguageSelector />
-              {user ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" aria-label={language === 'he' ? 'תפריט חשבון' : 'Account menu'}>
-                      <Shield className="h-5 w-5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>{language === 'he' ? 'חשבון שלי' : 'My Account'}</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {isAdmin && (
-                      <>
-                        <DropdownMenuItem onClick={() => navigate('/admin')}>
-                          <Shield className="mr-2 h-4 w-4" />
-                          {language === 'he' ? 'לוח בקרה' : 'Dashboard'}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate('/admin/knowledge')}>
-                          <Shield className="mr-2 h-4 w-4" />
-                          {language === 'he' ? 'מאגר ידע' : 'Knowledge Base'}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate('/admin/keywords')}>
-                          <Shield className="mr-2 h-4 w-4" />
-                          {language === 'he' ? 'מילות מפתח' : 'Keywords'}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate('/admin/chat')}>
-                          <Shield className="mr-2 h-4 w-4" />
-                          {language === 'he' ? 'צ\'אט מנהל' : 'Admin Chat'}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate('/leads')}>
-                          <Shield className="mr-2 h-4 w-4" />
-                          {language === 'he' ? 'ניהול לידים' : 'Lead Management'}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate('/admin/ai-responses')}>
-                          <Shield className="mr-2 h-4 w-4" />
-                          {language === 'he' ? 'עריכת תגובות AI' : 'AI Responses'}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate('/ai-settings')}>
-                          <Shield className="mr-2 h-4 w-4" />
-                          {language === 'he' ? 'הגדרות AI' : 'AI Settings'}
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                      </>
-                    )}
-                    <DropdownMenuItem onClick={handleSignOut}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      {language === 'he' ? 'התנתק' : 'Sign Out'}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <Link to="/auth">
-                  <Button variant="ghost" size="icon" aria-label={language === 'he' ? 'כניסת מנהלים' : 'Admin Login'}>
-                    <Shield className="h-5 w-5" />
-                  </Button>
-                </Link>
-              )}
             </div>
 
-            {/* Mobile hamburger */}
             <button
               className="lg:hidden p-2 text-gold-nav focus-visible:ring-2 focus-visible:ring-primary rounded"
               onClick={() => setDrawerOpen(true)}
@@ -235,7 +150,6 @@ export const Navigation = () => {
         </div>
       </nav>
 
-      {/* Mobile Drawer */}
       <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
         <SheetContent
           side="right"
@@ -243,14 +157,9 @@ export const Navigation = () => {
         >
           <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
           <div className="flex flex-col flex-1 p-6 pt-16">
-            {/* Nav links */}
             <div className="flex flex-col gap-4">
               {navLinks.map((link) => {
                 const isActive = link.sectionId ? activeSection === link.sectionId : false;
-
-
-
-
                 return (
                   <a
                     key={link.en}
@@ -271,43 +180,12 @@ export const Navigation = () => {
               })}
             </div>
 
-            {/* Drawer utilities */}
             <div className="mt-6 flex items-center gap-3">
               <LanguageSelector />
-              {user ? (
-                <Button
-                  variant="ghost"
-                  className="text-white/80 hover:text-white gap-2"
-                  onClick={() => { handleSignOut(); setDrawerOpen(false); }}
-                >
-                  <LogOut className="h-4 w-4" />
-                  {language === 'he' ? 'התנתק' : 'Sign Out'}
-                </Button>
-              ) : (
-                <Link to="/auth" onClick={() => setDrawerOpen(false)}>
-                  <Button variant="ghost" className="text-white/80 hover:text-white gap-2">
-                    <Shield className="h-4 w-4" />
-                    {language === 'he' ? 'כניסת מנהלים' : 'Admin Login'}
-                  </Button>
-                </Link>
-              )}
             </div>
 
-            {isAdmin && user && (
-              <div className="mt-4 space-y-2">
-                <Button variant="ghost" className="w-full justify-start text-white/80 hover:text-white" onClick={() => { navigate('/admin'); setDrawerOpen(false); }}>
-                  <Shield className="mr-2 h-4 w-4" />{language === 'he' ? 'לוח בקרה' : 'Dashboard'}
-                </Button>
-                <Button variant="ghost" className="w-full justify-start text-white/80 hover:text-white" onClick={() => { navigate('/admin/knowledge'); setDrawerOpen(false); }}>
-                  <Shield className="mr-2 h-4 w-4" />{language === 'he' ? 'מאגר ידע' : 'Knowledge Base'}
-                </Button>
-              </div>
-            )}
-
-            {/* Spacer */}
             <div className="flex-1" />
 
-            {/* Full-width Book Now CTA at bottom */}
             <Link to="/booking" onClick={() => setDrawerOpen(false)} className="mt-6">
               <Button
                 className="w-full bg-accent text-accent-foreground rounded-full py-3 text-lg font-semibold hover:brightness-110 transition-all duration-200"
