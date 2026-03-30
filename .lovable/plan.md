@@ -1,28 +1,30 @@
 
 
-## Plan: Add Real Hero Carousel Images
+## Plan: Fix TTS Hebrew Word Boundary Matching
 
-### Files to modify (1)
-1. **`src/components/Hero.tsx`** — Replace placeholder `bg-[#1a3a2a]` with `background-image` referencing local files
+### Problem
+Two files use broken regex for Hebrew word replacement:
+1. **`ttsSanitizer.ts`** — No boundaries at all (`new RegExp(original, 'g')`) → matches substrings
+2. **`ttsQualityChecker.ts`** — Uses `\b` which doesn't work with Hebrew characters → misses standalone words OR matches incorrectly
 
-### Files to create (5 image files)
-Downloaded via `curl` from Unsplash (free license) into `public/images/hero/`:
+Both cause corruption: "קולינריה" → "נהדרינריה" because "קול" matches as a substring.
 
-1. **`public/images/hero/sea-of-galilee.jpg`** — Sea of Galilee with mountains (Unsplash photo `photo-1678134017317` by Jayson Boesman)
-2. **`public/images/hero/mount-gilboa.jpg`** — Lush green hillside, Northern Israel (Unsplash photo `HW-zyu4mdT0` by Shalev Cohen)
-3. **`public/images/hero/springs-waterfall.jpg`** — Waterfall cascading down rocky cliff into pool (Unsplash photo `fifZ1Trjnx0` by engin akyurt)
-4. **`public/images/hero/jezreel-valley.jpg`** — Green grass field with blue sky, Israel landscape (Unsplash photo `lbjIl4x0-wE` by Yoav Aziz)
-5. **`public/images/hero/upper-galilee.jpg`** — Green hillside with mountains in background (Unsplash photo `wBRzvZoWYxM` by Polina Koroleva)
+### Fix
+Use Hebrew-aware lookbehind/lookahead: `(?<![א-ת])PATTERN(?![א-ת])`
 
-### Implementation
+This ensures the pattern only matches when NOT surrounded by other Hebrew letters.
 
-1. Create `public/images/hero/` directory
-2. Download each image from Unsplash CDN at 1920px width, high quality (`w=1920&q=80&auto=format`)
-3. In `Hero.tsx`, add an `img` field to each slide data object pointing to `/images/hero/<filename>.jpg`
-4. Replace the `<div className="absolute inset-0 bg-[#1a3a2a]" />` placeholder in each slide with a full-bleed `<img>` element using `object-cover` styling
-5. All other styles (overlay, text, CTA, navigation) remain unchanged
+### Files to modify (2)
+
+1. **`src/utils/ttsSanitizer.ts`** (line 66)
+   - Change `new RegExp(original, 'g')` to `new RegExp('(?<![א-ת])' + original + '(?![א-ת])', 'g')`
+
+2. **`src/utils/ttsQualityChecker.ts`** (lines 100, 106, 157)
+   - Replace all `\\b${word}\\b` and `\\b${slang}\\b` patterns with `(?<![א-ת])${word}(?![א-ת])` for Hebrew words
+   - Keep `\b` for pure ASCII words (like `DNA`) — but since all entries in the forbidden/replacement lists are Hebrew, apply the Hebrew boundary to all
 
 ### What does NOT change
-- Slide content, gradient overlay, CTA button, navigation dots/arrows
-- No other components or pages modified
+- No replacement rules added or removed
+- No config changes
+- No other functionality affected
 
