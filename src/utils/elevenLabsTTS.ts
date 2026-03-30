@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeForTTS } from "./ttsSanitizer";
 import { ttsConfig } from "./ttsConfig";
+import { toast } from "sonner";
 
 /**
  * Available ElevenLabs voices with Hebrew support
@@ -110,7 +111,7 @@ export async function speakWithElevenLabs(
     onEnd?.();
     
     // Fallback to Web Speech API
-    return speakWithWebSpeech(sanitizedText, onStart, onEnd);
+    return speakWithWebSpeech(sanitizedText, onStart, onEnd, language);
   }
 }
 
@@ -120,28 +121,43 @@ export async function speakWithElevenLabs(
 function speakWithWebSpeech(
   text: string,
   onStart?: () => void,
-  onEnd?: () => void
+  onEnd?: () => void,
+  language: 'he' | 'en' = 'he'
 ): boolean {
   if (!('speechSynthesis' in window)) {
     console.warn('[Web Speech] Not supported');
     return false;
   }
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'he-IL';
-  utterance.rate = ttsConfig.defaultRate;
-
-  // Try to find a Hebrew voice
   const voices = window.speechSynthesis.getVoices();
-  const hebrewVoice = voices.find(v => v.lang.includes('he'));
-  if (hebrewVoice) {
+
+  if (language === 'he') {
+    const hebrewVoice = voices.find(v => v.lang === 'he-IL' || v.lang === 'he');
+    if (!hebrewVoice) {
+      console.warn('[Web Speech] No Hebrew voice available, failing silently');
+      toast("Hebrew voice unavailable on this device");
+      return false;
+    }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'he-IL';
+    utterance.rate = ttsConfig.defaultRate;
     utterance.voice = hebrewVoice;
+    utterance.onstart = () => onStart?.();
+    utterance.onend = () => onEnd?.();
+    utterance.onerror = () => onEnd?.();
+    window.speechSynthesis.speak(utterance);
+    return true;
   }
 
+  // English / other — unchanged fallback
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  utterance.rate = ttsConfig.defaultRate;
+  const englishVoice = voices.find(v => v.lang.includes('en'));
+  if (englishVoice) utterance.voice = englishVoice;
   utterance.onstart = () => onStart?.();
   utterance.onend = () => onEnd?.();
   utterance.onerror = () => onEnd?.();
-
   window.speechSynthesis.speak(utterance);
   return true;
 }
