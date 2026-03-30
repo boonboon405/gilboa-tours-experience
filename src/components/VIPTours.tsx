@@ -318,15 +318,15 @@ export const VIPTours = () => {
             </p>
           </div>
 
-          <div className="space-y-6">
+          <Accordion type="single" collapsible className="space-y-4">
             {vipDestinations.map((destination) => {
               const currentSelections = vipSelections[destination.id] || [];
               
               return (
-                <Card key={destination.id} className="border-2 hover:shadow-strong transition-all duration-300">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-2xl">{destination.region}</CardTitle>
+                <AccordionItem key={destination.id} value={`region-${destination.id}`} className="border-2 rounded-lg hover:shadow-strong transition-all duration-300 px-0">
+                  <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                    <div className="flex items-center justify-between w-full mr-4">
+                      <span className="text-2xl font-semibold text-right">{destination.region}</span>
                       <Badge 
                         variant="secondary" 
                         className={cn("text-lg px-4 py-2", currentSelections.length > 0 && "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100")}
@@ -334,13 +334,13 @@ export const VIPTours = () => {
                         {currentSelections.length} {isHe ? 'נבחרו' : 'selected'}
                       </Badge>
                     </div>
-                    <CardDescription className="text-base mt-3">
+                  </AccordionTrigger>
+                  <AccordionContent className="px-6 pb-6">
+                    <p className="text-base text-muted-foreground mb-4">
                       {isHe 
                         ? 'בחר עד 5 פעילויות, יחד נקבע את האטרקציות הכי מתאימות בהיתחשב בזמנים ואפשרויות בשטח ומזג אויר'
                         : 'Select up to 5 attractions — we\'ll help you choose the best fit based on timing, logistics, and weather'}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
+                    </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {destination.sites.map((site, index) => (
                         <div
@@ -360,11 +360,11 @@ export const VIPTours = () => {
                         </div>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
+                  </AccordionContent>
+                </AccordionItem>
               );
             })}
-          </div>
+          </Accordion>
         </div>
 
         {/* Summary and Contact Form */}
