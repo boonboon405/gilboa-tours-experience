@@ -35,8 +35,8 @@ export const Hero = () => {
           key={i}
           className={`absolute inset-0 transition-opacity duration-[800ms] ${i === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
         >
-          {/* Background placeholder */}
-          <div className="absolute inset-0 bg-[#1a3a2a]" />
+          {/* Background image */}
+          <img src={slide.img} alt={slide.en} className="absolute inset-0 w-full h-full object-cover" loading={i === 0 ? 'eager' : 'lazy'} />
           {/* Gradient overlay – bottom 60% */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" style={{ top: '40%' }} />
 
