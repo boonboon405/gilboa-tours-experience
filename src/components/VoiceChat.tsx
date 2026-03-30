@@ -409,7 +409,7 @@ ${transcript}`;
     };
     setMessages([initialMsg]);
     
-    setTimeout(() => speakText(greeting), 500);
+    // Do NOT auto-speak on clear — wait for user interaction
 
     toast({
       title: language === 'he' ? "שיחה חדשה" : "New Conversation",
