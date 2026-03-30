@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/sheet';
 import { Phone, Mail, MessageCircle, HeadphonesIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { openWhatsApp, whatsappTemplates, trackPhoneCall } from '@/utils/contactTracking';
+import { openWhatsApp, getWhatsappTemplate, trackPhoneCall } from '@/utils/contactTracking';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export const EmergencyContactButton = () => {
