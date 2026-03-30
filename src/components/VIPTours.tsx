@@ -218,7 +218,7 @@ export const VIPTours = () => {
                   טיולי VIP - עד 19 מטיילים
                 </Badge>
               </div>
-              <CardTitle className="text-3xl md:text-4xl font-bold mb-4">
+              <CardTitle className="section-heading mb-4">
                 טיול VIP מיוחד לאורחים מחו״ל
               </CardTitle>
               <CardDescription className="text-lg md:text-xl leading-relaxed">
