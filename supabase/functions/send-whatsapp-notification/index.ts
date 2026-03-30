@@ -29,6 +29,11 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? req.headers.get('cf-connecting-ip') ?? 'unknown';
+  if (!checkRateLimit(ip)) {
+    return new Response('Too many requests', { status: 429, headers: corsHeaders });
+  }
+
   try {
     const { phone, message, template_name, template_params }: WhatsAppNotificationRequest = await req.json();
     

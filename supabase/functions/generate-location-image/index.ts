@@ -90,6 +90,11 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? req.headers.get('cf-connecting-ip') ?? 'unknown';
+  if (!checkRateLimit(ip)) {
+    return new Response('Too many requests', { status: 429, headers: corsHeaders });
+  }
+
   try {
     const { locationKey } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
