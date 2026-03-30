@@ -103,6 +103,10 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html, body {
+    font-family: 'Heebo', sans-serif;
+  }
+
   body {
     @apply bg-background text-foreground;
   }
