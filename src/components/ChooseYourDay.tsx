@@ -455,7 +455,7 @@ export const ChooseYourDay = () => {
 
           {/* Header */}
           <div className="text-center mb-12">{/* existing header content... */}
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+            <h2 className="section-heading text-foreground mb-6">
               יום כייף וגיבוש לחברות - כ100 טיולים ואטרקציות לבחירה
             </h2>
             
@@ -507,7 +507,7 @@ export const ChooseYourDay = () => {
             )}
 
             <div className="max-w-3xl mx-auto space-y-4">
-              <p className="text-xl text-muted-foreground">
+              <p className="text-xl text-muted-foreground leading-[1.7]">
                 בחרו מתוך הקטגוריות את  האטרקציות או האתרים המועדפים עליכם
               </p>
             <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-lg">

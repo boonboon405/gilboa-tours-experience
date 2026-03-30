@@ -70,8 +70,8 @@ export const PublicFAQ = () => {
             <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-4">
               <HelpCircle className="h-8 w-8 text-primary" />
             </div>
-            <h2 className="text-4xl font-bold mb-4">שאלות נפוצות</h2>
-            <p className="text-muted-foreground text-lg">
+            <h2 className="section-heading mb-4">שאלות נפוצות</h2>
+            <p className="text-muted-foreground text-lg leading-[1.7]">
               מצא תשובות לשאלות הנפוצות ביותר
             </p>
           </div>

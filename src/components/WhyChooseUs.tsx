@@ -55,7 +55,7 @@ export const WhyChooseUs = () => {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <h2 className="text-4xl md:text-5xl font-bold text-center text-foreground mb-16">
+        <h2 className="section-heading text-center text-foreground mb-16">
           {language === 'he' ? 'למה לבחור בדויד טורס?' : 'Why Choose David Tours?'}
         </h2>
 
@@ -80,7 +80,7 @@ export const WhyChooseUs = () => {
                   <h3 className="text-xl font-bold text-foreground mb-2">
                     {reason.title}
                   </h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground leading-[1.7]">
                     {reason.desc}
                   </p>
                 </CardContent>

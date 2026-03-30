@@ -62,7 +62,7 @@ export const ContactSection = () => {
     <section id="contact" className="py-20 bg-muted">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+          <h2 className="section-heading text-foreground mb-4">
             צור קשר
           </h2>
         </div>
