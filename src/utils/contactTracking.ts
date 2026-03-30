@@ -39,6 +39,22 @@ export const whatsappTemplates = {
   culinary: "שלום, אני מעוניין/ת בחוויה קולינרית בכפר נחלל"
 };
 
+const whatsappTemplatesEn: Record<string, string> = {
+  general: "Hi, I'd like to learn more about tours in Northern Israel",
+  booking: "Hi, I'd like to book a team-building day. Please send me details",
+  inquiry: "Hi David, I have a question about your tours",
+  quote: "Hi, I'd like to get a quote for a team-building day",
+  springs: "Hi, I'm interested in a tour to Sachne Springs",
+  clubCars: "Hi, I'm interested in off-road vehicles in the Gilboa area",
+  beitShean: "Hi, I'm interested in a tour of ancient Beit She'an",
+  culinary: "Hi, I'm interested in a culinary experience in Nahalal"
+};
+
+export const getWhatsappTemplate = (key: string, language: string): string => {
+  if (language === 'he') return whatsappTemplates[key as keyof typeof whatsappTemplates] || whatsappTemplates.inquiry;
+  return whatsappTemplatesEn[key] || whatsappTemplatesEn.inquiry;
+};
+
 export const openWhatsApp = (phone: string, message: string, source: string) => {
   const encodedMessage = encodeURIComponent(message);
   const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;

@@ -88,8 +88,20 @@ const Testimonials = () => {
           ))}
         </div>
 
-        {/* Leave a Review */}
-        <div className="text-center mt-12">
+        {/* Google Reviews + Leave a Review */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12">
+          <a
+            href="https://www.google.com/maps/place/David+Gilboa+Tours"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors text-primary font-semibold"
+          >
+            <span className="text-xl">⭐</span>
+            <span>4.9 ★ {lang === 'he' ? 'בגוגל' : 'on Google'}</span>
+            <span className="text-sm text-muted-foreground">
+              {lang === 'he' ? '— צפו בביקורות' : '— See reviews'}
+            </span>
+          </a>
           <Button
             variant="outline"
             size="lg"

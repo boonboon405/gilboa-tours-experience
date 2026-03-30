@@ -116,7 +116,7 @@ export const ContactSection = () => {
               variant="whatsapp"
               size="lg"
               className="w-full text-lg"
-              onClick={() => openWhatsApp('972537314235', whatsappTemplates.inquiry, 'contact-section')}
+              onClick={() => openWhatsApp('972537314235', getWhatsappTemplate('inquiry', language), 'contact-section')}
             >
               <MessageCircle className="ml-2 h-5 w-5" />
               {isHe ? 'שלחו הודעה בוואטסאפ' : 'Send a WhatsApp Message'}
