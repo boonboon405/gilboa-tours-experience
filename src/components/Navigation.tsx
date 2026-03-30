@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, Compass } from 'lucide-react';
+import { Menu, Compass, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { TeamDNAQuiz } from '@/components/TeamDNAQuiz';
