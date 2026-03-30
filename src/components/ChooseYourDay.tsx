@@ -359,8 +359,6 @@ export const ChooseYourDay = () => {
     const savedResults = localStorage.getItem('teamDNAResults');
     if (savedResults) {
       try { setQuizResults(JSON.parse(savedResults)); } catch (e) { console.error('Failed to parse saved quiz results', e); }
-    } else {
-      setShowQuiz(true);
     }
   }, []);
 
