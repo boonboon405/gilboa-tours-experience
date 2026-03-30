@@ -19,6 +19,7 @@ interface Service {
   highlights: string[];
   cta: string;
   scrollTo?: string;
+  badge?: { he: string; en: string };
 }
 
 const getServices = (language: string): Service[] => [
