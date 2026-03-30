@@ -1,5 +1,6 @@
 import { Mail, Phone } from 'lucide-react';
 import { trackPhoneCall } from '@/utils/contactTracking';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const Footer = () => {
   const email = 'davidisraeltours@gmail.com';
