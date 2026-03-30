@@ -97,13 +97,13 @@ export const checkTTSQuality = (text: string): QualityCheckResult => {
   
   // Check for forbidden words
   FORBIDDEN_WORDS.forEach(word => {
-    const regex = new RegExp(`\\b${word}\\b`, 'gi');
+    const regex = new RegExp('(?<![א-ת])' + word + '(?![א-ת])', 'gi');
     if (regex.test(lowerText)) {
       foundForbidden.push(word);
       
       // Try to replace with proper Hebrew
       if (HEBREW_REPLACEMENTS[word]) {
-        fixedText = fixedText.replace(regex, HEBREW_REPLACEMENTS[word]);
+        fixedText = fixedText.replace(new RegExp('(?<![א-ת])' + word + '(?![א-ת])', 'gi'), HEBREW_REPLACEMENTS[word]);
         replacementCount++;
       } else {
         issues.push(`נמצאה מילה בסלנג/ערבית: "${word}" ללא תחליף`);
@@ -154,7 +154,7 @@ export const cleanForHighQualityTTS = (text: string): string => {
   
   // Replace all known problematic words
   Object.entries(HEBREW_REPLACEMENTS).forEach(([slang, proper]) => {
-    const regex = new RegExp(`\\b${slang}\\b`, 'gi');
+    const regex = new RegExp('(?<![א-ת])' + slang + '(?![א-ת])', 'gi');
     cleaned = cleaned.replace(regex, proper);
   });
   

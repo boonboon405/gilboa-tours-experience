@@ -63,7 +63,7 @@ const replaceColloquialWords = (text: string): string => {
   
   // Apply all word replacements from config
   Object.entries(ttsConfig.wordReplacements).forEach(([original, replacement]) => {
-    const regex = new RegExp(original, 'g');
+    const regex = new RegExp('(?<![א-ת])' + original + '(?![א-ת])', 'g');
     result = result.replace(regex, replacement);
   });
   
