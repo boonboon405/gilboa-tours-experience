@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice } from '@/utils/elevenLabsTTS';
+import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice, ELEVENLABS_VOICES } from '@/utils/elevenLabsTTS';
 import { analyzeSentiment, getOverallSentiment } from '@/utils/sentimentAnalysis';
 import { WaveformVisualizer } from '@/components/WaveformVisualizer';
 import { ChatHistory } from '@/components/ChatHistory';

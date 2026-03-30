@@ -19,7 +19,7 @@ import { VoiceSelector } from '@/components/VoiceSelector';
 import companyLogo from '@/assets/company-logo.png';
 import { categoryMetadata, DNACategory } from '@/utils/activityCategories';
 import { detectCategoriesInMessage } from '@/utils/categoryDetector';
-import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice } from '@/utils/elevenLabsTTS';
+import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice, ELEVENLABS_VOICES } from '@/utils/elevenLabsTTS';
 
 interface Message {
   id: string;
