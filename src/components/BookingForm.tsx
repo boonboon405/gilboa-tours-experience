@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { updateFormField, setTourDate, setIsSubmitting, resetBookingForm } from "@/store/slices/bookingSlice";
 import { getLanguage } from "@/store/slices/languageSlice";
@@ -9,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { CalendarIcon, Loader2, CheckCircle2, MessageCircle, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
@@ -28,6 +29,7 @@ const bookingSchema = z.object({
 export const BookingForm = () => {
   const dispatch = useAppDispatch();
   const { toast } = useToast();
+  const [submitted, setSubmitted] = useState(false);
   
   const language = useAppSelector(getLanguage);
   const isHe = language === 'he';
@@ -86,12 +88,8 @@ export const BookingForm = () => {
         }
       }
 
-      toast({
-        title: isHe ? "ההזמנה נשלחה בהצלחה!" : "Booking submitted successfully!",
-        description: isHe ? "נציג יצור איתך קשר בהקדם" : "A representative will contact you soon",
-      });
-
       dispatch(resetBookingForm());
+      setSubmitted(true);
     } catch (error) {
       if (error instanceof z.ZodError) {
         toast({
@@ -111,6 +109,56 @@ export const BookingForm = () => {
       dispatch(setIsSubmitting(false));
     }
   };
+
+  if (submitted) {
+    return (
+      <div className="max-w-2xl mx-auto p-8 bg-card rounded-lg shadow-lg text-center space-y-6 animate-fade-in">
+        <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+          <CheckCircle2 className="h-9 w-9 text-primary" />
+        </div>
+        <h2 className="text-3xl font-bold text-foreground">
+          {isHe ? 'ההזמנה נשלחה בהצלחה!' : 'Booking Submitted Successfully!'}
+        </h2>
+        <p className="text-muted-foreground text-lg leading-[1.7] max-w-md mx-auto">
+          {isHe
+            ? 'תודה רבה! קיבלנו את הפרטים שלכם. נציג יצור איתכם קשר תוך 24 שעות לאישור ותיאום סופי.'
+            : 'Thank you! We\'ve received your details. A representative will contact you within 24 hours to confirm and finalize your booking.'}
+        </p>
+        <div className="bg-muted/50 rounded-lg p-5 text-right space-y-2">
+          <h3 className="font-semibold text-foreground mb-3">
+            {isHe ? 'מה הלאה?' : 'What\'s Next?'}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {isHe ? '📞 נציג יתקשר אליכם לאישור הפרטים' : '📞 A representative will call to confirm details'}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {isHe ? '📋 תקבלו סיכום במייל עם כל הפרטים' : '📋 You\'ll receive an email summary with all the details'}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {isHe ? '🎒 נשלח לכם רשימת ציוד מומלצת' : '🎒 We\'ll send you a recommended packing list'}
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => setSubmitted(false)}
+          >
+            <ArrowLeft className="ml-2 h-4 w-4" />
+            {isHe ? 'הזמנה נוספת' : 'Book Another Tour'}
+          </Button>
+          <Button
+            variant="whatsapp"
+            size="lg"
+            onClick={() => window.open('https://wa.me/972537314235', '_blank')}
+          >
+            <MessageCircle className="ml-2 h-4 w-4" />
+            {isHe ? 'שאלות? דברו איתנו' : 'Questions? Chat with Us'}
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto p-6 bg-card rounded-lg shadow-lg">
