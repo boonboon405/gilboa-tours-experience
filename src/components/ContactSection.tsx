@@ -11,9 +11,9 @@ import { openWhatsApp, whatsappTemplates, trackPhoneCall } from '@/utils/contact
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, 'שם נדרש').max(100, 'שם ארוך מדי'),
-  email: z.string().trim().email('אימייל לא תקין').max(255, 'אימייל ארוך מדי'),
-  phone: z.string().trim().min(6, 'טלפון לא תקין').max(30, 'טלפון ארוך מדי'),
-  message: z.string().trim().min(1, 'הודעה נדרשת').max(1000, 'הודעה ארוכה מדי'),
+  email: z.string().trim().email('אימייל לא תקין').max(150, 'אימייל ארוך מדי'),
+  phone: z.string().trim().min(6, 'טלפון לא תקין').max(20, 'טלפון ארוך מדי'),
+  message: z.string().trim().min(1, 'הודעה נדרשת').max(2000, 'הודעה ארוכה מדי'),
 });
 
 export const ContactSection = () => {
