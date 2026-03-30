@@ -117,12 +117,13 @@ export const MegaMenu = ({ activeSection, onNavClick }: MegaMenuProps) => {
               role="menuitem"
               aria-haspopup="true"
               aria-expanded={isHovered}
+              style={{ textShadow: '0px 1px 3px rgba(0,0,0,0.5)' }}
               className={cn(
-                "flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium relative group overflow-hidden",
+                "flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium relative group overflow-hidden text-gold-nav",
                 "transition-all duration-300 ease-out",
                 isActive 
-                  ? "text-primary bg-primary/10 shadow-[0_8px_30px_hsl(var(--primary)/0.2)] scale-105" 
-                  : "text-foreground hover:text-primary hover:bg-accent/50 hover:shadow-[0_4px_20px_hsl(var(--primary)/0.15)] hover:scale-105"
+                  ? "bg-primary/10 shadow-[0_8px_30px_hsl(var(--primary)/0.2)] scale-105" 
+                  : "hover:bg-accent/50 hover:shadow-[0_4px_20px_hsl(var(--primary)/0.15)] hover:scale-105"
               )}
             >
               {/* Animated background gradient */}
