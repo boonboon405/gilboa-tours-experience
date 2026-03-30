@@ -11,6 +11,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AccessibilityProvider } from "@/hooks/use-accessibility";
 import { AccessibilityWidget } from "@/components/AccessibilityWidget";
+import { WhatsAppFAB } from "@/components/WhatsAppFAB";
 import Index from "./pages/Index";
 import Booking from "./pages/Booking";
 import Chat from "./pages/Chat";
