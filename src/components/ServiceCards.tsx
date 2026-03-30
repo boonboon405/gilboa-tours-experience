@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Calendar, Users, Briefcase, CheckCircle2, ArrowLeft, ArrowRight } from "lucide-react";
+import { Badge } from '@/components/ui/badge';
 import { useParallax } from '@/hooks/use-parallax';
 import { use3DTilt } from '@/hooks/use-3d-tilt';
 import { getClickableProps } from '@/hooks/use-keyboard-nav';
