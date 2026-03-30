@@ -9,7 +9,7 @@ import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
 import SEOKeywords from '@/components/SEOKeywords';
 
-import { EmergencyContactButton } from '@/components/EmergencyContactButton';
+
 import { PublicFAQ } from '@/components/PublicFAQ';
 import { TestimonialSubmissionForm } from '@/components/TestimonialSubmissionForm';
 import { LandscapeGallery } from '@/components/LandscapeGallery';
