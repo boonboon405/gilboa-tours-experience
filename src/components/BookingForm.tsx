@@ -160,6 +160,7 @@ export const BookingForm = () => {
   }
 
   return (
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto p-6 bg-card rounded-lg shadow-lg">
       <div className="space-y-2">
         <h2 className="text-3xl font-bold text-foreground">{isHe ? 'הזמנת סיור' : 'Book a Tour'}</h2>
         <p className="text-muted-foreground">{isHe ? 'מלאו את הפרטים ונציג יצור איתכם קשר' : 'Fill in your details and a representative will contact you'}</p>
