@@ -163,7 +163,8 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
       }
       
       // Do NOT auto-speak greeting — wait for user interaction
-
+    }
+  }, [quizResults]);
 
   const speakText = async (text: string) => {
     // Stop any ongoing speech
