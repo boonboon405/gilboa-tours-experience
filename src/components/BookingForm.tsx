@@ -87,12 +87,8 @@ export const BookingForm = () => {
         }
       }
 
-      toast({
-        title: isHe ? "ההזמנה נשלחה בהצלחה!" : "Booking submitted successfully!",
-        description: isHe ? "נציג יצור איתך קשר בהקדם" : "A representative will contact you soon",
-      });
-
       dispatch(resetBookingForm());
+      setSubmitted(true);
     } catch (error) {
       if (error instanceof z.ZodError) {
         toast({
