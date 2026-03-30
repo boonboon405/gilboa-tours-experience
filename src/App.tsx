@@ -180,6 +180,7 @@ const App = () => {
               </Routes>
               
               <AccessibilityWidget />
+              <WhatsAppFAB />
             </BrowserRouter>
             </TooltipProvider>
           </AccessibilityProvider>
