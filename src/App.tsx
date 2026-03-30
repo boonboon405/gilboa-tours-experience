@@ -180,7 +180,7 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Routes>
               
-              <AccessibilityWidget />
+              
               <WhatsAppFAB />
               <BackToTop />
             </BrowserRouter>
