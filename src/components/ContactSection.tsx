@@ -149,12 +149,13 @@ export const ContactSection = () => {
                   />
                 </div>
                 <div>
-                  <Input
+                <Input
                     type="tel"
                     placeholder="טלפון"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     required
+                    maxLength={20}
                     className="border-2"
                   />
                 </div>
