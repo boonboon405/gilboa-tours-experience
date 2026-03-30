@@ -58,7 +58,8 @@ const getServices = (language: string): Service[] => [
       "Includes guide, excludes transportation"
     ],
     cta: language === 'he' ? "בחרו את הסיור שלכם" : "Choose Your Tour",
-    scrollTo: "choose-your-day"
+    scrollTo: "choose-your-day",
+    badge: { he: 'הכי פופולרי', en: 'Most Popular' }
   },
   {
     id: "vip",
