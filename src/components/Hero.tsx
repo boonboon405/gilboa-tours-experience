@@ -1,203 +1,101 @@
-import { useState, useEffect, useRef, KeyboardEvent } from 'react';
-import { Phone, MessageCircle, Sparkles, Calendar, Bot } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import heroImage from '@/assets/hero-gilboa.jpg';
-import { LandscapeImageSelector } from './LandscapeImageSelector';
-import { openWhatsApp, whatsappTemplates, trackPhoneCall } from '@/utils/contactTracking';
-import { getClickableProps } from '@/hooks/use-keyboard-nav';
+import { useState, useEffect, useCallback } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-const STORAGE_KEY = 'landscape-images';
+const slides = [
+  { he: 'גלה את הגליל', en: 'Discover the Galilee', sub: 'Guided tours through Israel\'s most breathtaking landscapes' },
+  { he: 'ימי גיבוש בטבע', en: 'Team Building in Nature', sub: 'Unforgettable group experiences on Mount Gilboa' },
+  { he: 'מעיינות עמק הבזלת', en: 'Springs Valley', sub: 'Hidden gem tours through ancient water springs' },
+  { he: 'חוויות VIP', en: 'VIP Experiences', sub: 'Premium private tours tailored to you' },
+  { he: 'עמק יזרעאל', en: 'Jezreel Valley', sub: 'Biblical landscapes, modern luxury' },
+];
 
 export const Hero = () => {
-  const [images, setImages] = useState<string[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    const savedImages = saved ? JSON.parse(saved) : [];
-    // Filter out empty/undefined slots
-    const validImages = savedImages.filter((img: string) => img);
-    return validImages.length > 0 ? validImages : [heroImage];
-  });
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
-  // Persist images to localStorage whenever they change
-  useEffect(() => {
-    if (images.length > 0) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(images));
-      console.log('💾 Saved images to localStorage:', images.length);
-    }
-  }, [images]);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [showImageSelector, setShowImageSelector] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
-  const heroRef = useRef<HTMLElement>(null);
-  const whatsappNumber = '972537314235';
-  const phoneNumber = '0537314235';
-
-  // Parallax scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+  const goTo = useCallback((index: number) => {
+    setCurrentSlide((index + slides.length) % slides.length);
   }, []);
 
-  // Auto-rotate images every 10 seconds
   useEffect(() => {
-    console.log('🖼️ Hero Images:', {
-      totalImages: images.length,
-      currentIndex: currentImageIndex,
-      images: images
-    });
-    
-    if (images.length > 1) {
-      console.log('✅ Starting image rotation interval');
-      const interval = setInterval(() => {
-        setCurrentImageIndex((prevIndex) => {
-          const nextIndex = (prevIndex + 1) % images.length;
-          console.log('🔄 Rotating image:', { from: prevIndex, to: nextIndex, totalImages: images.length });
-          return nextIndex;
-        });
-      }, 10000);
-
-      return () => {
-        console.log('🛑 Clearing image rotation interval');
-        clearInterval(interval);
-      };
-    } else {
-      console.log('⚠️ Not enough images for rotation:', images.length);
-    }
-  }, [images.length]);
+    if (isPaused) return;
+    const id = setInterval(() => setCurrentSlide(prev => (prev + 1) % slides.length), 5000);
+    return () => clearInterval(id);
+  }, [isPaused]);
 
   return (
-    <section ref={heroRef} id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      {/* Background Images with Fade Transition and Parallax */}
-      <div 
-        className="absolute inset-0"
-        style={{
-          transform: `translateY(${scrollY * 0.5}px)`,
-          filter: `blur(${Math.min(scrollY / 100, 8)}px)`,
-          transition: 'transform 0.1s ease-out, filter 0.3s ease-out'
-        }}
+    <section
+      className="relative w-full h-screen overflow-hidden"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {/* Slides */}
+      {slides.map((slide, i) => (
+        <div
+          key={i}
+          className={`absolute inset-0 transition-opacity duration-[800ms] ${i === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+        >
+          {/* Background placeholder */}
+          <div className="absolute inset-0 bg-[#1a3a2a]" />
+          {/* Gradient overlay – bottom 60% */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" style={{ top: '40%' }} />
+
+          {/* Content */}
+          <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
+            <h1 className="font-['Heebo'] text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-2">
+              {slide.he}
+            </h1>
+            <p className="font-['Heebo'] text-2xl md:text-4xl text-white mb-3">
+              {slide.en}
+            </p>
+            <p className="text-white/80 text-lg md:text-xl max-w-2xl mb-8">
+              {slide.sub}
+            </p>
+            <a
+              href="#contact"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="rounded-full px-8 py-3 bg-accent text-white font-semibold text-lg hover:brightness-110 transition-all"
+            >
+              Book Your Tour
+            </a>
+          </div>
+        </div>
+      ))}
+
+      {/* Desktop arrows */}
+      <button
+        onClick={() => goTo(currentSlide - 1)}
+        className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 items-center justify-center w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 transition-colors"
+        aria-label="Previous slide"
       >
-        {images.map((image, index) => (
-          <img
-            key={`${image}-${index}`}
-            src={image}
-            alt={`נוף פנורמי מרהיב של הרי הגלבוע ועמק המעיינות בצפון ישראל - תמונה ${index + 1}`}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-              index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-            }`}
+        <ChevronLeft className="w-6 h-6" style={{ color: 'var(--gold-nav)' }} />
+      </button>
+      <button
+        onClick={() => goTo(currentSlide + 1)}
+        className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 items-center justify-center w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 transition-colors"
+        aria-label="Next slide"
+      >
+        <ChevronRight className="w-6 h-6" style={{ color: 'var(--gold-nav)' }} />
+      </button>
+
+      {/* Dot indicators */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goTo(i)}
+            aria-label={`Go to slide ${i + 1}`}
+            className="w-3 h-3 rounded-full border-2 transition-all"
+            style={{
+              borderColor: 'var(--gold-nav)',
+              backgroundColor: i === currentSlide ? 'var(--gold-nav)' : 'transparent',
+            }}
           />
         ))}
-        <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/50 to-foreground/70" />
       </div>
-
-      {/* AI Image Generator Button */}
-      <Button
-        variant="outline"
-        size="sm"
-        className="absolute top-20 right-4 z-20 bg-background/80 backdrop-blur-sm animate-fade-in [animation-delay:0.5s] opacity-0 [animation-fill-mode:forwards] hover:scale-105 transition-all hover:shadow-lg animate-[float_8s_ease-in-out_infinite]"
-        onClick={() => setShowImageSelector(true)}
-      >
-        <Sparkles className="ml-2 h-4 w-4 animate-[spin_12s_linear_infinite]" />
-        צור תמונת רקע ב-AI
-      </Button>
-
-      {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 text-center">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 animate-[zoom-fade-in_0.8s_ease-out] hero-glow">
-            חוויה קבוצתית מיוחדת, בונה ובלתי נשכחת
-          </h1>
-          <h2 className="text-3xl md:text-5xl font-semibold text-accent mb-6 animate-[zoom-fade-in_0.8s_ease-out_0.2s] opacity-0 [animation-fill-mode:forwards] hero-glow-accent">
-            בצפון א״י היפה ובלב הגלבוע, עמק המעיינות, הגליל וסובב כנרת
-          </h2>
-          <p className="text-lg md:text-xl text-white/90 mb-4 max-w-2xl mx-auto leading-relaxed">
-            יום חווייתי, מהנה ומשמעותי שמשלב היסטוריה, טבע, גיבוש, והרבה זיכרונות טובים לחברה שלכם.
-          </p>
-          <p className="text-base md:text-lg text-white/80 mb-8 max-w-3xl mx-auto leading-relaxed">
-            🔥 הרפתקאות  |  💧 טבע  |  🏛️ דברי הימים  |  🍷 יין ואומנות הבישול  |  ⚡ ספורט  |  🎨 יצירה  |  🌿 בריאות  |  🤝 צוותיות
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-            <Link to="/chat">
-              <Button
-                variant="hero"
-                size="lg"
-                className="text-lg px-8 py-6 gap-2 animate-[slow-pulse_30s_ease-in-out_infinite] transition-all hover:scale-105 hover:shadow-xl ripple-effect animate-fade-in [animation-delay:0.2s] opacity-0 [animation-fill-mode:forwards]"
-              >
-                <Bot className="h-5 w-5" />
-                שוחח עם הסוכן החכם
-              </Button>
-            </Link>
-            <Link to="/booking">
-              <Button
-                variant="hero"
-                size="lg"
-                className="text-lg px-8 py-6 gap-2 transition-all hover:scale-105 hover:shadow-xl ripple-effect animate-fade-in [animation-delay:0.4s] opacity-0 [animation-fill-mode:forwards]"
-              >
-                <Calendar className="h-5 w-5" />
-                הזמן סיור
-              </Button>
-            </Link>
-            <Button
-              variant="hero"
-              size="lg"
-              className="text-lg px-8 py-6 transition-all hover:scale-105 hover:shadow-xl ripple-effect animate-fade-in [animation-delay:0.6s] opacity-0 [animation-fill-mode:forwards]"
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              <Phone className="h-5 w-5" />
-              צור קשר
-            </Button>
-          </div>
-
-          {/* WhatsApp Button */}
-          <div className="flex justify-center mb-8">
-            <Button
-              variant="whatsapp"
-              size="lg"
-              className="text-lg px-8 py-6 transition-all hover:scale-105 hover:shadow-xl ripple-effect animate-fade-in [animation-delay:0.8s] opacity-0 [animation-fill-mode:forwards]"
-              onClick={() => openWhatsApp('972537314235', whatsappTemplates.general, 'hero')}
-            >
-              <MessageCircle className="ml-2 h-5 w-5" />
-              וואטסאפ
-            </Button>
-          </div>
-
-          {/* Phone Number */}
-          <a
-            href={`tel:${phoneNumber}`}
-            onClick={() => trackPhoneCall(phoneNumber, 'hero')}
-            className="inline-flex items-center text-white text-xl font-semibold hover:text-accent transition-all duration-300 animate-fade-in [animation-delay:1s] opacity-0 [animation-fill-mode:forwards] hover:scale-110 hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] group"
-          >
-            <Phone className="ml-2 h-6 w-6 group-hover:animate-[ring_1s_ease-in-out]" />
-            {phoneNumber}
-          </a>
-        </div>
-      </div>
-
-      {/* Scroll Indicator */}
-      <div 
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce animate-fade-in [animation-delay:1.2s] opacity-0 [animation-fill-mode:forwards]"
-        {...getClickableProps(() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' }))}
-        aria-label="גלול למטה לתוכן נוסף"
-      >
-        <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center cursor-pointer hover:border-accent transition-colors focus-visible:ring-2 focus-visible:ring-accent">
-          <div className="w-1 h-3 bg-white rounded-full mt-2 animate-[scroll-indicator_2s_ease-in-out_infinite]" />
-        </div>
-      </div>
-
-      {/* Image Selector Dialog */}
-      <LandscapeImageSelector
-        open={showImageSelector}
-        onOpenChange={setShowImageSelector}
-        onImagesSelected={(newImages) => {
-          setImages(newImages);
-          setCurrentImageIndex(0);
-        }}
-      />
     </section>
   );
 };
