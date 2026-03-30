@@ -1,23 +1,45 @@
 
 
-## Plan: Gold Nav Link Color + Text Shadow
+## Plan: Security Hardening — Input Sanitization
 
-### Files to modify (2 files)
+### Files to modify (7 files)
 
-1. **`src/components/MegaMenu.tsx`** — Change desktop nav link text color from `text-foreground`/`text-primary` to gold (`var(--gold-nav)`) and add `text-shadow: 0px 1px 3px rgba(0,0,0,0.5)` via inline style
-2. **`src/components/Navigation.tsx`** — Change mobile nav link text color to gold and add the same text-shadow for mobile menu items
+**Edge functions (6):**
+1. `supabase/functions/forward-webhook/index.ts` — add `esc()` helper, apply to user fields, tighten length limits
+2. `supabase/functions/send-contact-email/index.ts` — add `esc()`, apply to name/email/phone/message in HTML templates
+3. `supabase/functions/send-booking-notification/index.ts` — add `esc()`, apply to customer_name, customer_email, customer_phone, customer_company, special_requests, tour_type, selected_destinations
+4. `supabase/functions/send-lead-notification/index.ts` — add `esc()`, apply to name, email, phone, notes, source_platform, interested_keywords
+5. `supabase/functions/send-preferences-email/index.ts` — add `esc()`, apply to all contactInfo fields, section titles, activity names, site names, otherOption
+6. `supabase/functions/send-low-confidence-alert/index.ts` — add `esc()`, apply to visitorName, message, conversationId
 
-### Specific changes
+**Client component (1):**
+7. `src/components/ContactSection.tsx` — update zod schema max lengths: email 150→150, phone 30→20, message 1000→2000; update `maxLength` attrs on `<Input>`/`<Textarea>` elements
 
-**MegaMenu.tsx (desktop links, ~line 120-126):**
-- Replace `text-foreground` and active `text-primary` with inline `color: 'var(--gold-nav)'` (or Tailwind `text-gold-nav`)
-- Add `style={{ textShadow: '0px 1px 3px rgba(0,0,0,0.5)' }}` to each nav link `<a>`
+### Details
 
-**Navigation.tsx (mobile links, ~lines 338 and 352):**
-- Replace `text-foreground` with gold color on mobile nav links
-- Add same text-shadow inline style
+**`esc()` helper** (added at top of each edge function — no shared module in Deno edge functions):
+```typescript
+function esc(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+```
+
+**Contact form validation changes (ContactSection.tsx):**
+- `email`: max 255 → 150
+- `phone`: max 30 → 20
+- `message`: max 1000 → 2000
+- Add/update `maxLength` HTML attributes on all 4 inputs to match
+
+**Server-side (forward-webhook):** Update zod schema to match: email max 150, phone max 20, message max 2000. Apply `esc()` to query params.
+
+**All email functions:** Wrap every user-supplied string interpolation in `esc()` before inserting into HTML templates. For arrays (destinations, keywords, activities), map each element through `esc()`.
 
 ### What does NOT change
-- Navigation structure, links, layout, icons, dropdowns, mega menu panels — all unchanged
-- Only the text color and text-shadow of navigation link labels change
+- No routing, layout, visual design, or functionality changes
+- No new files created (helper is inlined per function)
 
