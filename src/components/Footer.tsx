@@ -1,7 +1,9 @@
 import { Mail, Phone } from 'lucide-react';
 import { trackPhoneCall } from '@/utils/contactTracking';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const Footer = () => {
+  const { language } = useLanguage();
   const email = 'davidisraeltours@gmail.com';
   const phoneNumber = '0537314235';
 
@@ -15,7 +17,9 @@ export const Footer = () => {
               דויד טורס
             </h3>
             <p className="text-muted-foreground">
-              יום חווייתי, מהנה ומשמעותי שמשלב היסטוריה, טבע, גיבוש, והרבה זיכרונות טובים לחברה שלכם.
+              {language === 'he'
+                ? 'סיורי טבע ונוף, ימי גיבוש, וחוויות VIP פרטיות בהרי הגלבוע, עמק המעיינות והגליל'
+                : 'Nature and landscape tours, team-building days, and private VIP experiences in the Gilboa mountains, Springs Valley, and the Galilee'}
             </p>
           </div>
 

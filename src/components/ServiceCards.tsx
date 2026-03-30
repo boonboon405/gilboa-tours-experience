@@ -6,6 +6,7 @@ import { Calendar, Users, Briefcase, CheckCircle2, ArrowLeft } from "lucide-reac
 import { useParallax } from '@/hooks/use-parallax';
 import { use3DTilt } from '@/hooks/use-3d-tilt';
 import { getClickableProps } from '@/hooks/use-keyboard-nav';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Service {
   id: string;
@@ -19,13 +20,17 @@ interface Service {
   scrollTo?: string;
 }
 
-const services: Service[] = [
+const getServices = (language: string): Service[] => [
   {
     id: "daily",
     icon: Calendar,
-    title: "סיורים יומיים",
-    shortDesc: "חוויות מודרכות באזור הגלבוע ועמק בית שאן",
-    longDesc: "יום מלא בחוויות היסטוריות וטבעיות מרהיבות. מתאים למשפחות, קבוצות חברים, וצוותי עבודה.",
+    title: language === 'he' ? "סיורים יומיים" : "Daily Tours",
+    shortDesc: language === 'he'
+      ? "סיורי טבע ונוף מודרכים בהרי הגלבוע, עמק המעיינות והגליל"
+      : "Guided nature and landscape tours in the Gilboa mountains, Springs Valley, and the Galilee",
+    longDesc: language === 'he'
+      ? "יום שלם של הליכה בנופים מרהיבים, מעיינות טבעיים, ואתרים היסטוריים. מתאים למשפחות, קבוצות חברים וצוותי עבודה."
+      : "A full day of stunning landscapes, natural springs, and historical sites. Suitable for families, friend groups, and work teams.",
     features: [
       "בחירה מ-3 חבילות סיור מותאמות",
       "מדריך מקצועי ומנוסה",
@@ -39,15 +44,19 @@ const services: Service[] = [
       "מתאים לגילאי 8-88+",
       "כולל מדריך לא כולל הסעות"
     ],
-    cta: "בחר את הסיור שלך",
+    cta: language === 'he' ? "בחר את הסיור שלך" : "Choose Your Tour",
     scrollTo: "choose-your-day"
   },
   {
     id: "vip",
     icon: Users,
-    title: "סיורי VIP",
-    shortDesc: "חוויה פרימיום מותאמת אישית עם שירות יוקרתי",
-    longDesc: "סיור אקסקלוסיבי ומותאם באופן מלא לרצונותיכם. שירות אישי, רכבי יוקרה, וחוויות קולינריות ברמה הגבוהה ביותר.",
+    title: language === 'he' ? "סיורי VIP" : "VIP Tours",
+    shortDesc: language === 'he'
+      ? "חוויה פרטית ומותאמת אישית בנופי הגלבוע והגליל"
+      : "Private, personalized experience in the Gilboa and Galilee landscapes",
+    longDesc: language === 'he'
+      ? "סיור אקסקלוסיבי ומותאם באופן מלא לרצונותיכם. שירות אישי, רכבי יוקרה, וחוויות קולינריות ברמה הגבוהה ביותר."
+      : "An exclusive, fully personalized tour. Private service, luxury vehicles, and premium culinary experiences.",
     features: [
       "מסלול מותאם אישית 100%",
       "רכבי יוקרה פרטיים עם נהג",
@@ -61,15 +70,19 @@ const services: Service[] = [
       "תיאום מלא לפי לוח הזמנים שלכם",
       "אפשרות לשילוב לינה"
     ],
-    cta: "תכנן סיור VIP",
+    cta: language === 'he' ? "תכנן סיור VIP" : "Plan a VIP Tour",
     scrollTo: "vip-tours"
   },
   {
     id: "odt",
     icon: Briefcase,
-    title: "ODT לארגונים",
-    shortDesc: "פיתוח ארגוני בחוץ - גיבוש וצוות לחברות",
-    longDesc: "תוכנית ODT מקצועית המשלבת אתגרים, פעילויות גיבוש, וחוויות בטבע. מתאים לחברות בכל הגדלים.",
+    title: language === 'he' ? "ODT לארגונים" : "ODT for Organizations",
+    shortDesc: language === 'he'
+      ? "ימי גיבוש וצוות בטבע הפתוח — הרי הגלבוע ועמק המעיינות"
+      : "Team-building days in the open — Gilboa mountains and Springs Valley",
+    longDesc: language === 'he'
+      ? "תוכנית גיבוש מקצועית בטבע המשלבת אתגרים, עבודת צוות, ופעילויות בנופי הגלבוע ועמק המעיינות. מתאים לחברות בכל הגדלים."
+      : "Professional outdoor team-building combining challenges, teamwork, and activities in the Gilboa and Springs Valley landscapes. Suitable for companies of all sizes.",
     features: [
       "תכנון אירוע מותאם לצרכי הארגון",
       "פעילויות גיבוש מקצועיות ומנחים מוסמכים",
@@ -83,12 +96,14 @@ const services: Service[] = [
       "כולל ציוד מקצועי",
       "צוות מדריכים וצוות תמיכה"
     ],
-    cta: "צור קשר לתכנון",
+    cta: language === 'he' ? "צור קשר לתכנון" : "Contact Us to Plan",
     scrollTo: "odt-section"
   }
 ];
 
 export const ServiceCards = () => {
+  const { language } = useLanguage();
+  const services = getServices(language);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const parallaxSlow = useParallax(0.15);
   const parallaxMedium = useParallax(0.25);
@@ -119,10 +134,12 @@ export const ServiceCards = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            השירותים שלנו
+            {language === 'he' ? 'השירותים שלנו' : 'Our Services'}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-            בחר את החוויה המושלמת עבורך - סיורים יומיים, חוויות VIP, או אירועי גיבוש לארגונים
+            {language === 'he'
+              ? 'סיורי טבע ונוף מודרכים, ימי גיבוש לארגונים, וחוויות VIP פרטיות — בהרי הגלבוע, עמק המעיינות והגליל'
+              : 'Guided nature and landscape tours, corporate team-building days, and private VIP experiences — in the Gilboa mountains, Springs Valley, and the Galilee'}
           </p>
         </div>
 
@@ -156,7 +173,7 @@ export const ServiceCards = () => {
                     className="w-full"
                     variant="outline"
                   >
-                    לחץ לפרטים מלאים
+                    {language === 'he' ? 'לחץ לפרטים מלאים' : 'Click for full details'}
                   </Button>
                 </CardContent>
               </Card>
@@ -187,7 +204,7 @@ export const ServiceCards = () => {
               <div className="space-y-6 pt-4">
                 {/* Features */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-3 text-right">מה כולל?</h3>
+                  <h3 className="text-lg font-semibold mb-3 text-right">{language === 'he' ? 'מה כולל?' : 'What\'s Included?'}</h3>
                   <div className="grid gap-3">
                     {selectedService.features.map((feature, idx) => (
                       <div key={idx} className="flex items-start gap-3 text-right">
@@ -200,7 +217,7 @@ export const ServiceCards = () => {
 
                 {/* Highlights */}
                 <div className="bg-muted/50 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold mb-3 text-right">נקודות מרכזיות</h3>
+                  <h3 className="text-lg font-semibold mb-3 text-right">{language === 'he' ? 'נקודות מרכזיות' : 'Key Highlights'}</h3>
                   <div className="space-y-2">
                     {selectedService.highlights.map((highlight, idx) => (
                       <p key={idx} className="text-sm text-muted-foreground text-right">
