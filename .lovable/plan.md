@@ -1,77 +1,40 @@
 
 
-## Plan: Hebrew-Safe WebSpeech Fallback
+## Plan: Add Hebrew Voice Test Button to AI Chat
 
 ### File to modify (1)
-1. **`src/utils/elevenLabsTTS.ts`**
+1. **`src/components/AIChat.tsx`** — Add a "בדיקת קול" button next to the VoiceSelector
 
-### Changes
+### Change
 
-**1. Pass `language` to the fallback call (line 113)**
+In the voice settings section (lines 778-786), add a compact ghost button after the VoiceSelector that:
+- Calls `speakWithElevenLabs` with the test phrase `"[he] שלום, אני דוד. ברוכים הבאים לסיורים שלנו בגליל."` using the currently selected voice
+- Is disabled while `isSpeaking` is true
+- Styled as a ghost button with gold text (`text-[var(--color-gold-nav)]`), no background, subtle border on hover
 
-Change the catch block to forward the language parameter:
-```typescript
-return speakWithWebSpeech(sanitizedText, onStart, onEnd, language);
+```tsx
+<Button
+  variant="ghost"
+  size="sm"
+  disabled={isSpeaking}
+  onClick={() => {
+    speakWithElevenLabs(
+      "[he] שלום, אני דוד. ברוכים הבאים לסיורים שלנו בגליל.",
+      selectedVoice,
+      () => setIsSpeaking(true),
+      () => setIsSpeaking(false),
+      'he'
+    );
+  }}
+  className="text-[var(--color-gold-nav)] hover:border hover:border-[var(--color-gold-nav)]/30 text-xs px-2 py-1 h-auto"
+>
+  🔊 בדיקת קול
+</Button>
 ```
 
-**2. Rewrite `speakWithWebSpeech` (lines 120–147)**
-
-Add a `language` parameter (default `'he'`). When language is Hebrew:
-- Check `getVoices()` for a voice with `lang === 'he-IL'` or `lang === 'he'`
-- If found → use it as fallback (current behavior)
-- If NOT found → skip speech, import `toast` from sonner, show `toast("Hebrew voice unavailable on this device")`, return `false`
-
-When language is NOT Hebrew → keep current behavior unchanged (use any available voice).
-
-```typescript
-function speakWithWebSpeech(
-  text: string,
-  onStart?: () => void,
-  onEnd?: () => void,
-  language: 'he' | 'en' = 'he'
-): boolean {
-  if (!('speechSynthesis' in window)) {
-    return false;
-  }
-
-  const voices = window.speechSynthesis.getVoices();
-
-  if (language === 'he') {
-    const hebrewVoice = voices.find(v => v.lang === 'he-IL' || v.lang === 'he');
-    if (!hebrewVoice) {
-      console.warn('[Web Speech] No Hebrew voice available, failing silently');
-      toast("Hebrew voice unavailable on this device");
-      return false;
-    }
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'he-IL';
-    utterance.rate = ttsConfig.defaultRate;
-    utterance.voice = hebrewVoice;
-    utterance.onstart = () => onStart?.();
-    utterance.onend = () => onEnd?.();
-    utterance.onerror = () => onEnd?.();
-    window.speechSynthesis.speak(utterance);
-    return true;
-  }
-
-  // English / other — unchanged fallback
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'en-US';
-  utterance.rate = ttsConfig.defaultRate;
-  const englishVoice = voices.find(v => v.lang.includes('en'));
-  if (englishVoice) utterance.voice = englishVoice;
-  utterance.onstart = () => onStart?.();
-  utterance.onend = () => onEnd?.();
-  utterance.onerror = () => onEnd?.();
-  window.speechSynthesis.speak(utterance);
-  return true;
-}
-```
-
-**3. Add import** — Add `import { toast } from "sonner";` at top of file.
+Inserted inside the `<div className="flex items-center gap-2">` block, after `<VoiceSelector ... />` and before the speaking animation.
 
 ### What does NOT change
-- ElevenLabs API call, voice selection, sanitization — unchanged
-- English fallback behavior — unchanged
-- No other files modified
+- No other chat functionality, layout, or components modified
+- VoiceSelector, SpeakingAnimation, message handling all unchanged
 
