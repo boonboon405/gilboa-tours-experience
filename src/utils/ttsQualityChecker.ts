@@ -154,7 +154,7 @@ export const cleanForHighQualityTTS = (text: string): string => {
   
   // Replace all known problematic words
   Object.entries(HEBREW_REPLACEMENTS).forEach(([slang, proper]) => {
-    const regex = new RegExp(`\\b${slang}\\b`, 'gi');
+    const regex = new RegExp('(?<![א-ת])' + slang + '(?![א-ת])', 'gi');
     cleaned = cleaned.replace(regex, proper);
   });
   
