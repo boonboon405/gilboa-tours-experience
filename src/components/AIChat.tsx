@@ -780,6 +780,23 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
                 selectedVoice={selectedVoice}
                 onVoiceChange={setSelectedVoice}
               />
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={isSpeaking}
+                onClick={() => {
+                  speakWithElevenLabs(
+                    "[he] שלום, אני דוד. ברוכים הבאים לסיורים שלנו בגליל.",
+                    selectedVoice,
+                    () => setIsSpeaking(true),
+                    () => setIsSpeaking(false),
+                    'he'
+                  );
+                }}
+                className="text-[var(--color-gold-nav)] hover:border hover:border-[var(--color-gold-nav)]/30 text-xs px-2 py-1 h-auto"
+              >
+                🔊 בדיקת קול
+              </Button>
               {isSpeaking && (
                 <SpeakingAnimation isActive={isSpeaking} size="sm" />
               )}
