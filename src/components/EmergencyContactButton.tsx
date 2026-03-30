@@ -11,14 +11,17 @@ import {
 import { Phone, Mail, MessageCircle, HeadphonesIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { openWhatsApp, whatsappTemplates, trackPhoneCall } from '@/utils/contactTracking';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const EmergencyContactButton = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { language } = useLanguage();
+  const isHe = language === 'he';
 
   const ownerPhone = '0537314235';
   const ownerWhatsApp = '972537314235';
   const ownerEmail = 'DavidIsraelTours@gmail.com';
-  const ownerName = 'דויד דניאל רחימי';
+  const ownerName = isHe ? 'דויד דניאל רחימי' : 'David Daniel Rahimi';
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -26,7 +29,7 @@ export const EmergencyContactButton = () => {
         <Button
           size="lg"
           className="fixed bottom-6 left-6 z-50 rounded-full h-16 w-16 bg-gradient-hero transition-all duration-300 group hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.6)] hover:scale-110 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
-          aria-label="דברו עם הבעלים"
+          aria-label={isHe ? 'דברו עם הבעלים' : 'Talk to the owner'}
         >
           <div className="relative">
             <HeadphonesIcon className="h-7 w-7 text-white group-hover:scale-110 transition-transform" />
@@ -43,8 +46,12 @@ export const EmergencyContactButton = () => {
               <HeadphonesIcon className="h-6 w-6 text-white" />
             </div>
             <div className="flex-1">
-              <SheetTitle className="text-2xl">צריכים עזרה? דברו איתי!</SheetTitle>
-              <Badge className="mt-1 bg-green-500 text-white">זמין עכשיו</Badge>
+              <SheetTitle className="text-2xl">
+                {isHe ? 'צריכים עזרה? דברו איתי!' : 'Need help? Talk to me!'}
+              </SheetTitle>
+              <Badge className="mt-1 bg-green-500 text-white">
+                {isHe ? 'זמין עכשיו' : 'Available Now'}
+              </Badge>
             </div>
           </div>
           <SheetDescription className="text-right text-base leading-relaxed pt-2">
@@ -52,12 +59,13 @@ export const EmergencyContactButton = () => {
               {ownerName}
             </strong>
             <span className="block text-muted-foreground">
-              מומחה הטיולים שלנו
+              {isHe ? 'מומחה הטיולים שלנו' : 'Our Tour Expert'}
             </span>
             <div className="mt-4 p-4 bg-muted rounded-lg border-r-4 border-primary">
               <p className="text-sm text-foreground">
-                💬 אני כאן בשבילכם! אם יש שאלות, רוצים ליווי באתר יחד איתי? רוצים ייעוץ אישי - 
-                אל תהססו לפנות אליי ישירות. אענה בשמחה!
+                {isHe
+                  ? '💬 אני כאן בשבילכם! אם יש שאלות, רוצים ליווי באתר יחד איתי? רוצים ייעוץ אישי — אל תהססו לפנות אליי ישירות. אענה בשמחה!'
+                  : '💬 I\'m here for you! Have questions, want a guided walkthrough of the site, or need personal advice — don\'t hesitate to reach out directly. I\'ll be happy to help!'}
               </p>
             </div>
           </SheetDescription>
@@ -65,7 +73,9 @@ export const EmergencyContactButton = () => {
 
         <div className="space-y-4 mt-8">
           <div className="space-y-3">
-            <h3 className="font-semibold text-lg text-foreground">דרכי התקשרות:</h3>
+            <h3 className="font-semibold text-lg text-foreground">
+              {isHe ? 'דרכי התקשרות:' : 'Contact Methods:'}
+            </h3>
             
             <Button
               variant="whatsapp"
@@ -75,8 +85,8 @@ export const EmergencyContactButton = () => {
             >
               <MessageCircle className="ml-2 h-6 w-6" />
               <div className="flex-1 text-right">
-                <div>שלחו הודעה בוואטסאפ</div>
-                <div className="text-xs opacity-80">מומלץ - תגובה מהירה!</div>
+                <div>{isHe ? 'שלחו הודעה בוואטסאפ' : 'Send a WhatsApp Message'}</div>
+                <div className="text-xs opacity-80">{isHe ? 'מומלץ — תגובה מהירה!' : 'Recommended — fast response!'}</div>
               </div>
             </Button>
 
@@ -91,7 +101,7 @@ export const EmergencyContactButton = () => {
             >
               <Phone className="ml-2 h-6 w-6" />
               <div className="flex-1 text-right">
-                <div>התקשרו ישירות</div>
+                <div>{isHe ? 'התקשרו ישירות' : 'Call Directly'}</div>
                 <div className="text-xs opacity-80">{ownerPhone}</div>
               </div>
             </Button>
@@ -105,7 +115,7 @@ export const EmergencyContactButton = () => {
               <a href={`mailto:${ownerEmail}`}>
                 <Mail className="ml-2 h-6 w-6" />
                 <div className="flex-1 text-right">
-                  <div>שלחו אימייל</div>
+                  <div>{isHe ? 'שלחו אימייל' : 'Send an Email'}</div>
                   <div className="text-xs text-muted-foreground">{ownerEmail}</div>
                 </div>
               </a>
@@ -115,18 +125,18 @@ export const EmergencyContactButton = () => {
           <div className="mt-8 p-4 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg border">
             <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
               <span className="text-2xl">⏰</span>
-              זמני זמינות
+              {isHe ? 'זמני זמינות' : 'Availability Hours'}
             </h4>
             <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• ימים א׳-ה׳: 08:00-20:00</li>
-              <li>• יום ו׳: 08:00-14:00</li>
-              <li>• במקרים דחופים - גם מחוץ לשעות אלו!</li>
+              <li>{isHe ? '• ימים א׳–ה׳: 08:00–20:00' : '• Sun–Thu: 08:00–20:00'}</li>
+              <li>{isHe ? '• יום ו׳: 08:00–14:00' : '• Fri: 08:00–14:00'}</li>
+              <li>{isHe ? '• במקרים דחופים — גם מחוץ לשעות אלו!' : '• Urgent cases — available outside these hours too!'}</li>
             </ul>
           </div>
 
           <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
             <p className="text-sm text-amber-900 dark:text-amber-100 text-center">
-              <strong>🎯 המטרה שלי:</strong> שתמצאו את החוויה המושלמת!
+              <strong>🎯 {isHe ? 'המטרה שלי:' : 'My Goal:'}</strong> {isHe ? 'שתמצאו את החוויה המושלמת!' : 'Help you find the perfect experience!'}
             </p>
           </div>
         </div>
