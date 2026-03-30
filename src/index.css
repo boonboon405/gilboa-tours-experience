@@ -254,6 +254,14 @@ All colors MUST be HSL.
   }
 }
 
+/* Section heading utility */
+.section-heading {
+  font-family: 'Heebo', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1.2;
+}
+
 /* Custom animation utilities */
 @layer utilities {
   .animate-pulse-slow {

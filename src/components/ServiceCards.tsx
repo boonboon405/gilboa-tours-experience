@@ -133,10 +133,10 @@ export const ServiceCards = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="section-heading mb-4">
             {language === 'he' ? 'השירותים שלנו' : 'Our Services'}
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-[1.7]">
             {language === 'he'
               ? 'סיורי טבע ונוף מודרכים, ימי גיבוש לארגונים, וחוויות VIP פרטיות — בהרי הגלבוע, עמק המעיינות והגליל'
               : 'Guided nature and landscape tours, corporate team-building days, and private VIP experiences — in the Gilboa mountains, Springs Valley, and the Galilee'}

@@ -28,7 +28,7 @@ const Testimonials = () => {
   return (
     <section className="bg-background border-t-[3px] border-primary py-20 px-4">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-foreground" style={{ fontFamily: 'Heebo, sans-serif', fontWeight: 700 }}>
+        <h2 className="section-heading text-center mb-16 text-foreground">
           {lang === 'he' ? 'מה אומרים המשתתפים' : 'What Our Guests Say'}
         </h2>
 

@@ -80,7 +80,7 @@ export const WhyChooseUs = () => {
                   <h3 className="text-xl font-bold text-foreground mb-2">
                     {reason.title}
                   </h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground leading-[1.7]">
                     {reason.desc}
                   </p>
                 </CardContent>
