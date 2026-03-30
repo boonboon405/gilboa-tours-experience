@@ -1,49 +1,34 @@
 
 
-## Implement 3 Remaining 🟢 Nice-to-Have Items
+## Fix 4 Mobile-Specific Issues
 
-### Status Summary
-- ✅ Animated counters — already in `AboutDavid.tsx`
-- ✅ Parallax hook exists and is used on background blobs
-- ❌ 3 items still missing (below)
+None of the mobile issues have been addressed yet. Here is the plan:
 
----
+### 1. EmergencyContactButton — avoid mobile browser UI overlap
+**File:** `src/components/EmergencyContactButton.tsx`
+- Change `bottom-6 left-6 h-16 w-16` to `bottom-20 left-4 h-12 w-12 md:bottom-6 md:left-6 md:h-16 md:w-16`
+- Smaller on mobile (48px), moved higher to avoid browser chrome overlap
+- Full size on desktop
 
-### 1. Pulse animation on "Book Now" nav button
-**File:** `src/components/Navigation.tsx` + `src/index.css`
+### 2. Chat page tabs — icons-only on small screens
+**File:** `src/pages/Chat.tsx`
+- Wrap the Hebrew text labels in `<span className="hidden sm:inline">...</span>`
+- Icons remain visible at all sizes, text appears only on sm+ screens
 
-Add a CSS `@keyframes pulse-cta` that runs every 8 seconds — a subtle scale+glow pulse on the "Book Now" / "הזמינו סיור" button in the header. Apply via a utility class `.animate-pulse-cta`.
+### 3. ChooseYourDay — ensure no overflow at 375px
+**File:** `src/components/ChooseYourDay.tsx`
+- Audit checkbox grids and ensure they use `grid-cols-1` on mobile, expanding to multi-column on `sm:`/`md:`
+- Ensure image galleries use responsive widths (`w-full`) not fixed pixel widths
 
-```css
-@keyframes pulse-cta {
-  0%, 85%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0); }
-  90% { transform: scale(1.05); box-shadow: 0 0 12px 4px rgba(var(--accent-rgb), 0.3); }
-  95% { transform: scale(1.02); box-shadow: 0 0 6px 2px rgba(var(--accent-rgb), 0.1); }
-}
-```
+### 4. VIPTours — collapse regions into accordions on mobile
+**File:** `src/components/VIPTours.tsx`
+- Wrap each region's destination list in an `Accordion` component (already available in `ui/accordion.tsx`)
+- On mobile, regions start collapsed; user taps to expand one at a time
+- Prevents extremely tall scrollable checkbox lists
 
-### 2. Skeleton loading in PublicFAQ
-**File:** `src/components/PublicFAQ.tsx`
-
-Replace the spinner with 3 skeleton cards matching the FAQ accordion layout — a heading bar + 4 accordion-item-shaped rectangles per card. Uses existing `Skeleton` component.
-
-### 3. Scroll-reveal on LandscapeGallery images
-**File:** `src/components/LandscapeGallery.tsx`
-
-Wrap each gallery card in a `motion.div` with `initial={{ opacity: 0, y: 30 }}` and `whileInView={{ opacity: 1, y: 0 }}` with staggered delays. Subtle scale on hover already exists via CSS; this adds the scroll-triggered entrance.
-
-### 4. Video hero slide (dependency note)
-Replacing a hero slide with a drone video requires an actual `.mp4` asset. Two options:
-- **Option A**: User provides a 10-second drone clip of the Gilboa
-- **Option B**: Skip this item (a static image carousel is already professional)
-
-I'll implement items 1-3 now and flag item 4 for user decision.
-
----
-
-### Files to modify (3)
-1. `src/index.css` — add `@keyframes pulse-cta` + utility class
-2. `src/components/Navigation.tsx` — add pulse class to Book Now button
-3. `src/components/PublicFAQ.tsx` — replace spinner with skeleton cards
-4. `src/components/LandscapeGallery.tsx` — add framer-motion scroll-reveal to image cards
+### Files modified (4)
+1. `src/components/EmergencyContactButton.tsx`
+2. `src/pages/Chat.tsx`
+3. `src/components/ChooseYourDay.tsx`
+4. `src/components/VIPTours.tsx`
 
