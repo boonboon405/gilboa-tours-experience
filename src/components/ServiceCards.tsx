@@ -44,15 +44,19 @@ const getServices = (language: string): Service[] => [
       "מתאים לגילאי 8-88+",
       "כולל מדריך לא כולל הסעות"
     ],
-    cta: "בחר את הסיור שלך",
+    cta: language === 'he' ? "בחר את הסיור שלך" : "Choose Your Tour",
     scrollTo: "choose-your-day"
   },
   {
     id: "vip",
     icon: Users,
-    title: "סיורי VIP",
-    shortDesc: "חוויה פרימיום מותאמת אישית עם שירות יוקרתי",
-    longDesc: "סיור אקסקלוסיבי ומותאם באופן מלא לרצונותיכם. שירות אישי, רכבי יוקרה, וחוויות קולינריות ברמה הגבוהה ביותר.",
+    title: language === 'he' ? "סיורי VIP" : "VIP Tours",
+    shortDesc: language === 'he'
+      ? "חוויה פרטית ומותאמת אישית בנופי הגלבוע והגליל"
+      : "Private, personalized experience in the Gilboa and Galilee landscapes",
+    longDesc: language === 'he'
+      ? "סיור אקסקלוסיבי ומותאם באופן מלא לרצונותיכם. שירות אישי, רכבי יוקרה, וחוויות קולינריות ברמה הגבוהה ביותר."
+      : "An exclusive, fully personalized tour. Private service, luxury vehicles, and premium culinary experiences.",
     features: [
       "מסלול מותאם אישית 100%",
       "רכבי יוקרה פרטיים עם נהג",
