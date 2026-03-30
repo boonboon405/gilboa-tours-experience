@@ -7,7 +7,7 @@ import { Mail, Phone, MessageCircle, Send, Loader2, CheckCircle2, ArrowLeft } fr
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
-import { openWhatsApp, whatsappTemplates, trackPhoneCall } from '@/utils/contactTracking';
+import { openWhatsApp, getWhatsappTemplate, trackPhoneCall } from '@/utils/contactTracking';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const contactSchema = z.object({
