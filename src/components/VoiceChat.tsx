@@ -220,8 +220,7 @@ Tell me, how many people? What interests you?`;
       };
       setMessages([initialMsg]);
       greetingSpokenRef.current = true;
-      
-      setTimeout(() => speakText(greeting), 500);
+      // Do NOT auto-speak greeting — only speak after user interaction
     }
   }, [language, quizResults]);
 
@@ -410,7 +409,7 @@ ${transcript}`;
     };
     setMessages([initialMsg]);
     
-    setTimeout(() => speakText(greeting), 500);
+    // Do NOT auto-speak on clear — wait for user interaction
 
     toast({
       title: language === 'he' ? "שיחה חדשה" : "New Conversation",
