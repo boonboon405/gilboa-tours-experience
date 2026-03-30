@@ -28,6 +28,7 @@ const bookingSchema = z.object({
 export const BookingForm = () => {
   const dispatch = useAppDispatch();
   const { toast } = useToast();
+  const [submitted, setSubmitted] = useState(false);
   
   const language = useAppSelector(getLanguage);
   const isHe = language === 'he';
