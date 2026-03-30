@@ -6,6 +6,7 @@ import { Calendar, Users, Briefcase, CheckCircle2, ArrowLeft } from "lucide-reac
 import { useParallax } from '@/hooks/use-parallax';
 import { use3DTilt } from '@/hooks/use-3d-tilt';
 import { getClickableProps } from '@/hooks/use-keyboard-nav';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Service {
   id: string;
