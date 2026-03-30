@@ -197,7 +197,17 @@ export const Navigation = () => {
 
             <div className="flex-1" />
 
-            <Link to="/booking" onClick={() => setDrawerOpen(false)} className="mt-6">
+            <Link to="/chat" onClick={() => setDrawerOpen(false)} className="mt-6">
+              <Button
+                variant="outline"
+                className="w-full rounded-full py-3 text-lg font-semibold border-accent text-white hover:bg-accent hover:text-accent-foreground transition-all duration-200 gap-2"
+              >
+                <MessageCircle className="h-5 w-5" />
+                {language === 'he' ? 'תכנן עם AI' : 'Plan with AI'}
+              </Button>
+            </Link>
+
+            <Link to="/booking" onClick={() => setDrawerOpen(false)} className="mt-3">
               <Button
                 className="w-full bg-accent text-accent-foreground rounded-full py-3 text-lg font-semibold hover:brightness-110 transition-all duration-200"
                 aria-label={language === 'he' ? 'הזמן עכשיו' : 'Book Now'}
