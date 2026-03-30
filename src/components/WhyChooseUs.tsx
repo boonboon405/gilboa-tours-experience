@@ -56,7 +56,7 @@ export const WhyChooseUs = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <h2 className="text-4xl md:text-5xl font-bold text-center text-foreground mb-16">
-          למה לבחור בדויד טורס?
+          {language === 'he' ? 'למה לבחור בדויד טורס?' : 'Why Choose David Tours?'}
         </h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">

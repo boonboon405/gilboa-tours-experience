@@ -217,7 +217,7 @@ export const ServiceCards = () => {
 
                 {/* Highlights */}
                 <div className="bg-muted/50 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold mb-3 text-right">נקודות מרכזיות</h3>
+                  <h3 className="text-lg font-semibold mb-3 text-right">{language === 'he' ? 'נקודות מרכזיות' : 'Key Highlights'}</h3>
                   <div className="space-y-2">
                     {selectedService.highlights.map((highlight, idx) => (
                       <p key={idx} className="text-sm text-muted-foreground text-right">

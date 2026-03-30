@@ -20,7 +20,7 @@ const translations = {
     // Hero
     'hero.title': 'Discover the Ultimate Team Experience',
     'hero.subtitle': 'in the Heart of the Gilboa',
-    'hero.description': 'Powerful, fun-filled day trips combining history, nature, team-building, and unforgettable memories for your company.',
+    'hero.description': 'Guided nature tours, team-building days, and private VIP experiences in the Gilboa mountains, Springs Valley, and the Galilee.',
     'hero.cta': 'Book Your Adventure',
     'hero.whatsapp': 'WhatsApp Us',
     
