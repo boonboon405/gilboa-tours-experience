@@ -155,7 +155,7 @@ export const Navigation = () => {
             {/* Book Now — always visible */}
             <Link to="/booking">
               <Button
-                className="bg-accent text-accent-foreground rounded-full px-5 md:px-6 py-2 text-sm md:text-base font-semibold hover:brightness-110 hover:scale-[1.02] transition-all duration-200 min-w-0 md:min-w-[140px] animate-pulse-cta"
+                className="bg-accent text-accent-foreground rounded-full px-5 md:px-6 py-2 text-sm md:text-base font-semibold hover:brightness-110 hover:scale-[1.02] transition-all duration-200 min-w-0 md:min-w-[140px]"
                 aria-label={language === 'he' ? 'הזמן עכשיו' : 'Book Now'}
               >
                 {language === 'he' ? 'הזמן עכשיו' : 'Book Now'}
