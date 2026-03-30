@@ -1,30 +1,26 @@
 
 
-## Plan: Fix TTS Hebrew Word Boundary Matching
+## Plan: Add Hebrew Language Anchor Prefix to TTS
 
-### Problem
-Two files use broken regex for Hebrew word replacement:
-1. **`ttsSanitizer.ts`** — No boundaries at all (`new RegExp(original, 'g')`) → matches substrings
-2. **`ttsQualityChecker.ts`** — Uses `\b` which doesn't work with Hebrew characters → misses standalone words OR matches incorrectly
+### File to modify (1)
+1. **`supabase/functions/text-to-speech/index.ts`** — line 83-85
 
-Both cause corruption: "קולינריה" → "נהדרינריה" because "קול" matches as a substring.
+### Change
 
-### Fix
-Use Hebrew-aware lookbehind/lookahead: `(?<![א-ת])PATTERN(?![א-ת])`
+In the Hebrew branch (line 83: `if (language === 'he' || hasHebrew)`), prepend `[he] ` to `processedText`:
 
-This ensures the pattern only matches when NOT surrounded by other Hebrew letters.
+```typescript
+if (language === 'he' || hasHebrew) {
+  processedText = '[he] ' + processedText;
+  console.log('Processing as Hebrew - enforcing Hebrew language with [he] prefix');
+}
+```
 
-### Files to modify (2)
-
-1. **`src/utils/ttsSanitizer.ts`** (line 66)
-   - Change `new RegExp(original, 'g')` to `new RegExp('(?<![א-ת])' + original + '(?![א-ת])', 'g')`
-
-2. **`src/utils/ttsQualityChecker.ts`** (lines 100, 106, 157)
-   - Replace all `\\b${word}\\b` and `\\b${slang}\\b` patterns with `(?<![א-ת])${word}(?![א-ת])` for Hebrew words
-   - Keep `\b` for pure ASCII words (like `DNA`) — but since all entries in the forbidden/replacement lists are Hebrew, apply the Hebrew boundary to all
+The English branch remains unchanged. No other API call parameters are modified.
 
 ### What does NOT change
-- No replacement rules added or removed
-- No config changes
-- No other functionality affected
+- Voice settings, model_id, speed, voice selection — all unchanged
+- Character cleaning logic — unchanged
+- Rate limiting, CORS, error handling — unchanged
+- Client-side code — unchanged
 
