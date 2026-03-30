@@ -81,15 +81,15 @@ const Chat = () => {
           <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="voice" className="gap-2">
               <Mic className="w-4 h-4" />
-              צ'אט קולי
+              <span className="hidden sm:inline">צ'אט קולי</span>
             </TabsTrigger>
             <TabsTrigger value="text" className="gap-2">
               <MessageSquare className="w-4 h-4" />
-              צ'אט טקסט
+              <span className="hidden sm:inline">צ'אט טקסט</span>
             </TabsTrigger>
             <TabsTrigger value="compare" className="gap-2">
               <Info className="w-4 h-4" />
-              השוואה
+              <span className="hidden sm:inline">השוואה</span>
             </TabsTrigger>
           </TabsList>
 

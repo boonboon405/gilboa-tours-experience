@@ -28,7 +28,7 @@ export const EmergencyContactButton = () => {
       <SheetTrigger asChild>
         <Button
           size="lg"
-          className="fixed bottom-6 left-6 z-50 rounded-full h-16 w-16 bg-gradient-hero transition-all duration-300 group hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.6)] hover:scale-110 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+          className="fixed bottom-20 left-4 z-50 rounded-full h-12 w-12 md:bottom-6 md:left-6 md:h-16 md:w-16 bg-gradient-hero transition-all duration-300 group hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.6)] hover:scale-110 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
           aria-label={isHe ? 'דברו עם הבעלים' : 'Talk to the owner'}
         >
           <div className="relative">
