@@ -22,7 +22,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <SEOKeywords />
       
-      <EmergencyContactButton />
+      
       <Navigation />
       <div id="home">
         <Hero />
