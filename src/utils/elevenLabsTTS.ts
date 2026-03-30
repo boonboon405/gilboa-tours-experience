@@ -111,7 +111,7 @@ export async function speakWithElevenLabs(
     onEnd?.();
     
     // Fallback to Web Speech API
-    return speakWithWebSpeech(sanitizedText, onStart, onEnd);
+    return speakWithWebSpeech(sanitizedText, onStart, onEnd, language);
   }
 }
 
