@@ -221,7 +221,7 @@ export const VIPTours = () => {
               <CardTitle className="section-heading mb-4">
                 טיול VIP מיוחד לאורחים מחו״ל
               </CardTitle>
-              <CardDescription className="text-lg md:text-xl leading-relaxed">
+              <CardDescription className="text-lg md:text-xl leading-[1.7]">
                 <p className="mb-4">
                   החברה שלכם מארחת אורחים מחו״ל? דייויד טורס יכול לארח אותם בטיול VIP ברכב ממוזג מפואר ולהעניק להם חוויית טיול בלתי נשכחת ברחבי ישראל.
                 </p>

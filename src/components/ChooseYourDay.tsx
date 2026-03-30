@@ -507,7 +507,7 @@ export const ChooseYourDay = () => {
             )}
 
             <div className="max-w-3xl mx-auto space-y-4">
-              <p className="text-xl text-muted-foreground">
+              <p className="text-xl text-muted-foreground leading-[1.7]">
                 בחרו מתוך הקטגוריות את  האטרקציות או האתרים המועדפים עליכם
               </p>
             <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-lg">
