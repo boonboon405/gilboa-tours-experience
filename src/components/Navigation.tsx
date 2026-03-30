@@ -26,7 +26,7 @@ const navLinks = [
   { en: 'Tours', he: 'סיורים', target: '#choose-your-day', sectionId: 'choose-your-day' },
   { en: 'Team Building', he: 'גיבוש', target: '#odt-section', sectionId: 'odt-section' },
   { en: 'VIP', he: 'VIP', target: '#vip-tours', sectionId: 'vip-tours' },
-  { en: 'About', he: 'אודות', target: '/accessibility', isLink: true },
+  { en: 'About', he: 'אודות', target: '#about', sectionId: 'about' },
   { en: 'Contact', he: 'צור קשר', target: '#contact', sectionId: 'contact' },
 ];
 
@@ -128,20 +128,8 @@ export const Navigation = () => {
             {navLinks.map((link) => {
               const isActive = link.sectionId ? activeSection === link.sectionId : false;
 
-              if (link.isLink) {
-                return (
-                  <Link
-                    key={link.en}
-                    to={link.target}
-                    className={`nav-link-underline relative flex flex-col items-center px-1 py-1 ${linkColor} transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded`}
-                    style={!isScrolled ? { textShadow: '0px 1px 3px rgba(0,0,0,0.5)' } : undefined}
-                    aria-label={language === 'he' ? link.he : link.en}
-                  >
-                    <span className="text-sm font-semibold leading-tight">{language === 'he' ? link.he : link.en}</span>
-                    <span className="text-[11px] opacity-70 leading-tight">{language === 'he' ? link.en : link.he}</span>
-                  </Link>
-                );
-              }
+
+
 
               return (
                 <a
@@ -260,24 +248,8 @@ export const Navigation = () => {
               {navLinks.map((link) => {
                 const isActive = link.sectionId ? activeSection === link.sectionId : false;
 
-                if (link.isLink) {
-                  return (
-                    <Link
-                      key={link.en}
-                      to={link.target}
-                      onClick={() => setDrawerOpen(false)}
-                      className={`flex flex-col text-white/90 hover:text-white transition-colors py-2 focus-visible:ring-2 focus-visible:ring-primary rounded ${
-                        isActive ? 'border-l-3 border-accent pl-3' : ''
-                      }`}
-                      aria-label={language === 'he' ? link.he : link.en}
-                    >
-                      <span className="text-xl font-semibold" style={{ fontFamily: "'Heebo', sans-serif" }}>
-                        {language === 'he' ? link.he : link.en}
-                      </span>
-                      <span className="text-sm opacity-60">{language === 'he' ? link.en : link.he}</span>
-                    </Link>
-                  );
-                }
+
+
 
                 return (
                   <a
