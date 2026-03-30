@@ -81,8 +81,8 @@ serve(async (req) => {
     
     // Force Hebrew language context by adding a silent Hebrew prefix if text should be Hebrew
     if (language === 'he' || hasHebrew) {
-      // Text is Hebrew - ensure model processes as Hebrew only
-      console.log('Processing as Hebrew - enforcing Hebrew language');
+      processedText = '[he] ' + processedText;
+      console.log('Processing as Hebrew - enforcing Hebrew language with [he] prefix');
     } else {
       // Text is English only
       console.log('Processing as English - enforcing English language');
