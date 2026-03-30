@@ -1,128 +1,134 @@
 
 
-## Confirmation: Current Header Code
+## Cross-Site Audit & Polish — Every Page
 
-The current `src/components/Navigation.tsx` (434 lines) includes:
-- Logo with gradient text
-- MegaMenu component (elaborate dropdowns with images, breadcrumbs, highlights)
-- Quiz button with badge counter
-- LanguageSelector dropdown
-- Accessibility link
-- Book Tour button
-- Admin auth dropdown menu
-- Mobile menu (conditional render, not a drawer)
-- TeamDNAQuiz dialog
-- Scroll progress bar
-- IntersectionObserver for active section
+### All Pages and Routes
 
-The MegaMenu (`src/components/MegaMenu.tsx`, 239 lines) is a separate component with image-heavy dropdown panels.
+| Route | Page | Type |
+|---|---|---|
+| `/` | Index (homepage) | Public |
+| `/booking` | Booking | Public |
+| `/chat` | Chat | Public |
+| `/auth` | Auth (login/signup) | Public |
+| `/accessibility` | AccessibilityStatement | Public |
+| `/keywords` | KeywordsList | Public |
+| `/ai-settings`, `/settings/ai` | AISettings | Public |
+| `/admin` | AdminDashboard | Protected |
+| `/admin/keywords` | AdminKeywords | Protected |
+| `/admin/chat` | AdminChat | Protected |
+| `/admin/knowledge` | AdminKnowledgeBase | Protected |
+| `/admin/testimonials` | AdminTestimonials | Protected |
+| `/admin/email-templates` | AdminEmailTemplates | Protected |
+| `/admin/email-automation` | AdminEmailAutomation | Protected |
+| `/admin/ai-responses` | AdminAIResponses | Protected |
+| `/admin/categories` | AdminCategories | Protected |
+| `/admin/gallery` | AdminGallery | Protected |
+| `/chat-analytics` | ChatAnalytics | Protected |
+| `/booking-analytics` | BookingAnalytics | Protected |
+| `/dashboard` | MasterDashboard | Protected |
+| `/leads` | LeadManagement | Protected |
+| `*` | NotFound (404) | Public |
 
 ---
 
-## Plan: Premium Header Rebuild
+## Audit Findings & Fixes
 
-### File to modify (1)
-**`src/components/Navigation.tsx`** — Complete rewrite
+### STEP 1 — Verification Results
 
-### What gets removed
-- MegaMenu import and usage (the elaborate image dropdowns)
-- Scroll progress bar
-- Quiz button in the header (it can remain via the TeamDNAQuiz dialog triggered elsewhere)
-- The old mobile menu (inline conditional render)
+1. **Heebo font**: Loaded via Google Fonts in `index.html`. Applied globally in `index.css`. ✅ OK
+2. **Color palette**: All public-facing components use CSS variables. **One violation**: `NotFound.tsx` uses hardcoded `bg-gray-100`, `text-gray-600`, `text-blue-500`, `text-blue-700`. **FIX needed.**
+3. **Gold nav color**: Navigation uses `text-gold-nav` with text-shadow. ✅ OK
+4. **ExitIntentModal**: Search confirms zero traces. ✅ Gone
+5. **Broken images**: ChooseYourDay imports from `@/assets/` — need to verify these files exist. Gallery components use static imports + DB images with fallbacks. Will flag if missing.
+6. **Console errors**: No errors recorded. ✅
 
-### What gets preserved
-- TeamDNAQuiz dialog (kept at bottom of component, opened from admin menu or elsewhere)
-- Auth/admin dropdown menu (kept in desktop right side, compact)
-- LanguageSelector (kept in desktop right side)
-- IntersectionObserver for active section highlighting
-- Smooth scroll handler (`handleNavClick`)
-- All imports from AuthContext, LanguageContext
+### STEP 2 — Spacing & Padding Issues Found
 
-### New Structure
-
-```text
-<nav> (fixed, top-0, w-full, z-[1000], h-[72px] desktop / h-[60px] mobile)
-  ├─ Transparent state (scrollY < 80): no bg, no border, no shadow
-  ├─ Scrolled state (scrollY >= 80): backdrop-blur-[12px], bg-[rgba(250,249,247,0.85)], shadow
-  │
-  ├─ <div max-w-7xl mx-auto px-6> (container)
-  │   ├─ LEFT: Logo
-  │   │   └─ Compass icon (Lucide) + "David Tours" text
-  │   │   └─ Color: gold-nav when transparent, primary when scrolled
-  │   │   └─ Heebo 800, 1.5rem desktop / 1.25rem mobile
-  │   │
-  │   ├─ CENTER (hidden below lg): Nav Links
-  │   │   └─ 6 links: Home|Tours|Team Building|VIP|About|Contact
-  │   │   └─ Each link has Hebrew subtitle (12px, 70% opacity)
-  │   │   └─ Color: gold-nav with text-shadow
-  │   │   └─ Hover: underline slides in from left (::after pseudo, scaleX, 300ms)
-  │   │   └─ Active: bottom border in accent color
-  │   │
-  │   ├─ RIGHT: CTA + utilities
-  │   │   └─ "Book Now / הזמן עכשיו" button (always visible, all viewports)
-  │   │   └─ LanguageSelector (desktop only)
-  │   │   └─ Admin auth dropdown (desktop only, if logged in)
-  │   │   └─ Hamburger ☰ (mobile only, below md)
-  │   │
-  ├─ MOBILE DRAWER (Sheet from right)
-  │   ├─ bg-[hsl(var(--primary-dark))]
-  │   ├─ X close button top-right
-  │   ├─ Nav links vertical, white, Heebo 600, 1.25rem, with Hebrew subtitles
-  │   ├─ Full-width "Book Now" CTA at bottom
-  │   ├─ LanguageSelector
-  │   ├─ Admin links if authenticated
-  │   └─ body overflow:hidden while open
-```
-
-### Nav Links Definition (bilingual)
-
-| EN Label | HE Subtitle | Target |
+| Component | Issue | Fix |
 |---|---|---|
-| Home | בית | #home |
-| Tours | סיורים | #choose-your-day |
-| Team Building | גיבוש | #odt-section |
-| VIP | VIP | #vip-tours |
-| About | אודות | #accessibility (links to /accessibility) |
-| Contact | צור קשר | #contact |
+| `AccessibilityInfoSection` | Uses `py-16` instead of `py-20` | Change to `py-20` |
+| `Testimonials` | Cards use `p-8` ✅, section uses `py-20` ✅ | OK |
+| `PublicFAQ` | `py-20` ✅, cards `p-6` ✅ | OK |
+| `ContactSection` | `py-20` ✅, cards `p-6` ✅ | OK |
+| `ODTSection` | `py-20` ✅ | OK |
+| `WhyChooseUs` | `py-20` ✅, `p-6` ✅ | OK |
+| `ServiceCards` | `py-20` ✅ | OK |
+| `Footer` | `py-12` — slightly tight | Change to `py-16` |
+| `Chat` page | `py-8` main content — tight | Change to `py-12 md:py-20` |
+| `Booking` page | `pt-24 pb-16` — slightly unbalanced | Change to `pt-28 pb-20` |
+| `PublicFAQ` CTA link | Uses `px-6 py-3` inline link, not a `<Button>` — inconsistent | Convert to `<Button>` component |
+| `TestimonialSubmissionForm` in Index | wrapped in `py-20` ✅ | OK |
+| `Testimonials` heading | `mb-16` — adequate gap ✅ | OK |
 
-### Hover Underline Effect
+### STEP 3 — Mobile Responsiveness Issues
 
-Add CSS in `index.css`:
-```css
-.nav-link-underline::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: hsl(var(--accent));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 300ms ease;
-}
-.nav-link-underline:hover::after {
-  transform: scaleX(1);
-}
-```
+| Component | Issue | Fix |
+|---|---|---|
+| `Hero` | h1 uses `text-4xl md:text-6xl lg:text-7xl` — OK but no clamp | Add `clamp()` for smoother scaling |
+| `Testimonials` | `grid-cols-1 md:grid-cols-3` — jumps from 1→3, no tablet 2-col | Change to `md:grid-cols-2 lg:grid-cols-3` |
+| `ServiceCards` | `grid-cols-1 md:grid-cols-3` — same jump | Change to `md:grid-cols-2 lg:grid-cols-3` |
+| `WhyChooseUs` | `md:grid-cols-2 lg:grid-cols-4` ✅ | OK |
+| `ODTSection` | `lg:grid-cols-2` ✅ | OK |
+| `ChooseYourDay` | Long content — needs verified mobile padding | Ensure adequate `px-4` and readable font |
+| `NotFound` | No responsive consideration, hardcoded styles | Full restyle |
+| `Chat` page | `TabsList grid-cols-3` — may be tight on 375px | Add text size reduction on mobile |
+| `Navigation` mobile hamburger | Shows below `lg` (1024px), desktop nav hidden below `lg` ✅ | OK |
+| Mobile touch targets | Buttons use `h-10` default (40px) — close to 44px but slightly under | Add `min-h-[44px]` to key mobile buttons |
 
-### Mobile Drawer
+### STEP 4 — Tablet Responsiveness
 
-Use the existing `Sheet` component (`src/components/ui/sheet.tsx`) which is already in the project — it handles backdrop, close-on-click, body scroll lock, and slide-in animation from the right.
+| Component | Issue | Fix |
+|---|---|---|
+| `Testimonials` | Jumps 1→3 columns | Add `md:grid-cols-2` breakpoint |
+| `ServiceCards` | Jumps 1→3 columns | Add `md:grid-cols-2` breakpoint |
+| `AccessibilityInfoSection` features grid | `md:grid-cols-2 lg:grid-cols-3` ✅ | OK |
+| `LandscapeGallery` | Uses ImageGallery — need to verify grid | Check internal grid |
+| Nav links | Visible at `lg` (1024px+), hamburger below — correct for this design | OK |
 
-### Accessibility
-- `aria-label` on nav, hamburger, close button, all links, CTA
-- `role="navigation"`, `role="menuitem"` on links
-- `focus-visible:ring-2 focus-visible:ring-primary` on all interactive elements
-- Keyboard navigable (native `<a>` and `<button>` elements)
+---
 
-### Files to modify (2)
-1. **`src/components/Navigation.tsx`** — Full rewrite
-2. **`src/index.css`** — Add `.nav-link-underline` utility class
+## Implementation Plan (Files to Edit)
+
+### 1. `src/pages/NotFound.tsx` — Full restyle
+- Remove all hardcoded colors (`bg-gray-100`, `text-gray-600`, `text-blue-500`)
+- Use design system variables: `bg-background`, `text-muted-foreground`, `text-primary`
+- Add Heebo font, proper spacing, bilingual text
+- Add link back home with `<Button>` component
+
+### 2. `src/components/Testimonials.tsx` — Grid breakpoint
+- Change `grid-cols-1 md:grid-cols-3` → `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
+
+### 3. `src/components/ServiceCards.tsx` — Grid breakpoint
+- Change `grid-cols-1 md:grid-cols-3` → `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
+
+### 4. `src/components/AccessibilityInfoSection.tsx` — Spacing
+- Change `py-16` → `py-20`
+
+### 5. `src/components/Footer.tsx` — Spacing
+- Change `py-12` → `py-16`
+
+### 6. `src/pages/Chat.tsx` — Spacing
+- Change main `py-8` → `py-12 md:py-20`
+- Add `pt-24` to account for fixed nav
+
+### 7. `src/pages/Booking.tsx` — Spacing
+- Change `pt-24 pb-16` → `pt-28 pb-20`
+
+### 8. `src/components/PublicFAQ.tsx` — CTA consistency
+- Replace inline `<a>` CTA with `<Button>` component using `variant="hero"`
+- Make bilingual (uses language context)
+
+### 9. `src/index.css` — Global mobile safeguards
+- Add `min-h-[44px]` touch target utility
+- Ensure body text minimum sizing
+
+### 10. `src/components/Hero.tsx` — Clamp font sizing
+- Replace fixed breakpoint sizes with `clamp()` for smoother mobile scaling
 
 ### What does NOT change
-- `MegaMenu.tsx` file (left untouched, just no longer imported)
-- `Index.tsx`, routing, TTS, AIChat, any other components
-- Auth logic, admin dropdown items
-- LanguageSelector component
+- Admin pages (protected, not public-facing)
+- TTS, voice chat, AI chat logic
+- Navigation component (already rebuilt)
+- Content text (already updated)
+- Color variables, design tokens
 
