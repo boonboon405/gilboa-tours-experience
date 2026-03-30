@@ -96,7 +96,7 @@ const getServices = (language: string): Service[] => [
       "כולל ציוד מקצועי",
       "צוות מדריכים וצוות תמיכה"
     ],
-    cta: "צור קשר לתכנון",
+    cta: language === 'he' ? "צור קשר לתכנון" : "Contact Us to Plan",
     scrollTo: "odt-section"
   }
 ];
