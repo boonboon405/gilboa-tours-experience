@@ -182,6 +182,7 @@ const App = () => {
               
               <AccessibilityWidget />
               <WhatsAppFAB />
+              <BackToTop />
             </BrowserRouter>
             </TooltipProvider>
           </AccessibilityProvider>
