@@ -15,6 +15,7 @@ import { TestimonialSubmissionForm } from '@/components/TestimonialSubmissionFor
 import { LandscapeGallery } from '@/components/LandscapeGallery';
 import NorthIsraelGallery from '@/components/NorthIsraelGallery';
 import { AccessibilityInfoSection } from '@/components/AccessibilityInfoSection';
+import { AboutDavid } from '@/components/AboutDavid';
 
 const Index = () => {
   return (
@@ -27,6 +28,9 @@ const Index = () => {
         <Hero />
       </div>
       <ServiceCards />
+      <div id="about" className="scroll-mt-20">
+        <AboutDavid />
+      </div>
       
       {/* Hidden sections - accessed via TourServices CTAs */}
       <div id="choose-your-day" className="scroll-mt-20">
