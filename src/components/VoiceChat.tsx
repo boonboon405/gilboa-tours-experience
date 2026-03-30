@@ -764,6 +764,7 @@ ${transcript}`;
               onVoiceChange={(voice) => {
                 setSelectedVoice(voice);
                 localStorage.setItem('preferred-voice', voice);
+                toast({ title: `🔊 קול נבחר: ${ELEVENLABS_VOICES[voice].name}`, duration: 2000 });
               }}
               language={language}
               className="w-full"

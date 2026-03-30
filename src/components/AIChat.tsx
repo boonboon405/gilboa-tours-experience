@@ -784,6 +784,7 @@ export const AIChat = ({ quizResults, onRequestHumanAgent }: AIChatProps) => {
                 onVoiceChange={(voice) => {
                   setSelectedVoice(voice);
                   localStorage.setItem('preferred-voice', voice);
+                  toast({ title: `🔊 קול נבחר: ${ELEVENLABS_VOICES[voice].name}`, duration: 2000 });
                 }}
               />
               <Button
