@@ -9,6 +9,15 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+function esc(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
 interface ContactEmailRequest {
   name: string;
   email: string;
@@ -17,7 +26,6 @@ interface ContactEmailRequest {
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -27,38 +35,40 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Sending contact email for:", { name, email, phone });
 
-    // Validate input
     if (!name || !email || !phone || !message) {
       throw new Error("All fields are required");
     }
 
-    // Send notification email to business
+    const safeName = esc(name);
+    const safeEmail = esc(email);
+    const safePhone = esc(phone);
+    const safeMessage = esc(message);
+
     const notificationEmail = await resend.emails.send({
       from: "David Tours <onboarding@resend.dev>",
       to: ["DavidIsraelTours@gmail.com"],
-      subject: `הודעה חדשה מ-${name}`,
+      subject: `הודעה חדשה מ-${safeName}`,
       html: `
         <div dir="rtl" style="font-family: Arial, sans-serif;">
           <h2>הודעה חדשה מאתר David Tours</h2>
-          <p><strong>שם:</strong> ${name}</p>
-          <p><strong>אימייל:</strong> ${email}</p>
-          <p><strong>טלפון:</strong> ${phone}</p>
+          <p><strong>שם:</strong> ${safeName}</p>
+          <p><strong>אימייל:</strong> ${safeEmail}</p>
+          <p><strong>טלפון:</strong> ${safePhone}</p>
           <p><strong>הודעה:</strong></p>
-          <p>${message}</p>
+          <p>${safeMessage}</p>
         </div>
       `,
     });
 
     console.log("Notification email sent:", notificationEmail);
 
-    // Send confirmation email to customer
     const confirmationEmail = await resend.emails.send({
       from: "David Tours <onboarding@resend.dev>",
       to: [email],
       subject: "קיבלנו את הודעתך!",
       html: `
         <div dir="rtl" style="font-family: Arial, sans-serif;">
-          <h1>שלום ${name},</h1>
+          <h1>שלום ${safeName},</h1>
           <p>תודה שפנית אלינו!</p>
           <p>קיבלנו את הודעתך ונחזור אליך בהקדם האפשרי.</p>
           <br>

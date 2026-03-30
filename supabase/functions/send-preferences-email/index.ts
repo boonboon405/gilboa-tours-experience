@@ -9,6 +9,15 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+function esc(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
 interface PreferencesEmailRequest {
   selections?: {
     [key: number]: {
@@ -39,7 +48,6 @@ interface PreferencesEmailRequest {
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -53,11 +61,22 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Suggested date:", suggestedDate);
     console.log("Tour type:", tourType);
 
-    // Build HTML content for the email
+    const safeName = esc(contactInfo.name);
+    const safeEmail = esc(contactInfo.email);
+    const safeCompany = esc(contactInfo.company);
+    const safeWhatsapp = esc(contactInfo.whatsappNumber);
+    const safeOffice = esc(contactInfo.officeNumber);
+    const safeParticipants = esc(contactInfo.participantCount);
+    const safeTourType = esc(contactInfo.tourType);
+    const safeComments = esc(contactInfo.specialComments);
+    const safeLanguage = esc(contactInfo.language);
+    const safeSuggestedDate = suggestedDate ? esc(suggestedDate) : '';
+    const safeTopTourType = tourType ? esc(tourType) : '';
+
     let emailContent = `
       <div dir="rtl" style="font-family: Arial, sans-serif;">
         <h2>העדפות לקוח חדשות - David Tours</h2>
-        <p>התקבלה בחירת ${tourType === 'VIP Tour' ? 'טיול VIP' : 'פעילויות'} חדשה מהאתר:</p>
+        <p>התקבלה בחירת ${safeTopTourType === 'VIP Tour' ? 'טיול VIP' : 'פעילויות'} חדשה מהאתר:</p>
         <br>
         
         <div style="background-color: #f0f9ff; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
@@ -65,55 +84,54 @@ const handler = async (req: Request): Promise<Response> => {
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 8px; font-weight: bold; width: 40%;">שם:</td>
-              <td style="padding: 8px;">${contactInfo.name}</td>
+              <td style="padding: 8px;">${safeName}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">אימייל:</td>
-              <td style="padding: 8px;">${contactInfo.email}</td>
+              <td style="padding: 8px;">${safeEmail}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">חברה:</td>
-              <td style="padding: 8px;">${contactInfo.company}</td>
+              <td style="padding: 8px;">${safeCompany}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">מספר וואטסאפ:</td>
-              <td style="padding: 8px;">${contactInfo.whatsappNumber}</td>
+              <td style="padding: 8px;">${safeWhatsapp}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">מספר משרד:</td>
-              <td style="padding: 8px;">${contactInfo.officeNumber}</td>
+              <td style="padding: 8px;">${safeOffice}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">מספר משתתפים משוער:</td>
-              <td style="padding: 8px;">${contactInfo.participantCount}</td>
+              <td style="padding: 8px;">${safeParticipants}</td>
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">סוג טיול:</td>
-              <td style="padding: 8px;">${contactInfo.tourType}</td>
+              <td style="padding: 8px;">${safeTourType}</td>
             </tr>
-            ${suggestedDate ? `
+            ${safeSuggestedDate ? `
             <tr>
               <td style="padding: 8px; font-weight: bold;">תאריך מוצע לאירוע:</td>
-              <td style="padding: 8px;">${suggestedDate}</td>
+              <td style="padding: 8px;">${safeSuggestedDate}</td>
             </tr>
             ` : ''}
-            ${contactInfo.specialComments ? `
+            ${safeComments ? `
             <tr>
               <td style="padding: 8px; font-weight: bold; vertical-align: top;">הערות ומשאלות מיוחדות:</td>
-              <td style="padding: 8px; white-space: pre-wrap;">${contactInfo.specialComments}</td>
+              <td style="padding: 8px; white-space: pre-wrap;">${safeComments}</td>
             </tr>
             ` : ''}
-            ${contactInfo.language ? `
+            ${safeLanguage ? `
             <tr>
               <td style="padding: 8px; font-weight: bold;">שפה נדרשת לאורחים:</td>
-              <td style="padding: 8px;">${contactInfo.language}</td>
+              <td style="padding: 8px;">${safeLanguage}</td>
             </tr>
             ` : ''}
           </table>
         </div>
     `;
 
-    // Handle VIP destinations or regular selections
     if (tourType === 'VIP Tour' && vipDestinations) {
       emailContent += `
         <h3 style="color: #9333ea; margin-top: 30px;">אתרים שנבחרו לטיול VIP:</h3>
@@ -123,11 +141,11 @@ const handler = async (req: Request): Promise<Response> => {
         if (destination.sites.length > 0) {
           emailContent += `
             <div style="background-color: #faf5ff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-              <h4 style="color: #7c3aed; margin-top: 0;">${destination.region}</h4>
+              <h4 style="color: #7c3aed; margin-top: 0;">${esc(destination.region)}</h4>
               <ul style="margin: 10px 0;">
           `;
           destination.sites.forEach(site => {
-            emailContent += `<li style="margin-bottom: 5px;">${site}</li>`;
+            emailContent += `<li style="margin-bottom: 5px;">${esc(site)}</li>`;
           });
           emailContent += `
               </ul>
@@ -140,17 +158,16 @@ const handler = async (req: Request): Promise<Response> => {
         <h3 style="color: #2563eb;">בחירות פעילויות:</h3>
       `;
       
-      // Add each section's selections
       Object.entries(selections).forEach(([sectionId, section]) => {
         if (section.activities.length > 0 || section.otherOption) {
           emailContent += `
-            <h3 style="color: #2563eb; margin-top: 20px;">קטגוריה ${sectionId}: ${section.sectionTitle}</h3>
+            <h3 style="color: #2563eb; margin-top: 20px;">קטגוריה ${esc(sectionId)}: ${esc(section.sectionTitle)}</h3>
           `;
           
           if (section.activities.length > 0) {
             emailContent += `<ul style="margin-top: 10px;">`;
             section.activities.forEach(activity => {
-              emailContent += `<li style="margin-bottom: 8px;">${activity}</li>`;
+              emailContent += `<li style="margin-bottom: 8px;">${esc(activity)}</li>`;
             });
             emailContent += `</ul>`;
           }
@@ -158,7 +175,7 @@ const handler = async (req: Request): Promise<Response> => {
           if (section.otherOption) {
             emailContent += `
               <p style="margin-top: 10px; padding: 10px; background-color: #f3f4f6; border-radius: 5px;">
-                <strong>אפשרות אחרת:</strong> ${section.otherOption}
+                <strong>אפשרות אחרת:</strong> ${esc(section.otherOption)}
               </p>
             `;
           }
@@ -174,17 +191,15 @@ const handler = async (req: Request): Promise<Response> => {
       </div>
     `;
 
-    // Send email to business
     const emailResponse = await resend.emails.send({
       from: "David Tours <onboarding@resend.dev>",
       to: ["DavidIsraelTours@gmail.com"],
-      subject: `העדפות לקוח חדשות - ${contactInfo.name} - ${contactInfo.company}`,
+      subject: `העדפות לקוח חדשות - ${safeName} - ${safeCompany}`,
       html: emailContent,
     });
 
     console.log("Preferences email sent successfully:", emailResponse);
 
-    // Archive the email to database
     const archiveResponse = await fetch(
       `${Deno.env.get("SUPABASE_URL")}/rest/v1/email_archive`,
       {
@@ -197,7 +212,7 @@ const handler = async (req: Request): Promise<Response> => {
         },
         body: JSON.stringify({
           recipient_email: "DavidIsraelTours@gmail.com",
-          subject: `העדפות לקוח חדשות - ${contactInfo.name} - ${contactInfo.company}`,
+          subject: `העדפות לקוח חדשות - ${safeName} - ${safeCompany}`,
           html_content: emailContent,
           status: emailResponse.error ? "failed" : "sent",
           error_message: emailResponse.error?.message || null,

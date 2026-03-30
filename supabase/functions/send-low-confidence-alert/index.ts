@@ -8,6 +8,15 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+function esc(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
 interface AlertRequest {
   conversationId: string;
   visitorName: string;
@@ -26,7 +35,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Sending low confidence alert:", { conversationId, confidenceScore });
 
-    const recipientEmail = agentEmail || "david@odttours.com"; // Default admin email
+    const recipientEmail = agentEmail || "david@odttours.com";
+
+    const safeVisitorName = esc(visitorName || '');
+    const safeMessage = esc(message);
+    const safeConversationId = esc(conversationId);
 
     const emailResponse = await resend.emails.send({
       from: "ODT Tours Chat <onboarding@resend.dev>",
@@ -122,13 +135,13 @@ const handler = async (req: Request): Promise<Response> => {
               
               <p><strong>פרטי השיחה:</strong></p>
               <ul>
-                <li><strong>מבקר:</strong> ${visitorName || 'אורח'}</li>
-                <li><strong>מזהה שיחה:</strong> ${conversationId}</li>
+                <li><strong>מבקר:</strong> ${safeVisitorName || 'אורח'}</li>
+                <li><strong>מזהה שיחה:</strong> ${safeConversationId}</li>
               </ul>
               
               <p><strong>תוכן ההודעה:</strong></p>
               <div class="message-preview">
-                ${message}
+                ${safeMessage}
               </div>
               
               <div style="text-align: center;">

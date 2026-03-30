@@ -11,9 +11,9 @@ import { openWhatsApp, whatsappTemplates, trackPhoneCall } from '@/utils/contact
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, 'שם נדרש').max(100, 'שם ארוך מדי'),
-  email: z.string().trim().email('אימייל לא תקין').max(255, 'אימייל ארוך מדי'),
-  phone: z.string().trim().min(6, 'טלפון לא תקין').max(30, 'טלפון ארוך מדי'),
-  message: z.string().trim().min(1, 'הודעה נדרשת').max(1000, 'הודעה ארוכה מדי'),
+  email: z.string().trim().email('אימייל לא תקין').max(150, 'אימייל ארוך מדי'),
+  phone: z.string().trim().min(6, 'טלפון לא תקין').max(20, 'טלפון ארוך מדי'),
+  message: z.string().trim().min(1, 'הודעה נדרשת').max(2000, 'הודעה ארוכה מדי'),
 });
 
 export const ContactSection = () => {
@@ -128,40 +128,44 @@ export const ContactSection = () => {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <Input
+                <Input
                     placeholder="שם מלא"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
+                    maxLength={100}
                     className="border-2"
                   />
                 </div>
                 <div>
-                  <Input
+                <Input
                     type="email"
                     placeholder='דוא"ל'
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
+                    maxLength={150}
                     className="border-2"
                   />
                 </div>
                 <div>
-                  <Input
+                <Input
                     type="tel"
                     placeholder="טלפון"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     required
+                    maxLength={20}
                     className="border-2"
                   />
                 </div>
                 <div>
-                  <Textarea
+                <Textarea
                     placeholder="הודעה"
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     required
+                    maxLength={2000}
                     rows={5}
                     className="border-2"
                   />
