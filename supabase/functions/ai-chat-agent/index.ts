@@ -152,6 +152,11 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? req.headers.get('cf-connecting-ip') ?? 'unknown';
+  if (!checkRateLimit(ip)) {
+    return new Response('Too many requests', { status: 429, headers: corsHeaders });
+  }
+
   try {
     const startTime = Date.now();
     const { message, conversationId, sessionId, quizResults, conversationData, currentStep, requestFinalRecommendation, language = 'he' } = await req.json();
