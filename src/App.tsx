@@ -33,7 +33,7 @@ import AdminCategories from "./pages/AdminCategories";
 import AdminGallery from "./pages/AdminGallery";
 import AccessibilityStatement from "./pages/AccessibilityStatement";
 import NotFound from "./pages/NotFound";
-import { LiveChatWidget } from "./components/LiveChatWidget";
+
 
 const queryClient = new QueryClient();
 
@@ -177,7 +177,7 @@ const App = () => {
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
-              <LiveChatWidget />
+              
               <AccessibilityWidget />
             </BrowserRouter>
             </TooltipProvider>

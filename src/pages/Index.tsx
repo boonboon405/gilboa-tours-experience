@@ -8,7 +8,7 @@ import { Testimonials } from '@/components/Testimonials';
 import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
 import SEOKeywords from '@/components/SEOKeywords';
-import { ExitIntentModal } from '@/components/ExitIntentModal';
+
 import { EmergencyContactButton } from '@/components/EmergencyContactButton';
 import { PublicFAQ } from '@/components/PublicFAQ';
 import { TestimonialSubmissionForm } from '@/components/TestimonialSubmissionForm';
@@ -20,7 +20,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOKeywords />
-      <ExitIntentModal />
+      
       <EmergencyContactButton />
       <Navigation />
       <div id="home">
