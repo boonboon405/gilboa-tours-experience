@@ -9,6 +9,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { HelpCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface FAQItem {
   id: string;
@@ -47,13 +48,26 @@ export const PublicFAQ = () => {
 
   if (loading) {
     return (
-      <section className="py-20 bg-background">
+      <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">
-              {isHe ? 'טוען שאלות נפוצות...' : 'Loading FAQs...'}
-            </p>
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <Skeleton className="h-14 w-14 rounded-full mx-auto mb-4" />
+              <Skeleton className="h-8 w-64 mx-auto mb-4" />
+              <Skeleton className="h-5 w-80 mx-auto" />
+            </div>
+            <div className="space-y-8">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="p-6">
+                  <Skeleton className="h-7 w-40 mb-4" />
+                  {[1, 2, 3, 4].map((j) => (
+                    <div key={j} className="py-4 border-b border-border last:border-0">
+                      <Skeleton className="h-5 w-full max-w-md" />
+                    </div>
+                  ))}
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </section>

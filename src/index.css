@@ -260,6 +260,25 @@ All colors MUST be HSL.
   .animate-pulse-once {
     animation: pulse-once 1s ease-out;
   }
+
+  @keyframes pulse-cta {
+    0%, 85%, 100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 hsl(var(--accent) / 0);
+    }
+    90% {
+      transform: scale(1.05);
+      box-shadow: 0 0 12px 4px hsl(var(--accent) / 0.3);
+    }
+    95% {
+      transform: scale(1.02);
+      box-shadow: 0 0 6px 2px hsl(var(--accent) / 0.1);
+    }
+  }
+
+  .animate-pulse-cta {
+    animation: pulse-cta 8s ease-in-out infinite;
+  }
 }
 
 /* Section heading utility */

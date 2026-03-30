@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Mountain, Sparkles, Search } from 'lucide-react';
 import { ImageGallery } from './ImageGallery';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
 import galileeNature from '@/assets/galilee-nature.jpg';
