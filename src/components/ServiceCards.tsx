@@ -204,7 +204,7 @@ export const ServiceCards = () => {
               <div className="space-y-6 pt-4">
                 {/* Features */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-3 text-right">מה כולל?</h3>
+                  <h3 className="text-lg font-semibold mb-3 text-right">{language === 'he' ? 'מה כולל?' : 'What\'s Included?'}</h3>
                   <div className="grid gap-3">
                     {selectedService.features.map((feature, idx) => (
                       <div key={idx} className="flex items-start gap-3 text-right">
