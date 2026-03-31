@@ -103,7 +103,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         text: processedText,
-        model_id: 'eleven_multilingual_v2', // Multilingual v2 - auto-detects Hebrew from text content
+        model_id: 'eleven_v3', // V3 - latest model with improved multilingual support
         voice_settings: {
           stability: 0.5, // Lower stability for more natural Hebrew pronunciation
           similarity_boost: 0.75,
