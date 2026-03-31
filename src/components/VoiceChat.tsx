@@ -337,13 +337,23 @@ ${transcript}`;
     }
   };
 
-  const startListening = () => {
+  const startListening = async () => {
     if (!recognitionRef.current || isListening || isProcessing || isSpeaking) return;
     
     try {
+      // Request microphone permission explicitly first
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+      recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
       recognitionRef.current.start();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error starting recognition:', error);
+      toast({
+        title: language === 'he' ? 'שגיאת מיקרופון' : 'Microphone Error',
+        description: language === 'he' 
+          ? 'לא ניתן לגשת למיקרופון. אנא אפשרו גישה בהגדרות הדפדפן'
+          : 'Cannot access microphone. Please allow access in browser settings',
+        variant: 'destructive'
+      });
     }
   };
 
