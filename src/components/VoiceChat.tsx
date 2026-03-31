@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe, PhoneOff } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe, PhoneOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice, ELEVENLABS_VOICES } from '@/utils/elevenLabsTTS';
