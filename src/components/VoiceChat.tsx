@@ -889,26 +889,67 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
           </div>
         </div>
 
-        {/* Voice Control - Session Toggle */}
+        {/* Voice Control - Two Button System */}
         <div className="p-6 bg-muted/20">
           <div className="flex flex-col items-center gap-4">
-            <div className="relative">
-              {isListening && <MicrophoneAnimation isActive={true} />}
+            {/* Two-button row */}
+            <div className="flex items-center gap-3 w-full max-w-md justify-center">
+              {/* Start AI / Send to AI Button */}
               <Button
-                onClick={toggleSession}
-                size="lg"
-                className={`w-20 h-20 rounded-full relative z-10 transition-all duration-300 ${getMicButtonStyles()}`}
+                onClick={startOrResumeAI}
+                disabled={isSpeaking || isProcessing}
+                className={`min-w-[140px] rounded-full transition-all duration-200 gap-2 ${
+                  hasPendingTranscript 
+                    ? 'bg-primary text-primary-foreground hover:brightness-110 ring-4 ring-primary/30' 
+                    : !sessionActive 
+                      ? 'bg-primary text-primary-foreground hover:brightness-110'
+                      : isSpeaking
+                        ? 'bg-primary/50 text-primary-foreground cursor-not-allowed'
+                        : 'bg-primary text-primary-foreground hover:brightness-110'
+                }`}
+                style={{ fontFamily: "'Heebo', sans-serif" }}
               >
-                {getMicIcon()}
+                {isProcessing ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : hasPendingTranscript ? (
+                  <Send className="w-4 h-4" />
+                ) : (
+                  <Play className="w-4 h-4" />
+                )}
+                {getStartButtonLabel()}
               </Button>
-              {isListening && (
-                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
-                  <WaveformVisualizer isActive={true} />
-                </div>
-              )}
+
+              {/* My Turn to Talk Button */}
+              <Button
+                onClick={takeMyTurn}
+                disabled={!sessionActive || isListening || isProcessing}
+                className={`min-w-[140px] rounded-full transition-all duration-200 gap-2 ${
+                  isListening
+                    ? 'bg-accent text-accent-foreground ring-4 ring-accent/30 animate-pulse'
+                    : sessionActive
+                      ? 'bg-accent text-accent-foreground hover:brightness-110'
+                      : 'bg-muted text-muted-foreground cursor-not-allowed'
+                }`}
+                style={{ fontFamily: "'Heebo', sans-serif" }}
+              >
+                <Mic className="w-4 h-4" />
+                {getMyTurnLabel()}
+              </Button>
             </div>
+
+            {/* Waveform when listening */}
+            {isListening && (
+              <div className="w-full max-w-xs">
+                <WaveformVisualizer isActive={true} />
+              </div>
+            )}
+
+            {/* Speaking animation */}
+            {isSpeaking && <SpeakingAnimation isActive={true} size="lg" />}
+
+            {/* Status Text */}
             <div className="space-y-2 w-full max-w-md">
-              <p className="text-base font-medium text-foreground text-center px-4 py-2 bg-background/80 rounded-lg border border-border/50">
+              <p className="text-base font-medium text-foreground text-center px-4 py-2 bg-background/80 rounded-lg border border-border/50" style={{ fontFamily: "'Heebo', sans-serif" }}>
                 {getStatusText()}
               </p>
               {sessionActive && (
@@ -923,8 +964,8 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
               {!sessionActive && (
                 <p className="text-sm text-foreground/70 text-center px-3 py-1.5 bg-accent/10 rounded-md">
                   {language === 'he' 
-                    ? 'לחצו להתחלת שיחה חופשית — hands-free'
-                    : 'Click to start a hands-free conversation'
+                    ? 'הסוכן ידבר אליכם ואז תוכלו לענות'
+                    : 'The agent will speak to you, then you can respond'
                   }
                 </p>
               )}
