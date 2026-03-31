@@ -62,12 +62,17 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const sessionActiveRef = useRef(false);
+  const phaseRef = useRef<SessionPhase>('idle');
   const { toast } = useToast();
 
-  // Keep ref in sync with state for use in callbacks
+  // Keep refs in sync with state for use in callbacks
   useEffect(() => {
     sessionActiveRef.current = sessionActive;
   }, [sessionActive]);
+
+  useEffect(() => {
+    phaseRef.current = phase;
+  }, [phase]);
 
   // Save conversation to history periodically
   useEffect(() => {
@@ -142,8 +147,8 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
 
     recognition.onend = () => {
       // Auto re-arm if session is active and we're in listening phase
-      // (onend fires after each recognition result in non-continuous mode)
-      if (sessionActiveRef.current && phase === 'listening') {
+      // Use refs to avoid stale closure
+      if (sessionActiveRef.current && phaseRef.current === 'listening') {
         try { recognition.start(); } catch (e) { /* already started */ }
       }
     };
