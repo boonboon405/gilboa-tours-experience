@@ -35,7 +35,7 @@ const getStaticSections = (isHe: boolean): GallerySection[] => [
       { src: 'https://images.unsplash.com/photo-1769457661805-51aaf1d16867?w=800&q=80&fit=crop', alt: isHe ? 'שרידי העיר הרומית בבית שאן' : 'Ruins of the Roman city in Beit She\'an', title: isHe ? 'עמק בית שאן' : 'Beit She\'an Valley', description: isHe ? 'נוף היסטורי מרהיב' : 'Stunning historical landscape' },
       { src: 'https://images.unsplash.com/photo-1695898303391-d4139d30588a?w=800&q=80&fit=crop', alt: isHe ? 'סירה על הכנרת' : 'Boat on the Sea of Galilee', title: isHe ? 'שיט בכנרת' : 'Galilee Sailing', description: isHe ? 'שיט ציורי בכנרת' : 'Scenic sailing on the Sea of Galilee' },
       { src: 'https://images.unsplash.com/photo-1660924375739-75e64670bd40?w=800&q=80&fit=crop', alt: isHe ? 'מעיינות הכנרת והגליל' : 'Springs of the Galilee', title: isHe ? 'מעיינות הגליל' : 'Galilee Springs', description: isHe ? 'מעיינות טבעיים באזור' : 'Natural springs in the region' },
-      { src: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80&fit=crop', alt: isHe ? 'טעמי הגליל - יין ומטעמים מקומיים' : 'Flavors of the Galilee - local wine and delicacies', title: isHe ? 'טעמי הגליל' : 'Flavors of the Galilee', description: isHe ? 'חוויות קולינריות באזור' : 'Culinary experiences in the region' },
+      { src: 'https://images.unsplash.com/photo-1552423313-b6b7ae492c4d?w=800&q=80&fit=crop', alt: isHe ? 'טעמי הגליל - יין ומטעמים מקומיים' : 'Flavors of the Galilee - local wine and delicacies', title: isHe ? 'טעמי הגליל' : 'Flavors of the Galilee', description: isHe ? 'חוויות קולינריות באזור' : 'Culinary experiences in the region' },
     ]
   },
   {
