@@ -86,7 +86,6 @@ export async function speakWithElevenLabs(
       currentAudio.onended = () => {
         currentAudio = null;
         onEnd?.();
-        onEnd?.();
         resolve(true);
       };
 
