@@ -560,48 +560,40 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     );
   }
 
-  // Phase-based mic button styles
-  const getMicButtonStyles = () => {
-    if (sessionActive) {
-      switch (phase) {
-        case 'listening': return 'bg-green-500 hover:bg-green-600 ring-4 ring-green-500/30 animate-pulse';
-        case 'processing': return 'bg-amber-500 hover:bg-amber-600 ring-4 ring-amber-500/30';
-        case 'speaking': return 'bg-blue-500 hover:bg-blue-600 ring-4 ring-blue-500/30';
-        default: return 'bg-primary hover:bg-primary/90';
-      }
-    }
-    return 'bg-primary hover:bg-primary/90';
-  };
-
-  const getMicIcon = () => {
-    if (sessionActive) {
-      switch (phase) {
-        case 'listening': return <Mic className="w-8 h-8 text-white" />;
-        case 'processing': return <Loader2 className="w-8 h-8 text-white animate-spin" />;
-        case 'speaking': return <Volume2 className="w-8 h-8 text-white" />;
-        default: return <Mic className="w-8 h-8 text-white" />;
-      }
-    }
-    return <MicOff className="w-8 h-8" />;
-  };
-
+  // Phase-based status text
   const getStatusText = () => {
     if (language === 'he') {
-      if (!sessionActive) return 'לחצו על המיקרופון להתחלת שיחה';
+      if (!sessionActive) return 'לחצו "התחל שיחה" כדי להתחיל';
+      if (hasPendingTranscript) return `📝 "${accumulatedTranscriptRef.current.substring(0, 40)}..." — לחצו "שלח לסוכן"`;
       switch (phase) {
         case 'listening': return '🎤 מקשיב... דברו עכשיו';
         case 'processing': return '⚙️ מעבד את הבקשה...';
-        case 'speaking': return '🔊 הסוכן מדבר...';
-        default: return '🎤 שיחה פעילה';
+        case 'speaking': return '🔊 הסוכן מדבר... לחצו "תורי" להפסיק';
+        default: return '🎤 שיחה פעילה — לחצו "תורי לדבר"';
       }
     }
-    if (!sessionActive) return 'Click the microphone to start conversation';
+    if (!sessionActive) return 'Click "Start Conversation" to begin';
+    if (hasPendingTranscript) return `📝 "${accumulatedTranscriptRef.current.substring(0, 40)}..." — Click "Send to AI"`;
     switch (phase) {
       case 'listening': return '🎤 Listening... speak now';
       case 'processing': return '⚙️ Processing your request...';
-      case 'speaking': return '🔊 Agent is speaking...';
-      default: return '🎤 Session active';
+      case 'speaking': return '🔊 Agent speaking... click "My Turn" to interrupt';
+      default: return '🎤 Session active — click "My Turn to Talk"';
     }
+  };
+
+  // Button labels
+  const getStartButtonLabel = () => {
+    if (!sessionActive) return language === 'he' ? 'התחל שיחה' : 'Start Conversation';
+    if (hasPendingTranscript) return language === 'he' ? 'שלח לסוכן' : 'Send to AI';
+    if (isSpeaking) return language === 'he' ? 'הסוכן מדבר...' : 'AI Speaking...';
+    if (isProcessing) return language === 'he' ? 'מעבד...' : 'Processing...';
+    return language === 'he' ? 'הפעל סוכן' : 'Resume AI';
+  };
+
+  const getMyTurnLabel = () => {
+    if (isListening) return language === 'he' ? 'מקשיב...' : 'Listening...';
+    return language === 'he' ? 'תורי לדבר' : 'My Turn to Talk';
   };
 
   return (
