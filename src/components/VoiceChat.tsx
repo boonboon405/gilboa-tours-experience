@@ -306,15 +306,8 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
 
       setMessages(prev => [...prev, aiMessage]);
 
-      // Speak the response; on done, auto re-arm mic if session active
-      await speakText(data.message, () => {
-        if (sessionActiveRef.current && recognitionRef.current) {
-          try {
-            recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
-            recognitionRef.current.start();
-          } catch (e) { /* already started */ }
-        }
-      });
+      // Speak the response; no auto re-arm — user clicks "My Turn" to talk again
+      await speakText(data.message);
 
     } catch (error) {
       console.error('Voice chat error:', error);
