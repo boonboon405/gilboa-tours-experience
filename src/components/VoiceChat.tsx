@@ -1,11 +1,10 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
-import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Sparkles, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe, PhoneOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice, ELEVENLABS_VOICES } from '@/utils/elevenLabsTTS';
@@ -20,6 +19,7 @@ import { MicrophoneAnimation } from '@/components/MicrophoneAnimation';
 import { ProcessingAnimation } from '@/components/ProcessingAnimation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useLanguage } from '@/contexts/LanguageContext';
 import companyLogo from '@/assets/company-logo.png';
 
 interface Message {
@@ -34,6 +34,8 @@ interface Message {
   };
 }
 
+type SessionPhase = 'idle' | 'listening' | 'processing' | 'speaking';
+
 interface VoiceChatProps {
   quizResults?: {
     id: string;
@@ -44,17 +46,13 @@ interface VoiceChatProps {
 
 export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isListening, setIsListening] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [phase, setPhase] = useState<SessionPhase>('idle');
+  const [sessionActive, setSessionActive] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState(() => `session-${Date.now()}-${Math.random()}`);
   const [speechSupported, setSpeechSupported] = useState(true);
   const [textInput, setTextInput] = useState('');
-  const [language, setLanguage] = useState<'he' | 'en'>(() => {
-    const saved = localStorage.getItem('preferred-language');
-    return (saved === 'en' ? 'en' : 'he') as 'he' | 'en';
-  });
+  const { language, setLanguage } = useLanguage();
   const [selectedVoice, setSelectedVoice] = useState<ElevenLabsVoice>(() => {
     const saved = localStorage.getItem('preferred-voice');
     return (saved as ElevenLabsVoice) || 'Rachel';
@@ -63,7 +61,13 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const [showCategories, setShowCategories] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+  const sessionActiveRef = useRef(false);
   const { toast } = useToast();
+
+  // Keep ref in sync with state for use in callbacks
+  useEffect(() => {
+    sessionActiveRef.current = sessionActive;
+  }, [sessionActive]);
 
   // Save conversation to history periodically
   useEffect(() => {
@@ -79,62 +83,69 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Initialize speech recognition
   useEffect(() => {
-    // Check for speech recognition support
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition || !window.speechSynthesis) {
+    if (!SpeechRecognition) {
       setSpeechSupported(false);
-      toast({
-        title: "דפדפן לא נתמך",
-        description: "אנא השתמשו ב-Chrome, Edge או Safari לתמיכה מלאה בקול",
-        variant: "destructive"
-      });
       return;
     }
 
-    // Initialize speech recognition
     const recognition = new SpeechRecognition();
     recognition.continuous = false;
     recognition.interimResults = false;
     recognition.lang = language === 'he' ? 'he-IL' : 'en-US';
 
-    recognition.onstart = () => {
-      setIsListening(true);
-    };
-
-    recognition.onresult = async (event) => {
+    recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
-      setIsListening(false);
-      await handleVoiceInput(transcript);
+      if (transcript.trim()) {
+        handleVoiceInput(transcript);
+      }
     };
 
     recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
-      setIsListening(false);
       
+      // Don't show error for aborted (we abort on purpose when ending session)
+      if (event.error === 'aborted') return;
+
+      // For no-speech, auto re-arm if session is still active
+      if (event.error === 'no-speech') {
+        if (sessionActiveRef.current) {
+          try { recognition.start(); } catch (e) { /* already started */ }
+        } else {
+          setPhase('idle');
+        }
+        return;
+      }
+
       const errorMessages: Record<string, { he: string; en: string }> = {
-        'no-speech': { he: 'לא נשמע קול. אנא נסו שוב ודברו בבירור', en: 'No speech detected. Please try again and speak clearly' },
-        'not-allowed': { he: 'נדרשת הרשאת מיקרופון. אנא אפשרו גישה בדפדפן', en: 'Microphone permission required. Please allow access in browser settings' },
-        'network': { he: 'שגיאת רשת. אנא בדקו את החיבור לאינטרנט', en: 'Network error. Please check your internet connection' },
-        'aborted': { he: 'ההאזנה בוטלה', en: 'Listening was cancelled' },
-        'audio-capture': { he: 'לא נמצא מיקרופון. אנא חברו מיקרופון ונסו שוב', en: 'No microphone found. Please connect a microphone and try again' },
-        'service-not-allowed': { he: 'שירות הזיהוי אינו זמין. אנא נסו בדפדפן Chrome', en: 'Speech service unavailable. Please try using Chrome browser' },
+        'not-allowed': { he: 'נדרשת הרשאת מיקרופון', en: 'Microphone permission required' },
+        'network': { he: 'שגיאת רשת', en: 'Network error' },
+        'audio-capture': { he: 'לא נמצא מיקרופון', en: 'No microphone found' },
       };
       
       const msg = errorMessages[event.error] || { 
-        he: `שגיאה בזיהוי קול: ${event.error}`, 
-        en: `Speech recognition error: ${event.error}` 
+        he: `שגיאה: ${event.error}`, 
+        en: `Error: ${event.error}` 
       };
       
       toast({
         title: language === 'he' ? 'שגיאה' : 'Error',
         description: language === 'he' ? msg.he : msg.en,
-        variant: event.error === 'no-speech' ? 'default' : 'destructive'
+        variant: 'destructive'
       });
+      
+      // End session on critical errors
+      endSession();
     };
 
     recognition.onend = () => {
-      setIsListening(false);
+      // Auto re-arm if session is active and we're in listening phase
+      // (onend fires after each recognition result in non-continuous mode)
+      if (sessionActiveRef.current && phase === 'listening') {
+        try { recognition.start(); } catch (e) { /* already started */ }
+      }
     };
 
     recognitionRef.current = recognition;
@@ -143,17 +154,20 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
       if (recognitionRef.current) {
         recognitionRef.current.abort();
       }
-      if (window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
     };
   }, [language]);
 
-  // Track if greeting has been spoken to prevent duplicate TTS
+  // Update recognition language when it changes
+  useEffect(() => {
+    if (recognitionRef.current) {
+      recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
+    }
+  }, [language]);
+
+  // Track if greeting has been spoken
   const greetingSpokenRef = useRef(false);
 
   useEffect(() => {
-    // Send initial greeting with enhanced quiz integration and categories
     if (messages.length === 0 && !greetingSpokenRef.current) {
       let greeting = '';
       
@@ -161,61 +175,27 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
         if (quizResults) {
           const topCategories = quizResults.top_categories?.slice(0, 3) || [];
           const categoryNamesHe: Record<string, string> = {
-            adventure: 'הרפתקאות',
-            nature: 'טבע',
-            history: 'היסטוריה',
-            culinary: 'קולינריה',
-            sports: 'ספורט',
-            creative: 'יצירה',
-            wellness: 'בריאות ורוגע',
-            teambuilding: 'גיבוש צוות'
+            adventure: 'הרפתקאות', nature: 'טבע', history: 'היסטוריה',
+            culinary: 'קולינריה', sports: 'ספורט', creative: 'יצירה',
+            wellness: 'בריאות ורוגע', teambuilding: 'גיבוש צוות'
           };
           const categoryNames = topCategories.map(c => categoryNamesHe[c] || c).join(', ');
-          greeting = `שלום וברוכים הבאים! אני הסוכנת הדיגיטלית של אאוטדור ישראל.
-
-על פי השאלון שמילאתם, הקטגוריות המתאימות לכם ביותר הן: ${categoryNames}.
-
-יש לנו למעלה ממאה פעילויות שונות באזור הגלבוע, עמק המעיינות, בית שאן, הכנרת והגליל.
-
-ספרו לי, כמה אתם? מה מעניין אתכם במיוחד?`;
+          greeting = `שלום וברוכים הבאים! אני הסוכנת הדיגיטלית של אאוטדור ישראל.\n\nעל פי השאלון שמילאתם, הקטגוריות המתאימות לכם ביותר הן: ${categoryNames}.\n\nיש לנו למעלה ממאה פעילויות שונות באזור הגלבוע, עמק המעיינות, בית שאן, הכנרת והגליל.\n\nספרו לי, כמה אתם? מה מעניין אתכם במיוחד?`;
         } else {
-          greeting = `שלום וברוכים הבאים! אני הסוכנת הדיגיטלית של אאוטדור ישראל.
-
-אנחנו מתמחים בימי כיף, סיורים וחוויות בצפון ישראל, מהגלבוע ועד הכנרת, מהגולן ועד עמק יזרעאל.
-
-יש לנו למעלה ממאה פעילויות בשמונה קטגוריות שונות: הרפתקאות, טבע, היסטוריה, קולינריה, ספורט, יצירה, בריאות ורוגע וגיבוש צוות.
-
-ספרו לי, כמה אתם? מה מעניין אתכם?`;
+          greeting = `שלום וברוכים הבאים! אני הסוכנת הדיגיטלית של אאוטדור ישראל.\n\nאנחנו מתמחים בימי כיף, סיורים וחוויות בצפון ישראל, מהגלבוע ועד הכנרת, מהגולן ועד עמק יזרעאל.\n\nיש לנו למעלה ממאה פעילויות בשמונה קטגוריות שונות: הרפתקאות, טבע, היסטוריה, קולינריה, ספורט, יצירה, בריאות ורוגע וגיבוש צוות.\n\nספרו לי, כמה אתם? מה מעניין אתכם?`;
         }
       } else {
         if (quizResults) {
           const topCategories = quizResults.top_categories?.slice(0, 3) || [];
           const categoryNamesEn: Record<string, string> = {
-            adventure: 'Adventure',
-            nature: 'Nature',
-            history: 'History',
-            culinary: 'Culinary',
-            sports: 'Sports',
-            creative: 'Creative',
-            wellness: 'Wellness',
-            teambuilding: 'Team Building'
+            adventure: 'Adventure', nature: 'Nature', history: 'History',
+            culinary: 'Culinary', sports: 'Sports', creative: 'Creative',
+            wellness: 'Wellness', teambuilding: 'Team Building'
           };
           const categoryNames = topCategories.map(c => categoryNamesEn[c] || c).join(', ');
-          greeting = `Hello and welcome! I'm the digital agent of Outdoor Israel, experts in experiences in Northern Israel.
-
-Based on your quiz results, your top matching categories are: ${categoryNames}.
-
-We offer over one hundred different activities in the Gilboa region, Springs Valley, Beit Shean, Sea of Galilee, and the Galilee.
-
-Tell me, how many people are in your group? What interests you most?`;
+          greeting = `Hello and welcome! I'm the digital agent of Outdoor Israel.\n\nBased on your quiz results, your top matching categories are: ${categoryNames}.\n\nWe offer over one hundred different activities in the Gilboa region, Springs Valley, Beit Shean, Sea of Galilee, and the Galilee.\n\nTell me, how many people are in your group? What interests you most?`;
         } else {
-          greeting = `Hello and welcome! I'm the digital agent of Outdoor Israel.
-
-We specialize in day trips, tours, and experiences in Northern Israel, from the Gilboa mountains to the Sea of Galilee, from the Golan Heights to the Jezreel Valley.
-
-We offer over one hundred activities across eight categories: Adventure, Nature, History, Culinary, Sports, Creative, Wellness, and Team Building.
-
-Tell me, how many people? What interests you?`;
+          greeting = `Hello and welcome! I'm the digital agent of Outdoor Israel.\n\nWe specialize in day trips, tours, and experiences in Northern Israel, from the Gilboa mountains to the Sea of Galilee, from the Golan Heights to the Jezreel Valley.\n\nWe offer over one hundred activities across eight categories: Adventure, Nature, History, Culinary, Sports, Creative, Wellness, and Team Building.\n\nTell me, how many people? What interests you?`;
         }
       }
 
@@ -227,42 +207,40 @@ Tell me, how many people? What interests you?`;
       };
       setMessages([initialMsg]);
       greetingSpokenRef.current = true;
-      // Do NOT auto-speak greeting — only speak after user interaction
     }
   }, [language, quizResults]);
 
-  // Reset chat when language changes
   const handleLanguageChange = (newLang: 'he' | 'en') => {
     if (newLang !== language) {
-      stopElevenLabsSpeech();
+      endSession();
       greetingSpokenRef.current = false;
       setMessages([]);
       setLanguage(newLang);
-      localStorage.setItem('preferred-language', newLang);
     }
   };
 
-  const speakText = async (text: string) => {
-    // Stop any ongoing speech
+  const speakText = useCallback(async (text: string, onDone?: () => void) => {
     stopElevenLabsSpeech();
+    setPhase('speaking');
     
-    // Use ElevenLabs for high-quality TTS with selected language
     await speakWithElevenLabs(
       text,
       selectedVoice,
-      () => setIsSpeaking(true),
-      () => setIsSpeaking(false),
-      language // Pass the selected language to TTS
+      () => setPhase('speaking'),
+      () => {
+        setPhase(sessionActiveRef.current ? 'listening' : 'idle');
+        onDone?.();
+      },
+      language
     );
-  };
+  }, [selectedVoice, language]);
 
-  const handleVoiceInput = async (transcript: string) => {
-    if (!transcript.trim() || isProcessing) return;
+  const handleVoiceInput = useCallback(async (transcript: string) => {
+    if (!transcript.trim()) return;
 
-    // Analyze sentiment of user message
+    setPhase('processing');
+
     const sentiment = analyzeSentiment(transcript);
-
-    // Add user message to UI with sentiment
     const tempUserMsg: Message = {
       id: `temp-${Date.now()}`,
       sender: 'user',
@@ -271,19 +249,13 @@ Tell me, how many people? What interests you?`;
       sentiment
     };
     setMessages(prev => [...prev, tempUserMsg]);
-    setIsProcessing(true);
 
     try {
-      // Enhanced context for AI with quiz results and categories
       let enhancedMessage = transcript;
       if (quizResults && messages.length <= 3) {
         const topCats = quizResults.top_categories?.slice(0, 3) || [];
         const percentages = topCats.map(cat => `${cat}: ${quizResults.percentages?.[cat] || 0}%`).join(', ');
-        enhancedMessage = `[CONTEXT: User completed Quiz. Top 3 categories: ${percentages}. 
-8 total categories available: Adventure, Nature, History, Culinary, Sports, Creative, Wellness, Team Building.
-~100 activity options across these categories in Gilboa and Beit Shean region.
-Use this data to recommend from the most suitable categories.] 
-${transcript}`;
+        enhancedMessage = `[CONTEXT: User completed Quiz. Top 3 categories: ${percentages}. 8 total categories available: Adventure, Nature, History, Culinary, Sports, Creative, Wellness, Team Building. ~100 activity options across these categories in Gilboa and Beit Shean region. Use this data to recommend from the most suitable categories.] ${transcript}`;
       }
 
       const { data, error } = await supabase.functions.invoke('ai-chat-agent', {
@@ -292,7 +264,7 @@ ${transcript}`;
           conversationId,
           sessionId,
           quizResults,
-          language, // Pass language preference to AI agent
+          language,
           categories: {
             all: ['adventure', 'nature', 'history', 'culinary', 'sports', 'creative', 'wellness', 'teambuilding'],
             top: quizResults?.top_categories || []
@@ -304,10 +276,11 @@ ${transcript}`;
 
       if (data.error) {
         toast({
-          title: "שגיאה",
+          title: language === 'he' ? 'שגיאה' : 'Error',
           description: data.fallback || data.error,
-          variant: "destructive"
+          variant: 'destructive'
         });
+        setPhase(sessionActiveRef.current ? 'listening' : 'idle');
         return;
       }
 
@@ -322,31 +295,48 @@ ${transcript}`;
 
       setMessages(prev => [...prev, aiMessage]);
 
-      // Speak the AI response
-      speakText(data.message);
+      // Speak the response; on done, auto re-arm mic if session active
+      await speakText(data.message, () => {
+        if (sessionActiveRef.current && recognitionRef.current) {
+          try {
+            recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
+            recognitionRef.current.start();
+          } catch (e) { /* already started */ }
+        }
+      });
 
     } catch (error) {
       console.error('Voice chat error:', error);
-        toast({
-          title: "שגיאה בעיבוד",
-          description: "אנא נסו שוב או צרו קשר בטלפון 0537314235",
-          variant: "destructive"
-        });
-    } finally {
-      setIsProcessing(false);
+      toast({
+        title: language === 'he' ? 'שגיאה בעיבוד' : 'Processing Error',
+        description: language === 'he' ? 'אנא נסו שוב או צרו קשר בטלפון 0537314235' : 'Please try again or call 0537314235',
+        variant: 'destructive'
+      });
+      setPhase(sessionActiveRef.current ? 'listening' : 'idle');
     }
-  };
+  }, [conversationId, sessionId, quizResults, language, speakText, messages.length, toast]);
 
-  const startListening = async () => {
-    if (!recognitionRef.current || isListening || isProcessing || isSpeaking) return;
+  const startSession = useCallback(async () => {
+    if (!recognitionRef.current) return;
     
     try {
-      // Request microphone permission explicitly first
+      // Request mic permission once at session start
       await navigator.mediaDevices.getUserMedia({ audio: true });
+      
+      setSessionActive(true);
+      sessionActiveRef.current = true;
+      setPhase('listening');
+      
       recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
       recognitionRef.current.start();
+      
+      toast({
+        title: language === 'he' ? '🎤 שיחה התחילה' : '🎤 Session Started',
+        description: language === 'he' ? 'דברו בחופשיות, אני מקשיב...' : 'Speak freely, I\'m listening...',
+        duration: 3000
+      });
     } catch (error: any) {
-      console.error('Error starting recognition:', error);
+      console.error('Error starting session:', error);
       toast({
         title: language === 'he' ? 'שגיאת מיקרופון' : 'Microphone Error',
         description: language === 'he' 
@@ -355,82 +345,68 @@ ${transcript}`;
         variant: 'destructive'
       });
     }
-  };
+  }, [language, toast]);
 
-  const stopListening = () => {
-    if (recognitionRef.current && isListening) {
-      recognitionRef.current.stop();
+  const endSession = useCallback(() => {
+    setSessionActive(false);
+    sessionActiveRef.current = false;
+    setPhase('idle');
+    
+    if (recognitionRef.current) {
+      try { recognitionRef.current.abort(); } catch (e) { /* ignore */ }
     }
-  };
+    stopElevenLabsSpeech();
+  }, []);
 
-  const toggleSpeech = () => {
-    if (isSpeaking) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
+  const toggleSession = useCallback(() => {
+    if (sessionActive) {
+      endSession();
+    } else {
+      startSession();
     }
-  };
+  }, [sessionActive, startSession, endSession]);
 
   const handleTextSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const message = textInput.trim();
     
-    if (message && !isProcessing) {
+    if (message && phase !== 'processing') {
       setTextInput('');
       await handleVoiceInput(message);
     }
   };
 
   const handleClearChat = () => {
-    // Stop any ongoing speech
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
-    if (recognitionRef.current && isListening) {
-      recognitionRef.current.stop();
-    }
-
-    // Reset conversation
+    endSession();
     setMessages([]);
     setConversationId(null);
     setSessionId(`session-${Date.now()}-${Math.random()}`);
     setTextInput('');
-    setIsListening(false);
-    setIsSpeaking(false);
-    setIsProcessing(false);
+    greetingSpokenRef.current = false;
 
-    // Send enhanced greeting
+    // Re-trigger greeting
     let greeting = '';
     if (language === 'he') {
-      if (quizResults) {
-        const topCategory = quizResults.top_categories?.[0] || '';
-        const percentage = quizResults.percentages?.[topCategory] || 0;
-        greeting = `שלום! ראיתי שעשיתם את הQuiz שלנו ומצאתי משהו מעניין! אתם מתאימים במיוחד ל${topCategory} עם ${Math.round(percentage)}% התאמה. יש לנו כ-100 אפשרויות שונות, ואני כאן למצוא את המושלם. ספרו לי - כמה אנשים? תקציב?`;
-      } else {
-        greeting = 'שלום! אני סוכן דיגיטלי מומחה. יש לי גישה לכ-100 חוויות שונות בגלבוע ובית שאן. ספרו לי - כמה אנשים? מה מעניין אתכם?';
-      }
+      greeting = quizResults
+        ? `שלום! ראיתי שעשיתם את הQuiz שלנו. יש לנו כ-100 אפשרויות שונות, ואני כאן למצוא את המושלם. ספרו לי - כמה אנשים? תקציב?`
+        : 'שלום! אני סוכן דיגיטלי מומחה. יש לי גישה לכ-100 חוויות שונות בגלבוע ובית שאן. ספרו לי - כמה אנשים? מה מעניין אתכם?';
     } else {
-      if (quizResults) {
-        const topCategory = quizResults.top_categories?.[0] || '';
-        const percentage = quizResults.percentages?.[topCategory] || 0;
-        greeting = `Hello! I saw your Quiz results - interesting! You're suited for ${topCategory} with ${Math.round(percentage)}% match. I have ~100 options. Tell me - how many people? Budget?`;
-      } else {
-        greeting = 'Hello! I am a digital expert. I have access to ~100 experiences in Gilboa and Beit Shean. Tell me - how many people? What interests you?';
-      }
+      greeting = quizResults
+        ? `Hello! I saw your Quiz results. I have ~100 options. Tell me - how many people? Budget?`
+        : 'Hello! I have access to ~100 experiences in Gilboa and Beit Shean. Tell me - how many people? What interests you?';
     }
 
-    const initialMsg: Message = {
+    setMessages([{
       id: '0',
       sender: 'ai',
       message: greeting,
       created_at: new Date().toISOString()
-    };
-    setMessages([initialMsg]);
-    
-    // Do NOT auto-speak on clear — wait for user interaction
+    }]);
+    greetingSpokenRef.current = true;
 
     toast({
-      title: language === 'he' ? "שיחה חדשה" : "New Conversation",
-      description: language === 'he' ? "השיחה אופסה בהצלחה" : "Chat cleared successfully"
+      title: language === 'he' ? 'שיחה חדשה' : 'New Conversation',
+      description: language === 'he' ? 'השיחה אופסה בהצלחה' : 'Chat cleared successfully'
     });
   };
 
@@ -452,24 +428,22 @@ ${transcript}`;
     URL.revokeObjectURL(url);
 
     toast({
-      title: language === 'he' ? "שיחה יוצאה" : "Chat Exported",
-      description: language === 'he' ? "הקובץ הורד בהצלחה" : "File downloaded successfully"
+      title: language === 'he' ? 'שיחה יוצאה' : 'Chat Exported',
+      description: language === 'he' ? 'הקובץ הורד בהצלחה' : 'File downloaded successfully'
     });
   };
 
   const handleLoadConversation = (item: any) => {
     setMessages(item.messages);
     setConversationId(item.id);
-    
     toast({
-      title: language === 'he' ? "שיחה נטענה" : "Conversation loaded",
-      description: language === 'he' ? "השיחה שוחזרה בהצלחה" : "Conversation restored successfully"
+      title: language === 'he' ? 'שיחה נטענה' : 'Conversation loaded',
+      description: language === 'he' ? 'השיחה שוחזרה בהצלחה' : 'Conversation restored successfully'
     });
   };
 
-  // When clicking a quick reply, put it in the input field instead of sending immediately
   const handleQuickReply = (reply: string) => {
-    if (!isProcessing && !isSpeaking) {
+    if (phase !== 'processing' && phase !== 'speaking') {
       setTextInput(reply);
     }
   };
@@ -496,7 +470,6 @@ ${transcript}`;
     { text: 'צריך להגיע עם ציוד מיוחד?', icon: Backpack },
     { text: 'איך להתכונן לפעילות?', icon: ListChecks },
     { text: 'האם מספקים ציוד במקום?', icon: Box },
-    { text: 'מה צריך ללבוש?', icon: Shirt },
     { text: 'האם צריך נעליים מיוחדות?', icon: Footprints }
   ] : [
     { text: 'Tell me more about the activity', icon: Info },
@@ -518,53 +491,97 @@ ${transcript}`;
     { text: 'Do I need special equipment?', icon: Backpack },
     { text: 'How should I prepare?', icon: ListChecks },
     { text: 'Do you provide equipment?', icon: Box },
-    { text: 'What should I wear?', icon: Shirt },
     { text: 'Do I need special shoes?', icon: Footprints }
   ], [language]);
 
-  // Rotate quick replies randomly every 10 seconds with fade animation
   const [visibleReplies, setVisibleReplies] = useState<Array<{ text: string; icon: any }>>([]);
   const [isAnimating, setIsAnimating] = useState(false);
   
   useEffect(() => {
     const shuffleReplies = () => {
-      // Trigger fade out
       setIsAnimating(true);
-      
-      // After fade out completes, shuffle and fade in
       setTimeout(() => {
         const shuffled = [...allQuickReplies].sort(() => Math.random() - 0.5);
         setVisibleReplies(shuffled.slice(0, 20));
         setIsAnimating(false);
-      }, 300); // Match the CSS transition duration
+      }, 300);
     };
-    
     shuffleReplies();
     const interval = setInterval(shuffleReplies, 10000);
-    
     return () => clearInterval(interval);
   }, [allQuickReplies]);
 
   const quickReplies = visibleReplies;
 
+  // Derive booleans for UI
+  const isListening = phase === 'listening';
+  const isSpeaking = phase === 'speaking';
+  const isProcessing = phase === 'processing';
+
   if (!speechSupported) {
     return (
       <Card className="flex flex-col items-center justify-center h-[600px] max-w-4xl mx-auto p-8 text-center">
         <MicOff className="w-16 h-16 text-muted-foreground mb-4" />
-        <h3 className="text-xl font-semibold mb-2">צ'אט קולי לא נתמך</h3>
+        <h3 className="text-xl font-semibold mb-2">
+          {language === 'he' ? 'צ\'אט קולי לא נתמך' : 'Voice chat not supported'}
+        </h3>
         <p className="text-muted-foreground">
-          אנא השתמשו בדפדפן Chrome, Edge או Safari למחשב עבור תכונה זו
+          {language === 'he' ? 'אנא השתמשו ב-Chrome, Edge או Safari לתמיכה מלאה בקול' : 'Please use Chrome, Edge or Safari for full voice support'}
         </p>
       </Card>
     );
   }
+
+  // Phase-based mic button styles
+  const getMicButtonStyles = () => {
+    if (sessionActive) {
+      switch (phase) {
+        case 'listening': return 'bg-green-500 hover:bg-green-600 ring-4 ring-green-500/30 animate-pulse';
+        case 'processing': return 'bg-amber-500 hover:bg-amber-600 ring-4 ring-amber-500/30';
+        case 'speaking': return 'bg-blue-500 hover:bg-blue-600 ring-4 ring-blue-500/30';
+        default: return 'bg-primary hover:bg-primary/90';
+      }
+    }
+    return 'bg-primary hover:bg-primary/90';
+  };
+
+  const getMicIcon = () => {
+    if (sessionActive) {
+      switch (phase) {
+        case 'listening': return <Mic className="w-8 h-8 text-white" />;
+        case 'processing': return <Loader2 className="w-8 h-8 text-white animate-spin" />;
+        case 'speaking': return <Volume2 className="w-8 h-8 text-white" />;
+        default: return <Mic className="w-8 h-8 text-white" />;
+      }
+    }
+    return <MicOff className="w-8 h-8" />;
+  };
+
+  const getStatusText = () => {
+    if (language === 'he') {
+      if (!sessionActive) return 'לחצו על המיקרופון להתחלת שיחה';
+      switch (phase) {
+        case 'listening': return '🎤 מקשיב... דברו עכשיו';
+        case 'processing': return '⚙️ מעבד את הבקשה...';
+        case 'speaking': return '🔊 הסוכן מדבר...';
+        default: return '🎤 שיחה פעילה';
+      }
+    }
+    if (!sessionActive) return 'Click the microphone to start conversation';
+    switch (phase) {
+      case 'listening': return '🎤 Listening... speak now';
+      case 'processing': return '⚙️ Processing your request...';
+      case 'speaking': return '🔊 Agent is speaking...';
+      default: return '🎤 Session active';
+    }
+  };
 
   return (
     <Card className="flex flex-col h-[600px] max-w-4xl mx-auto border-border/50 shadow-xl">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-border/50 bg-gradient-to-r from-primary/10 to-secondary/10">
         <div className="flex items-center gap-3">
-          <img src={companyLogo} alt="לוגו טיולים עם דויד - סיורים מודרכים בצפון ישראל, הגלבוע ועמק המעיינות" className="w-10 h-10 rounded-lg object-cover" />
+          <img src={companyLogo} alt="לוגו טיולים עם דויד" className="w-10 h-10 rounded-lg object-cover" />
           <div className="relative">
             <Bot className="w-8 h-8 text-primary" />
             {isSpeaking && (
@@ -576,12 +593,16 @@ ${transcript}`;
           <div className="flex-1">
             <h3 className="font-semibold text-lg flex items-center gap-2">
               {language === 'he' ? 'צ\'אט קולי - טיולים עם דויד' : 'Voice Chat - Tours with David'}
-              {isSpeaking && (
-                <VolumeIndicator isActive={isSpeaking} className="h-5" />
-              )}
+              {isSpeaking && <VolumeIndicator isActive={isSpeaking} className="h-5" />}
             </h3>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>{language === 'he' ? 'חוויות בטבע עם הדרכה מקצועית 🌿' : 'Nature experiences with professional guidance 🌿'}</span>
+              {sessionActive && (
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                  {language === 'he' ? 'שיחה פעילה' : 'Live'}
+                </span>
+              )}
               {messages.length > 2 && (
                 <span className={`text-lg ${overallSentiment.color}`} title={language === 'he' ? 'מצב רוח' : 'Mood'}>
                   {overallSentiment.icon}
@@ -591,7 +612,7 @@ ${transcript}`;
           </div>
         </div>
         <div className="flex gap-2 items-center">
-          {/* Language Selector - Prominent with Settings */}
+          {/* Language Selector */}
           <div className="flex items-center gap-1 bg-background/60 rounded-lg px-2 py-1 border border-border/50">
             <Globe className="w-4 h-4 text-muted-foreground" />
             <Button
@@ -616,7 +637,7 @@ ${transcript}`;
             </Button>
           </div>
           
-          {/* Settings Button - separate from language selector */}
+          {/* Settings Button */}
           <TooltipProvider delayDuration={200}>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -624,24 +645,19 @@ ${transcript}`;
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowSettings(!showSettings)}
-                  title={language === 'he' ? 'הגדרות קול' : 'Voice Settings'}
                   className="gap-2"
                 >
                   <Settings className="w-4 h-4" />
-                  <span className="text-sm">{language === 'he' ? 'הגדרות' : 'Settings'}</span>
+                  <span className="text-sm hidden sm:inline">{language === 'he' ? 'הגדרות' : 'Settings'}</span>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-xs text-center">
+              <TooltipContent side="bottom">
                 <p className="font-medium">{language === 'he' ? 'הגדרות קול' : 'Voice Settings'}</p>
-                <p className="text-xs text-muted-foreground">
-                  {language === 'he' ? 'בחירת קול לתגובות הבוט' : 'Choose voice for bot responses'}
-                </p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
           
           <TooltipProvider delayDuration={200}>
-            {/* History */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <div>
@@ -652,74 +668,44 @@ ${transcript}`;
                   />
                 </div>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-xs text-center">
+              <TooltipContent side="bottom">
                 <p className="font-medium">{language === 'he' ? 'היסטוריית שיחות' : 'Chat History'}</p>
-                <p className="text-xs text-muted-foreground">
-                  {language === 'he' ? 'צפייה וטעינה של שיחות קודמות שנשמרו' : 'View and load previously saved conversations'}
-                </p>
               </TooltipContent>
             </Tooltip>
 
-            {/* View Categories */}
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowCategories(true)}
-                >
+                <Button variant="ghost" size="icon" onClick={() => setShowCategories(true)}>
                   <Eye className="w-5 h-5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-xs text-center">
+              <TooltipContent side="bottom">
                 <p className="font-medium">{language === 'he' ? 'הצג קטגוריות' : 'View Categories'}</p>
-                <p className="text-xs text-muted-foreground">
-                  {language === 'he' ? 'צפייה ב-8 קטגוריות הפעילויות השונות' : 'Browse all 8 activity categories available'}
-                </p>
               </TooltipContent>
             </Tooltip>
 
-
-            {/* Export Chat */}
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleExportChat}
-                  disabled={messages.length === 0}
-                >
+                <Button variant="ghost" size="icon" onClick={handleExportChat} disabled={messages.length === 0}>
                   <Download className="w-5 h-5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-xs text-center">
+              <TooltipContent side="bottom">
                 <p className="font-medium">{language === 'he' ? 'ייצא שיחה' : 'Export Chat'}</p>
-                <p className="text-xs text-muted-foreground">
-                  {language === 'he' ? 'הורדת השיחה הנוכחית כקובץ טקסט' : 'Download current conversation as a text file'}
-                </p>
               </TooltipContent>
             </Tooltip>
 
-            {/* Clear Chat */}
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleClearChat}
-                >
+                <Button variant="ghost" size="icon" onClick={handleClearChat}>
                   <Trash2 className="w-5 h-5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-xs text-center">
+              <TooltipContent side="bottom">
                 <p className="font-medium">{language === 'he' ? 'נקה שיחה' : 'Clear Chat'}</p>
-                <p className="text-xs text-muted-foreground">
-                  {language === 'he' ? 'מחיקת כל ההודעות והתחלת שיחה חדשה' : 'Delete all messages and start a new conversation'}
-                </p>
               </TooltipContent>
             </Tooltip>
 
-            {/* Mute/Unmute */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -727,20 +713,20 @@ ${transcript}`;
                   size="icon"
                   onClick={() => {
                     stopElevenLabsSpeech();
-                    setIsSpeaking(false);
+                    if (sessionActiveRef.current) {
+                      setPhase('listening');
+                      try { recognitionRef.current?.start(); } catch (e) { /* */ }
+                    } else {
+                      setPhase('idle');
+                    }
                   }}
                   className={isSpeaking ? 'text-destructive hover:text-destructive' : ''}
                 >
                   {isSpeaking ? <VolumeX className="w-5 h-5 animate-pulse" /> : <Volume2 className="w-5 h-5" />}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-xs text-center">
-                <p className="font-medium">{language === 'he' ? (isSpeaking ? 'השתק' : 'השמעה קולית') : (isSpeaking ? 'Mute' : 'Voice Output')}</p>
-                <p className="text-xs text-muted-foreground">
-                  {language === 'he' 
-                    ? (isSpeaking ? 'לחץ להשתקת הקול' : 'הפעלת/השתקת תגובות קוליות')
-                    : (isSpeaking ? 'Click to stop speaking' : 'Toggle voice responses on/off')}
-                </p>
+              <TooltipContent side="bottom">
+                <p className="font-medium">{language === 'he' ? (isSpeaking ? 'השתק' : 'קול') : (isSpeaking ? 'Mute' : 'Voice')}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -766,7 +752,6 @@ ${transcript}`;
             </Select>
           </div>
           
-          {/* Voice Selection */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -780,7 +765,7 @@ ${transcript}`;
               onVoiceChange={(voice) => {
                 setSelectedVoice(voice);
                 localStorage.setItem('preferred-voice', voice);
-                toast({ title: `🔊 קול נבחר: ${ELEVENLABS_VOICES[voice].name}`, duration: 2000 });
+                toast({ title: `🔊 ${language === 'he' ? 'קול נבחר' : 'Voice selected'}: ${ELEVENLABS_VOICES[voice].name}`, duration: 2000 });
               }}
               language={language}
               className="w-full"
@@ -862,7 +847,7 @@ ${transcript}`;
             </Button>
           </form>
           
-          {/* Quick Reply Buttons - 4 rows x 5 columns */}
+          {/* Quick Reply Buttons */}
           <div className={`grid grid-cols-5 gap-2 px-3 pb-3 transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`} dir={language === 'he' ? 'rtl' : 'ltr'}>
             {quickReplies.map((reply, index) => {
               const Icon = reply.icon;
@@ -884,61 +869,45 @@ ${transcript}`;
           </div>
         </div>
 
-        {/* Voice Control */}
+        {/* Voice Control - Session Toggle */}
         <div className="p-6 bg-muted/20">
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
-              <MicrophoneAnimation isActive={isListening} />
+              {isListening && <MicrophoneAnimation isActive={true} />}
               <Button
-                onClick={isListening ? stopListening : startListening}
-                disabled={isProcessing || isSpeaking}
+                onClick={toggleSession}
                 size="lg"
-                className={`w-20 h-20 rounded-full relative z-10 ${
-                  isListening 
-                    ? 'bg-red-500 hover:bg-red-600' 
-                    : 'bg-primary hover:bg-primary/90'
-                }`}
+                className={`w-20 h-20 rounded-full relative z-10 transition-all duration-300 ${getMicButtonStyles()}`}
               >
-                {isListening ? (
-                  <Mic className="w-8 h-8" />
-                ) : isProcessing ? (
-                  <Loader2 className="w-8 h-8 animate-spin" />
-                ) : (
-                  <MicOff className="w-8 h-8" />
-                )}
+                {getMicIcon()}
               </Button>
               {isListening && (
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
-                  <WaveformVisualizer isActive={isListening} />
+                  <WaveformVisualizer isActive={true} />
                 </div>
               )}
             </div>
             <div className="space-y-2 w-full max-w-md">
               <p className="text-base font-medium text-foreground text-center px-4 py-2 bg-background/80 rounded-lg border border-border/50">
-                {language === 'he' ? (
-                  isListening 
-                    ? '🎤 מקשיב...' 
-                    : isSpeaking 
-                    ? '🔊 מדבר...'
-                    : isProcessing
-                    ? '⚙️ מעבד...'
-                    : 'לחצו על המיקרופון להתחלת שיחה'
-                ) : (
-                  isListening 
-                    ? '🎤 Listening...' 
-                    : isSpeaking 
-                    ? '🔊 Speaking...'
-                    : isProcessing
-                    ? '⚙️ Processing...'
-                    : 'Click the microphone to start conversation'
-                )}
+                {getStatusText()}
               </p>
-              <p className="text-sm text-foreground/70 text-center px-3 py-1.5 bg-accent/10 rounded-md">
-                {language === 'he' 
-                  ? 'תכונה זו פועלת בעברית ובאנגלית'
-                  : 'Works in Hebrew and English'
-                }
-              </p>
+              {sessionActive && (
+                <button 
+                  onClick={endSession}
+                  className="flex items-center justify-center gap-1.5 mx-auto text-sm text-destructive hover:text-destructive/80 transition-colors"
+                >
+                  <PhoneOff className="w-3.5 h-3.5" />
+                  {language === 'he' ? 'סיום שיחה' : 'End Session'}
+                </button>
+              )}
+              {!sessionActive && (
+                <p className="text-sm text-foreground/70 text-center px-3 py-1.5 bg-accent/10 rounded-md">
+                  {language === 'he' 
+                    ? 'לחצו להתחלת שיחה חופשית — hands-free'
+                    : 'Click to start a hands-free conversation'
+                  }
+                </p>
+              )}
             </div>
           </div>
         </div>
