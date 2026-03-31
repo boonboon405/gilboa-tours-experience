@@ -1,53 +1,85 @@
 
 
-## Fix Voice Chat: Immediate AI Greeting + Barge-In Interruption
+## Two-Button Voice Control: Play/Pause + Talk
 
-### Problem
-1. **No immediate AI speech on session start**: Clicking the mic only starts listening — the AI greeting (already displayed as text) is never spoken aloud
-2. **No barge-in**: When the user starts speaking, the AI keeps talking — there's no interruption logic
-3. **Hebrew voice verification**: Need to confirm the language param flows correctly to the TTS edge function
+### What We're Building
 
-### Changes
+Replace the single mic toggle with two distinct, branded buttons:
 
-#### 1. `src/components/VoiceChat.tsx` — `startSession` function
+1. **"Start / Resume AI" button** (teal/primary) — Starts the session and makes the AI speak its greeting or continue speaking its response. When clicked again after user speaks, AI processes and responds.
+2. **"My Turn to Talk" button** (accent/orange) — Pauses AI speech immediately, activates the microphone so the user can speak. When user is done, they click the first button to let the AI respond.
 
-**Speak greeting immediately on session start:**
-- After getting mic permission and setting session active, call `speakText()` with the current greeting message (first message in `messages` array)
-- Set phase to `'speaking'` first (not `'listening'`), then after greeting finishes, auto-transition to `'listening'` and start recognition
-- This way: click mic → AI speaks greeting → then listens for user
+Additionally: switching language mid-session immediately stops all speech and resets.
 
-**Add barge-in (interrupt) logic:**
-- In `recognition.onresult`, before processing the transcript, call `stopElevenLabsSpeech()` to immediately cut off any AI speech
-- This means: if AI is speaking and user starts talking, the AI stops mid-sentence and the user's input gets processed
-- Also in `recognition.onstart` or when speech is first detected, stop TTS playback
+### User Flow
 
-**Flow after fix:**
 ```text
-Click mic → [Speaking] (AI speaks greeting)
-                → TTS ends → [Listening] (auto-arm mic)
-                → User speaks (interrupts AI if still talking) → [Processing] → [Speaking] → [Listening] → ...
-Click mic again → [Idle] (end session)
+[Idle] → Click "Start AI" → AI speaks greeting (phase: speaking)
+      → Click "My Turn" → AI stops talking, mic activates (phase: listening)
+      → User speaks...
+      → Click "Send to AI" → mic stops, AI processes + responds (phase: processing → speaking)
+      → Click "My Turn" again → interrupt AI, speak again
+      → ...repeat...
+      → Click "End Session" → everything stops
 ```
 
-#### 2. `src/components/VoiceChat.tsx` — Speech recognition setup
+### Language Switch Behavior
+When user switches language (he↔en), `handleLanguageChange` already calls `endSession()` which stops TTS + recognition. The greeting regenerates in the new language. No additional change needed — already works.
 
-**Enable barge-in during continuous listening:**
-- In the `recognition.onresult` handler (line ~104), add `stopElevenLabsSpeech()` as the first action before calling `handleVoiceInput`
-- This ensures any currently playing AI audio is cut immediately when user speech is detected
+### File Changes
 
-#### 3. Hebrew voice verification
+#### 1. `src/components/VoiceChat.tsx` — Major UI refactor of controls
 
-The current flow is correct:
-- `speakText` calls `speakWithElevenLabs(text, selectedVoice, ..., language)` where `language` comes from `useLanguage()` context
-- The edge function receives `language`, detects Hebrew chars, prepends `[he]` prefix, uses `eleven_multilingual_v2` model
-- No code change needed here — the Hebrew path is properly wired
+**State changes:**
+- Keep `phase` state machine (`idle | listening | processing | speaking`)
+- Keep `sessionActive` flag
+- Remove auto-re-arm logic from `speakText` callback and `recognition.onend` — user now manually controls turns
 
-### Summary of code changes
+**New control flow:**
+- `startOrResumeAI()`: If no session, start session + speak greeting. If session active and user just spoke (has pending transcript), send to AI. If AI finished and waiting, do nothing.
+- `takeMyTurn()`: Call `stopElevenLabsSpeech()`, set phase to `listening`, start recognition. Recognition stays on until user clicks "Send to AI".
+- `recognition.continuous = true` so it captures everything while user talks
+- `recognition.onresult`: Accumulate transcript into a ref (don't send immediately)
+- When user clicks "Start AI" button after speaking: stop recognition, send accumulated transcript to `handleVoiceInput`
 
-**`src/components/VoiceChat.tsx`:**
-1. `startSession`: After mic permission, speak the greeting message first (phase = speaking), then on TTS end transition to listening + start recognition
-2. `recognition.onresult`: Add `stopElevenLabsSpeech()` at the top to enable barge-in interruption
-3. `recognition.continuous = true` should remain to keep re-arming within a session
+**UI — Bottom control bar:**
+Replace the single 80px mic button with two side-by-side branded buttons:
 
-No other files need changes.
+- **Left button**: "▶ Start AI" / "▶ Let AI Respond" — teal/primary, rounded-full, min-w-[140px]
+  - Idle: "Start Conversation" with play icon
+  - After user spoke: "Send to AI" with send icon  
+  - While AI speaking: disabled or shows "AI Speaking..."
+- **Right button**: "🎤 My Turn" — accent/orange, rounded-full, min-w-[140px]
+  - Only enabled when AI is speaking or session is active
+  - While listening: shows "Listening..." with pulse animation
+  - While idle (no session): disabled
+
+- **End Session** link stays below
+
+**Phase-based status text** updates to reflect the manual turn-taking.
+
+#### 2. `src/utils/elevenLabsTTS.ts` — No changes needed
+
+`stopElevenLabsSpeech()` already handles immediate interruption. The `onEnd` callback still fires correctly.
+
+#### 3. `src/components/VoiceChat.tsx` — Language switch already stops speech
+
+`handleLanguageChange` calls `endSession()` which calls `stopElevenLabsSpeech()` — this already handles the requirement that switching language stops the current voice immediately.
+
+### Visual Design (Brand Identity)
+
+- **Start/AI button**: Uses `bg-primary` (teal) with `hover:brightness-110`, `rounded-full`, `min-w-[140px]`, Heebo font
+- **My Turn button**: Uses `bg-accent` (sunset orange) with `hover:brightness-110`, `rounded-full`, `min-w-[140px]`
+- Active listening state: orange button gets `ring-4 ring-accent/30 animate-pulse`
+- AI speaking state: teal button gets `ring-4 ring-primary/30`
+- Status text: centered below buttons in `bg-background/80 rounded-lg border` container
+- Both buttons use standard `200ms transition-all` per brand standards
+
+### Summary
+
+- Remove auto-loop logic (no auto re-arm)
+- Two explicit buttons for turn-taking
+- Accumulated transcript sent on user's command
+- Language switch = immediate stop (already works)
+- Brand-consistent button styling
 
