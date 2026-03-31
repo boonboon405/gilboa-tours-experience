@@ -99,32 +99,34 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     }
 
     const recognition = new SpeechRecognition();
-    recognition.continuous = false;
+    recognition.continuous = true;
     recognition.interimResults = false;
     recognition.lang = language === 'he' ? 'he-IL' : 'en-US';
 
     recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      if (transcript.trim()) {
-        // Barge-in: immediately stop any AI speech when user speaks
+      // Accumulate all results
+      let transcript = '';
+      for (let i = 0; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          transcript += event.results[i][0].transcript + ' ';
+        }
+      }
+      const trimmed = transcript.trim();
+      if (trimmed) {
+        // Barge-in: stop AI speech if it's playing
         stopElevenLabsSpeech();
-        handleVoiceInput(transcript);
+        accumulatedTranscriptRef.current = trimmed;
+        setHasPendingTranscript(true);
       }
     };
 
     recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
       
-      // Don't show error for aborted (we abort on purpose when ending session)
       if (event.error === 'aborted') return;
 
-      // For no-speech, auto re-arm if session is still active
       if (event.error === 'no-speech') {
-        if (sessionActiveRef.current) {
-          try { recognition.start(); } catch (e) { /* already started */ }
-        } else {
-          setPhase('idle');
-        }
+        // Don't auto re-arm — user controls turns manually
         return;
       }
 
@@ -145,16 +147,11 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
         variant: 'destructive'
       });
       
-      // End session on critical errors
       endSession();
     };
 
     recognition.onend = () => {
-      // Auto re-arm if session is active and we're in listening phase
-      // Use refs to avoid stale closure
-      if (sessionActiveRef.current && phaseRef.current === 'listening') {
-        try { recognition.start(); } catch (e) { /* already started */ }
-      }
+      // No auto re-arm — user manually controls turns
     };
 
     recognitionRef.current = recognition;
