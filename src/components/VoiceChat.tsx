@@ -104,6 +104,8 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
       if (transcript.trim()) {
+        // Barge-in: immediately stop any AI speech when user speaks
+        stopElevenLabsSpeech();
         handleVoiceInput(transcript);
       }
     };
