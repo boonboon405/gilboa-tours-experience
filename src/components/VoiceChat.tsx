@@ -332,10 +332,28 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
       
       setSessionActive(true);
       sessionActiveRef.current = true;
-      setPhase('listening');
       
-      recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
-      recognitionRef.current.start();
+      // Speak the greeting immediately, then auto-listen
+      const greetingMsg = messages.length > 0 ? messages[0].message : null;
+      if (greetingMsg) {
+        setPhase('speaking');
+        recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
+        
+        // Start recognition in parallel so barge-in works during greeting
+        try { recognitionRef.current.start(); } catch (e) { /* ignore */ }
+        
+        await speakText(greetingMsg, () => {
+          // After greeting finishes, ensure we're listening
+          if (sessionActiveRef.current && recognitionRef.current) {
+            setPhase('listening');
+            try { recognitionRef.current.start(); } catch (e) { /* already started */ }
+          }
+        });
+      } else {
+        setPhase('listening');
+        recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
+        recognitionRef.current.start();
+      }
       
       toast({
         title: language === 'he' ? '🎤 שיחה התחילה' : '🎤 Session Started',
