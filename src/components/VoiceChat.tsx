@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe, PhoneOff } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, Loader2, Bot, User, Send, Trash2, Languages, Settings, Download, Eye, Info, DollarSign, MapPin, Clock, Package, Activity, Users, Cloud, Calendar, Navigation, ParkingCircle, XCircle, UsersRound, ShoppingBag, Shirt, Backpack, ListChecks, Box, Footprints, Globe, PhoneOff, Play, Square } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { speakWithElevenLabs, stopElevenLabsSpeech, ElevenLabsVoice, ELEVENLABS_VOICES } from '@/utils/elevenLabsTTS';
@@ -63,6 +63,8 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const recognitionRef = useRef<any>(null);
   const sessionActiveRef = useRef(false);
   const phaseRef = useRef<SessionPhase>('idle');
+  const accumulatedTranscriptRef = useRef('');
+  const [hasPendingTranscript, setHasPendingTranscript] = useState(false);
   const { toast } = useToast();
 
   // Keep refs in sync with state for use in callbacks
@@ -97,32 +99,34 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     }
 
     const recognition = new SpeechRecognition();
-    recognition.continuous = false;
+    recognition.continuous = true;
     recognition.interimResults = false;
     recognition.lang = language === 'he' ? 'he-IL' : 'en-US';
 
     recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      if (transcript.trim()) {
-        // Barge-in: immediately stop any AI speech when user speaks
+      // Accumulate all results
+      let transcript = '';
+      for (let i = 0; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          transcript += event.results[i][0].transcript + ' ';
+        }
+      }
+      const trimmed = transcript.trim();
+      if (trimmed) {
+        // Barge-in: stop AI speech if it's playing
         stopElevenLabsSpeech();
-        handleVoiceInput(transcript);
+        accumulatedTranscriptRef.current = trimmed;
+        setHasPendingTranscript(true);
       }
     };
 
     recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
       
-      // Don't show error for aborted (we abort on purpose when ending session)
       if (event.error === 'aborted') return;
 
-      // For no-speech, auto re-arm if session is still active
       if (event.error === 'no-speech') {
-        if (sessionActiveRef.current) {
-          try { recognition.start(); } catch (e) { /* already started */ }
-        } else {
-          setPhase('idle');
-        }
+        // Don't auto re-arm — user controls turns manually
         return;
       }
 
@@ -143,16 +147,11 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
         variant: 'destructive'
       });
       
-      // End session on critical errors
       endSession();
     };
 
     recognition.onend = () => {
-      // Auto re-arm if session is active and we're in listening phase
-      // Use refs to avoid stale closure
-      if (sessionActiveRef.current && phaseRef.current === 'listening') {
-        try { recognition.start(); } catch (e) { /* already started */ }
-      }
+      // No auto re-arm — user manually controls turns
     };
 
     recognitionRef.current = recognition;
@@ -235,7 +234,12 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
       selectedVoice,
       () => setPhase('speaking'),
       () => {
-        setPhase(sessionActiveRef.current ? 'listening' : 'idle');
+        // Don't auto re-arm — just go idle after speaking
+        if (sessionActiveRef.current) {
+          setPhase('idle');
+        } else {
+          setPhase('idle');
+        }
         onDone?.();
       },
       language
@@ -302,15 +306,8 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
 
       setMessages(prev => [...prev, aiMessage]);
 
-      // Speak the response; on done, auto re-arm mic if session active
-      await speakText(data.message, () => {
-        if (sessionActiveRef.current && recognitionRef.current) {
-          try {
-            recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
-            recognitionRef.current.start();
-          } catch (e) { /* already started */ }
-        }
-      });
+      // Speak the response; no auto re-arm — user clicks "My Turn" to talk again
+      await speakText(data.message);
 
     } catch (error) {
       console.error('Voice chat error:', error);
@@ -323,73 +320,79 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     }
   }, [conversationId, sessionId, quizResults, language, speakText, messages.length, toast]);
 
-  const startSession = useCallback(async () => {
-    if (!recognitionRef.current) return;
-    
-    try {
-      // Request mic permission once at session start
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      
-      setSessionActive(true);
-      sessionActiveRef.current = true;
-      
-      // Speak the greeting immediately, then auto-listen
-      const greetingMsg = messages.length > 0 ? messages[0].message : null;
-      if (greetingMsg) {
-        setPhase('speaking');
-        recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
-        
-        // Start recognition in parallel so barge-in works during greeting
-        try { recognitionRef.current.start(); } catch (e) { /* ignore */ }
-        
-        await speakText(greetingMsg, () => {
-          // After greeting finishes, ensure we're listening
-          if (sessionActiveRef.current && recognitionRef.current) {
-            setPhase('listening');
-            try { recognitionRef.current.start(); } catch (e) { /* already started */ }
-          }
+  const startOrResumeAI = useCallback(async () => {
+    if (!sessionActive) {
+      // First click: start session + speak greeting
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        setSessionActive(true);
+        sessionActiveRef.current = true;
+        accumulatedTranscriptRef.current = '';
+        setHasPendingTranscript(false);
+
+        const greetingMsg = messages.length > 0 ? messages[0].message : null;
+        if (greetingMsg) {
+          await speakText(greetingMsg);
+        }
+
+        toast({
+          title: language === 'he' ? '🎤 שיחה התחילה' : '🎤 Session Started',
+          description: language === 'he' ? 'הסוכן מדבר... לחצו "תורי לדבר" כדי לענות' : 'Agent speaking... click "My Turn" to respond',
+          duration: 3000
         });
-      } else {
-        setPhase('listening');
-        recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
-        recognitionRef.current.start();
+      } catch (error: any) {
+        console.error('Error starting session:', error);
+        toast({
+          title: language === 'he' ? 'שגיאת מיקרופון' : 'Microphone Error',
+          description: language === 'he' 
+            ? 'לא ניתן לגשת למיקרופון. אנא אפשרו גישה בהגדרות הדפדפן'
+            : 'Cannot access microphone. Please allow access in browser settings',
+          variant: 'destructive'
+        });
+      }
+    } else if (hasPendingTranscript && accumulatedTranscriptRef.current.trim()) {
+      // User has spoken and wants to send to AI
+      const transcript = accumulatedTranscriptRef.current.trim();
+      accumulatedTranscriptRef.current = '';
+      setHasPendingTranscript(false);
+      
+      // Stop recognition
+      if (recognitionRef.current) {
+        try { recognitionRef.current.abort(); } catch (e) { /* ignore */ }
       }
       
-      toast({
-        title: language === 'he' ? '🎤 שיחה התחילה' : '🎤 Session Started',
-        description: language === 'he' ? 'דברו בחופשיות, אני מקשיב...' : 'Speak freely, I\'m listening...',
-        duration: 3000
-      });
-    } catch (error: any) {
-      console.error('Error starting session:', error);
-      toast({
-        title: language === 'he' ? 'שגיאת מיקרופון' : 'Microphone Error',
-        description: language === 'he' 
-          ? 'לא ניתן לגשת למיקרופון. אנא אפשרו גישה בהגדרות הדפדפן'
-          : 'Cannot access microphone. Please allow access in browser settings',
-        variant: 'destructive'
-      });
+      await handleVoiceInput(transcript);
     }
-  }, [language, toast, messages, speakText]);
+  }, [sessionActive, hasPendingTranscript, messages, speakText, language, toast, handleVoiceInput]);
+
+  const takeMyTurn = useCallback(() => {
+    if (!sessionActive || !recognitionRef.current) return;
+    
+    // Stop AI speech immediately
+    stopElevenLabsSpeech();
+    
+    // Clear previous transcript
+    accumulatedTranscriptRef.current = '';
+    setHasPendingTranscript(false);
+    
+    // Start listening
+    setPhase('listening');
+    recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
+    try { recognitionRef.current.start(); } catch (e) { /* already started */ }
+  }, [sessionActive, language]);
 
   const endSession = useCallback(() => {
     setSessionActive(false);
     sessionActiveRef.current = false;
     setPhase('idle');
+    accumulatedTranscriptRef.current = '';
+    setHasPendingTranscript(false);
     
     if (recognitionRef.current) {
       try { recognitionRef.current.abort(); } catch (e) { /* ignore */ }
     }
     stopElevenLabsSpeech();
   }, []);
-
-  const toggleSession = useCallback(() => {
-    if (sessionActive) {
-      endSession();
-    } else {
-      startSession();
-    }
-  }, [sessionActive, startSession, endSession]);
 
   const handleTextSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -557,48 +560,40 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     );
   }
 
-  // Phase-based mic button styles
-  const getMicButtonStyles = () => {
-    if (sessionActive) {
-      switch (phase) {
-        case 'listening': return 'bg-green-500 hover:bg-green-600 ring-4 ring-green-500/30 animate-pulse';
-        case 'processing': return 'bg-amber-500 hover:bg-amber-600 ring-4 ring-amber-500/30';
-        case 'speaking': return 'bg-blue-500 hover:bg-blue-600 ring-4 ring-blue-500/30';
-        default: return 'bg-primary hover:bg-primary/90';
-      }
-    }
-    return 'bg-primary hover:bg-primary/90';
-  };
-
-  const getMicIcon = () => {
-    if (sessionActive) {
-      switch (phase) {
-        case 'listening': return <Mic className="w-8 h-8 text-white" />;
-        case 'processing': return <Loader2 className="w-8 h-8 text-white animate-spin" />;
-        case 'speaking': return <Volume2 className="w-8 h-8 text-white" />;
-        default: return <Mic className="w-8 h-8 text-white" />;
-      }
-    }
-    return <MicOff className="w-8 h-8" />;
-  };
-
+  // Phase-based status text
   const getStatusText = () => {
     if (language === 'he') {
-      if (!sessionActive) return 'לחצו על המיקרופון להתחלת שיחה';
+      if (!sessionActive) return 'לחצו "התחל שיחה" כדי להתחיל';
+      if (hasPendingTranscript) return `📝 "${accumulatedTranscriptRef.current.substring(0, 40)}..." — לחצו "שלח לסוכן"`;
       switch (phase) {
         case 'listening': return '🎤 מקשיב... דברו עכשיו';
         case 'processing': return '⚙️ מעבד את הבקשה...';
-        case 'speaking': return '🔊 הסוכן מדבר...';
-        default: return '🎤 שיחה פעילה';
+        case 'speaking': return '🔊 הסוכן מדבר... לחצו "תורי" להפסיק';
+        default: return '🎤 שיחה פעילה — לחצו "תורי לדבר"';
       }
     }
-    if (!sessionActive) return 'Click the microphone to start conversation';
+    if (!sessionActive) return 'Click "Start Conversation" to begin';
+    if (hasPendingTranscript) return `📝 "${accumulatedTranscriptRef.current.substring(0, 40)}..." — Click "Send to AI"`;
     switch (phase) {
       case 'listening': return '🎤 Listening... speak now';
       case 'processing': return '⚙️ Processing your request...';
-      case 'speaking': return '🔊 Agent is speaking...';
-      default: return '🎤 Session active';
+      case 'speaking': return '🔊 Agent speaking... click "My Turn" to interrupt';
+      default: return '🎤 Session active — click "My Turn to Talk"';
     }
+  };
+
+  // Button labels
+  const getStartButtonLabel = () => {
+    if (!sessionActive) return language === 'he' ? 'התחל שיחה' : 'Start Conversation';
+    if (hasPendingTranscript) return language === 'he' ? 'שלח לסוכן' : 'Send to AI';
+    if (isSpeaking) return language === 'he' ? 'הסוכן מדבר...' : 'AI Speaking...';
+    if (isProcessing) return language === 'he' ? 'מעבד...' : 'Processing...';
+    return language === 'he' ? 'הפעל סוכן' : 'Resume AI';
+  };
+
+  const getMyTurnLabel = () => {
+    if (isListening) return language === 'he' ? 'מקשיב...' : 'Listening...';
+    return language === 'he' ? 'תורי לדבר' : 'My Turn to Talk';
   };
 
   return (
@@ -894,26 +889,67 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
           </div>
         </div>
 
-        {/* Voice Control - Session Toggle */}
+        {/* Voice Control - Two Button System */}
         <div className="p-6 bg-muted/20">
           <div className="flex flex-col items-center gap-4">
-            <div className="relative">
-              {isListening && <MicrophoneAnimation isActive={true} />}
+            {/* Two-button row */}
+            <div className="flex items-center gap-3 w-full max-w-md justify-center">
+              {/* Start AI / Send to AI Button */}
               <Button
-                onClick={toggleSession}
-                size="lg"
-                className={`w-20 h-20 rounded-full relative z-10 transition-all duration-300 ${getMicButtonStyles()}`}
+                onClick={startOrResumeAI}
+                disabled={isSpeaking || isProcessing}
+                className={`min-w-[140px] rounded-full transition-all duration-200 gap-2 ${
+                  hasPendingTranscript 
+                    ? 'bg-primary text-primary-foreground hover:brightness-110 ring-4 ring-primary/30' 
+                    : !sessionActive 
+                      ? 'bg-primary text-primary-foreground hover:brightness-110'
+                      : isSpeaking
+                        ? 'bg-primary/50 text-primary-foreground cursor-not-allowed'
+                        : 'bg-primary text-primary-foreground hover:brightness-110'
+                }`}
+                style={{ fontFamily: "'Heebo', sans-serif" }}
               >
-                {getMicIcon()}
+                {isProcessing ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : hasPendingTranscript ? (
+                  <Send className="w-4 h-4" />
+                ) : (
+                  <Play className="w-4 h-4" />
+                )}
+                {getStartButtonLabel()}
               </Button>
-              {isListening && (
-                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
-                  <WaveformVisualizer isActive={true} />
-                </div>
-              )}
+
+              {/* My Turn to Talk Button */}
+              <Button
+                onClick={takeMyTurn}
+                disabled={!sessionActive || isListening || isProcessing}
+                className={`min-w-[140px] rounded-full transition-all duration-200 gap-2 ${
+                  isListening
+                    ? 'bg-accent text-accent-foreground ring-4 ring-accent/30 animate-pulse'
+                    : sessionActive
+                      ? 'bg-accent text-accent-foreground hover:brightness-110'
+                      : 'bg-muted text-muted-foreground cursor-not-allowed'
+                }`}
+                style={{ fontFamily: "'Heebo', sans-serif" }}
+              >
+                <Mic className="w-4 h-4" />
+                {getMyTurnLabel()}
+              </Button>
             </div>
+
+            {/* Waveform when listening */}
+            {isListening && (
+              <div className="w-full max-w-xs">
+                <WaveformVisualizer isActive={true} />
+              </div>
+            )}
+
+            {/* Speaking animation */}
+            {isSpeaking && <SpeakingAnimation isActive={true} size="lg" />}
+
+            {/* Status Text */}
             <div className="space-y-2 w-full max-w-md">
-              <p className="text-base font-medium text-foreground text-center px-4 py-2 bg-background/80 rounded-lg border border-border/50">
+              <p className="text-base font-medium text-foreground text-center px-4 py-2 bg-background/80 rounded-lg border border-border/50" style={{ fontFamily: "'Heebo', sans-serif" }}>
                 {getStatusText()}
               </p>
               {sessionActive && (
@@ -928,8 +964,8 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
               {!sessionActive && (
                 <p className="text-sm text-foreground/70 text-center px-3 py-1.5 bg-accent/10 rounded-md">
                   {language === 'he' 
-                    ? 'לחצו להתחלת שיחה חופשית — hands-free'
-                    : 'Click to start a hands-free conversation'
+                    ? 'הסוכן ידבר אליכם ואז תוכלו לענות'
+                    : 'The agent will speak to you, then you can respond'
                   }
                 </p>
               )}
