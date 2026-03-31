@@ -108,22 +108,29 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
       await handleVoiceInput(transcript);
     };
 
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
       setIsListening(false);
       
-      if (event.error === 'no-speech') {
-        toast({
-          title: "לא נשמע קול",
-          description: "אנא נסו שוב ודברו בבירור",
-        });
-      } else if (event.error === 'not-allowed') {
-        toast({
-          title: "נדרשת הרשאה",
-          description: "אנא אפשרו גישה למיקרופון בדפדפן",
-          variant: "destructive"
-        });
-      }
+      const errorMessages: Record<string, { he: string; en: string }> = {
+        'no-speech': { he: 'לא נשמע קול. אנא נסו שוב ודברו בבירור', en: 'No speech detected. Please try again and speak clearly' },
+        'not-allowed': { he: 'נדרשת הרשאת מיקרופון. אנא אפשרו גישה בדפדפן', en: 'Microphone permission required. Please allow access in browser settings' },
+        'network': { he: 'שגיאת רשת. אנא בדקו את החיבור לאינטרנט', en: 'Network error. Please check your internet connection' },
+        'aborted': { he: 'ההאזנה בוטלה', en: 'Listening was cancelled' },
+        'audio-capture': { he: 'לא נמצא מיקרופון. אנא חברו מיקרופון ונסו שוב', en: 'No microphone found. Please connect a microphone and try again' },
+        'service-not-allowed': { he: 'שירות הזיהוי אינו זמין. אנא נסו בדפדפן Chrome', en: 'Speech service unavailable. Please try using Chrome browser' },
+      };
+      
+      const msg = errorMessages[event.error] || { 
+        he: `שגיאה בזיהוי קול: ${event.error}`, 
+        en: `Speech recognition error: ${event.error}` 
+      };
+      
+      toast({
+        title: language === 'he' ? 'שגיאה' : 'Error',
+        description: language === 'he' ? msg.he : msg.en,
+        variant: event.error === 'no-speech' ? 'default' : 'destructive'
+      });
     };
 
     recognition.onend = () => {
