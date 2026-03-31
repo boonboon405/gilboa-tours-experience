@@ -62,12 +62,17 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const sessionActiveRef = useRef(false);
+  const phaseRef = useRef<SessionPhase>('idle');
   const { toast } = useToast();
 
-  // Keep ref in sync with state for use in callbacks
+  // Keep refs in sync with state for use in callbacks
   useEffect(() => {
     sessionActiveRef.current = sessionActive;
   }, [sessionActive]);
+
+  useEffect(() => {
+    phaseRef.current = phase;
+  }, [phase]);
 
   // Save conversation to history periodically
   useEffect(() => {
