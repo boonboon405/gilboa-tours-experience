@@ -234,7 +234,12 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
       selectedVoice,
       () => setPhase('speaking'),
       () => {
-        setPhase(sessionActiveRef.current ? 'listening' : 'idle');
+        // Don't auto re-arm — just go idle after speaking
+        if (sessionActiveRef.current) {
+          setPhase('idle');
+        } else {
+          setPhase('idle');
+        }
         onDone?.();
       },
       language
