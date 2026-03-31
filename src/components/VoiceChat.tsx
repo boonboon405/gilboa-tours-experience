@@ -147,8 +147,8 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
 
     recognition.onend = () => {
       // Auto re-arm if session is active and we're in listening phase
-      // (onend fires after each recognition result in non-continuous mode)
-      if (sessionActiveRef.current && phase === 'listening') {
+      // Use refs to avoid stale closure
+      if (sessionActiveRef.current && phaseRef.current === 'listening') {
         try { recognition.start(); } catch (e) { /* already started */ }
       }
     };
