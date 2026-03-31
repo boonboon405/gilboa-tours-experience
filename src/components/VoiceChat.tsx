@@ -320,73 +320,79 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     }
   }, [conversationId, sessionId, quizResults, language, speakText, messages.length, toast]);
 
-  const startSession = useCallback(async () => {
-    if (!recognitionRef.current) return;
-    
-    try {
-      // Request mic permission once at session start
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      
-      setSessionActive(true);
-      sessionActiveRef.current = true;
-      
-      // Speak the greeting immediately, then auto-listen
-      const greetingMsg = messages.length > 0 ? messages[0].message : null;
-      if (greetingMsg) {
-        setPhase('speaking');
-        recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
-        
-        // Start recognition in parallel so barge-in works during greeting
-        try { recognitionRef.current.start(); } catch (e) { /* ignore */ }
-        
-        await speakText(greetingMsg, () => {
-          // After greeting finishes, ensure we're listening
-          if (sessionActiveRef.current && recognitionRef.current) {
-            setPhase('listening');
-            try { recognitionRef.current.start(); } catch (e) { /* already started */ }
-          }
+  const startOrResumeAI = useCallback(async () => {
+    if (!sessionActive) {
+      // First click: start session + speak greeting
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        setSessionActive(true);
+        sessionActiveRef.current = true;
+        accumulatedTranscriptRef.current = '';
+        setHasPendingTranscript(false);
+
+        const greetingMsg = messages.length > 0 ? messages[0].message : null;
+        if (greetingMsg) {
+          await speakText(greetingMsg);
+        }
+
+        toast({
+          title: language === 'he' ? '🎤 שיחה התחילה' : '🎤 Session Started',
+          description: language === 'he' ? 'הסוכן מדבר... לחצו "תורי לדבר" כדי לענות' : 'Agent speaking... click "My Turn" to respond',
+          duration: 3000
         });
-      } else {
-        setPhase('listening');
-        recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
-        recognitionRef.current.start();
+      } catch (error: any) {
+        console.error('Error starting session:', error);
+        toast({
+          title: language === 'he' ? 'שגיאת מיקרופון' : 'Microphone Error',
+          description: language === 'he' 
+            ? 'לא ניתן לגשת למיקרופון. אנא אפשרו גישה בהגדרות הדפדפן'
+            : 'Cannot access microphone. Please allow access in browser settings',
+          variant: 'destructive'
+        });
+      }
+    } else if (hasPendingTranscript && accumulatedTranscriptRef.current.trim()) {
+      // User has spoken and wants to send to AI
+      const transcript = accumulatedTranscriptRef.current.trim();
+      accumulatedTranscriptRef.current = '';
+      setHasPendingTranscript(false);
+      
+      // Stop recognition
+      if (recognitionRef.current) {
+        try { recognitionRef.current.abort(); } catch (e) { /* ignore */ }
       }
       
-      toast({
-        title: language === 'he' ? '🎤 שיחה התחילה' : '🎤 Session Started',
-        description: language === 'he' ? 'דברו בחופשיות, אני מקשיב...' : 'Speak freely, I\'m listening...',
-        duration: 3000
-      });
-    } catch (error: any) {
-      console.error('Error starting session:', error);
-      toast({
-        title: language === 'he' ? 'שגיאת מיקרופון' : 'Microphone Error',
-        description: language === 'he' 
-          ? 'לא ניתן לגשת למיקרופון. אנא אפשרו גישה בהגדרות הדפדפן'
-          : 'Cannot access microphone. Please allow access in browser settings',
-        variant: 'destructive'
-      });
+      await handleVoiceInput(transcript);
     }
-  }, [language, toast, messages, speakText]);
+  }, [sessionActive, hasPendingTranscript, messages, speakText, language, toast, handleVoiceInput]);
+
+  const takeMyTurn = useCallback(() => {
+    if (!sessionActive || !recognitionRef.current) return;
+    
+    // Stop AI speech immediately
+    stopElevenLabsSpeech();
+    
+    // Clear previous transcript
+    accumulatedTranscriptRef.current = '';
+    setHasPendingTranscript(false);
+    
+    // Start listening
+    setPhase('listening');
+    recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
+    try { recognitionRef.current.start(); } catch (e) { /* already started */ }
+  }, [sessionActive, language]);
 
   const endSession = useCallback(() => {
     setSessionActive(false);
     sessionActiveRef.current = false;
     setPhase('idle');
+    accumulatedTranscriptRef.current = '';
+    setHasPendingTranscript(false);
     
     if (recognitionRef.current) {
       try { recognitionRef.current.abort(); } catch (e) { /* ignore */ }
     }
     stopElevenLabsSpeech();
   }, []);
-
-  const toggleSession = useCallback(() => {
-    if (sessionActive) {
-      endSession();
-    } else {
-      startSession();
-    }
-  }, [sessionActive, startSession, endSession]);
 
   const handleTextSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
