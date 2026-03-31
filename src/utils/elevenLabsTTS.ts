@@ -73,9 +73,8 @@ export async function speakWithElevenLabs(
       throw new Error('No audio content returned');
     }
 
-    // Convert base64 to audio and play
-    const audioBlob = base64ToBlob(data.audioContent, 'audio/mpeg');
-    const audioUrl = URL.createObjectURL(audioBlob);
+    // Use data URI for reliable base64 audio playback (avoids manual decoding issues)
+    const audioUrl = `data:audio/mpeg;base64,${data.audioContent}`;
     currentAudio = new Audio(audioUrl);
 
     return new Promise((resolve) => {
