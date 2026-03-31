@@ -142,7 +142,15 @@ const translations = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('he');
+  const [language, setLanguageState] = useState<Language>(() => {
+    const saved = localStorage.getItem('preferred-language');
+    return saved === 'en' ? 'en' : 'he';
+  });
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    localStorage.setItem('preferred-language', lang);
+  };
 
   useEffect(() => {
     // Apply RTL for Hebrew
