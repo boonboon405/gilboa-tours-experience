@@ -92,7 +92,7 @@ export async function speakWithElevenLabs(
 
       currentAudio.onerror = (e) => {
         console.error('[ElevenLabs TTS] Audio playback error:', e);
-        URL.revokeObjectURL(audioUrl);
+        currentAudio = null;
         currentAudio = null;
         onEnd?.();
         resolve(false);
