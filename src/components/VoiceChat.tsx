@@ -63,6 +63,8 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const recognitionRef = useRef<any>(null);
   const sessionActiveRef = useRef(false);
   const phaseRef = useRef<SessionPhase>('idle');
+  const accumulatedTranscriptRef = useRef('');
+  const [hasPendingTranscript, setHasPendingTranscript] = useState(false);
   const { toast } = useToast();
 
   // Keep refs in sync with state for use in callbacks
