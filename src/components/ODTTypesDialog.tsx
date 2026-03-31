@@ -24,7 +24,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Trust Games',
     descriptionHe: 'פעילויות שבהן חברי הצוות חייבים לסמוך אחד על השני כדי להצליח.',
     descriptionEn: 'Activities where team members must trust each other to succeed.',
-    imageUrl: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1608637765750-6b77adacfcac?w=600&q=80&fit=crop'
   },
   {
     id: 2,
@@ -32,7 +32,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Creative Problem Solving',
     descriptionHe: 'אתגרים הדורשים חשיבה יצירתית ופתרון בעיות קבוצתי.',
     descriptionEn: 'Challenges requiring creative thinking and group problem solving.',
-    imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1697747245806-6aa4b6565a54?w=600&q=80&fit=crop'
   },
   {
     id: 3,
@@ -40,7 +40,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'High Ropes Course',
     descriptionHe: 'מסלולי אתגר בגובה הדורשים אומץ, איזון ותמיכה צוותית.',
     descriptionEn: 'Challenging high courses requiring courage, balance, and team support.',
-    imageUrl: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1533591380348-14193f1de18f?w=600&q=80&fit=crop'
   },
   {
     id: 4,
@@ -48,7 +48,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Navigation & Orienteering',
     descriptionHe: 'שימוש במפה ומצפן לניווט בשטח.',
     descriptionEn: 'Using map and compass for field navigation.',
-    imageUrl: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1678134017317-4edd53da833d?w=600&q=80&fit=crop'
   },
   {
     id: 5,
@@ -56,7 +56,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Raft Building',
     descriptionHe: 'צוותים בונים רפסודות מחומרים בסיסיים ומפליגים עליהן.',
     descriptionEn: 'Teams build rafts from basic materials and sail on them.',
-    imageUrl: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1695898303391-d4139d30588a?w=600&q=80&fit=crop'
   },
   {
     id: 6,
@@ -64,7 +64,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Team Climbing Wall',
     descriptionHe: 'אתגר בו כל חברי הצוות חייבים לעבור מעבר קיר גבוה יחד.',
     descriptionEn: 'Challenge where all team members must cross a high wall together.',
-    imageUrl: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1760541726316-5c20875f8914?w=600&q=80&fit=crop'
   },
   {
     id: 7,
@@ -72,7 +72,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Treasure Hunt',
     descriptionHe: 'משחק התמצאות עם רמזים ומשימות.',
     descriptionEn: 'Orienteering game with clues and challenges.',
-    imageUrl: 'https://images.unsplash.com/photo-1506784365847-bbad939e9335?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1769457661805-51aaf1d16867?w=600&q=80&fit=crop'
   },
   {
     id: 8,
@@ -80,7 +80,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Survival Courses',
     descriptionHe: 'לימוד מיומנויות שרידות בסיסיות כמו הבערת אש, בניית מחסה.',
     descriptionEn: 'Learning basic survival skills like fire-making and shelter building.',
-    imageUrl: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1660924375739-75e64670bd40?w=600&q=80&fit=crop'
   },
   {
     id: 9,
@@ -88,7 +88,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Guided Nature Walk',
     descriptionHe: 'מסעות הליכה ארוכים בטבע עם משימות לאורך הדרך.',
     descriptionEn: 'Long nature hikes with challenges along the way.',
-    imageUrl: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1739820644476-6adf21e31830?w=600&q=80&fit=crop'
   },
   {
     id: 10,
@@ -96,7 +96,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Leadership Games',
     descriptionHe: 'פעילויות שבהן חברי צוות מסתובבים בתפקידי מנהיגות.',
     descriptionEn: 'Activities where team members rotate leadership roles.',
-    imageUrl: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1641496011336-baf26b2d778a?w=600&q=80&fit=crop'
   },
   {
     id: 11,
@@ -104,7 +104,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Communication Challenges',
     descriptionHe: 'משימות המדגישות את חשיבות התקשורת הברורה.',
     descriptionEn: 'Tasks emphasizing the importance of clear communication.',
-    imageUrl: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1593543321468-bbc5676c2f94?w=600&q=80&fit=crop'
   },
   {
     id: 12,
@@ -112,7 +112,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Team Camping',
     descriptionHe: 'חנייה ללילה בטבע עם פעילויות שיתופיות.',
     descriptionEn: 'Overnight camping with collaborative activities.',
-    imageUrl: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1469041635451-4512b21a9326?w=600&q=80&fit=crop'
   },
   {
     id: 13,
@@ -120,7 +120,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Adventure Sports',
     descriptionHe: 'פעילויות כמו רפטינג, קיאקינג או טיפוס סלעים.',
     descriptionEn: 'Activities like rafting, kayaking, or rock climbing.',
-    imageUrl: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1613412984420-1300edb8219f?w=600&q=80&fit=crop'
   },
   {
     id: 14,
@@ -136,7 +136,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Time Challenges',
     descriptionHe: 'משימות עם מגבלות זמן קפדניות הדורשות תכנון מהיר.',
     descriptionEn: 'Tasks with strict time limits requiring quick planning.',
-    imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1668678348012-b0fee6ef7677?w=600&q=80&fit=crop'
   }
 ];
 
