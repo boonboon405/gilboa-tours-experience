@@ -73,9 +73,8 @@ export async function speakWithElevenLabs(
       throw new Error('No audio content returned');
     }
 
-    // Convert base64 to audio and play
-    const audioBlob = base64ToBlob(data.audioContent, 'audio/mpeg');
-    const audioUrl = URL.createObjectURL(audioBlob);
+    // Use data URI for reliable base64 audio playback (avoids manual decoding issues)
+    const audioUrl = `data:audio/mpeg;base64,${data.audioContent}`;
     currentAudio = new Audio(audioUrl);
 
     return new Promise((resolve) => {
@@ -85,15 +84,15 @@ export async function speakWithElevenLabs(
       }
       
       currentAudio.onended = () => {
-        URL.revokeObjectURL(audioUrl);
         currentAudio = null;
+        onEnd?.();
         onEnd?.();
         resolve(true);
       };
 
       currentAudio.onerror = (e) => {
         console.error('[ElevenLabs TTS] Audio playback error:', e);
-        URL.revokeObjectURL(audioUrl);
+        currentAudio = null;
         currentAudio = null;
         onEnd?.();
         resolve(false);
@@ -162,33 +161,6 @@ function speakWithWebSpeech(
   return true;
 }
 
-/**
- * Convert base64 string to Blob - handles large audio files by processing in chunks
- */
-function base64ToBlob(base64: string, mimeType: string): Blob {
-  try {
-    // Process in chunks to avoid call stack issues with large files
-    const chunkSize = 1024;
-    const byteCharacters = atob(base64);
-    const byteArrays: BlobPart[] = [];
-    
-    for (let offset = 0; offset < byteCharacters.length; offset += chunkSize) {
-      const slice = byteCharacters.slice(offset, offset + chunkSize);
-      const byteNumbers = new Array(slice.length);
-      
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-      
-      byteArrays.push(new Uint8Array(byteNumbers));
-    }
-    
-    return new Blob(byteArrays, { type: mimeType });
-  } catch (error) {
-    console.error('[ElevenLabs TTS] Base64 decode error:', error);
-    throw error;
-  }
-}
 
 /**
  * Stop any currently playing audio
