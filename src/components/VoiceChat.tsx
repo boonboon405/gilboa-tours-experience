@@ -370,7 +370,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
         variant: 'destructive'
       });
     }
-  }, [language, toast]);
+  }, [language, toast, messages, speakText]);
 
   const endSession = useCallback(() => {
     setSessionActive(false);
