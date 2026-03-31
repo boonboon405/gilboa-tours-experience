@@ -84,8 +84,8 @@ export async function speakWithElevenLabs(
       }
       
       currentAudio.onended = () => {
-        URL.revokeObjectURL(audioUrl);
         currentAudio = null;
+        onEnd?.();
         onEnd?.();
         resolve(true);
       };
