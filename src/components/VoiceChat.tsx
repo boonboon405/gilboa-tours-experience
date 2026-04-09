@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useScribe, CommitStrategy } from '@elevenlabs/react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -50,7 +51,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const [sessionActive, setSessionActive] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState(() => `session-${Date.now()}-${Math.random()}`);
-  const [speechSupported, setSpeechSupported] = useState(true);
+  const [speechSupported] = useState(true); // ElevenLabs STT works everywhere
   const [textInput, setTextInput] = useState('');
   const { language, setLanguage } = useLanguage();
   const [selectedVoice, setSelectedVoice] = useState<ElevenLabsVoice>(() => {
@@ -60,12 +61,31 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   const [showSettings, setShowSettings] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<any>(null);
   const sessionActiveRef = useRef(false);
   const phaseRef = useRef<SessionPhase>('idle');
   const accumulatedTranscriptRef = useRef('');
   const [hasPendingTranscript, setHasPendingTranscript] = useState(false);
   const { toast } = useToast();
+
+  // ElevenLabs Scribe (Realtime STT)
+  const scribe = useScribe({
+    modelId: 'scribe_v2_realtime',
+    commitStrategy: CommitStrategy.VAD,
+    onPartialTranscript: (data) => {
+      // Barge-in: stop AI speech on any voice input
+      stopElevenLabsSpeech();
+      if (phaseRef.current === 'speaking') {
+        setPhase('listening');
+      }
+    },
+    onCommittedTranscript: (data) => {
+      if (data.text?.trim()) {
+        stopElevenLabsSpeech();
+        accumulatedTranscriptRef.current += (accumulatedTranscriptRef.current ? ' ' : '') + data.text.trim();
+        setHasPendingTranscript(true);
+      }
+    },
+  });
 
   // Keep refs in sync with state for use in callbacks
   useEffect(() => {
@@ -89,86 +109,6 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
-  // Initialize speech recognition
-  useEffect(() => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      setSpeechSupported(false);
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = false;
-    recognition.lang = language === 'he' ? 'he-IL' : 'en-US';
-
-    recognition.onresult = (event: any) => {
-      // Accumulate all results
-      let transcript = '';
-      for (let i = 0; i < event.results.length; i++) {
-        if (event.results[i].isFinal) {
-          transcript += event.results[i][0].transcript + ' ';
-        }
-      }
-      const trimmed = transcript.trim();
-      if (trimmed) {
-        // Barge-in: stop AI speech if it's playing
-        stopElevenLabsSpeech();
-        accumulatedTranscriptRef.current = trimmed;
-        setHasPendingTranscript(true);
-      }
-    };
-
-    recognition.onerror = (event: any) => {
-      console.error('Speech recognition error:', event.error);
-      
-      if (event.error === 'aborted') return;
-
-      if (event.error === 'no-speech') {
-        // Don't auto re-arm — user controls turns manually
-        return;
-      }
-
-      const errorMessages: Record<string, { he: string; en: string }> = {
-        'not-allowed': { he: 'נדרשת הרשאת מיקרופון', en: 'Microphone permission required' },
-        'network': { he: 'שגיאת רשת', en: 'Network error' },
-        'audio-capture': { he: 'לא נמצא מיקרופון', en: 'No microphone found' },
-      };
-      
-      const msg = errorMessages[event.error] || { 
-        he: `שגיאה: ${event.error}`, 
-        en: `Error: ${event.error}` 
-      };
-      
-      toast({
-        title: language === 'he' ? 'שגיאה' : 'Error',
-        description: language === 'he' ? msg.he : msg.en,
-        variant: 'destructive'
-      });
-      
-      endSession();
-    };
-
-    recognition.onend = () => {
-      // No auto re-arm — user manually controls turns
-    };
-
-    recognitionRef.current = recognition;
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.abort();
-      }
-    };
-  }, [language]);
-
-  // Update recognition language when it changes
-  useEffect(() => {
-    if (recognitionRef.current) {
-      recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
-    }
-  }, [language]);
 
   // Track if greeting has been spoken
   const greetingSpokenRef = useRef(false);
@@ -234,7 +174,6 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
       selectedVoice,
       () => setPhase('speaking'),
       () => {
-        // Don't auto re-arm — just go idle after speaking
         if (sessionActiveRef.current) {
           setPhase('idle');
         } else {
@@ -291,7 +230,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
           description: data.fallback || data.error,
           variant: 'destructive'
         });
-        setPhase(sessionActiveRef.current ? 'listening' : 'idle');
+        setPhase(sessionActiveRef.current ? 'idle' : 'idle');
         return;
       }
 
@@ -306,7 +245,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
 
       setMessages(prev => [...prev, aiMessage]);
 
-      // Speak the response; no auto re-arm — user clicks "My Turn" to talk again
+      // Speak the response
       await speakText(data.message);
 
     } catch (error) {
@@ -316,7 +255,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
         description: language === 'he' ? 'אנא נסו שוב או צרו קשר בטלפון 0537314235' : 'Please try again or call 0537314235',
         variant: 'destructive'
       });
-      setPhase(sessionActiveRef.current ? 'listening' : 'idle');
+      setPhase(sessionActiveRef.current ? 'idle' : 'idle');
     }
   }, [conversationId, sessionId, quizResults, language, speakText, messages.length, toast]);
 
@@ -356,17 +295,15 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
       accumulatedTranscriptRef.current = '';
       setHasPendingTranscript(false);
       
-      // Stop recognition
-      if (recognitionRef.current) {
-        try { recognitionRef.current.abort(); } catch (e) { /* ignore */ }
-      }
+      // Disconnect scribe
+      try { scribe.disconnect(); } catch (e) { /* ignore */ }
       
       await handleVoiceInput(transcript);
     }
-  }, [sessionActive, hasPendingTranscript, messages, speakText, language, toast, handleVoiceInput]);
+  }, [sessionActive, hasPendingTranscript, messages, speakText, language, toast, handleVoiceInput, scribe]);
 
-  const takeMyTurn = useCallback(() => {
-    if (!sessionActive || !recognitionRef.current) return;
+  const takeMyTurn = useCallback(async () => {
+    if (!sessionActive) return;
     
     // Stop AI speech immediately
     stopElevenLabsSpeech();
@@ -375,11 +312,35 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     accumulatedTranscriptRef.current = '';
     setHasPendingTranscript(false);
     
-    // Start listening
+    // Start listening via ElevenLabs Scribe
     setPhase('listening');
-    recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
-    try { recognitionRef.current.start(); } catch (e) { /* already started */ }
-  }, [sessionActive, language]);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('elevenlabs-scribe-token');
+      
+      if (error || !data?.token) {
+        throw new Error('Failed to get STT token');
+      }
+      
+      await scribe.connect({
+        token: data.token,
+        microphone: {
+          echoCancellation: true,
+          noiseSuppression: true,
+        },
+      });
+    } catch (error) {
+      console.error('Error starting Scribe STT:', error);
+      toast({
+        title: language === 'he' ? 'שגיאת מיקרופון' : 'Microphone Error',
+        description: language === 'he' 
+          ? 'לא ניתן להפעיל הקלטה. נסו שוב'
+          : 'Could not start recording. Please try again',
+        variant: 'destructive'
+      });
+      setPhase('idle');
+    }
+  }, [sessionActive, language, scribe, toast]);
 
   const endSession = useCallback(() => {
     setSessionActive(false);
@@ -388,11 +349,9 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     accumulatedTranscriptRef.current = '';
     setHasPendingTranscript(false);
     
-    if (recognitionRef.current) {
-      try { recognitionRef.current.abort(); } catch (e) { /* ignore */ }
-    }
+    try { scribe.disconnect(); } catch (e) { /* ignore */ }
     stopElevenLabsSpeech();
-  }, []);
+  }, [scribe]);
 
   const handleTextSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -522,21 +481,12 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
     { text: 'Do I need special shoes?', icon: Footprints }
   ], [language]);
 
+  // Shuffle once on mount only — no interval
   const [visibleReplies, setVisibleReplies] = useState<Array<{ text: string; icon: any }>>([]);
-  const [isAnimating, setIsAnimating] = useState(false);
   
   useEffect(() => {
-    const shuffleReplies = () => {
-      setIsAnimating(true);
-      setTimeout(() => {
-        const shuffled = [...allQuickReplies].sort(() => Math.random() - 0.5);
-        setVisibleReplies(shuffled.slice(0, 20));
-        setIsAnimating(false);
-      }, 300);
-    };
-    shuffleReplies();
-    const interval = setInterval(shuffleReplies, 10000);
-    return () => clearInterval(interval);
+    const shuffled = [...allQuickReplies].sort(() => Math.random() - 0.5);
+    setVisibleReplies(shuffled.slice(0, 20));
   }, [allQuickReplies]);
 
   const quickReplies = visibleReplies;
@@ -733,12 +683,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
                   size="icon"
                   onClick={() => {
                     stopElevenLabsSpeech();
-                    if (sessionActiveRef.current) {
-                      setPhase('listening');
-                      try { recognitionRef.current?.start(); } catch (e) { /* */ }
-                    } else {
-                      setPhase('idle');
-                    }
+                    setPhase('idle');
                   }}
                   className={isSpeaking ? 'text-destructive hover:text-destructive' : ''}
                 >
@@ -868,7 +813,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
           </form>
           
           {/* Quick Reply Buttons */}
-          <div className={`grid grid-cols-5 gap-2 px-3 pb-3 transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`} dir={language === 'he' ? 'rtl' : 'ltr'}>
+          <div className={`grid grid-cols-5 gap-2 px-3 pb-3`} dir={language === 'he' ? 'rtl' : 'ltr'}>
             {quickReplies.map((reply, index) => {
               const Icon = reply.icon;
               return (
@@ -946,6 +891,13 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
 
             {/* Speaking animation */}
             {isSpeaking && <SpeakingAnimation isActive={true} size="lg" />}
+
+            {/* Live transcript preview */}
+            {isListening && scribe.partialTranscript && (
+              <p className="text-sm text-muted-foreground italic text-center max-w-md">
+                {scribe.partialTranscript}
+              </p>
+            )}
 
             {/* Status Text */}
             <div className="space-y-2 w-full max-w-md">
