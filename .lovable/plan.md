@@ -1,85 +1,49 @@
 
 
-## Two-Button Voice Control: Play/Pause + Talk
+## Fix: Suggestions Reshuffling + Voice Input Network Error
 
-### What We're Building
+### Problem 1: Quick Reply Suggestions Keep Changing
+Lines 528-540 in `VoiceChat.tsx` run a `setInterval` every 10 seconds that reshuffles the suggestions randomly. This is disorienting — suggestions should only randomize once on page load.
 
-Replace the single mic toggle with two distinct, branded buttons:
+**Fix:** Remove the `setInterval`. Keep the initial shuffle on mount only.
 
-1. **"Start / Resume AI" button** (teal/primary) — Starts the session and makes the AI speak its greeting or continue speaking its response. When clicked again after user speaks, AI processes and responds.
-2. **"My Turn to Talk" button** (accent/orange) — Pauses AI speech immediately, activates the microphone so the user can speak. When user is done, they click the first button to let the AI respond.
+### Problem 2: "My Turn to Talk" Triggers Network Error
+The console shows `Speech recognition error: network` when clicking "My Turn to Talk". The browser's built-in `SpeechRecognition` API sends audio to Google's servers and is unreliable — it frequently fails with network errors, especially in non-Chrome browsers or when the gesture chain is broken.
 
-Additionally: switching language mid-session immediately stops all speech and resets.
+**Fix:** Replace the browser `SpeechRecognition` API with **ElevenLabs Realtime STT** (`scribe_v2_realtime`) which is far more reliable and already matches the TTS provider. This involves:
 
-### User Flow
-
-```text
-[Idle] → Click "Start AI" → AI speaks greeting (phase: speaking)
-      → Click "My Turn" → AI stops talking, mic activates (phase: listening)
-      → User speaks...
-      → Click "Send to AI" → mic stops, AI processes + responds (phase: processing → speaking)
-      → Click "My Turn" again → interrupt AI, speak again
-      → ...repeat...
-      → Click "End Session" → everything stops
-```
-
-### Language Switch Behavior
-When user switches language (he↔en), `handleLanguageChange` already calls `endSession()` which stops TTS + recognition. The greeting regenerates in the new language. No additional change needed — already works.
+1. **New edge function** `elevenlabs-scribe-token` — generates a single-use token for the ElevenLabs realtime STT WebSocket (keeps API key server-side)
+2. **Install `@elevenlabs/react`** — provides the `useScribe` hook for WebSocket-based transcription
+3. **Refactor `takeMyTurn`** in `VoiceChat.tsx` — instead of `recognition.start()`, connect to ElevenLabs Scribe via the `useScribe` hook with VAD (voice activity detection) for automatic silence-based segmentation
+4. **Remove browser SpeechRecognition** — delete the `useEffect` that initializes `SpeechRecognition` and all related refs
 
 ### File Changes
 
-#### 1. `src/components/VoiceChat.tsx` — Major UI refactor of controls
+#### 1. `src/components/VoiceChat.tsx`
+- **Line 528-540**: Remove `setInterval` from the quick replies effect; keep only the initial shuffle on mount
+- **Lines 94-164**: Remove browser `SpeechRecognition` initialization `useEffect`
+- **Lines 166-171**: Remove the language-sync `useEffect` for recognition
+- Add `useScribe` hook from `@elevenlabs/react` with:
+  - `modelId: 'scribe_v2_realtime'`
+  - `commitStrategy: 'vad'` (auto-commits on silence)
+  - `onCommittedTranscript`: accumulates into `accumulatedTranscriptRef` and sets `hasPendingTranscript`
+- **`takeMyTurn` (line 368-382)**: Instead of `recognition.start()`, call `scribe.connect()` with a token fetched from the edge function, with microphone config (echoCancellation, noiseSuppression)
+- **`endSession` (line 384-395)**: Call `scribe.disconnect()` instead of `recognition.abort()`
+- **`startOrResumeAI` (line 353-365)**: When sending transcript, call `scribe.disconnect()` instead of `recognition.abort()`
 
-**State changes:**
-- Keep `phase` state machine (`idle | listening | processing | speaking`)
-- Keep `sessionActive` flag
-- Remove auto-re-arm logic from `speakText` callback and `recognition.onend` — user now manually controls turns
+#### 2. New edge function: `supabase/functions/elevenlabs-scribe-token/index.ts`
+- POST endpoint that calls `https://api.elevenlabs.io/v1/single-use-token/realtime_scribe` using `ELEVENLABS_API_KEY`
+- Returns `{ token }` to the client
+- Standard CORS headers
 
-**New control flow:**
-- `startOrResumeAI()`: If no session, start session + speak greeting. If session active and user just spoke (has pending transcript), send to AI. If AI finished and waiting, do nothing.
-- `takeMyTurn()`: Call `stopElevenLabsSpeech()`, set phase to `listening`, start recognition. Recognition stays on until user clicks "Send to AI".
-- `recognition.continuous = true` so it captures everything while user talks
-- `recognition.onresult`: Accumulate transcript into a ref (don't send immediately)
-- When user clicks "Start AI" button after speaking: stop recognition, send accumulated transcript to `handleVoiceInput`
+#### 3. Package install
+- `npm install @elevenlabs/react`
 
-**UI — Bottom control bar:**
-Replace the single 80px mic button with two side-by-side branded buttons:
-
-- **Left button**: "▶ Start AI" / "▶ Let AI Respond" — teal/primary, rounded-full, min-w-[140px]
-  - Idle: "Start Conversation" with play icon
-  - After user spoke: "Send to AI" with send icon  
-  - While AI speaking: disabled or shows "AI Speaking..."
-- **Right button**: "🎤 My Turn" — accent/orange, rounded-full, min-w-[140px]
-  - Only enabled when AI is speaking or session is active
-  - While listening: shows "Listening..." with pulse animation
-  - While idle (no session): disabled
-
-- **End Session** link stays below
-
-**Phase-based status text** updates to reflect the manual turn-taking.
-
-#### 2. `src/utils/elevenLabsTTS.ts` — No changes needed
-
-`stopElevenLabsSpeech()` already handles immediate interruption. The `onEnd` callback still fires correctly.
-
-#### 3. `src/components/VoiceChat.tsx` — Language switch already stops speech
-
-`handleLanguageChange` calls `endSession()` which calls `stopElevenLabsSpeech()` — this already handles the requirement that switching language stops the current voice immediately.
-
-### Visual Design (Brand Identity)
-
-- **Start/AI button**: Uses `bg-primary` (teal) with `hover:brightness-110`, `rounded-full`, `min-w-[140px]`, Heebo font
-- **My Turn button**: Uses `bg-accent` (sunset orange) with `hover:brightness-110`, `rounded-full`, `min-w-[140px]`
-- Active listening state: orange button gets `ring-4 ring-accent/30 animate-pulse`
-- AI speaking state: teal button gets `ring-4 ring-primary/30`
-- Status text: centered below buttons in `bg-background/80 rounded-lg border` container
-- Both buttons use standard `200ms transition-all` per brand standards
+### Language Handling
+- The ElevenLabs Scribe model auto-detects language, so no manual `lang` parameter is needed — it handles Hebrew and English natively
+- When language switches, `endSession()` disconnects the scribe session; `takeMyTurn` reconnects with a fresh token
 
 ### Summary
-
-- Remove auto-loop logic (no auto re-arm)
-- Two explicit buttons for turn-taking
-- Accumulated transcript sent on user's command
-- Language switch = immediate stop (already works)
-- Brand-consistent button styling
+- Suggestions: shuffle once on load, never again
+- Voice input: replace unreliable browser STT with ElevenLabs Realtime STT via WebSocket for reliable, high-quality speech recognition in both Hebrew and English
 
