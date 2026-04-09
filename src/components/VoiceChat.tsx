@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { useScribe } from '@elevenlabs/react';
+import { useScribe, CommitStrategy } from '@elevenlabs/react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -70,7 +70,7 @@ export const VoiceChat = ({ quizResults }: VoiceChatProps) => {
   // ElevenLabs Scribe (Realtime STT)
   const scribe = useScribe({
     modelId: 'scribe_v2_realtime',
-    commitStrategy: 'vad',
+    commitStrategy: CommitStrategy.VAD,
     onPartialTranscript: (data) => {
       // Barge-in: stop AI speech on any voice input
       stopElevenLabsSpeech();
