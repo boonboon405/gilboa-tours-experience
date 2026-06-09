@@ -41,7 +41,16 @@ export const Hero = () => {
           key={i}
           className={`absolute inset-0 transition-opacity duration-[800ms] ${i === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
         >
-          <img src={slide.img} alt={isHe ? slide.he : slide.en} className="absolute inset-0 w-full h-full object-cover" loading={i === 0 ? 'eager' : 'lazy'} />
+          <img
+            src={getIsraelImage(slide.imgKey, 1600)}
+            srcSet={getIsraelImageSrcSet(slide.imgKey, HERO_WIDTHS)}
+            sizes={HERO_SIZES}
+            alt={isHe ? slide.he : slide.en}
+            className="absolute inset-0 w-full h-full object-cover"
+            loading={i === 0 ? 'eager' : 'lazy'}
+            fetchPriority={i === 0 ? 'high' : 'auto'}
+            decoding={i === 0 ? 'sync' : 'async'}
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" style={{ top: '40%' }} />
 
           <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
