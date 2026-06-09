@@ -39,7 +39,11 @@ export const ImageGallery = ({ images, className, layout = 'grid' }: ImageGaller
               >
                 <img
                   src={image.src}
+                  srcSet={image.srcSet}
+                  sizes={image.sizes ?? '288px'}
                   alt={image.alt}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 
