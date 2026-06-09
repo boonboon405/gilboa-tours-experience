@@ -147,7 +147,7 @@ export const Navigation = () => {
             </div>
 
             <button
-              className="lg:hidden p-2 text-gold-nav focus-visible:ring-2 focus-visible:ring-primary rounded"
+              className="lg:hidden p-2 text-foreground focus-visible:ring-2 focus-visible:ring-primary rounded"
               onClick={() => setDrawerOpen(true)}
               aria-label={language === 'he' ? 'פתח תפריט' : 'Open menu'}
             >
