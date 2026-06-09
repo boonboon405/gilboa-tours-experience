@@ -76,8 +76,8 @@ export const Navigation = () => {
     console.log('Quiz completed:', results);
   };
 
-  const logoColor = isScrolled ? 'text-primary' : 'text-gold-nav';
-  const linkColor = isScrolled ? 'text-foreground' : 'text-gold-nav';
+  const logoColor = 'text-primary';
+  const linkColor = 'text-foreground';
 
   return (
     <>
