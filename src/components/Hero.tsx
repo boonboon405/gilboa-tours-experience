@@ -1,15 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { israelImages } from '@/data/israelImages';
+import { getIsraelImage, getIsraelImageSrcSet } from '@/data/israelImages';
 
 const slides = [
-  { he: 'גלה את הגליל', en: 'Discover the Galilee', subHe: 'סיורים מודרכים בנופים עוצרי הנשימה של ישראל', subEn: 'Guided tours through Israel\'s most breathtaking landscapes', img: israelImages['sea-of-galilee'] },
-  { he: 'ימי גיבוש בטבע', en: 'Team Building in Nature', subHe: 'חוויות קבוצתיות בלתי נשכחות', subEn: 'Unforgettable group experiences on Mount Gilboa', img: israelImages['mount-gilboa'] },
-  { he: 'מעיינות ומפלים', en: 'Springs Valley', subHe: 'סיורים במעיינות נסתרים', subEn: 'Hidden gem tours through ancient water springs', img: israelImages['gan-hashlosha'] },
-  { he: 'חוויות VIP', en: 'VIP Experiences', subHe: 'טיולים פרטיים ומותאמים אישית', subEn: 'Premium private tours tailored to you', img: israelImages['rosh-pina'] },
-  { he: 'עמק יזרעאל', en: 'Jezreel Valley', subHe: 'נופים מקראיים', subEn: 'Biblical landscapes, modern luxury', img: israelImages['jezreel-valley'] },
-];
+  { he: 'גלה את הגליל', en: 'Discover the Galilee', subHe: 'סיורים מודרכים בנופים עוצרי הנשימה של ישראל', subEn: 'Guided tours through Israel\'s most breathtaking landscapes', imgKey: 'sea-of-galilee' },
+  { he: 'ימי גיבוש בטבע', en: 'Team Building in Nature', subHe: 'חוויות קבוצתיות בלתי נשכחות', subEn: 'Unforgettable group experiences on Mount Gilboa', imgKey: 'mount-gilboa' },
+  { he: 'מעיינות ומפלים', en: 'Springs Valley', subHe: 'סיורים במעיינות נסתרים', subEn: 'Hidden gem tours through ancient water springs', imgKey: 'gan-hashlosha' },
+  { he: 'חוויות VIP', en: 'VIP Experiences', subHe: 'טיולים פרטיים ומותאמים אישית', subEn: 'Premium private tours tailored to you', imgKey: 'rosh-pina' },
+  { he: 'עמק יזרעאל', en: 'Jezreel Valley', subHe: 'נופים מקראיים', subEn: 'Biblical landscapes, modern luxury', imgKey: 'jezreel-valley' },
+] as const;
+
+const HERO_WIDTHS = [640, 960, 1280, 1600, 1920];
+const HERO_SIZES = '100vw';
 
 export const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
