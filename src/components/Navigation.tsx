@@ -82,11 +82,7 @@ export const Navigation = () => {
   return (
     <>
       <nav
-        className={`fixed top-0 w-full z-[1000] transition-all duration-300 ease-in-out ${
-          isScrolled
-            ? 'bg-[rgba(250,249,247,0.85)] backdrop-blur-[12px] shadow-lg border-b border-border/50'
-            : 'bg-transparent'
-        }`}
+        className="fixed top-0 w-full z-[1000] bg-white/95 backdrop-blur-[12px] shadow-md border-b border-border/50 transition-all duration-300 ease-in-out"
         role="navigation"
         aria-label={language === 'he' ? 'תפריט ראשי' : 'Main navigation'}
       >
