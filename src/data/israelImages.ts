@@ -42,7 +42,7 @@ export const israelImages: Record<string,string> = {
   'nahariya-beach': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Nahariya_-_Port.jpg/960px-Nahariya_-_Port.jpg',
   'stella-maris': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/97599_stella_maris_monastery_PikiWiki_Israel.jpg/960px-97599_stella_maris_monastery_PikiWiki_Israel.jpg',
   'druze-villages': 'https://upload.wikimedia.org/wikipedia/commons/c/ca/PikiWiki_Israel_1337_Druze_scouts_at_jethro_holy_place_%D7%A6%D7%95%D7%A4%D7%99%D7%9D_%D7%93%D7%A8%D7%95%D7%96%D7%99%D7%9D_%D7%91%D7%A7%D7%91%D7%A8_%D7%99%D7%AA%D7%A8%D7%95.jpg',
-  'majrase': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/View_of_Agamon_Hula.JPG/960px-View_of_Agamon_Hula.JPG',
+  'majrase': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/PikiWiki_Israel_14401_Majrase_Reserve.JPG/960px-PikiWiki_Israel_14401_Majrase_Reserve.JPG',
   'yehiam-fortress': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/%D7%9E%D7%91%D7%A6%D7%A8_%D7%9E%D7%95%D7%A0%D7%A4%D7%95%D7%A8%D7%98_%D7%91%D7%96%D7%A8%D7%99%D7%97%D7%94.JPG/960px-%D7%9E%D7%91%D7%A6%D7%A8_%D7%9E%D7%95%D7%A0%D7%A4%D7%95%D7%A8%D7%98_%D7%91%D7%96%D7%A8%D7%99%D7%97%D7%94.JPG',
   'keshet-cave': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/PikiWiki_Israel_27967_Keshet_Cave_in_Adamit_Park.JPG/960px-PikiWiki_Israel_27967_Keshet_Cave_in_Adamit_Park.JPG',
   'montfort-castle': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/%D7%9E%D7%91%D7%A6%D7%A8_%D7%9E%D7%95%D7%A0%D7%A4%D7%95%D7%A8%D7%98_%D7%91%D7%96%D7%A8%D7%99%D7%97%D7%94.JPG/960px-%D7%9E%D7%91%D7%A6%D7%A8_%D7%9E%D7%95%D7%A0%D7%A4%D7%95%D7%A8%D7%98_%D7%91%D7%96%D7%A8%D7%99%D7%97%D7%94.JPG',
