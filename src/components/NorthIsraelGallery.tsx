@@ -138,9 +138,13 @@ const NorthIsraelGallery = () => {
           {selectedImage && (
             <div className="relative">
               <img
-                src={israelImages[selectedImage.key]}
+                src={getIsraelImage(selectedImage.key, 1280)}
+                srcSet={getIsraelImageSrcSet(selectedImage.key, [640, 960, 1280, 1600])}
+                sizes="(min-width: 1024px) 80vw, 95vw"
                 alt={language === 'he' ? selectedImage.nameHe : selectedImage.nameEn}
                 className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+                loading="eager"
+                decoding="async"
               />
               <p className="text-muted-foreground mt-4 text-center">
                 {language === 'he' ? selectedImage.descriptionHe : selectedImage.descriptionEn}
