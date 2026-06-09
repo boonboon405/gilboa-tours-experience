@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { israelImages } from '@/data/israelImages';
 
 const slides = [
-  { he: 'גלה את הגליל', en: 'Discover the Galilee', subHe: 'סיורים מודרכים בנופים עוצרי הנשימה של ישראל', subEn: 'Guided tours through Israel\'s most breathtaking landscapes', img: 'https://images.unsplash.com/photo-1739820644476-6adf21e31830?w=1920&q=80&fit=crop' },
-  { he: 'ימי גיבוש בטבע', en: 'Team Building in Nature', subHe: 'חוויות קבוצתיות בלתי נשכחות', subEn: 'Unforgettable group experiences on Mount Gilboa', img: 'https://images.unsplash.com/photo-1608637765750-6b77adacfcac?w=1920&q=80&fit=crop' },
-  { he: 'מעיינות ומפלים', en: 'Springs Valley', subHe: 'סיורים במעיינות נסתרים', subEn: 'Hidden gem tours through ancient water springs', img: 'https://images.unsplash.com/photo-1660924375739-75e64670bd40?w=1920&q=80&fit=crop' },
-  { he: 'חוויות VIP', en: 'VIP Experiences', subHe: 'טיולים פרטיים ומותאמים אישית', subEn: 'Premium private tours tailored to you', img: 'https://images.unsplash.com/photo-1613412984420-1300edb8219f?w=1920&q=80&fit=crop' },
-  { he: 'עמק יזרעאל', en: 'Jezreel Valley', subHe: 'נופים מקראיים', subEn: 'Biblical landscapes, modern luxury', img: 'https://images.unsplash.com/photo-1697747245806-6aa4b6565a54?w=1920&q=80&fit=crop' },
+  { he: 'גלה את הגליל', en: 'Discover the Galilee', subHe: 'סיורים מודרכים בנופים עוצרי הנשימה של ישראל', subEn: 'Guided tours through Israel\'s most breathtaking landscapes', img: israelImages['sea-of-galilee'] },
+  { he: 'ימי גיבוש בטבע', en: 'Team Building in Nature', subHe: 'חוויות קבוצתיות בלתי נשכחות', subEn: 'Unforgettable group experiences on Mount Gilboa', img: israelImages['mount-gilboa'] },
+  { he: 'מעיינות ומפלים', en: 'Springs Valley', subHe: 'סיורים במעיינות נסתרים', subEn: 'Hidden gem tours through ancient water springs', img: israelImages['gan-hashlosha'] },
+  { he: 'חוויות VIP', en: 'VIP Experiences', subHe: 'טיולים פרטיים ומותאמים אישית', subEn: 'Premium private tours tailored to you', img: israelImages['rosh-pina'] },
+  { he: 'עמק יזרעאל', en: 'Jezreel Valley', subHe: 'נופים מקראיים', subEn: 'Biblical landscapes, modern luxury', img: israelImages['jezreel-valley'] },
 ];
 
 export const Hero = () => {
