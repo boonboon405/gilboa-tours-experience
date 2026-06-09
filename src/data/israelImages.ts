@@ -21,7 +21,7 @@ export const israelImages: Record<string,string> = {
   'ein-gev': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/EinGev056a.jpg/960px-EinGev056a.jpg',
   'capernaum': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Sites_of_Christianity_in_the_Galillee_-_Ruins_of_the_ancient_Great_Synagogue_at_Capernaum_%28or_Kfar_Nahum%29_on_the_shore_of_the_Lake_of_Galilee%2C_Northern_Israel.jpg/960px-thumbnail.jpg',
   'arbel-valley': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Arbel2185.JPG/960px-Arbel2185.JPG',
-  'gamla': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Bental_mountain.JPG/960px-Bental_mountain.JPG',
+  'gamla': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Blue_rock_thrush_%28male%29_at_Gamla_Nature_Reserve.jpg/960px-Blue_rock_thrush_%28male%29_at_Gamla_Nature_Reserve.jpg',
   'korazim': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Korazim-view.jpg/960px-Korazim-view.jpg',
   'agamon-hula': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/View_of_Agamon_Hula.JPG/960px-View_of_Agamon_Hula.JPG',
   'bahai-gardens': 'https://upload.wikimedia.org/wikipedia/commons/6/6e/TerracesBenGurion2.jpg',
