@@ -7,6 +7,8 @@ interface GalleryImage {
   src: string;
   alt: string;
   title?: string;
+  srcSet?: string;
+  sizes?: string;
 }
 
 interface ImageGalleryProps {
