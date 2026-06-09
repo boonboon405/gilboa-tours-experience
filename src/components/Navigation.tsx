@@ -110,7 +110,7 @@ export const Navigation = () => {
                   className={`nav-link-underline relative flex flex-col items-center px-1 py-1 ${linkColor} transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded ${
                     isActive ? 'border-b-2 border-accent' : ''
                   }`}
-                  style={!isScrolled ? { textShadow: '0px 1px 3px rgba(0,0,0,0.5)' } : undefined}
+                  
                   aria-label={language === 'he' ? link.he : link.en}
                   aria-current={isActive ? 'page' : undefined}
                 >
