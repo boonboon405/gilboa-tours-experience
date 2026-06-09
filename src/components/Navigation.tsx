@@ -26,16 +26,8 @@ export const Navigation = () => {
   const { language } = useLanguage();
   const [showQuiz, setShowQuiz] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('home');
-  const [isScrolled, setIsScrolled] = useState(false);
+  
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 80);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     const sectionIds = navLinks.filter(l => l.sectionId).map(l => l.sectionId!);
@@ -76,17 +68,13 @@ export const Navigation = () => {
     console.log('Quiz completed:', results);
   };
 
-  const logoColor = isScrolled ? 'text-primary' : 'text-gold-nav';
-  const linkColor = isScrolled ? 'text-foreground' : 'text-gold-nav';
+  const logoColor = 'text-primary';
+  const linkColor = 'text-foreground';
 
   return (
     <>
       <nav
-        className={`fixed top-0 w-full z-[1000] transition-all duration-300 ease-in-out ${
-          isScrolled
-            ? 'bg-[rgba(250,249,247,0.85)] backdrop-blur-[12px] shadow-lg border-b border-border/50'
-            : 'bg-transparent'
-        }`}
+        className="fixed top-0 w-full z-[1000] bg-white/95 backdrop-blur-[12px] shadow-md border-b border-border/50 transition-all duration-300 ease-in-out"
         role="navigation"
         aria-label={language === 'he' ? 'תפריט ראשי' : 'Main navigation'}
       >
@@ -114,7 +102,7 @@ export const Navigation = () => {
                   className={`nav-link-underline relative flex flex-col items-center px-1 py-1 ${linkColor} transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded ${
                     isActive ? 'border-b-2 border-accent' : ''
                   }`}
-                  style={!isScrolled ? { textShadow: '0px 1px 3px rgba(0,0,0,0.5)' } : undefined}
+                  
                   aria-label={language === 'he' ? link.he : link.en}
                   aria-current={isActive ? 'page' : undefined}
                 >
@@ -151,7 +139,7 @@ export const Navigation = () => {
             </div>
 
             <button
-              className="lg:hidden p-2 text-gold-nav focus-visible:ring-2 focus-visible:ring-primary rounded"
+              className="lg:hidden p-2 text-foreground focus-visible:ring-2 focus-visible:ring-primary rounded"
               onClick={() => setDrawerOpen(true)}
               aria-label={language === 'he' ? 'פתח תפריט' : 'Open menu'}
             >
