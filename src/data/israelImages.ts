@@ -49,13 +49,6 @@ export const israelImages: Record<string,string> = {
   'nahal-kziv': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Kziv_stream_12.JPG/960px-Kziv_stream_12.JPG',
   'rosh-pina': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/PikiWiki_Israel_17512_Cities_in_Israel.JPG/960px-PikiWiki_Israel_17512_Cities_in_Israel.JPG',
   'miron-forest': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/139107_mount_hillel_in_the_meron_mountains_-_1071_m._PikiWiki_Israel.jpg/960px-139107_mount_hillel_in_the_meron_mountains_-_1071_m._PikiWiki_Israel.jpg',
-  'galilee': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Kinneret_cropped.jpg/960px-Kinneret_cropped.jpg',
-  'gilboa': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Gilboa_096.jpg/960px-Gilboa_096.jpg',
-  'springs': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Gan_Hashlosha_%28997009324296705171.jpg/960px-Gan_Hashlosha_%28997009324296705171.jpg',
-  'vip': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/PikiWiki_Israel_17512_Cities_in_Israel.JPG/960px-PikiWiki_Israel_17512_Cities_in_Israel.JPG',
-  'jeep-tour': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Bental_mountain.JPG/960px-Bental_mountain.JPG',
-  'culinary': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/PikiWiki_Israel_17512_Cities_in_Israel.JPG/960px-PikiWiki_Israel_17512_Cities_in_Israel.JPG',
-  'team-building': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Gilboa_096.jpg/960px-Gilboa_096.jpg',
 };
 
 /**
