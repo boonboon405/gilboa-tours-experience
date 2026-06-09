@@ -15,7 +15,7 @@ interface ODTType {
   titleEn: string;
   descriptionHe: string;
   descriptionEn: string;
-  imageUrl: string;
+  imageKey: string;
 }
 
 const odtTypes: ODTType[] = [
@@ -25,7 +25,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Trust Games',
     descriptionHe: 'פעילויות שבהן חברי הצוות חייבים לסמוך אחד על השני כדי להצליח.',
     descriptionEn: 'Activities where team members must trust each other to succeed.',
-    imageUrl: israelImages['mount-gilboa']
+    imageKey: 'mount-gilboa'
   },
   {
     id: 2,
@@ -33,7 +33,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Creative Problem Solving',
     descriptionHe: 'אתגרים הדורשים חשיבה יצירתית ופתרון בעיות קבוצתי.',
     descriptionEn: 'Challenges requiring creative thinking and group problem solving.',
-    imageUrl: israelImages['sea-of-galilee']
+    imageKey: 'sea-of-galilee'
   },
   {
     id: 3,
@@ -41,7 +41,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'High Ropes Course',
     descriptionHe: 'מסלולי אתגר בגובה הדורשים אומץ, איזון ותמיכה צוותית.',
     descriptionEn: 'Challenging high courses requiring courage, balance, and team support.',
-    imageUrl: israelImages['gan-hashlosha']
+    imageKey: 'gan-hashlosha'
   },
   {
     id: 4,
@@ -49,7 +49,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Navigation & Orienteering',
     descriptionHe: 'שימוש במפה ומצפן לניווט בשטח.',
     descriptionEn: 'Using map and compass for field navigation.',
-    imageUrl: israelImages['nahal-ayun']
+    imageKey: 'nahal-ayun'
   },
   {
     id: 5,
@@ -57,7 +57,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Raft Building',
     descriptionHe: 'צוותים בונים רפסודות מחומרים בסיסיים ומפליגים עליהן.',
     descriptionEn: 'Teams build rafts from basic materials and sail on them.',
-    imageUrl: israelImages['mount-arbel']
+    imageKey: 'mount-arbel'
   },
   {
     id: 6,
@@ -65,7 +65,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Team Climbing Wall',
     descriptionHe: 'אתגר בו כל חברי הצוות חייבים לעבור מעבר קיר גבוה יחד.',
     descriptionEn: 'Challenge where all team members must cross a high wall together.',
-    imageUrl: israelImages['mount-tabor']
+    imageKey: 'mount-tabor'
   },
   {
     id: 7,
@@ -73,7 +73,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Treasure Hunt',
     descriptionHe: 'משחק התמצאות עם רמזים ומשימות.',
     descriptionEn: 'Orienteering game with clues and challenges.',
-    imageUrl: israelImages['hula-valley']
+    imageKey: 'hula-valley'
   },
   {
     id: 8,
@@ -81,7 +81,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Survival Courses',
     descriptionHe: 'לימוד מיומנויות שרידות בסיסיות כמו הבערת אש, בניית מחסה.',
     descriptionEn: 'Learning basic survival skills like fire-making and shelter building.',
-    imageUrl: israelImages['jordan-river']
+    imageKey: 'jordan-river'
   },
   {
     id: 9,
@@ -89,7 +89,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Guided Nature Walk',
     descriptionHe: 'מסעות הליכה ארוכים בטבע עם משימות לאורך הדרך.',
     descriptionEn: 'Long nature hikes with challenges along the way.',
-    imageUrl: israelImages['golan-heights']
+    imageKey: 'golan-heights'
   },
   {
     id: 10,
@@ -97,7 +97,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Leadership Games',
     descriptionHe: 'פעילויות שבהן חברי צוות מסתובבים בתפקידי מנהיגות.',
     descriptionEn: 'Activities where team members rotate leadership roles.',
-    imageUrl: israelImages['jezreel-valley']
+    imageKey: 'jezreel-valley'
   },
   {
     id: 11,
@@ -105,7 +105,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Communication Challenges',
     descriptionHe: 'משימות המדגישות את חשיבות התקשורת הברורה.',
     descriptionEn: 'Tasks emphasizing the importance of clear communication.',
-    imageUrl: israelImages['banias-waterfall']
+    imageKey: 'banias-waterfall'
   },
   {
     id: 12,
@@ -113,7 +113,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Team Camping',
     descriptionHe: 'חנייה ללילה בטבע עם פעילויות שיתופיות.',
     descriptionEn: 'Overnight camping with collaborative activities.',
-    imageUrl: israelImages['nahal-snir']
+    imageKey: 'nahal-snir'
   },
   {
     id: 13,
@@ -121,7 +121,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Adventure Sports',
     descriptionHe: 'פעילויות כמו רפטינג, קיאקינג או טיפוס סלעים.',
     descriptionEn: 'Activities like rafting, kayaking, or rock climbing.',
-    imageUrl: israelImages['rosh-hanikra']
+    imageKey: 'rosh-hanikra'
   },
   {
     id: 14,
@@ -129,7 +129,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Environmental Workshops',
     descriptionHe: 'פעילויות שמחברות בין גיבוש צוות לבין מודעות סביבתית.',
     descriptionEn: 'Activities connecting team building with environmental awareness.',
-    imageUrl: israelImages['mount-meron']
+    imageKey: 'mount-meron'
   },
   {
     id: 15,
@@ -137,7 +137,7 @@ const odtTypes: ODTType[] = [
     titleEn: 'Time Challenges',
     descriptionHe: 'משימות עם מגבלות זמן קפדניות הדורשות תכנון מהיר.',
     descriptionEn: 'Tasks with strict time limits requiring quick planning.',
-    imageUrl: israelImages['mount-hermon']
+    imageKey: 'mount-hermon'
   }
 ];
 
@@ -166,11 +166,16 @@ export const ODTTypesDialog = ({ open, onOpenChange }: ODTTypesDialogProps) => {
           {odtTypes.map((odtType) => (
             <Card key={odtType.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="relative h-48 bg-muted">
-                <img 
-                  src={odtType.imageUrl} 
+                <img
+                  src={getIsraelImage(odtType.imageKey, 640)}
+                  srcSet={getIsraelImageSrcSet(odtType.imageKey, [400, 640, 800])}
+                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                   alt={isHe ? odtType.titleHe : odtType.titleEn}
                   className="w-full h-full object-cover"
                   loading="lazy"
+                  decoding="async"
+                  width={640}
+                  height={384}
                 />
               </div>
               <CardHeader>
