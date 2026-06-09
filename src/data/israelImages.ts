@@ -13,7 +13,7 @@ export const israelImages: Record<string,string> = {
   'mount-gilboa': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Gilboa_096.jpg/960px-Gilboa_096.jpg',
   'haifa-bay': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/The_Hanging_Gardens_of_Haifa%2C_Israel_%2850099173503%29_%28cropped%29.jpg/960px-The_Hanging_Gardens_of_Haifa%2C_Israel_%2850099173503%29_%28cropped%29.jpg',
   'nahal-ayun': 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Ayun_fall.JPG/960px-Ayun_fall.JPG',
-  'hula-valley': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/View_of_Agamon_Hula.JPG/960px-View_of_Agamon_Hula.JPG',
+  'hula-valley': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Flickr_-_Government_Press_Office_%28GPO%29_-_Hula_Valley_Nature_Reserve.jpg/960px-Flickr_-_Government_Press_Office_%28GPO%29_-_Hula_Valley_Nature_Reserve.jpg',
   'mount-tabor': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/%D7%94%D7%A8_%D7%AA%D7%91%D7%95%D7%A8_%D7%91%D7%9E%D7%91%D7%98_%D7%9E%D7%93%D7%A8%D7%95%D7%9D_%D7%9E%D7%A2%D7%A8%D7%91.jpg/960px-%D7%94%D7%A8_%D7%AA%D7%91%D7%95%D7%A8_%D7%91%D7%9E%D7%91%D7%98_%D7%9E%D7%93%D7%A8%D7%95%D7%9D_%D7%9E%D7%A2%D7%A8%D7%91.jpg',
   'jordan-river': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/PikiWiki_Israel_83640_jordan_river_village.jpg/960px-PikiWiki_Israel_83640_jordan_river_village.jpg',
   'tel-dan': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Tel_Dan_Canaanite_Gate_1.jpg/960px-Tel_Dan_Canaanite_Gate_1.jpg',
