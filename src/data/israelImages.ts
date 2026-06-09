@@ -52,35 +52,48 @@ export const israelImages: Record<string,string> = {
 };
 
 /**
+ * Wikimedia Commons now only serves thumbnails at a fixed set of standard
+ * widths (see https://w.wiki/GHai). Arbitrary widths return HTTP 400. We snap
+ * any requested width UP to the nearest allowed size so images always load.
+ */
+const ALLOWED_WIDTHS = [120, 250, 330, 500, 960, 1280, 1920];
+
+function snapWidth(width: number): number {
+  for (const w of ALLOWED_WIDTHS) if (w >= width) return w;
+  return ALLOWED_WIDTHS[ALLOWED_WIDTHS.length - 1];
+}
+
+/**
  * Rewrites a Wikimedia Commons URL to a specific rendered width.
- * Handles both /thumb/ URLs (replaces the trailing "<N>px-...") and direct
- * /commons/<a>/<ab>/<file> URLs (converts to a /thumb/ variant).
- * Falls back to the original URL if neither pattern matches.
+ * Snaps the requested width to the nearest allowed Wikimedia thumbnail size.
  */
 export function wikimediaAtWidth(url: string, width: number): string {
   if (!url) return url;
+  const w = snapWidth(width);
   const thumbRe = /^(.+\/thumb\/[0-9a-f]\/[0-9a-f]{2}\/[^/]+)\/\d+px-(.+)$/;
   const m = url.match(thumbRe);
-  if (m) return `${m[1]}/${width}px-${m[2]}`;
+  if (m) return `${m[1]}/${w}px-${m[2]}`;
   const directRe = /^(https:\/\/upload\.wikimedia\.org\/wikipedia\/commons)\/([0-9a-f])\/([0-9a-f]{2})\/([^/?#]+\.(?:jpg|jpeg|png|svg|gif|webp))$/i;
   const d = url.match(directRe);
   if (d) {
     const [, base, a, ab, file] = d;
-    return `${base}/thumb/${a}/${ab}/${file}/${width}px-${file}`;
+    return `${base}/thumb/${a}/${ab}/${file}/${w}px-${file}`;
   }
   return url;
 }
 
 /** Returns the image URL for a given key at the requested rendered width. */
-export const getIsraelImage = (key: string, width = 800): string =>
+export const getIsraelImage = (key: string, width = 960): string =>
   wikimediaAtWidth(israelImages[key] ?? '', width);
 
 /** Builds a srcSet string for responsive `<img srcSet>` with the given widths. */
 export const getIsraelImageSrcSet = (
   key: string,
-  widths: number[] = [400, 640, 960, 1280, 1600],
+  widths: number[] = [500, 960, 1280, 1920],
 ): string => {
   const base = israelImages[key];
   if (!base) return '';
-  return widths.map((w) => `${wikimediaAtWidth(base, w)} ${w}w`).join(', ');
+  const seen = new Set<number>();
+  const snapped = widths.map(snapWidth).filter((w) => (seen.has(w) ? false : seen.add(w)));
+  return snapped.map((w) => `${wikimediaAtWidth(base, w)} ${w}w`).join(', ');
 };
