@@ -7,7 +7,7 @@ const slides = [
   { he: 'ימי גיבוש בטבע', en: 'Team Building in Nature', subHe: 'חוויות קבוצתיות בלתי נשכחות בהר הגלבוע', subEn: 'Unforgettable group experiences on Mount Gilboa', img: 'https://images.unsplash.com/photo-1608637765750-6b77adacfcac?w=1920&q=80&fit=crop' },
   { he: 'מעיינות ומפלים', en: 'Springs Valley', subHe: 'סיורים במעיינות העתיקים הנסתרים', subEn: 'Hidden gem tours through ancient water springs', img: 'https://images.unsplash.com/photo-1660924375739-75e64670bd40?w=1920&q=80&fit=crop' },
   { he: 'חוויות VIP', en: 'VIP Experiences', subHe: 'טיולים פרטיים ומותאמים אישית', subEn: 'Premium private tours tailored to you', img: 'https://images.unsplash.com/photo-1613412984420-1300edb8219f?w=1920&q=80&fit=crop' },
-  { he: 'עמק יזרעאל', en: 'Jezreel Valley', subHe: 'נופים מקראיים, מותרות מודרניות', subEn: 'Biblical landscapes, modern luxury', img: 'https://images.unsplash.com/photo-1697747245806-6aa4b6565a54?w=1920&q=80&fit=crop' },
+  { he: 'עמק יזרעאל', en: 'Jezreel Valley', subHe: 'נופים מקראיים', subEn: 'Biblical landscapes, modern luxury', img: 'https://images.unsplash.com/photo-1697747245806-6aa4b6565a54?w=1920&q=80&fit=crop' },
 ];
 
 export const Hero = () => {
