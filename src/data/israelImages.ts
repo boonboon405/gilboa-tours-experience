@@ -30,7 +30,7 @@ export const israelImages: Record<string,string> = {
   'megiddo': 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/TEL_MEGIDO_AERIAL_C.JPG/960px-TEL_MEGIDO_AERIAL_C.JPG',
   'yardenit': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Yardenit.jpg/960px-Yardenit.jpg',
   'katzrin': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Katzrinlibrary.jpg/960px-Katzrinlibrary.jpg',
-  'jezreel-valley': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/%D7%94%D7%A8_%D7%AA%D7%91%D7%95%D7%A8_%D7%91%D7%9E%D7%91%D7%98_%D7%9E%D7%93%D7%A8%D7%95%D7%9D_%D7%9E%D7%A2%D7%A8%D7%91.jpg/960px-%D7%94%D7%A8_%D7%AA%D7%91%D7%95%D7%A8_%D7%91%D7%9E%D7%91%D7%98_%D7%9E%D7%93%D7%A8%D7%95%D7%9D_%D7%9E%D7%A2%D7%A8%D7%91.jpg',
+  'jezreel-valley': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Jezreel_Valley_panorama.jpg/960px-Jezreel_Valley_panorama.jpg',
   'nahal-snir': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Hazbani.jpg/960px-Hazbani.jpg',
   'achziv': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Achziv_IMG_5322.JPG/960px-Achziv_IMG_5322.JPG',
   'hamat-gader': 'https://upload.wikimedia.org/wikipedia/commons/e/ed/Hot_springs_in_Hamat_Gader.jpg',
