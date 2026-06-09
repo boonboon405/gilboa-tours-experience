@@ -28,14 +28,6 @@ export const Navigation = () => {
   const [activeSection, setActiveSection] = useState<string>('home');
   
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 80);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     const sectionIds = navLinks.filter(l => l.sectionId).map(l => l.sectionId!);
