@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { israelImages } from '@/data/israelImages';
+import { israelImages, getIsraelImage, getIsraelImageSrcSet } from '@/data/israelImages';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ODTType {

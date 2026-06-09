@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { MapPin, ZoomIn, X } from 'lucide-react';
-import { israelImages } from '@/data/israelImages';
+import { israelImages, getIsraelImage, getIsraelImageSrcSet } from '@/data/israelImages';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Location {
