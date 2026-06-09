@@ -48,7 +48,7 @@ export const israelImages: Record<string,string> = {
   'montfort-castle': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Montfort-2-5015.jpg/960px-Montfort-2-5015.jpg',
   'nahal-kziv': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Kziv_stream_12.JPG/960px-Kziv_stream_12.JPG',
   'rosh-pina': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/PikiWiki_Israel_17512_Cities_in_Israel.JPG/960px-PikiWiki_Israel_17512_Cities_in_Israel.JPG',
-  'miron-forest': 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Northern_slope_of_Mount_Meron.jpg/960px-Northern_slope_of_Mount_Meron.jpg',
+  'miron-forest': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/139107_mount_hillel_in_the_meron_mountains_-_1071_m._PikiWiki_Israel.jpg/960px-139107_mount_hillel_in_the_meron_mountains_-_1071_m._PikiWiki_Israel.jpg',
   'galilee': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Kinneret_cropped.jpg/960px-Kinneret_cropped.jpg',
   'gilboa': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Gilboa_096.jpg/960px-Gilboa_096.jpg',
   'springs': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Gan_Hashlosha_%28997009324296705171.jpg/960px-Gan_Hashlosha_%28997009324296705171.jpg',
