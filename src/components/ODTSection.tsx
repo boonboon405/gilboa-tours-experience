@@ -29,6 +29,8 @@ export const ODTSection = () => {
               src={odtImage}
               alt={language === 'he' ? 'צוות עובדים בפעילות גיבוש ODT בטבע בהרי הגלבוע' : 'Team participating in outdoor ODT team-building activity in the Gilboa mountains'}
               className="relative rounded-2xl shadow-strong w-full h-[500px] object-cover"
+              loading="lazy"
+              decoding="async"
             />
           </div>
 
