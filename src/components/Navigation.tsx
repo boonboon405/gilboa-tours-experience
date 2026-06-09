@@ -26,7 +26,7 @@ export const Navigation = () => {
   const { language } = useLanguage();
   const [showQuiz, setShowQuiz] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('home');
-  const [isScrolled, setIsScrolled] = useState(false);
+  
 
   useEffect(() => {
     const handleScroll = () => {
