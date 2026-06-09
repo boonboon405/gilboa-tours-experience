@@ -7,6 +7,8 @@ interface GalleryImage {
   src: string;
   alt: string;
   title?: string;
+  srcSet?: string;
+  sizes?: string;
 }
 
 interface ImageGalleryProps {
@@ -37,7 +39,11 @@ export const ImageGallery = ({ images, className, layout = 'grid' }: ImageGaller
               >
                 <img
                   src={image.src}
+                  srcSet={image.srcSet}
+                  sizes={image.sizes ?? '288px'}
                   alt={image.alt}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 
@@ -84,7 +90,11 @@ export const ImageGallery = ({ images, className, layout = 'grid' }: ImageGaller
               <div className="relative w-full h-full">
                 <img
                   src={image.src}
+                  srcSet={image.srcSet}
+                  sizes={image.sizes ?? '(min-width: 768px) 33vw, 50vw'}
                   alt={image.alt}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 

@@ -7,13 +7,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { israelImages } from '@/data/israelImages';
+import { israelImages, getIsraelImage, getIsraelImageSrcSet } from '@/data/israelImages';
 
 interface GallerySection {
   id: string;
   title: string;
   description: string;
-  images: { src: string; alt: string; title: string; description: string }[];
+  images: { src: string; alt: string; title: string; description: string; srcSet?: string; sizes?: string }[];
 }
 
 interface DynamicImage {
@@ -31,12 +31,12 @@ const getStaticSections = (isHe: boolean): GallerySection[] => [
     title: isHe ? 'הגליל והכנרת' : 'The Galilee & Sea of Galilee',
     description: isHe ? 'נופים עוצרי נשימה של אזור הגליל והכנרת' : 'Breathtaking landscapes of the Galilee and Sea of Galilee region',
     images: [
-      { src: israelImages['sea-of-galilee'], alt: isHe ? 'נוף ירוק ופורח של הרי הגליל' : 'Lush green landscape of the Galilee mountains', title: isHe ? 'נופי הגליל' : 'Galilee Views', description: isHe ? 'נוף פנורמי של הרי הגליל' : 'Panoramic view of the Galilee mountains' },
-      { src: israelImages['mount-gilboa'], alt: isHe ? 'עצי דקל ליד הכנרת' : 'Palm trees by the Sea of Galilee', title: isHe ? 'חוף הכנרת' : 'Galilee Shore', description: isHe ? 'חוף ציורי לכנרת' : 'Scenic Galilee shoreline' },
-      { src: israelImages['beit-shean'], alt: isHe ? 'שרידי העיר הרומית בבית שאן' : 'Ruins of the Roman city in Beit She\'an', title: isHe ? 'עמק בית שאן' : 'Beit She\'an Valley', description: isHe ? 'נוף היסטורי מרהיב' : 'Stunning historical landscape' },
-      { src: israelImages['ein-gev'], alt: isHe ? 'סירה על הכנרת' : 'Boat on the Sea of Galilee', title: isHe ? 'שיט בכנרת' : 'Galilee Sailing', description: isHe ? 'שיט ציורי בכנרת' : 'Scenic sailing on the Sea of Galilee' },
-      { src: israelImages['gan-hashlosha'], alt: isHe ? 'מעיינות הכנרת והגליל' : 'Springs of the Galilee', title: isHe ? 'מעיינות הגליל' : 'Galilee Springs', description: isHe ? 'מעיינות טבעיים באזור' : 'Natural springs in the region' },
-      { src: israelImages['rosh-pina'], alt: isHe ? 'טעמי הגליל - יין ומטעמים מקומיים' : 'Flavors of the Galilee - local wine and delicacies', title: isHe ? 'טעמי הגליל' : 'Flavors of the Galilee', description: isHe ? 'חוויות קולינריות באזור' : 'Culinary experiences in the region' },
+      { src: getIsraelImage('sea-of-galilee', 800), srcSet: getIsraelImageSrcSet('sea-of-galilee'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'נוף ירוק ופורח של הרי הגליל' : 'Lush green landscape of the Galilee mountains', title: isHe ? 'נופי הגליל' : 'Galilee Views', description: isHe ? 'נוף פנורמי של הרי הגליל' : 'Panoramic view of the Galilee mountains' },
+      { src: getIsraelImage('mount-gilboa', 800), srcSet: getIsraelImageSrcSet('mount-gilboa'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'עצי דקל ליד הכנרת' : 'Palm trees by the Sea of Galilee', title: isHe ? 'חוף הכנרת' : 'Galilee Shore', description: isHe ? 'חוף ציורי לכנרת' : 'Scenic Galilee shoreline' },
+      { src: getIsraelImage('beit-shean', 800), srcSet: getIsraelImageSrcSet('beit-shean'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'שרידי העיר הרומית בבית שאן' : 'Ruins of the Roman city in Beit She\'an', title: isHe ? 'עמק בית שאן' : 'Beit She\'an Valley', description: isHe ? 'נוף היסטורי מרהיב' : 'Stunning historical landscape' },
+      { src: getIsraelImage('ein-gev', 800), srcSet: getIsraelImageSrcSet('ein-gev'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'סירה על הכנרת' : 'Boat on the Sea of Galilee', title: isHe ? 'שיט בכנרת' : 'Galilee Sailing', description: isHe ? 'שיט ציורי בכנרת' : 'Scenic sailing on the Sea of Galilee' },
+      { src: getIsraelImage('gan-hashlosha', 800), srcSet: getIsraelImageSrcSet('gan-hashlosha'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'מעיינות הכנרת והגליל' : 'Springs of the Galilee', title: isHe ? 'מעיינות הגליל' : 'Galilee Springs', description: isHe ? 'מעיינות טבעיים באזור' : 'Natural springs in the region' },
+      { src: getIsraelImage('rosh-pina', 800), srcSet: getIsraelImageSrcSet('rosh-pina'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'טעמי הגליל - יין ומטעמים מקומיים' : 'Flavors of the Galilee - local wine and delicacies', title: isHe ? 'טעמי הגליל' : 'Flavors of the Galilee', description: isHe ? 'חוויות קולינריות באזור' : 'Culinary experiences in the region' },
     ]
   },
   {
@@ -44,11 +44,11 @@ const getStaticSections = (isHe: boolean): GallerySection[] => [
     title: isHe ? 'הרי הגלבוע' : 'Mount Gilboa',
     description: isHe ? 'הפנינה הטבעית של צפון הארץ' : 'The natural gem of northern Israel',
     images: [
-      { src: israelImages['mount-gilboa'], alt: isHe ? 'תצפית מפסגת הרי הגלבוע' : 'View from the summit of Mount Gilboa', title: isHe ? 'הרי הגלבוע' : 'Mount Gilboa', description: isHe ? 'שקיעה מדהימה מפסגות הגלבוע' : 'Stunning sunset from the Gilboa peaks' },
-      { src: israelImages['gan-hashlosha'], alt: isHe ? 'מעיינות בגן השלושה' : 'Springs at Gan HaShlosha', title: isHe ? 'עמק המעיינות' : 'Springs Valley', description: isHe ? 'מעיינות צלולים בלב הטבע' : 'Crystal-clear springs in nature' },
-      { src: israelImages['nahal-ayun'], alt: isHe ? 'נהר עם מפל בטבע' : 'River with waterfall in nature', title: isHe ? 'פעילויות במעיינות' : 'Spring Activities', description: isHe ? 'חוויות ייחודיות במים' : 'Unique water experiences' },
-      { src: israelImages['jezreel-valley'], alt: isHe ? 'נוף עמק בית שאן מהגלבוע' : 'Valley view from Gilboa', title: isHe ? 'תצפית העמק' : 'Valley Lookout', description: isHe ? 'מבט לעמק מהפסגה' : 'View of the valley from the summit' },
-      { src: israelImages['golan-heights'], alt: isHe ? 'טיול רכבי שטח בגלבוע' : 'Off-road vehicle tour on Gilboa', title: isHe ? 'טיולי שטח' : 'Off-Road Tours', description: isHe ? 'הרפתקאות בגלבוע' : 'Adventures on Gilboa' },
+      { src: getIsraelImage('mount-gilboa', 800), srcSet: getIsraelImageSrcSet('mount-gilboa'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'תצפית מפסגת הרי הגלבוע' : 'View from the summit of Mount Gilboa', title: isHe ? 'הרי הגלבוע' : 'Mount Gilboa', description: isHe ? 'שקיעה מדהימה מפסגות הגלבוע' : 'Stunning sunset from the Gilboa peaks' },
+      { src: getIsraelImage('gan-hashlosha', 800), srcSet: getIsraelImageSrcSet('gan-hashlosha'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'מעיינות בגן השלושה' : 'Springs at Gan HaShlosha', title: isHe ? 'עמק המעיינות' : 'Springs Valley', description: isHe ? 'מעיינות צלולים בלב הטבע' : 'Crystal-clear springs in nature' },
+      { src: getIsraelImage('nahal-ayun', 800), srcSet: getIsraelImageSrcSet('nahal-ayun'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'נהר עם מפל בטבע' : 'River with waterfall in nature', title: isHe ? 'פעילויות במעיינות' : 'Spring Activities', description: isHe ? 'חוויות ייחודיות במים' : 'Unique water experiences' },
+      { src: getIsraelImage('jezreel-valley', 800), srcSet: getIsraelImageSrcSet('jezreel-valley'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'נוף עמק בית שאן מהגלבוע' : 'Valley view from Gilboa', title: isHe ? 'תצפית העמק' : 'Valley Lookout', description: isHe ? 'מבט לעמק מהפסגה' : 'View of the valley from the summit' },
+      { src: getIsraelImage('golan-heights', 800), srcSet: getIsraelImageSrcSet('golan-heights'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'טיול רכבי שטח בגלבוע' : 'Off-road vehicle tour on Gilboa', title: isHe ? 'טיולי שטח' : 'Off-Road Tours', description: isHe ? 'הרפתקאות בגלבוע' : 'Adventures on Gilboa' },
     ]
   },
   {
@@ -56,11 +56,11 @@ const getStaticSections = (isHe: boolean): GallerySection[] => [
     title: isHe ? 'פעילויות וחוויות' : 'Activities & Experiences',
     description: isHe ? 'מגוון פעילויות מרתקות בטבע' : 'A variety of exciting activities in nature',
     images: [
-      { src: israelImages['golan-heights'], alt: isHe ? 'רכבי שטח חשמליים בגלבוע' : 'Electric off-road vehicles on Gilboa', title: isHe ? 'רכבי שטח חשמליים' : 'Electric Off-Road Vehicles', description: isHe ? 'טיולים מאתגרים בשטח' : 'Challenging off-road tours' },
-      { src: israelImages['rosh-pina'], alt: isHe ? 'מטעמים מקומיים' : 'Local delicacies', title: isHe ? 'חוויות קולינריות' : 'Culinary Experiences', description: isHe ? 'טעמים אותנטיים של האזור' : 'Authentic flavors of the region' },
-      { src: israelImages['mount-gilboa'], alt: isHe ? 'פעילות גיבוש ODT' : 'ODT team building activity', title: isHe ? 'גיבוש ODT' : 'ODT Team Building', description: isHe ? 'פעילויות גיבוש צוותיות' : 'Team building activities' },
-      { src: israelImages['banias-waterfall'], alt: isHe ? 'מפל מים בטבע' : 'Waterfall in nature', title: isHe ? 'פעילויות מים' : 'Water Activities', description: isHe ? 'הרפתקאות במים' : 'Water adventures' },
-      { src: israelImages['mount-meron'], alt: isHe ? 'טיולים בטבע הצפון' : 'Hiking in northern nature', title: isHe ? 'טיולי טבע' : 'Nature Hikes', description: isHe ? 'סיורים מודרכים בטבע' : 'Guided nature tours' },
+      { src: getIsraelImage('golan-heights', 800), srcSet: getIsraelImageSrcSet('golan-heights'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'רכבי שטח חשמליים בגלבוע' : 'Electric off-road vehicles on Gilboa', title: isHe ? 'רכבי שטח חשמליים' : 'Electric Off-Road Vehicles', description: isHe ? 'טיולים מאתגרים בשטח' : 'Challenging off-road tours' },
+      { src: getIsraelImage('rosh-pina', 800), srcSet: getIsraelImageSrcSet('rosh-pina'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'מטעמים מקומיים' : 'Local delicacies', title: isHe ? 'חוויות קולינריות' : 'Culinary Experiences', description: isHe ? 'טעמים אותנטיים של האזור' : 'Authentic flavors of the region' },
+      { src: getIsraelImage('mount-gilboa', 800), srcSet: getIsraelImageSrcSet('mount-gilboa'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'פעילות גיבוש ODT' : 'ODT team building activity', title: isHe ? 'גיבוש ODT' : 'ODT Team Building', description: isHe ? 'פעילויות גיבוש צוותיות' : 'Team building activities' },
+      { src: getIsraelImage('banias-waterfall', 800), srcSet: getIsraelImageSrcSet('banias-waterfall'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'מפל מים בטבע' : 'Waterfall in nature', title: isHe ? 'פעילויות מים' : 'Water Activities', description: isHe ? 'הרפתקאות במים' : 'Water adventures' },
+      { src: getIsraelImage('mount-meron', 800), srcSet: getIsraelImageSrcSet('mount-meron'), sizes: '(min-width: 768px) 33vw, 50vw', alt: isHe ? 'טיולים בטבע הצפון' : 'Hiking in northern nature', title: isHe ? 'טיולי טבע' : 'Nature Hikes', description: isHe ? 'סיורים מודרכים בטבע' : 'Guided nature tours' },
     ]
   }
 ];

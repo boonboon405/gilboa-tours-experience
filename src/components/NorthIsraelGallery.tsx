@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { MapPin, ZoomIn, X } from 'lucide-react';
-import { israelImages } from '@/data/israelImages';
+import { israelImages, getIsraelImage, getIsraelImageSrcSet } from '@/data/israelImages';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Location {
@@ -95,10 +95,15 @@ const NorthIsraelGallery = () => {
             >
               <div className="aspect-[4/3] relative bg-muted">
                 <img
-                  src={israelImages[location.key]}
+                  src={getIsraelImage(location.key, 400)}
+                  srcSet={getIsraelImageSrcSet(location.key, [240, 400, 640, 800])}
+                  sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
                   alt={language === 'he' ? location.nameHe : location.nameEn}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
+                  decoding="async"
+                  width={400}
+                  height={300}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
@@ -133,9 +138,13 @@ const NorthIsraelGallery = () => {
           {selectedImage && (
             <div className="relative">
               <img
-                src={israelImages[selectedImage.key]}
+                src={getIsraelImage(selectedImage.key, 1280)}
+                srcSet={getIsraelImageSrcSet(selectedImage.key, [640, 960, 1280, 1600])}
+                sizes="(min-width: 1024px) 80vw, 95vw"
                 alt={language === 'he' ? selectedImage.nameHe : selectedImage.nameEn}
                 className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+                loading="eager"
+                decoding="async"
               />
               <p className="text-muted-foreground mt-4 text-center">
                 {language === 'he' ? selectedImage.descriptionHe : selectedImage.descriptionEn}
