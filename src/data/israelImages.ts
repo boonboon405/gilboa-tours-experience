@@ -15,7 +15,7 @@ export const israelImages: Record<string,string> = {
   'nahal-ayun': 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Ayun_fall.JPG/960px-Ayun_fall.JPG',
   'hula-valley': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/View_of_Agamon_Hula.JPG/960px-View_of_Agamon_Hula.JPG',
   'mount-tabor': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/%D7%94%D7%A8_%D7%AA%D7%91%D7%95%D7%A8_%D7%91%D7%9E%D7%91%D7%98_%D7%9E%D7%93%D7%A8%D7%95%D7%9D_%D7%9E%D7%A2%D7%A8%D7%91.jpg/960px-%D7%94%D7%A8_%D7%AA%D7%91%D7%95%D7%A8_%D7%91%D7%9E%D7%91%D7%98_%D7%9E%D7%93%D7%A8%D7%95%D7%9D_%D7%9E%D7%A2%D7%A8%D7%91.jpg',
-  'jordan-river': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/20100923_mer_morte13.JPG/960px-20100923_mer_morte13.JPG',
+  'jordan-river': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/PikiWiki_Israel_83640_jordan_river_village.jpg/960px-PikiWiki_Israel_83640_jordan_river_village.jpg',
   'tel-dan': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Tel_Dan_Canaanite_Gate_1.jpg/960px-Tel_Dan_Canaanite_Gate_1.jpg',
   'nimrod-fortress': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Nimrod_Fortress_%D7%9E%D7%91%D7%A6%D7%A8_%D7%A0%D7%9E%D7%A8%D7%95%D7%93.jpg/960px-Nimrod_Fortress_%D7%9E%D7%91%D7%A6%D7%A8_%D7%A0%D7%9E%D7%A8%D7%95%D7%93.jpg',
   'ein-gev': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/EinGev056a.jpg/960px-EinGev056a.jpg',
