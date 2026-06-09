@@ -45,7 +45,7 @@ export const israelImages: Record<string,string> = {
   'majrase': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/PikiWiki_Israel_14401_Majrase_Reserve.JPG/960px-PikiWiki_Israel_14401_Majrase_Reserve.JPG',
   'yehiam-fortress': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/%D7%9E%D7%91%D7%A6%D7%A8_%D7%9E%D7%95%D7%A0%D7%A4%D7%95%D7%A8%D7%98_%D7%91%D7%96%D7%A8%D7%99%D7%97%D7%94.JPG/960px-%D7%9E%D7%91%D7%A6%D7%A8_%D7%9E%D7%95%D7%A0%D7%A4%D7%95%D7%A8%D7%98_%D7%91%D7%96%D7%A8%D7%99%D7%97%D7%94.JPG',
   'keshet-cave': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/PikiWiki_Israel_27967_Keshet_Cave_in_Adamit_Park.JPG/960px-PikiWiki_Israel_27967_Keshet_Cave_in_Adamit_Park.JPG',
-  'montfort-castle': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/%D7%9E%D7%91%D7%A6%D7%A8_%D7%9E%D7%95%D7%A0%D7%A4%D7%95%D7%A8%D7%98_%D7%91%D7%96%D7%A8%D7%99%D7%97%D7%94.JPG/960px-%D7%9E%D7%91%D7%A6%D7%A8_%D7%9E%D7%95%D7%A0%D7%A4%D7%95%D7%A8%D7%98_%D7%91%D7%96%D7%A8%D7%99%D7%97%D7%94.JPG',
+  'montfort-castle': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Montfort-2-5015.jpg/960px-Montfort-2-5015.jpg',
   'nahal-kziv': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Kziv_stream_12.JPG/960px-Kziv_stream_12.JPG',
   'rosh-pina': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/PikiWiki_Israel_17512_Cities_in_Israel.JPG/960px-PikiWiki_Israel_17512_Cities_in_Israel.JPG',
   'miron-forest': 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Northern_slope_of_Mount_Meron.jpg/960px-Northern_slope_of_Mount_Meron.jpg',
