@@ -13,7 +13,7 @@ interface GallerySection {
   id: string;
   title: string;
   description: string;
-  images: { src: string; alt: string; title: string; description: string }[];
+  images: { src: string; alt: string; title: string; description: string; srcSet?: string; sizes?: string }[];
 }
 
 interface DynamicImage {
