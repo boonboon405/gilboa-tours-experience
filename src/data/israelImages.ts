@@ -57,3 +57,37 @@ export const israelImages: Record<string,string> = {
   'culinary': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/PikiWiki_Israel_17512_Cities_in_Israel.JPG/960px-PikiWiki_Israel_17512_Cities_in_Israel.JPG',
   'team-building': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Gilboa_096.jpg/960px-Gilboa_096.jpg',
 };
+
+/**
+ * Rewrites a Wikimedia Commons URL to a specific rendered width.
+ * Handles both /thumb/ URLs (replaces the trailing "<N>px-...") and direct
+ * /commons/<a>/<ab>/<file> URLs (converts to a /thumb/ variant).
+ * Falls back to the original URL if neither pattern matches.
+ */
+export function wikimediaAtWidth(url: string, width: number): string {
+  if (!url) return url;
+  const thumbRe = /^(.+\/thumb\/[0-9a-f]\/[0-9a-f]{2}\/[^/]+)\/\d+px-(.+)$/;
+  const m = url.match(thumbRe);
+  if (m) return `${m[1]}/${width}px-${m[2]}`;
+  const directRe = /^(https:\/\/upload\.wikimedia\.org\/wikipedia\/commons)\/([0-9a-f])\/([0-9a-f]{2})\/([^/?#]+\.(?:jpg|jpeg|png|svg|gif|webp))$/i;
+  const d = url.match(directRe);
+  if (d) {
+    const [, base, a, ab, file] = d;
+    return `${base}/thumb/${a}/${ab}/${file}/${width}px-${file}`;
+  }
+  return url;
+}
+
+/** Returns the image URL for a given key at the requested rendered width. */
+export const getIsraelImage = (key: string, width = 800): string =>
+  wikimediaAtWidth(israelImages[key] ?? '', width);
+
+/** Builds a srcSet string for responsive `<img srcSet>` with the given widths. */
+export const getIsraelImageSrcSet = (
+  key: string,
+  widths: number[] = [400, 640, 960, 1280, 1600],
+): string => {
+  const base = israelImages[key];
+  if (!base) return '';
+  return widths.map((w) => `${wikimediaAtWidth(base, w)} ${w}w`).join(', ');
+};
